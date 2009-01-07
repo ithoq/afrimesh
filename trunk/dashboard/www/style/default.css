@@ -1,0 +1,84 @@
+/**
+ * Afrimesh: easy management for B.A.T.M.A.N. wireless mesh networks
+ * Copyright (C) 2008-2009 Meraka Institute of the CSIR
+ * All rights reserved.
+ *  
+ * This software is licensed as free software under the terms of the
+ * New BSD License. See /LICENSE for more information.
+ */
+
+
+/* - Source: http://developer.yahoo.com/yui/reset/ ------------------------- */
+@import url("reset-fonts-grids.css");
+
+
+/* - global ---------------------------------------------------------------- */
+html {
+  font-size: 62.5%;
+}
+
+body {
+  font-family: "Lucida Grande", "Lucida Sans Unicode", Helvetica, Verdana, Arial, sans-serif;
+  text-align: left;
+  color: #333;
+}
+
+/* - Lucida Sans variants look 'orrible - */
+strong, em, b, i {
+  font-family: "Lucida Grande", "Lucida Sans", "Lucida Sans Unicode", Helvetica, Verdana, Arial, sans-serif;   
+}
+
+
+/* - styles --------------------------------------------------------------- */
+h1 {
+  font-size: 1.85em;
+  padding-bottom: .75em;
+}
+
+h2 {
+  font-size: 1.35em;
+  padding-bottom: .75em;
+}
+
+h3 {
+  font-size: 1.1em;
+  padding-bottom: .75em;
+}
+
+
+/* - layout --------------------------------------------------------------- */
+#container {
+  margin: 10px;
+  background-color: white;  
+  /*border: 1px solid blue;*/
+}
+
+#header {
+  padding-left: .5em;
+  /*border: 1px solid green;*/
+}
+
+#navigation {
+  float: left;
+  width: 138px;  /* 188 */
+  padding: .5em;
+  /*border: 1px solid green;*/
+}
+
+#content {
+  margin-left: 160px;  /* 220 */
+  padding: .75em;
+  padding-left: .95em;
+  border-left: 1px solid lightgray;       
+  /*border: 1px solid green;*/
+}
+
+#footer {
+  clear: both;
+  padding: .5em;  
+  color: #333;
+  /*border: 1px solid green;*/
+}
+
+
+

@@ -1,0 +1,132 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!--
+ * Afrimesh: easy management for B.A.T.M.A.N. wireless mesh networks
+ * Copyright (C) 2008-2009 Meraka Institute of the CSIR
+ * All rights reserved.
+ *  
+ * This software is licensed as free software under the terms of the
+ * New BSD License. See /LICENSE for more information.
+-->
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="style/default.css"> 
+    <link rel="stylesheet" type="text/css" href="style/drawers.css"> 
+    <link rel="stylesheet" type="text/css" href="widgets/widgets.css"> 
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/jquery.ui.js"></script>
+    <!-- script type="text/javascript" src="js/jquery.tablednd.js"></script -->
+    <script type="text/javascript" src="js/jquery.corner.js"></script> <!-- http://jrc.meerbox.nl/ - TODO deprecate -->
+                                                                       <!-- also look at: http://www.malsup.com/jquery/corner/ -->
+                                                                       <!--               http://www.ruzee.com/files/shadedborder/ -->
+    <!-- script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAUILHePuv7Cq0mK0HSze5PRRTJkofi8MdSXz7uUeCtVadpg691BS55tAxiNsjEjEAKrgA9qrFrG_PPw'></script -->
+    <script src="http://api.maps.yahoo.com/ajaxymap?v=3.0&appid=euzuro-openlayers"></script>
+    <script type="text/javascript" src="js/openstreetmap.org/OpenLayers-lite.js"></script>
+    <!-- script type="text/javascript" src="http://www.openlayers.org/api/OpenLayers.js"></script --> <!-- TODO -->
+    <!-- script type="text/javascript" src="http://meraka.7degrees.co.za/cgi-bin/ajax-proxy.cgi?url=http://192.168.20.226/openstreetmaps/OpenLayers-lite.js"></script -->
+    <script type="text/javascript" src="js/openstreetmap.org/OpenStreetMap.js"></script>
+    <script type="text/javascript" src="widgets/mesh.includes.js"></script>
+    <script type="text/javascript" src="widgets/mesh.js"></script>
+    <script type="text/javascript">  //<![CDATA[    
+      $(document).ready(function() {
+
+        /* global error handlers */
+        /*$(document).ajaxError( function(response) {
+          var s = "<pre>AJAX ERROR:\n";
+          for (property in response) { s += property + " : " + response[property] + "\n"; }
+          s += "\n</pre>";
+          $("#errors").html(s);
+          //if (window.console && window.console.error) {
+          //  console.error(arguments);
+          //}
+        });*/
+
+
+        load_mesh_modules();                /* load all management modules */
+         //$("#menu-everything-watch").click();    /* set default page            */
+         //$("#menu-customers-watch").click(); 
+         //$("#menu-customers-recharge").click(); 
+         //$("#menu-customers-manage").click(); 
+         //$("#menu-village-configure").click(); 
+         //$("#menu-village-map").click(); 
+         //$("#menu-internet-configure").click(); 
+         //$("#menu-router-configure").click(); 
+         $("#menu-setup-router").click(); 
+         //$("#menu-setup-mesh").click(); 
+         $("#message-loading").html("");
+       });
+     //]]></script>
+  </head>
+  <body>
+
+    <div id="message-loading" style="text-align:center;">please wait...</div> <!-- TODO -->
+    <div id="errors"></div> <!-- TODO -->
+
+    <div id="container">
+
+      <div id="header">
+        <h1>Joe's Village Telco & ISP &nbsp; <span style="color:lightgray;">gateway-1 (192.168.20.200)</span></h1>
+      </div> <!-- /header -->
+
+      <div id="navigation">
+        <div class="drawers-wrapper">
+          <div class="drawers-top"></div>
+          <ul class="drawers">
+
+            <li class="drawer">
+              <h2 class="drawer-handle">Customers</h2>
+              <ul> 
+                <li><a href="#" id="menu-customers-recharge">Recharge</a></li>
+                <li><a href="#" id="menu-customers-manage">Manage</a></li>
+                <li><a href="" class="todo">TODO: Prices</a></li>
+              </ul>
+            </li>
+
+            <li class="drawer">
+              <h2 class="drawer-handle">Network</h2>
+              <ul> 
+                <li><a href="#" id="menu-village-map">Map</a></li>
+                <li><a href="#" id="menu-everything-watch">Health</a></li>
+                <li><a href="#" id="menu-customers-watch">Activity</a></li>
+              </ul>
+            </li>
+
+            <li class="drawer">
+              <h2 class="drawer-handle">Settings</h2> 
+              <ul> 
+                <li><a href="#" id="menu-village-configure">Mesh</a></li>
+                <li><a href="#" id="menu-internet-configure">Internet</a></li>
+              </ul>
+            </li>
+            <li class="drawer">
+              <h2 class="drawer-handle">Install</h2> 
+              <ul> 
+                <li><a href="#" id="menu-setup-mesh">Dashboard</a></li>
+                <li><a href="#" id="menu-setup-router">Router</a></li>
+              </ul>
+            </li>
+
+
+          </ul>
+          <div class="drawers-bottom"></div>
+        </div>
+      </div> <!-- /navigation -->
+
+      <div id="content">
+        please wait a moment...
+      </div> <!-- /content -->
+
+      <div id="footer">
+<!--
+        <h3>Important Routers</h3>
+        <a href="" style="color:green";>gateway-1</a>&nbsp;
+        <a href="" style="color:green";>00:90:4C:60:00:2C</a>&nbsp;
+        <a href="" style="color:green";>00:14:BF:73:2D:F6</a>&nbsp;
+-->
+      </div> <!-- /footer -->
+
+    </div> <!-- /container -->
+      
+  </body>
+</html>
+
+

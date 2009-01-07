@@ -1,0 +1,54 @@
+<html>
+  <head>
+    <!--
+        A purely HTML based captive portal using the JSON interface of CoovaChilli
+      -->
+    <title>coova hotspot</title>
+    <style><!--
+               body,td,a,p,h {
+                 font-family:arial,sans-serif;
+               }
+               body {
+                 text-align: center;
+                 padding-top: 30px;
+                 margin: auto;
+                 width: 50%;
+               }
+               #MyChilli {
+                 background: url("/images/coova.jpg") right top no-repeat;
+                 margin: auto;
+                 text-align: left;
+                 padding: 10px 0 30px 0;
+               }
+               #locationName {
+                 height: 50px;
+                 font-size: 120%;
+                 font-weight: bold;
+               }
+               #chilliPage {
+                 border: 1px solid orange;
+                 padding: 20px 20px 20px 20px;
+                 margin-top: 20px;
+               }
+               #signUpRow {
+                 display: inline;
+               }
+             -->
+    </style>
+  </head>
+  <body>
+    <div id="MyChilli">
+      
+      <div id="noLocation" style="display:none;">
+        <p style="padding-top: 100px;">
+          <strong>You are not at a hotspot.</strong> 
+          If you want to see a a sample login page using the <a href="http://coova.org/wiki/index.php/CoovaChilli/JSON">JSON interface</a> 
+          of <a href="http://coova.org/wiki/index.php/CoovaChilli">CoovaChilli</a>, 
+          then <a href="javascript: window.location = 'view-source:' + window.location.href;">view the source</a> of this page.</p>
+      </div>
+      
+      <script id='chillijs' src='/www/chilli.js'></script>
+      
+    </div>
+  </body>
+</html>
