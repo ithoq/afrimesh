@@ -25,6 +25,12 @@
 #include <pthread.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+#if defined(__FreeBSD__) || defined (__APPLE__)
+  #include <netinet/in.h>
+#endif
+#if defined(__APPLE__)
+  #include <sys/time.h>
+#endif
 #include <arpa/inet.h>
 #include <errno.h>
 
