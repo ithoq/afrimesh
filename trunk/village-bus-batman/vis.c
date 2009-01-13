@@ -23,6 +23,9 @@
 
 
 #include <fcntl.h>
+#if defined(__FreeBSD__) || defined (__APPLE__)
+  #include <sys/socket.h>
+#endif
 #include <net/if.h>
 #include <sys/ioctl.h>
 #include <sys/select.h>
@@ -560,45 +563,28 @@ void write_data_in_buffer() {
 
 
 void *tcp_server( void *arg ) {
-
   struct thread_data *thread_data = ((struct thread_data*) arg);
   buffer_t *last_send = NULL;
   ssize_t ret;
 
-
-  while ( !is_aborted() ) {
-
-    if ( current != NULL && current != last_send ) {
-
+  while (!is_aborted()) {
+    if (current != NULL && current != last_send) {
       pthread_mutex_lock( &current->mutex );
       current->counter = current->counter == -1 ? 1 : current->counter + 1;
       pthread_mutex_unlock( &current->mutex );
-
-      if (debug_level > 0 && output_format == json) {
-	char buf[1024];
-	ret = read(thread_data->socket, buf, 1024);
-	buf[ret] = '\0';
-	printf("Read:\n---- begin ----\n%s\n---- ende ----\n", buf);
+      ret = write(thread_data->socket, current->buffer, strlen(current->buffer));
+      if (ret != strlen( current->buffer ) || (output_format == json)) {
+        pthread_mutex_lock( &current->mutex );
+        current->counter--;
+        pthread_mutex_unlock( &current->mutex );
+        break;
       }
-
-      ret = write( thread_data->socket, current->buffer, strlen( current->buffer ) );
-      if( ret != strlen( current->buffer ) || (output_format == json) )
-	{
-
-	  pthread_mutex_lock( &current->mutex );
-	  current->counter--;
-	  pthread_mutex_unlock( &current->mutex );
-	  break;
-	}
-      pthread_mutex_lock( &current->mutex );
+      pthread_mutex_lock(&current->mutex);
       current->counter--;
-      pthread_mutex_unlock( &current->mutex );
+      pthread_mutex_unlock(&current->mutex);
       last_send = current;
-
     }
-
     sleep(5);
-
   }
 
   if ( debug_level > 0 )
@@ -608,7 +594,6 @@ void *tcp_server( void *arg ) {
   debugFree( arg, 2011 );
 
   return NULL;
-
 }
 
 
