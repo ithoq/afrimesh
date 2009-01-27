@@ -27,10 +27,10 @@ function include(filename) {
 
 /* - jQuery plugins ------------------------------------------------------- */
 /*include("js/jquery.ui.js");*/ /* http://ui.jquery.com/download_builder/ TODO - configure a pack with only the parts I'm using */
-include("js/jquery.json.js");
-include("js/jquery.jeditable.js");
-include("js/jquery.tablesorter.min.js"); /* http://tablesorter.com/docs/ */
-include("js/jquery.sparkline.js");
+include("javascript/jquery.json.js");
+include("javascript/jquery.jeditable.js");
+include("javascript/jquery.tablesorter.min.js"); /* http://tablesorter.com/docs/ */
+include("javascript/jquery.sparkline.js");
 
 /* - openstreetmaps.org --------------------------------------------------- */
 /*include("http://www.openlayers.org/api/OpenLayers.js");
