@@ -15,7 +15,7 @@
 
     <!-- includes ---------------------------------------------------------- -->
     <!-- jquery -->
-    <script type="text/javascript" src="javascript/jquery.js"></script>
+    <script type="text/javascript" src="javascript/jquery/jquery.js"></script>
     <!-- script type="text/javascript" src="javascript/jquery/jquery.ui.js"></script -->
     <!-- script type="text/javascript" src="javascript/jquery/jquery.corner.js"></script --> <!-- http://jrc.meerbox.nl/ - TODO deprecate -->
                                                                                       <!-- also look at: http://www.malsup.com/jquery/corner/ -->
@@ -27,45 +27,54 @@
     <script type="text/javascript" src="javascript/openlayers/OpenStreetmap.js"></script -->
 
     <!-- afrimesh -->
-    <script type="text/javascript" src="javascript/afrimesh/util.js"></script>
-    <!-- script type="text/javascript" src="javascript/afrimesh/villagebus.js"></script>
-    <script type="text/javascript" src="javascript/afrimesh/network.js"></script>
-    <script type="text/javascript" src="javascript/afrimesh/customers.js"></script>
-    <script type="text/javascript" src="javascript/afrimesh.js"></script -->
+    <script type="text/javascript" src="javascript/afrimesh.util.js"></script>
+    <script type="text/javascript" src="javascript/afrimesh.villagebus.js"></script>
+    <script type="text/javascript" src="javascript/afrimesh.network.js"></script>
+    <script type="text/javascript" src="javascript/afrimesh.customers.js"></script>
+    <script type="text/javascript" src="javascript/afrimesh.js"></script>
 
     <!-- widgets -->
     <!-- script type="text/javascript" src="widgets/mesh.includes.js"></script -->
     <!-- script type="text/javascript" src="widgets/mesh.js"></script -->
 
-
-    <!-- $(document).ready() -->
+    <!-- One-time initializationn ------------------------------------------ -->
     <script type="text/javascript">  //<![CDATA[    
       $(document).ready(function() {
-         // global error handler for Ajax requests
+         console.debug("$(document).ready() -------------------- start");
+
+        /** global error handler for Ajax requests */
         $(document).ajaxError(function(response) {
-          var s = "AJAX ERROR: \n";
-          for (property in response) { s += property + " : " + response[property] + "\n"; }
-          //$("#errors").html(s);
-          console.error("s");
-          //if (window.console && window.console.error) { console.error(arguments);  }
-        });
+            var s = "AJAX ERROR: \n";
+            for (property in response) { s += property + " : " + response[property] + "\n"; }
+            console.error(s);
+          });
 
+        /** populate DOM references to afrimesh.settings */
+        var elements = $("[id*=afrimesh|settings]");
+        elements.each(function(element) {
+            //$(elements[element]).html("&lt;" + elements[element].id + "&gt;");
+            $(elements[element]).html(afrimesh.Q(elements[element].id) + "");
+          });
 
-        load_mesh_modules();                     // load all management modules 
-         $("#menu-everything-watch").click();    // set default page            
-         //$("#menu-customers-watch").click(); 
-         //$("#menu-customers-recharge").click(); 
-         //$("#menu-customers-manage").click(); 
-         //$("#menu-village-configure").click(); 
-         //$("#menu-village-map").click(); 
-         //$("#menu-internet-configure").click(); 
-         //$("#menu-router-configure").click(); 
-         //$("#menu-setup-router").click(); 
-         //$("#menu-setup-mesh").click(); 
-         $("#message-loading").html("");
+        /** set default page */
+        //load_mesh_modules();                     // load all management modules 
+        //$("#menu-everything-watch").click();    // set default page            
+        //$("#menu-customers-watch").click(); 
+        //$("#menu-customers-recharge").click(); 
+        //$("#menu-customers-manage").click(); 
+        //$("#menu-village-configure").click(); 
+        //$("#menu-village-map").click(); 
+        //$("#menu-internet-configure").click(); 
+        //$("#menu-router-configure").click(); 
+        //$("#menu-setup-router").click(); 
+        //$("#menu-setup-mesh").click(); 
 
-         console.debug("$(document).ready()");
-       });
+        /** loading complete, we can now remove our message */
+        $("#message-loading").html("");
+
+        console.debug("$(document).ready() -------------------- end");
+      });
+
      //]]></script>
   </head>
   <body>
@@ -75,7 +84,11 @@
     <div id="container">
 
       <div id="header">
-        <h1>Joe's Village Telco & ISP &nbsp; <span style="color:lightgray;">gateway-1 (192.168.20.200)</span></h1>
+        <h1>
+          <span id="afrimesh|settings|network_name"></span>
+          <span style="color:lightgray; float:right;"
+                id="afrimesh|settings|hosts|dashboard_server"></span>
+        </h1>
       </div> <!-- /header -->
 
       <div id="navigation">
