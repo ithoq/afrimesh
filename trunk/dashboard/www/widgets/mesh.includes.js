@@ -27,16 +27,24 @@ function include(filename) {
 
 /* - jQuery plugins ------------------------------------------------------- */
 /*include("js/jquery.ui.js");*/ /* http://ui.jquery.com/download_builder/ TODO - configure a pack with only the parts I'm using */
-include("javascript/jquery.json.js");
-include("javascript/jquery.jeditable.js");
-include("javascript/jquery.tablesorter.min.js"); /* http://tablesorter.com/docs/ */
-include("javascript/jquery.sparkline.js");
+include("javascript/jquery/jquery.json.js");
+include("javascript/jquery/jquery.jeditable.js");
+include("javascript/jquery/jquery.tablesorter.min.js"); /* http://tablesorter.com/docs/ */
+include("javascript/jquery/jquery.sparkline.js");
 
 /* - openstreetmaps.org --------------------------------------------------- */
 /*include("http://www.openlayers.org/api/OpenLayers.js");
   include("http://www.openstreetmap.org/openlayers/OpenStreetMap.js"); */
 /*include("js/openstreetmap.org/OpenLayers.js");
   include("js/openstreetmap.org/OpenStreetMap.js"); */
+
+/* - afrimesh ------------------------------------------------------------ */
+/**include("javascript/afrimesh/util.js");
+include("javascript/afrimesh/villagebus.js");
+include("javascript/afrimesh/network.js");
+include("javascript/afrimesh/customers.js");
+include("javascript/afrimesh.js");*/
+
 
 /* - mesh widgets --------------------------------------------------------- */
 include("widgets/mesh.everything.js");

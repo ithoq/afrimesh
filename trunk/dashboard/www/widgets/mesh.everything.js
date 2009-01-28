@@ -36,10 +36,10 @@ var traffic_graph_timer;
 
 
 var update_traffic_graph = function() {
-  
   clearTimeout(traffic_graph_timer);
   $.ajax({ 
-      url: config.router_host + "/cgi-bin/village-bus-snmp", 
+      //url: config.router_host + "/cgi-bin/village-bus-snmp", 
+      url: "/cgi-bin/village-bus-snmp", 
         type: "POST", 
         contentType: "application/json", 
         processData: false,
@@ -52,7 +52,7 @@ var update_traffic_graph = function() {
           return;
         }
         var snmp = data[0];
-        /*var foo = ""; for (key in snmp) { foo+= key + "|" + snmp[key] + "\n"; } alert(foo);*/
+        //var foo = ""; for (key in snmp) { foo+= key + "|" + snmp[key] + "\n"; } alert(foo);
         var now_time = new Date();
         if (last_in == 0 || 
             last_time.getTime() > now_time.getTime() || 
