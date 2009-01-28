@@ -1,4 +1,4 @@
-console.debug("loading afrimesh/villagebus.js ...");
+
 
 var BootVillageBus = function (parent) {
 
@@ -15,8 +15,8 @@ var BootVillageBus = function (parent) {
     return this.vis.sync(); 
   }; 
 
-  villagebus.batman.vis.url  = "http://" + parent.settings.hosts.vis_server + ":2004";
-  villagebus.batman.vis.urlf = function() { return "http://" + afrimesh.settings.hosts.vis_server + ":2004"; };
+  villagebus.batman.vis.url  = "http://" + parent.settings.hosts.batman_vis_server + ":2004";
+  villagebus.batman.vis.urlf = function() { return "http://" + afrimesh.settings.hosts.batman_vis_server + ":2004"; };
   
   villagebus.batman.vis.async = function(f) { 
     var xml = XMLHttpRequest();
@@ -56,3 +56,6 @@ var BootVillageBus = function (parent) {
 
   return villagebus;
 };
+
+
+console.debug("loaded afrimesh.villagebus.js");

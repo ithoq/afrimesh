@@ -1,4 +1,4 @@
-console.debug("loading afrimesh/network.js ...");
+
 
 function BootNetwork(parent) {
 
@@ -37,3 +37,4 @@ function BootNetwork(parent) {
 };
 
 
+console.debug("loaded afrimesh.network.js");

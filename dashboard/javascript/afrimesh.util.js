@@ -1,9 +1,73 @@
 
+/**
+ * Making Javascript a better Lisp
+ */
+Array.prototype.car = function() { return (this.length > 0) ? this[0]       : []; };
+Array.prototype.cdr = function() { return (this.length > 1) ? this.slice(1) : []; };
+Array.prototype.first = Array.prototype.car;
+Array.prototype.rest  = Array.prototype.cdr;
+
+
+/**
+ * Making Javascript a better Javascript
+ */
+Object.prototype.isArray = function() {
+  return this.constructor == Array;
+};
+String.prototype.trim = function() {
+  return this.replace(/^\s+|\s+$/g,"");
+};
+String.prototype.ltrim = function() {
+  return this.replace(/^\s+/g,"");
+};
+String.prototype.rtrim = function() {
+  return this.replace(/\s+$/g,"");
+};
+
+
+/**
+ * Query object graphs using simple selectors
+ */
+Object.prototype.Q = function(selector) {
+  if (!selector.split) {
+    console.warn("Q(" + this.valueOf() + "): Invalid type for selector - " + selector.valueOf());
+    return undefined;
+  }
+  selector = selector.split(/ |\.|-|\|/);
+  /** SUGAR drop the first selector element if it is the same as the object name */
+  //var r = /[^function ][A-Z,0-9,$]*/i;
+  //var this_name = this.constructor.toString().match(/[^function ][A-Z,0-9,$]*/i).toString();
+  //console.log("name: |" + this_name + "|");
+  if (selector.car().toLowerCase() == "afrimesh") { // TODO UDE we don't have a friendly way to get object names
+    selector = selector.cdr();
+  };
+  return this.__q(selector);
+};
+Object.prototype.__q = function(selector) {
+  //return (selector.length > 0) ? this[selector.car()].__q(selector.cdr()) : this;
+  if (!selector.isArray()) {
+    console.warn("__q(" + this.valueOf() + "): Invalid type for selector - " + selector.valueOf());
+    return undefined;
+  } else if (selector.length == 0) {
+    return this;
+   } else if (this[selector.car()] == undefined) {
+    console.warn("__q(" + this.valueOf() + "): Invalid selector - " + selector.join("|"));
+    return undefined;
+  } 
+  return this[selector.car()].__q(selector.cdr());
+};
+
 
 /**
  * Dump the object contents to a string
  */
 function dump_object(o, follow_properties) {
+  var s = "";
+  s += o + "\n";
+  for (var p in o) {
+    s += p + " : " + p[o] + "\n";
+  }
+  console.info(s);
 };
 
 
@@ -119,3 +183,6 @@ console.warn("this is a warn");
 console.error("this is an error");
 console.debug("this is a debug");
 */
+
+
+console.debug("loaded afrimesh.util.js");
