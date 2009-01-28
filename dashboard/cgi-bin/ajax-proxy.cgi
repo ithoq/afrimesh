@@ -1,5 +1,24 @@
 #!/bin/sh
 
+# TODO - hasn't anyone written a nice, portable, secure ajax-proxy ?
+
+# track down wget and curl
+WGET=wget
+CURL=curl
+if [ -f /usr/bin/wget ]; then
+    WGET=/usr/bin/wget
+fi
+if [ -f /usr/bin/curl ]; then
+    CURL=/usr/bin/curl
+fi
+if [ -f /usr/local/bin/wget ]; then
+    WGET=/usr/local/bin/wget
+fi
+if [ -f /usr/local/bin/curl ]; then
+    CURL=/usr/local/bin/curl
+fi
+
+    
 
 QUERY=$QUERY_STRING
 if [ "$REQUEST_METHOD" = "POST" ]; then
@@ -9,10 +28,10 @@ if [ "$REQUEST_METHOD" = "POST" ]; then
 fi
 
 URL=`echo "$QUERY_STRING" | grep -oE "(^|[?&])url=[^&]+" | sed "s/%20/ /g" | cut -f 2 -d "="`
-COMMAND="wget -q -O - $URL"
+COMMAND="$WGET -q -O - $URL"
 if [ "$REQUEST_METHOD" = "POST" ]; then
 #    COMMAND="wget --post-data="$QUERY" -q -O - $URL"
-    COMMAND="curl -d \"$QUERY\" $URL"
+    COMMAND="$CURL -d \"$QUERY\" $URL"
 fi
 
 #echo "ajax-proxy.cgi - REQUEST_METHOD: $REQUEST_METHOD" >> /tmp/village-bus.log

@@ -12,37 +12,47 @@
     <link rel="stylesheet" type="text/css" href="style/default.css"> 
     <link rel="stylesheet" type="text/css" href="style/drawers.css"> 
     <link rel="stylesheet" type="text/css" href="widgets/widgets.css"> 
+
+    <!-- includes ---------------------------------------------------------- -->
+    <!-- jquery -->
     <script type="text/javascript" src="javascript/jquery.js"></script>
-    <script type="text/javascript" src="javascript/jquery.ui.js"></script>
-    <!-- script type="text/javascript" src="javascript/jquery.tablednd.js"></script -->
-    <script type="text/javascript" src="javascript/jquery.corner.js"></script> <!-- http://jrc.meerbox.nl/ - TODO deprecate -->
-                                                                       <!-- also look at: http://www.malsup.com/jquery/corner/ -->
-                                                                       <!--               http://www.ruzee.com/files/shadedborder/ -->
-    <!-- script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAUILHePuv7Cq0mK0HSze5PRRTJkofi8MdSXz7uUeCtVadpg691BS55tAxiNsjEjEAKrgA9qrFrG_PPw'></script -->
-    <script src="http://api.maps.yahoo.com/ajaxymap?v=3.0&appid=euzuro-openlayers"></script>
-    <script type="text/javascript" src="javascript/openstreetmap.org/OpenLayers-lite.js"></script>
-    <!-- script type="text/javascript" src="http://www.openlayers.org/api/OpenLayers.js"></script --> <!-- TODO -->
-    <!-- script type="text/javascript" src="http://meraka.7degrees.co.za/cgi-bin/ajax-proxy.cgi?url=http://192.168.20.226/openstreetmaps/OpenLayers-lite.js"></script -->
-    <script type="text/javascript" src="javascript/openstreetmap.org/OpenStreetMap.js"></script>
-    <script type="text/javascript" src="widgets/mesh.includes.js"></script>
-    <script type="text/javascript" src="widgets/mesh.js"></script>
+    <!-- script type="text/javascript" src="javascript/jquery/jquery.ui.js"></script -->
+    <!-- script type="text/javascript" src="javascript/jquery/jquery.corner.js"></script --> <!-- http://jrc.meerbox.nl/ - TODO deprecate -->
+                                                                                      <!-- also look at: http://www.malsup.com/jquery/corner/ -->
+                                                                                      <!--               http://www.ruzee.com/files/shadedborder/ -->
+    <!-- openlayers -->
+    <!--* script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAUILHePuv7Cq0mK0HSze5PRRTJkofi8MdSXz7uUeCtVadpg691BS55tAxiNsjEjEAKrgA9qrFrG_PPw'></script -->
+    <!-- script src="http://api.maps.yahoo.com/ajaxymap?v=3.0&appid=euzuro-openlayers"></script>
+    <script type="text/javascript" src="javascript/openlayers/OpenLayers.js"></script>
+    <script type="text/javascript" src="javascript/openlayers/OpenStreetmap.js"></script -->
+
+    <!-- afrimesh -->
+    <script type="text/javascript" src="javascript/afrimesh/util.js"></script>
+    <!-- script type="text/javascript" src="javascript/afrimesh/villagebus.js"></script>
+    <script type="text/javascript" src="javascript/afrimesh/network.js"></script>
+    <script type="text/javascript" src="javascript/afrimesh/customers.js"></script>
+    <script type="text/javascript" src="javascript/afrimesh.js"></script -->
+
+    <!-- widgets -->
+    <!-- script type="text/javascript" src="widgets/mesh.includes.js"></script -->
+    <!-- script type="text/javascript" src="widgets/mesh.js"></script -->
+
+
+    <!-- $(document).ready() -->
     <script type="text/javascript">  //<![CDATA[    
       $(document).ready(function() {
-
-        /* global error handlers */
-        /*$(document).ajaxError( function(response) {
-          var s = "<pre>AJAX ERROR:\n";
+         // global error handler for Ajax requests
+        $(document).ajaxError(function(response) {
+          var s = "AJAX ERROR: \n";
           for (property in response) { s += property + " : " + response[property] + "\n"; }
-          s += "\n</pre>";
-          $("#errors").html(s);
-          //if (window.console && window.console.error) {
-          //  console.error(arguments);
-          //}
-        });*/
+          //$("#errors").html(s);
+          console.error("s");
+          //if (window.console && window.console.error) { console.error(arguments);  }
+        });
 
 
-        load_mesh_modules();                /* load all management modules */
-         //$("#menu-everything-watch").click();    /* set default page            */
+        load_mesh_modules();                     // load all management modules 
+         $("#menu-everything-watch").click();    // set default page            
          //$("#menu-customers-watch").click(); 
          //$("#menu-customers-recharge").click(); 
          //$("#menu-customers-manage").click(); 
@@ -50,16 +60,17 @@
          //$("#menu-village-map").click(); 
          //$("#menu-internet-configure").click(); 
          //$("#menu-router-configure").click(); 
-         $("#menu-setup-router").click(); 
+         //$("#menu-setup-router").click(); 
          //$("#menu-setup-mesh").click(); 
          $("#message-loading").html("");
+
+         console.debug("$(document).ready()");
        });
      //]]></script>
   </head>
   <body>
 
     <div id="message-loading" style="text-align:center;">please wait...</div> <!-- TODO -->
-    <div id="errors"></div> <!-- TODO -->
 
     <div id="container">
 
@@ -115,7 +126,7 @@
         please wait a moment...
       </div> <!-- /content -->
 
-      <div id="footer">
+      <div id="footer">footer
 <!--
         <h3>Important Routers</h3>
         <a href="" style="color:green";>gateway-1</a>&nbsp;
@@ -123,6 +134,8 @@
         <a href="" style="color:green";>00:14:BF:73:2D:F6</a>&nbsp;
 -->
       </div> <!-- /footer -->
+
+    <div id="console">console</div> <!-- TODO -->
 
     </div> <!-- /container -->
       
