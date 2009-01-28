@@ -30,6 +30,34 @@
 DEPROOT=/Volumes/afrimesh-dev/ext
 KAMIKAZE=/Volumes/afrimesh-dev/ext/kamikaze
 
+DASHBOARD_WWW=/usr/local/www/apache22/data
+DASHBOARD_CGI=/usr/local/www/apache22/cgi-bin
+INSTALL=cp -rf
+MKDIR=mkdir -p
+
+install-freebsd : village-bus-freebsd
+	echo "Cleaning"
+	rm -rf $(DASHBOARD_WWW)/*
+	rm -rf $(DASHBOARD_CGI)/*
+	rm -f dashboard/www/javascript
+	echo "Installing on FreeBSD machine"
+	$(INSTALL) dashboard/www/index.html $(DASHBOARD_WWW)
+	$(INSTALL) dashboard/www/images     $(DASHBOARD_WWW)
+	$(INSTALL) dashboard/www/style      $(DASHBOARD_WWW)
+	$(INSTALL) dashboard/www/widgets    $(DASHBOARD_WWW)
+	$(INSTALL) dashboard/javascript     $(DASHBOARD_WWW)
+	$(INSTALL) dashboard/cgi-bin/ajax-proxy.cgi $(DASHBOARD_CGI)
+	find $(DASHBOARD_WWW) -name "*~"   | xargs rm
+	find $(DASHBOARD_WWW) -name ".svn" | xargs rm -rf
+	find $(DASHBOARD_CGI) -name "*~"   | xargs rm
+	find $(DASHBOARD_CGI) -name ".svn" | xargs rm -rf
+	echo "Finishing up"
+	cd dashboard/www ; ln -s ../javascript ./javascript # replace symlink
+
+village-bus-freebsd : village-bus-snmp/village-bus-snmp
+	cd village-bus-snmp ; make village-bus-snmp
+	$(INSTALL) village-bus-snmp/village-bus-snmp $(DASHBOARD_CGI)
+
 all-openwrt :
 	cd $(KAMIKAZE) ; \
 	make package/afrimesh-base-compile V=99
