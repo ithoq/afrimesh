@@ -185,4 +185,4 @@ console.debug("this is a debug");
 */
 
 
-console.debug("loaded afrimesh.util.js");
+console.debug("loaded afrimesh.utilities.js");
