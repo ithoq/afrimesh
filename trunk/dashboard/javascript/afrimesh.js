@@ -16,11 +16,12 @@ var afrimesh = undefined;
       network_name : "development testbed",
       locale       : "en_US.UTF-8",
       hosts        : {
-        dashboard_server  : "dashboard.7degrees.co.za",
+        dashboard_server  : "bdashboard.7degrees.co.za",
         batman_vis_server : "dashboard.7degrees.co.za",
         internet_gateway  : "192.168.20.1",
         mesh_gateway      : "192.168.20.200"
-      }
+      },
+      community : "public"
     };
     this.network    = BootNetwork(this);
     this.customers  = undefined;
