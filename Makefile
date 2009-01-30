@@ -35,11 +35,22 @@ DASHBOARD_CGI=/usr/local/www/apache22/cgi-bin
 INSTALL=cp -rf
 MKDIR=mkdir -p
 
-install-freebsd : village-bus-freebsd
+
+# TODO - crunch all javascript into a single file ?
+
+
+# - freebsd ------------------------------------------------------------------
+clean-freebsd : 
 	echo "Cleaning"
 	rm -rf $(DASHBOARD_WWW)/*
 	rm -rf $(DASHBOARD_CGI)/*
 	rm -f dashboard/www/javascript
+
+village-bus-freebsd : village-bus-snmp/village-bus-snmp
+	cd village-bus-snmp ; make village-bus-snmp
+	$(INSTALL) village-bus-snmp/village-bus-snmp $(DASHBOARD_CGI)
+
+install-freebsd : clean-freebsd village-bus-freebsd
 	echo "Installing on FreeBSD machine"
 	$(INSTALL) dashboard/www/index.html $(DASHBOARD_WWW)
 	$(INSTALL) dashboard/www/images     $(DASHBOARD_WWW)
@@ -54,10 +65,9 @@ install-freebsd : village-bus-freebsd
 	echo "Finishing up"
 	cd dashboard/www ; ln -s ../javascript ./javascript # replace symlink
 
-village-bus-freebsd : village-bus-snmp/village-bus-snmp
-	cd village-bus-snmp ; make village-bus-snmp
-	$(INSTALL) village-bus-snmp/village-bus-snmp $(DASHBOARD_CGI)
 
+
+# - openwrt ------------------------------------------------------------------
 all-openwrt :
 	cd $(KAMIKAZE) ; \
 	make package/afrimesh-base-compile V=99

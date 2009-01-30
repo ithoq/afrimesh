@@ -16,6 +16,9 @@
     <!-- includes ---------------------------------------------------------- -->
     <!-- jquery -->
     <script type="text/javascript" src="javascript/jquery/jquery.js"></script>
+    <script type="text/javascript" src="javascript/jquery/jquery.json.js"></script>
+    <!-- script type="text/javascript" src="javascript/jquery/jquery.sparkline.js"></script -->
+    <!-- script type="text/javascript" src="javascript/jquery/jquery.ui.js"></script -->
     <!-- script type="text/javascript" src="javascript/jquery/jquery.ui.js"></script -->
     <!-- script type="text/javascript" src="javascript/jquery/jquery.corner.js"></script --> <!-- http://jrc.meerbox.nl/ - TODO deprecate -->
                                                                                       <!-- also look at: http://www.malsup.com/jquery/corner/ -->
@@ -28,6 +31,7 @@
 
     <!-- afrimesh -->
     <script type="text/javascript" src="javascript/afrimesh.utilities.js"></script>
+    <script type="text/javascript" src="javascript/afrimesh.platform.js"></script>
     <script type="text/javascript" src="javascript/afrimesh.villagebus.js"></script>
     <script type="text/javascript" src="javascript/afrimesh.network.js"></script>
     <script type="text/javascript" src="javascript/afrimesh.customers.js"></script>
@@ -53,21 +57,40 @@
         var elements = $("[id*=afrimesh|settings]");
         elements.each(function(element) {
             //$(elements[element]).html("&lt;" + elements[element].id + "&gt;");
-            $(elements[element]).html(afrimesh.Q(elements[element].id) + "");
+            //$(elements[element]).html(afrimesh.Q(elements[element].id) + "");
+            $(elements[element]).html(Q(afrimesh, elements[element].id) + "");
           });
 
+        /** attach actions to menu */
+        // UDE it looks like we're ending up with multiple instances of modules
+        //     need to change the code so it either unloads or only ever loads
+        //     a module once
+        // UDE as the code currently stands we cannot load a module into the
+        //     browser as a standalone
+        var unloader = function() {  }
+        $("div#menu li#network a#health").click(function(event) { 
+            unloader();  // UDE ready() and unloader() should really be Objekt constructors and destructors
+            $("div#content").hide();
+            $("div#content").load("modules/network.health.html", function(page) { 
+                $("div#content").fadeIn("slow"); 
+                // UDE fades mess with load completion and require a ready() method :(
+                unloader = ready();
+            });
+            return false;
+          });
+        $("div#menu li#network a#map").click(function(event) { 
+            unloader();
+            $("div#content").hide();
+            $("div#content").load("modules/network.map.html", function(page) { 
+                $("div#content").fadeIn("slow"); 
+                unloader = ready();
+            });
+            return false;
+          });
+
+
         /** set default page */
-        //load_mesh_modules();                     // load all management modules 
-        //$("#menu-everything-watch").click();    // set default page            
-        //$("#menu-customers-watch").click(); 
-        //$("#menu-customers-recharge").click(); 
-        //$("#menu-customers-manage").click(); 
-        //$("#menu-village-configure").click(); 
-        //$("#menu-village-map").click(); 
-        //$("#menu-internet-configure").click(); 
-        //$("#menu-router-configure").click(); 
-        //$("#menu-setup-router").click(); 
-        //$("#menu-setup-mesh").click(); 
+        $("div#menu li#network a#health").click();
 
         /** loading complete, we can now remove our message */
         $("#message-loading").html("");
@@ -91,41 +114,41 @@
         </h1>
       </div> <!-- /header -->
 
-      <div id="navigation">
+      <div id="menu">
         <div class="drawers-wrapper">
           <div class="drawers-top"></div>
           <ul class="drawers">
 
-            <li class="drawer">
+            <li id="customers" class="drawer">
               <h2 class="drawer-handle">Customers</h2>
               <ul> 
-                <li><a href="#" id="menu-customers-recharge">Recharge</a></li>
-                <li><a href="#" id="menu-customers-manage">Manage</a></li>
-                <li><a href="" class="todo">TODO: Prices</a></li>
+                <li><a href="#" id="recharge" class="todo">Recharge</a></li>
+                <li><a href="#" id="manage"   class="todo">Manage</a></li>
+                <li><a href=""  id="prices"   class="todo">TODO: Prices</a></li>
               </ul>
             </li>
 
-            <li class="drawer">
+            <li id="network" class="drawer">
               <h2 class="drawer-handle">Network</h2>
               <ul> 
-                <li><a href="#" id="menu-village-map">Map</a></li>
-                <li><a href="#" id="menu-everything-watch">Health</a></li>
-                <li><a href="#" id="menu-customers-watch">Activity</a></li>
+                <li><a href="#" id="map">Map</a></li>
+                <li><a href="#" id="health">Health</a></li>
+                <li><a href="#" id="activity" class="todo">Activity</a></li>
               </ul>
             </li>
 
-            <li class="drawer">
+            <li id="settings" class="drawer">
               <h2 class="drawer-handle">Settings</h2> 
               <ul> 
-                <li><a href="#" id="menu-village-configure">Mesh</a></li>
-                <li><a href="#" id="menu-internet-configure">Internet</a></li>
+                <li><a href="#" id="mesh" class="todo">Mesh</a></li>
+                <li><a href="#" id="internet" class="todo">Internet</a></li>
               </ul>
             </li>
-            <li class="drawer">
+            <li id="install" class="drawer">
               <h2 class="drawer-handle">Install</h2> 
               <ul> 
-                <li><a href="#" id="menu-setup-mesh">Dashboard</a></li>
-                <li><a href="#" id="menu-setup-router">Router</a></li>
+                <li><a href="#" id="dashboard" class="todo">Dashboard</a></li>
+                <li><a href="#" id="router" class="todo">Router</a></li>
               </ul>
             </li>
 
