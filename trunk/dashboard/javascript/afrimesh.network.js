@@ -1,4 +1,4 @@
-/**
+/*
  * Afrimesh: easy management for B.A.T.M.A.N. wireless mesh networks
  * Copyright (C) 2008-2009 Meraka Institute of the CSIR
  * All rights reserved.
@@ -43,6 +43,6 @@ function BootNetwork(parent) {
   
   return network;
 };
-
-
 console.debug("loaded afrimesh.network.js");
+
+
