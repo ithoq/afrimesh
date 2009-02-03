@@ -1,4 +1,4 @@
-/**
+/*
  * Afrimesh: easy management for B.A.T.M.A.N. wireless mesh networks
  * Copyright (C) 2008-2009 Meraka Institute of the CSIR
  * All rights reserved.
@@ -112,18 +112,25 @@
   } else if (window.console === undefined) { // not running in firebug, not safari
     // assuming firefox , TODO - we need to do some decent platform detection at some point - jquery ?
     var console = { };
-    netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect'); // argh!
-    var console_service = Components.classes['@mozilla.org/consoleservice;1'].getService(Components.interfaces.nsIConsoleService);
-    console.native_log = function(message) {
-      netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect'); 
-      console_service.logStringMessage(message);
-    }; 
-    console.native_error = function(message) {
-      netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect');
-      Components.utils.reportError(message);
-    };
-    console.native_info = console.native_log;
-    console.native_warn = console.native_log;
+    try {
+      netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect'); // argh!
+      var console_service = Components.classes['@mozilla.org/consoleservice;1'].getService(Components.interfaces.nsIConsoleService);
+      console.native_log = function(message) {
+        netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect'); 
+        console_service.logStringMessage(message);
+      }; 
+      console.native_error = function(message) {
+        netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect');
+        Components.utils.reportError(message);
+      };
+      console.native_info = console.native_log;
+      console.native_warn = console.native_log;
+    } catch (e) { // firefox only lets us do this if we're a file:///
+      console.native_log   = function() {};
+      console.native_info  = console.native_log;
+      console.native_warn  = console.native_log;
+      console.native_error = console.native_log;
+    }
   } else {  // running in safari, firebug or some other browser with console support
     console.native_log   = console.log;
     console.native_info  = console.info;
@@ -147,7 +154,7 @@
     for (var arg = 0; arg < arguments.length; arg++) {
       message += arguments[arg];
     }
-    console.native_log(message);
+    return console.native_log(message);
   };
   
   console.info = function() {
@@ -156,7 +163,7 @@
     for (var arg = 0; arg < arguments.length; arg++) {
       message += arguments[arg];
     }
-    console.native_info(message);
+    return console.native_info(message);
   };
   
   console.warn = function() {
@@ -165,7 +172,7 @@
     for (var arg = 0; arg < arguments.length; arg++) {
       message += arguments[arg];
     }
-    console.native_warn(message);
+    return console.native_warn(message);
   };
   
   console.error = function() {
@@ -174,18 +181,19 @@
     for (var arg = 0; arg < arguments.length; arg++) {
       message += arguments[arg] + " ";
     }
-    console.native_error(message);
+    return console.native_error(message);
   };
   
   console.debug = function() {
-    if (!console.debug_output) { return; }
+    if (!console.debug_output) { return ""; }
     var message = "";//timestamp();
     message += "[debug]\t";
     for (var arg = 0; arg < arguments.length; arg++) {
       message += arguments[arg] + " ";
     }
-    console.native_log(message);
+    return console.native_log(message);
   };
   
 //})();  
 console.debug("loaded afrimesh.utilities.js");
+
