@@ -109,37 +109,37 @@
     console.native_info  = print;
     console.native_warn  = print;
     console.native_error = print; 
-  } else if (window.console === undefined) { // not running in firebug, not safari
+  } else if (!window.console) { // not running in firebug, not safari
     // assuming firefox , TODO - we need to do some decent platform detection at some point - jquery ?
-    var console = { };
+    window.console = { };
     try {
       netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect'); // argh!
       var console_service = Components.classes['@mozilla.org/consoleservice;1'].getService(Components.interfaces.nsIConsoleService);
-      console.native_log = function(message) {
+      window.console.native_log = function(message) {
         netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect'); 
         console_service.logStringMessage(message);
       }; 
-      console.native_error = function(message) {
+      window.console.native_error = function(message) {
         netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect');
         Components.utils.reportError(message);
       };
-      console.native_info = console.native_log;
-      console.native_warn = console.native_log;
+      window.console.native_info = console.native_log;
+      window.console.native_warn = console.native_log;
     } catch (e) { // firefox only lets us do this if we're a file:///
-      console.native_log   = function() {};
-      console.native_info  = console.native_log;
-      console.native_warn  = console.native_log;
-      console.native_error = console.native_log;
+      window.console.native_log   = function() {};
+      window.console.native_info  = console.native_log;
+      window.console.native_warn  = console.native_log;
+      window.console.native_error = console.native_log;
     }
   } else {  // running in safari, firebug or some other browser with console support
-    console.native_log   = console.log;
-    console.native_info  = console.info;
-    console.native_warn  = console.warn;
-    console.native_error = console.error;
+    window.console.native_log   = console.log;
+    window.console.native_info  = console.info;
+    window.console.native_warn  = console.warn;
+    window.console.native_error = console.error;
   }
-  console.debug_output = true;
+  window.console.debug_output = true;
   
-  console.page = function(message) { // output the message to a page div with id=console
+  window.console.page = function(message) { // output the message to a page div with id=console
     var element = document.getElementById("console");
     if (element) {
       var s = element.innerHTML;
@@ -148,52 +148,55 @@
     }
   };
   
-  console.log = function() {
+  window.console.log = function() {
     var message = "";// timestamp(true);
     message += "[log]\t";
     for (var arg = 0; arg < arguments.length; arg++) {
       message += arguments[arg];
     }
-    return console.native_log(message);
+    return window.console.native_log(message);
   };
   
-  console.info = function() {
+  window.console.info = function() {
     var message = "";// timestamp(true);
     message += "[info]\t";
     for (var arg = 0; arg < arguments.length; arg++) {
       message += arguments[arg];
     }
-    return console.native_info(message);
+    return window.console.native_info(message);
   };
   
-  console.warn = function() {
+  window.console.warn = function() {
     var message = "";// timestamp(true);
     message += "[warn]\t";
     for (var arg = 0; arg < arguments.length; arg++) {
       message += arguments[arg];
     }
-    return console.native_warn(message);
+    return window.console.native_warn(message);
   };
   
-  console.error = function() {
+  window.console.error = function() {
     var message = "";//timestamp();
     message += "[error]\t";
     for (var arg = 0; arg < arguments.length; arg++) {
       message += arguments[arg] + " ";
     }
-    return console.native_error(message);
+    return window.console.native_error(message);
   };
   
-  console.debug = function() {
+  window.console.debug = function() {
     if (!console.debug_output) { return ""; }
     var message = "";//timestamp();
     message += "[debug]\t";
     for (var arg = 0; arg < arguments.length; arg++) {
       message += arguments[arg] + " ";
     }
-    return console.native_log(message);
+    return window.console.native_log(message);
   };
   
 //})();  
+//if (!console && window.console) {
+  console = window.console; //TODO CLEAN 
+//}
 console.debug("loaded afrimesh.utilities.js");
 
