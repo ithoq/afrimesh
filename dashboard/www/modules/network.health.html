@@ -7,63 +7,16 @@
  * New BSD License. See /LICENSE for more information.
 -->
 
-<script type="text/javascript"> //<![CDATA[    
-(function() {
-
-  /** includes ------------------------------------------------------------ */
-  load("javascript/jquery/jquery.sparkline.js");
-
-  /** construction -------------------------------------------------------- */
-  ready = function() { // INJ 'ready' should be the only symbol we're exposing to the global namespace
-    $(".traffic-village").sparkline([5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3], {type: 'bar'});  // TODO - lose
-    console.debug("loaded network.health.html");
-    update();
-    return unload;
-  };
-
-  function unload() {
-    console.debug("unloading network.health.html");
-    clearTimeout(timer);
-  };
-
-
-  /** update displays ----------------------------------------------------- */
-  var timer = {};
-  function update() {
-    clearTimeout(timer);
-    var data = afrimesh.villagebus.snmp(afrimesh.settings.hosts.internet_gateway, 
-                                        afrimesh.settings.community, 
-                                        [ ".1.3.6.1.2.1.2.2.1.10.4",    /* interfaces.ifTable.ifEntry.ifInOctets.4  ->  eth0.1 == .4 */
-                                          ".1.3.6.1.2.1.2.2.1.16.4" ]); /* interfaces.ifTable.ifEntry.ifOutOctets.4 ->  eth0.1 == .4 */
-    update_internet_traffic(data);
-    timer = setTimeout(update, 10000);
-  };
-
-  function update_internet_traffic(data) {
-    console.debug("update: " + dump_object(data));
-
-  };
-
-
-  /** done ---------------------------------------------------------------- */
-  console.debug("loaded network.health.js");
-
-})();
-//]]></script>
-
-
-
-
 <h2>Health</h2>
 
-<table border=1>
+<table border=0>
   <tr><td>Mesh</td><td><span style="color:green;">feeling good</span></td></tr>
   <tr><td>Internet Connection</td><td><span style="color:green;">feeling good</span></td></tr>
 </table>
 <br/>
 
 <h2>Traffic</h2>
-<table border=1>
+<table border=0>
   <tr>
     <td>Mesh</td>
     <td><span style="color:gray;">TODO</span></td>
@@ -73,7 +26,7 @@
   <tr>
     <td>Internet</td>
     <td><span id="traffic-internet-busy"></span></td>
-    <td><span id="traffic-internet">searching...</span></td>
+    <td><span id="traffic-internet">querying...</span></td>
     <td><span id="traffic-internet-in">?</span>/<span id="traffic-internet-in-max">?</span>Kbps in, 
       <span style="color:gray;">
         <span id="traffic-internet-out">?</span>/<span id="traffic-internet-out-max">?</span>Kbps out
@@ -96,5 +49,107 @@
   </tr>
 </table> 
 
+
+
+<script type="text/javascript"> //<![CDATA[    
+(function() {
+
+  /** includes ------------------------------------------------------------ */
+  load("javascript/jquery/jquery.sparkline.js");
+
+  /** construction -------------------------------------------------------- */
+  ready = function() { // INJ 'ready' should be the only symbol we're exposing to the global namespace
+    $(".traffic-village").sparkline([5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3], { type: 'bar', barColor: 'gray' });  // TODO - lose
+    console.debug("loaded network.health.html");
+    update();
+    return unload;
+  };
+
+  function unload() {
+    console.debug("unloading network.health.html");
+    clearTimeout(timer);
+  };
+
+
+  /** update displays ----------------------------------------------------- */
+  var timer = {};
+  function update() {
+    clearTimeout(timer);
+    var data = afrimesh.villagebus.snmp(afrimesh.settings.internet_gateway.address, 
+                                        afrimesh.settings.internet_gateway.snmp.community, 
+                                        [ ".1.3.6.1.2.1.1.1.0",                             // system.sysDescr.0
+                                          afrimesh.settings.internet_gateway.snmp.down,   
+                                          afrimesh.settings.internet_gateway.snmp.up ]);
+    update_internet_traffic(data);
+    timer = setTimeout(update, 5000);
+  };
+
+
+  var traffic = {
+    length    : 30,
+    max_down  : afrimesh.settings.internet_gateway.bandwidth.down,
+    max_up    : afrimesh.settings.internet_gateway.bandwidth.up,
+    down      : [ afrimesh.settings.internet_gateway.bandwidth.down ],
+    up        : [ afrimesh.settings.internet_gateway.bandwidth.up   ],
+    last      : new Date(),
+    last_down : 0,
+    last_up   : 0,
+    overhead  : 10.0
+  }; 
+  for (var i = 0; i < traffic.length; i++) {
+    traffic.down.push(0);
+    traffic.up.push(0);
+  }
+  function update_internet_traffic(snmp) {
+    //console.debug("update: " + dump_object(traffic));
+    var now = new Date();
+    if (traffic.last_down == 0      || traffic.last.getTime() > now.getTime() ||
+        traffic.last_down > snmp[1] ||  traffic.last_up   > snmp[2])  {  // IF_MIB__ifInOctets_4 | IF_MIB__ifOutOctets_4
+      traffic.last = now;
+      traffic.last_down = snmp[1];
+      traffic.last_up   = snmp[2];
+      return;
+    } 
+    var interval = now.getTime() - traffic.last.getTime();
+    var traffic_down = ((snmp[1] - traffic.last_down) / interval) * traffic.overhead;
+    var traffic_up   = ((snmp[2] - traffic.last_up) / interval) * traffic.overhead;
+    traffic.down.push(traffic_down);
+    traffic.up.push(traffic_up);
+    traffic.last_down = snmp[1];
+    traffic.last_up   = snmp[2];
+    traffic.last = now;
+    if (traffic.down.length > traffic.length) {
+      traffic.down.splice(2, traffic.down.length - traffic.length); // leave 0 for scaling
+    }
+    if (traffic.up.length > traffic.length) {
+      traffic.up.splice(2, traffic.up.length - traffic.length); // leave 0 for scaling
+    }
+    $("#traffic-internet").sparkline(traffic.down,  { composite: false, lineColor: "black", spotColor: false, minSpotColor: false, maxSpotColor: false, fillColor: false });
+    $("#traffic-internet").sparkline(traffic.up,    { composite: true,  lineColor: "gray",  spotColor: false, minSpotColor: false, maxSpotColor: false, fillColor: false });
+    $("#traffic-internet-in").html("" + Math.floor(traffic_down));
+    $("#traffic-internet-out").html("" + Math.floor(traffic_up));
+    $("#traffic-internet-in-max").html(traffic.max_down);
+    $("#traffic-internet-out-max").html(traffic.max_up);
+    var n = Math.max(traffic_down / traffic.max_down, traffic_up / traffic.max_up);
+    var busy = ""; 
+    if (n < 0.2) {
+      busy += "<span style=\"color:green;\">relaxed</span>";
+    } else if (n < 0.75) {
+      busy += "<span style=\"color:green;\">normal</span>";
+    } else if (n < 0.90) {
+      busy += "<span style=\"color:orange;\">busy</span>";
+    } else {
+      busy += "<span style=\"color:red;\">full</span>";
+    }
+    $("#traffic-internet-busy").html(busy);
+
+  };
+
+
+  /** done ---------------------------------------------------------------- */
+  console.debug("loaded network.health.js");
+
+})();
+//]]></script>
 
 
