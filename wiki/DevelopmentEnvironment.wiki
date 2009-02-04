@@ -1,9 +1,9 @@
-#How to create yourself an afrimesh development environment.
+Configuring an afrimesh development environment.
 
 = Dependencies =
 
-The system relies on a number of pieces from elsewhere to function:
-* Any httpd - I'm using apache for a server install and busybox when running on a router
-* net-snmp 
-* mysql if you plan to work with the radius support
+The system relies on a number of pieces from other projects:
 
+  * Any httpd - I'm using apache for a server install and busybox when running on a router 
+  * net-snmp 
+  * mysql if you plan to work with the radius support
