@@ -102,6 +102,7 @@
    * Cross-platform console functions
    *
    * Also see: http://stackoverflow.com/questions/55633/where-is-the-console-api-for-webkitsafari
+   *           http://code.google.com/p/fbug/source/browse/trunk/lite/firebug.js?r=366
    */
   if (typeof window === "undefined") {  // running from the command line
     var console = { };

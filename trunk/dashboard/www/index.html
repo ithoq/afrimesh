@@ -46,6 +46,13 @@
           async: false,
           success: function(js) { console.debug("finished loading"); } });*/
 
+        /** menu drawers */
+        $("li.drawer h2:not(.open)").next().hide();
+        $("h2.drawer-handle").mouseover(function () {
+          $("h2.drawer-handle.open").removeClass("open").next().hide();
+          $(this).addClass("open").next().show(); 
+        });
+
         console.debug("$(document).ready() -------------------- start");
 
         /** global error handler for Ajax requests */
@@ -146,6 +153,7 @@
                 <li><a href="#" id="internet" class="todo">Internet</a></li>
               </ul>
             </li>
+
             <li id="install" class="drawer">
               <h2 class="drawer-handle">Install</h2> 
               <ul> 
@@ -154,11 +162,10 @@
               </ul>
             </li>
 
-
           </ul>
           <div class="drawers-bottom"></div>
         </div>
-      </div> <!-- /navigation -->
+      </div> <!-- /menu -->
 
       <div id="content">
         please wait a moment...
