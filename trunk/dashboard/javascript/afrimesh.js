@@ -18,10 +18,20 @@ var afrimesh = undefined;
       hosts        : {
         dashboard_server  : "bdashboard.7degrees.co.za",
         batman_vis_server : "dashboard.7degrees.co.za",
-        internet_gateway  : "192.168.20.1",
         mesh_gateway      : "192.168.20.200"
       },
-      community : "public"
+      internet_gateway : {
+        address   : "192.168.20.1",
+        snmp      : {
+          community : "public",
+          down      : ".1.3.6.1.2.1.2.2.1.10.4",  // interfaces.ifTable.ifEntry.ifInOctets.4  ->  eth0.1 == .4
+          up        : ".1.3.6.1.2.1.2.2.1.16.4"   // interfaces.ifTable.ifEntry.ifOutOctets.4 ->  eth0.1 == .4
+        },
+        bandwidth : { 
+          down : 512,    // with protocol overhead the max observed is 430
+          up   : 256     // with protocol overhead the max observed is 228
+        }
+      }
     };
     this.network    = BootNetwork(this);
     this.customers  = undefined;
