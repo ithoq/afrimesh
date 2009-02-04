@@ -11,7 +11,10 @@
   <head>
     <link rel="stylesheet" type="text/css" href="style/default.css"> 
     <link rel="stylesheet" type="text/css" href="style/drawers.css"> 
-    <link rel="stylesheet" type="text/css" href="widgets/widgets.css"> 
+    <link rel="stylesheet" type="text/css" href="style/map.default.css"> 
+    <link rel="stylesheet" type="text/css" href="style/map.css"> 
+    <link rel="stylesheet" type="text/css" href="style/widgets.css"> 
+
 
     <!-- includes ---------------------------------------------------------- -->
     <!-- jquery -->
@@ -23,11 +26,6 @@
     <!-- script type="text/javascript" src="javascript/jquery/jquery.corner.js"></script --> <!-- http://jrc.meerbox.nl/ - TODO deprecate -->
                                                                                       <!-- also look at: http://www.malsup.com/jquery/corner/ -->
                                                                                       <!--               http://www.ruzee.com/files/shadedborder/ -->
-    <!-- openlayers -->
-    <!-- script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAUILHePuv7Cq0mK0HSze5PRRTJkofi8MdSXz7uUeCtVadpg691BS55tAxiNsjEjEAKrgA9qrFrG_PPw'></script -->
-    <!-- script src="http://api.maps.yahoo.com/ajaxymap?v=3.0&appid=euzuro-openlayers"></script>
-    <script type="text/javascript" src="javascript/openlayers/OpenLayers.js"></script>
-    <script type="text/javascript" src="javascript/openlayers/OpenStreetmap.js"></script -->
 
     <!-- afrimesh -->
     <script type="text/javascript" src="javascript/afrimesh.utilities.js"></script>
@@ -99,7 +97,7 @@
           });
 
         /** set default page */
-        $("div#menu li#network a#health").click();
+        $("div#menu li#network a#map").click();
 
         /** loading complete, we can now remove our message */
         $("#message-loading").html("");

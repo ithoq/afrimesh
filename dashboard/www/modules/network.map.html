@@ -7,19 +7,54 @@
  * New BSD License. See /LICENSE for more information.
 -->
 
-<script type="text/javascript">(function() {
+<h2>Network Map</h2>
+
+<div id="network-map" style="border:0px red solid; width: 100%; height: 75%;">please wait a moment...</div>
+
+
+<script type="text/javascript">( //<![CDATA[    
+function() {
+
+  /** includes ------------------------------------------------------------ */
+  load("modules/network.map.js");
+
+  /** construction -------------------------------------------------------- */
   ready = function() {
     console.debug("loaded network.map.html");
+    $("div#network-map").html("");
+    var map = new Map("network-map",
+                      afrimesh.settings.map.longitude,
+                      afrimesh.settings.map.latitude,
+                      afrimesh.settings.map.extent,
+                      afrimesh.settings.map.zoom);
+    map.the_map.addLayer(new OpenLayers.Layer.Vector("Mesh Routes"));
+    map.the_map.addLayer(new OpenLayers.Layer.Vector("Mesh Nodes"));
+
+
+    update();
     return unload;
   };
+
   function unload() {
-    console.debug("unloading network.map.html");
+    clearTimeout(timer);
+    console.debug("unloaded network.map.html");
   };
   console.debug("loaded network.map.js");
-})();</script>
 
 
-<h2>Map</h2>
+  /** update map ---------------------------------------------------------- */
+  var timer = {};
+  function update() {
+    clearTimeout(timer);
+    //console.debug("updating map");
+    timer = setTimeout(update, 10000);
+  };
+
+})();
+//]]></script>
+
+
+
 
 
 

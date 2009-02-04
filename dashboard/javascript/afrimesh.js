@@ -14,6 +14,13 @@ var afrimesh = undefined;
   function Afrimesh() {
     this.settings = { 
       network_name : "development testbed",
+      map          : {
+        longitude : 18.339733,
+        latitude  : -34.138061,
+        extent    : 0.025, // in degrees 
+        zoom      : 16,
+        aerial    : true
+      },
       locale       : "en_US.UTF-8",
       hosts        : {
         dashboard_server  : "bdashboard.7degrees.co.za",
