@@ -55,6 +55,21 @@ char* escape_oid(char* name)
 }
 
 
+void print_var(struct variable_list* vars) 
+{
+  if (vars->type == ASN_OCTET_STR) {
+    char* sp = (char*)malloc(1 + vars->val_len);
+    memcpy(sp, vars->val.string, vars->val_len);
+    sp[vars->val_len] = '\0';
+    printf("\"%s\"", sp);
+    free(sp);
+  } else if (vars->type == ASN_COUNTER) { /* ASN_COUNTER */
+    printf("%lu", *vars->val.integer);
+  } else {
+    printf("\"unknown type: 0x%x\"", vars->type);
+  }
+}
+
 void query_snmp(const char* host, const char* community)
 {
   struct snmp_session session, *ss;
@@ -118,23 +133,17 @@ void query_snmp(const char* host, const char* community)
     return;
   } 
 
+  size_t index = 0;
   for (vars = response->variables; vars; vars = vars->next_variable) {
     //print_variable(vars->name, vars->name_length, vars);
     char buf[1024];
     snprint_objid(buf, 1024, vars->name, vars->name_length);
     char* name = escape_oid(buf);
     printf("%s\n\t%s : ", (vars == response->variables ? "" : ","), name);
-    if (vars->type == ASN_OCTET_STR) {
-      char* sp = (char*)malloc(1 + vars->val_len);
-      memcpy(sp, vars->val.string, vars->val_len);
-      sp[vars->val_len] = '\0';
-      printf("\"%s\"", sp);
-      free(sp);
-    } else if (vars->type == ASN_COUNTER) { /* ASN_COUNTER */
-      printf("%lu", *vars->val.integer);
-    } else {
-      printf("\"unknown type: 0x%x\"", vars->type);
-    }
+    print_var(vars);
+    printf(",\n\t%d : ", index);
+    print_var(vars);
+    index++;
   }
   
   if (response) {
