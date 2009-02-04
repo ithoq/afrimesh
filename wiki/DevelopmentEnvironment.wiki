@@ -3,7 +3,8 @@ Configuring an afrimesh development environment.
 = Required Dependencies =
 
   * gcc 
-  * Any httpd  (I'm using apache for a server install and busybox when running on a router)
+  * Any httpd  
+  ** I'm using apache for a Linux or FreeBSD install and busybox when running under OpenWRT
   * net-snmp 
   * bash   (to be deprecated)
   * curl     (to be deprecated)
@@ -12,5 +13,7 @@ Configuring an afrimesh development environment.
   
 = Optional Dependencies =
 
-  * openwrt (you'll need either a copy of the source or the latest toolchain release to build OpenWRT packages)
-  * mysql (if you plan to work with the radius support)
+  * openwrt 
+  ** you'll need either a copy of the source or the latest toolchain release to build OpenWRT packages
+  * mysql 
+  ** if you plan to work with the radius support
