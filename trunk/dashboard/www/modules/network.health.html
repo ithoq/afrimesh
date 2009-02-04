@@ -66,8 +66,8 @@
   };
 
   function unload() {
-    console.debug("unloading network.health.html");
     clearTimeout(timer);
+    console.debug("unloaded network.health.html");
   };
 
 
@@ -93,8 +93,7 @@
     up        : [ afrimesh.settings.internet_gateway.bandwidth.up   ],
     last      : new Date(),
     last_down : 0,
-    last_up   : 0,
-    overhead  : 10.0
+    last_up   : 0
   }; 
   for (var i = 0; i < traffic.length; i++) {
     traffic.down.push(0);
@@ -111,8 +110,8 @@
       return;
     } 
     var interval = now.getTime() - traffic.last.getTime();
-    var traffic_down = ((snmp[1] - traffic.last_down) / interval) * traffic.overhead;
-    var traffic_up   = ((snmp[2] - traffic.last_up) / interval) * traffic.overhead;
+    var traffic_down = Math.min(traffic.max_down, ((snmp[1] - traffic.last_down) / interval) * 10.0);
+    var traffic_up   = Math.min(traffic.max_up,   ((snmp[2] - traffic.last_up)   / interval) * 10.0);
     traffic.down.push(traffic_down);
     traffic.up.push(traffic_up);
     traffic.last_down = snmp[1];
