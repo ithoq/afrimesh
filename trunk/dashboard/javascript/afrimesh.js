@@ -14,9 +14,12 @@ var afrimesh = undefined;
   function Afrimesh() {
     this.settings = { 
       network_name : "development testbed",
-      map          : {
+      location : {
         longitude : 18.339733,
-        latitude  : -34.138061,
+        latitude  : -34.138061
+      },
+      map : {
+        server    : "openstreetmaps.org",
         extent    : 0.025, // in degrees 
         zoom      : 16,
         aerial    : true
@@ -38,7 +41,8 @@ var afrimesh = undefined;
           down : 512,    // with protocol overhead the max observed is 430
           up   : 256     // with protocol overhead the max observed is 228
         }
-      }
+      },
+      ajax_proxy    : "/cgi-bin/ajax-proxy.cgi?url="
     };
     this.network    = BootNetwork(this);
     this.customers  = undefined;

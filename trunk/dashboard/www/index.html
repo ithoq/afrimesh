@@ -11,7 +11,6 @@
   <head>
     <link rel="stylesheet" type="text/css" href="style/default.css"> 
     <link rel="stylesheet" type="text/css" href="style/drawers.css"> 
-    <link rel="stylesheet" type="text/css" href="style/map.default.css"> 
     <link rel="stylesheet" type="text/css" href="style/map.css"> 
     <link rel="stylesheet" type="text/css" href="style/widgets.css"> 
 
@@ -20,13 +19,10 @@
     <!-- jquery -->
     <script type="text/javascript" src="javascript/jquery/jquery.js"></script>
     <script type="text/javascript" src="javascript/jquery/jquery.json.js"></script>
-    <!-- script type="text/javascript" src="javascript/jquery/jquery.sparkline.js"></script -->
-    <!-- script type="text/javascript" src="javascript/jquery/jquery.ui.js"></script -->
     <!-- script type="text/javascript" src="javascript/jquery/jquery.ui.js"></script -->
     <!-- script type="text/javascript" src="javascript/jquery/jquery.corner.js"></script --> <!-- http://jrc.meerbox.nl/ - TODO deprecate -->
                                                                                       <!-- also look at: http://www.malsup.com/jquery/corner/ -->
                                                                                       <!--               http://www.ruzee.com/files/shadedborder/ -->
-
     <!-- afrimesh -->
     <script type="text/javascript" src="javascript/afrimesh.utilities.js"></script>
     <script type="text/javascript" src="javascript/afrimesh.platform.js"></script>
@@ -55,8 +51,8 @@
 
         /** global error handler for Ajax requests */
         $(document).ajaxError(function(response) {
-            var s = "AJAX ERROR: \n";
-            for (property in response) { s += property + " : " + response[property] + "\n"; }
+            var s = "AJAX ERROR: " + response;
+            //for (property in response) { s += property + " : " + response[property] + "\n"; }
             console.error(s);
           });
 

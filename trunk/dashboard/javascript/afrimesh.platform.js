@@ -30,11 +30,15 @@
       });
     console.debug("utilities.loaded " + uri);
   };
-  
+  platform.browser.sleep = function() {
+  };
 
     /** - capability tests ---------------------------------------------------- */
   try { load; } catch (e) {
     load = platform.browser.load;
+  }
+  try { sleep; } catch (e) {
+    sleep = platform.browser.sleep;
   }
 
   // TODO move contents of unit.shell to here  

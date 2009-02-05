@@ -25,18 +25,21 @@ var Map = undefined;
   load("javascript/openlayers/OpenStreetMap.js");
   OpenLayers.ImgPath = "images/";
 
-  /** 
-   * Map - create a map in the DOM element pointed to by the id.
-   */
+
+
+  /** Map ----------------------------------------------------------------- */
   function _Map(id, longitude, latitude, extent, zoom) {
-    this.the_map = create_map();
+
+    the_map = create_map();
+
     function create_map() { 
       var options = {
         projection        : epsg_900913,
         displayProjection : epsg_4326,
         units             : "m",
         numZoomLevels     : 20,
-        restrictedExtent  : new OpenLayers.Bounds()
+        restrictedExtent  : new OpenLayers.Bounds(),
+        theme             : "style/map.default.css"
       };
       options.restrictedExtent.extend(LonLat(longitude - extent, latitude - extent));
       options.restrictedExtent.extend(LonLat(longitude + extent, latitude + extent));
@@ -59,12 +62,63 @@ var Map = undefined;
       map.addControl(new OpenLayers.Control.ScaleLine());
       map.setCenter(LonLat(longitude, latitude), zoom);
       if (!map.getCenter()) { map.zoomToMaxExtent(); }
+      map.addLayer(new OpenLayers.Layer.Vector("Mesh Links"));
+      map.addLayer(new OpenLayers.Layer.Vector("Mesh Routers"));
+      map.routes = map.getLayersByName("Mesh Links")[0];
+      map.routers  = map.getLayersByName("Mesh Routers")[0];
+
+      var dragger = new OpenLayers.Control.DragFeature(map.routers);
+      dragger.onComplete = on_position;
+      map.addControl(dragger);
+      dragger.activate();
+      var selector = new OpenLayers.Control.SelectFeature(map.routers);
+      selector.onSelect = on_select;
+      map.addControl(selector);
+      selector.activate();
       return map;
     };
+
+    this.router = function(router) {
+      var feature = the_map.routers.getFeatureById(router.address);
+      if (feature) {
+        return feature;
+      }
+      return add_router(router);
+    };
+
+    function add_router(router) {
+      //var feature = new OpenLayers.Feature.Vector(Point(longitude, latitude));
+      var feature = new OpenLayers.Feature.Vector(Point(null, null));
+      feature.id = router.address;
+      feature.router = router;
+      the_map.routers.addFeatures([feature]);
+
+      // fire off an async request for location data
+      var uci = afrimesh.villagebus.uci(router.address);
+      console.info("uci it is: " + dump_object(uci));
+      //console.debug("router: " + router.address + "\n" + dump_object(uci.afrimesh.location));
+
+      /*var uci = afrimesh.villagebus.uci(router.address);
+      console.debug("router: " + router.address + "\n" + dump_object(uci.afrimesh.location));
+      if (uci.afrimesh.location) {
+        marker.lonlat = LonLat(uci.afrimesh.location.longitude, uci.afrimesh.location.latitude);
+        this.routers().redraw();
+        }*/
+
+      return feature;
+    };
+    
+
+    function on_select(feature) {
+      console.log("on_select: " + dump_object(feature.router));
+    };
+
+    function on_position(feature) {
+      console.log("on_position: " + dump_object(feature.router));
+    };
+
   };
   Map = _Map;
-
-
 
 
 
