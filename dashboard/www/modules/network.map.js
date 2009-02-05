@@ -75,8 +75,10 @@ var Map = undefined;
       selector.onSelect = on_select;
       map.addControl(selector);
       selector.activate();
+      console.debug("MADE MAP");
       return map;
     };
+
 
     this.router = function(router) {
       var feature = the_map.routers.getFeatureById(router.address);
@@ -86,25 +88,16 @@ var Map = undefined;
       return add_router(router);
     };
 
+
     function add_router(router) {
-      //var feature = new OpenLayers.Feature.Vector(Point(longitude, latitude));
-      var feature = new OpenLayers.Feature.Vector(Point(null, null));
+      var feature = new OpenLayers.Feature.Vector();
       feature.id = router.address;
       feature.router = router;
       the_map.routers.addFeatures([feature]);
-
-      // fire off an async request for location data
-      var uci = afrimesh.villagebus.uci(router.address);
-      console.info("uci it is: " + dump_object(uci));
-      //console.debug("router: " + router.address + "\n" + dump_object(uci.afrimesh.location));
-
-      /*var uci = afrimesh.villagebus.uci(router.address);
-      console.debug("router: " + router.address + "\n" + dump_object(uci.afrimesh.location));
-      if (uci.afrimesh.location) {
-        marker.lonlat = LonLat(uci.afrimesh.location.longitude, uci.afrimesh.location.latitude);
-        this.routers().redraw();
-        }*/
-
+      afrimesh.villagebus.uci.get.async(function (config) {
+          feature.geometry = new Point(config.afrimesh.location.longitude, config.afrimesh.location.latitude);
+          the_map.routers.redraw();
+        }, router.address, "afrimesh.location");
       return feature;
     };
     

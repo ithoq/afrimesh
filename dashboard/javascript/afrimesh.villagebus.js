@@ -8,6 +8,13 @@
  */
 
 
+/**
+ * All interaction with external systems, both local and on the network
+ * occur via the VillageBus
+ *
+ * sync calls returns any result from the request
+ * async calls return the XMLHttpRequest object associated with the request
+ */
 var BootVillageBus = function (afrimesh) {
 
   var villagebus = function() {
@@ -90,21 +97,15 @@ var BootVillageBus = function (afrimesh) {
   };
 
   villagebus.snmp.sync = function(address, community, oids) {
-    var request = { package   : "snmp",
+    return make_json_request({
+        url     : this.url,
+        request : { package   : "snmp",
                     command   : "get",
                     address   : address,
                     community : community, 
-                    oids      : oids };
-    var response_handler = make_default_response_handler(address, "villagebus.snmp");
-    $.ajax({ 
-        url : this.url, 
-          type        : "POST", 
-          contentType : "application/json", 
-          dataType    : "json", 
-          async       : false,
-          data        : $.toJSON(request),
-          success     : response_handler });
-    return response_handler.response;
+                    oids      : oids        },
+        success : make_sync_response_handler(address, "villagebus.snmp"),
+        async   : false });
   };
 
 
@@ -133,16 +134,28 @@ var BootVillageBus = function (afrimesh) {
     return make_json_request({ 
         url     : villagebus.uci.url(address), 
         request : { package: "uci", command: "show"  }, 
-        success : make_default_response_handler(address, "villagebus.uci"), 
+        success : make_sync_response_handler(address, "villagebus.uci"), 
         async   : false });
   };
+
+  villagebus.uci.get.async = function(f, address, selector) {
+    return make_json_request({ 
+        url     : villagebus.uci.url(address), 
+        request : { package: "uci", command: "show"  }, 
+        success : make_async_response_handler(f, address, "villagebus.uci"),
+        async   : true });
+  };
+
   villagebus.uci.set.sync = function(address, entries) {
   };
 
 
   /** - helper functions -------------------------------------------------- */
+  /**
+   * @return XMLHttpRequest
+   */
   function make_json_request(request) {
-    $.ajax({
+    var xml = $.ajax({
         url: request.url,
           type        : "POST",
           contentType : "application/json",
@@ -150,12 +163,13 @@ var BootVillageBus = function (afrimesh) {
           async       : request.async,
           data        : $.toJSON(request.request),
           success     : request.success });
-    if (!request.async) {
-      return request.success.response;
+    if (request.async) {
+      return xml;
     }
+    return request.success.response;
   };
 
-  function make_default_response_handler(address, name) {
+  function make_sync_response_handler(address, name) {
     var handler = function(data) {
       if (data.length != 1) {
         console.error(name + " failed to get data from address: " + address);
@@ -166,6 +180,21 @@ var BootVillageBus = function (afrimesh) {
         return;
       }
       handler.response = data[0];
+    };
+    return handler;
+  };
+
+  function make_async_response_handler(f, address, name) {
+    var handler = function(data) {
+      if (data.length != 1) {
+        console.error(name + " failed to get data from address: " + address);
+        return;
+      } 
+      if (data[0].error) {
+        console.error(name + " failed with error: " + data[0].error);
+        return;
+      }
+      f(data[0]);
     };
     return handler;
   };

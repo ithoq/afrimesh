@@ -22,12 +22,11 @@ function() {
   ready = function() {
     console.debug("loaded network.map.html");
     $("div#network-map").html("");
-    var network_map = new Map("network-map",
+    var network_map = new Map("network-map",  // TODO - consider caching the map
                               afrimesh.settings.location.longitude,
                               afrimesh.settings.location.latitude,
                               afrimesh.settings.map.extent,
                               afrimesh.settings.map.zoom);
-
     update(network_map);
     return unload;
   };
@@ -43,11 +42,18 @@ function() {
   var timer = {};
   function update(network_map) {
     clearTimeout(timer);
+    var now = new Date();
 
     afrimesh.network.mesh.routers().map(function(router) { 
+
         var feature = network_map.router(router);
-        console.debug(router.address + " - " + feature.router.address);
+        //console.debug(router.address + " - " + feature.router.address);
+        feature.last_seen = now;
       });
+
+    
+    // go through all map features and set transparency relative to when they were last seen
+    
   
 
     console.debug("updated network map");
