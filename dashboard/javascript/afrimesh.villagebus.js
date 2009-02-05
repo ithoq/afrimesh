@@ -8,7 +8,7 @@
  */
 
 
-var BootVillageBus = function (parent) {
+var BootVillageBus = function (afrimesh) {
 
   var villagebus = function() {
     var ret = [];
@@ -23,11 +23,11 @@ var BootVillageBus = function (parent) {
     return this.vis.sync(); 
   }; 
 
-  villagebus.batman.vis.url  = "http://" + parent.settings.hosts.batman_vis_server + ":2004";
+  villagebus.batman.vis.url  = "http://" + afrimesh.settings.hosts.batman_vis_server + ":2004";
   villagebus.batman.vis.urlf = function() { return "http://" + afrimesh.settings.hosts.batman_vis_server + ":2004"; };
   
   villagebus.batman.vis.async = function(f) { 
-    var xml = XMLHttpRequest();
+    var xml = new XMLHttpRequest();
     xml.open("POST", this.url, true); 
     xml.onreadystatechange = function() {
       if (xml.readyState == 4) {
@@ -35,20 +35,39 @@ var BootVillageBus = function (parent) {
       }
     };
     xml.send("{}");
+    return xml;
   };
   villagebus.batman.vis.poll = function(f, frequency) {   
     this.async(f);
     setTimeout(function() { afrimesh.villagebus.batman.vis.poll(f, frequency); }, 
                frequency);
   };
+  // UDE - we can't use the sleep() approach because browser javascript is single threaded
+  // and gives no access to the event loop
+  // INJ - Use a synchronous XMLHttpRequest
+  // NB  - Now it no longer works in xpcshell!   
   villagebus.batman.vis.sync = function() { // TODO - error handling + timeout 
+    var request  = new XMLHttpRequest();
+    var response;
+    request.open("POST", this.url, false);
+    request.onreadystatechange = function() {
+      if (request.readyState == 4) {
+        response = eval(request.responseText);
+      }
+    };
+    request.send("{}");
+    return response;
+  };
+  /**villagebus.batman.vis.sync = function() { 
     var response = undefined;
-    this.async(function(routes) { 
+    var xml = this.async(function(routes) { 
         response = routes;
       });
-    while (!response) { sleep(); }
+    while (!response) { 
+      sleep(); 
+    }
     return response; 
-  };
+  };*/
   
   
   /** - villagebus.radius ------------------------------------------------- */
@@ -60,7 +79,7 @@ var BootVillageBus = function (parent) {
     return villagebus.snmp.sync(address, community, oids);
   };
 
-  villagebus.snmp.url = "http://" + parent.settings.hosts.dashboard_server + "/cgi-bin/village-bus-snmp";
+  villagebus.snmp.url = "http://" + afrimesh.settings.hosts.dashboard_server + "/cgi-bin/village-bus-snmp";
 
   villagebus.snmp.async = function(f, address, community, oids) {
     // TODO
@@ -76,7 +95,7 @@ var BootVillageBus = function (parent) {
                     address   : address,
                     community : community, 
                     oids      : oids };
-    var response = {};
+    var response_handler = make_default_response_handler(address, "villagebus.snmp");
     $.ajax({ 
         url : this.url, 
           type        : "POST", 
@@ -84,24 +103,74 @@ var BootVillageBus = function (parent) {
           dataType    : "json", 
           async       : false,
           data        : $.toJSON(request),
-          success     : 
-        function(data) { 
-          if (data.length != 1) {
-            console.error("villagebus.snmp failed to get data from address: " + address);
-            return; // UDE we don't yet have a standard strategy for return values for failed calls
-          }
-          if (data[0].error) {
-            console.error("villagebus.snmp failed with error: " + data[0].error);
-          }
-          response = data[0];
-        }
-      });
-    return response;
+          success     : response_handler });
+    return response_handler.response;
   };
 
 
+
   /** - villagebus.uci ---------------------------------------------------- */
-  villagebus.uci    = undefined; 
+  villagebus.uci = function(address) {
+    return villagebus.uci.get.sync(address, "*");
+  };
+
+  // UDE - when dashboard_host != mesh_gateway then we need a way to be able to proxy
+  //       through the mesh gateway onto the mesh
+  // INJ - TODO - modify ajax_proxy.cgi to be able to chain ajax proxy calls ?
+  // INJ.alt - the way open mesh deals with this is to have the mesh nodes pull requests to the
+  //           dashboard rather than the dashboard pushing to the nodes. Hrmm. Must ponder.
+  villagebus.uci.ajax_proxy = "http://" + afrimesh.settings.hosts.mesh_gateway + afrimesh.settings.ajax_proxy;
+  villagebus.uci.url = function(address) { return villagebus.uci.ajax_proxy + "http://" + address + "/cgi-bin/village-bus-uci"; }
+
+  villagebus.uci.get = function(address, selector) {
+    return villagebus.uci.get.sync(address, selector);
+  };
+  villagebus.uci.set = function(address, entries) {
+    return villagebus.uci.set.sync(address, entries);
+  };
+
+  villagebus.uci.get.sync = function(address, selector) {
+    return make_json_request({ 
+        url     : villagebus.uci.url(address), 
+        request : { package: "uci", command: "show"  }, 
+        success : make_default_response_handler(address, "villagebus.uci"), 
+        async   : false });
+  };
+  villagebus.uci.set.sync = function(address, entries) {
+  };
+
+
+  /** - helper functions -------------------------------------------------- */
+  function make_json_request(request) {
+    $.ajax({
+        url: request.url,
+          type        : "POST",
+          contentType : "application/json",
+          dataType    : "json",
+          async       : request.async,
+          data        : $.toJSON(request.request),
+          success     : request.success });
+    if (!request.async) {
+      return request.success.response;
+    }
+  };
+
+  function make_default_response_handler(address, name) {
+    var handler = function(data) {
+      if (data.length != 1) {
+        console.error(name + " failed to get data from address: " + address);
+        return;
+      } 
+      if (data[0].error) {
+        console.error(name + " failed with error: " + data[0].error);
+        return;
+      }
+      handler.response = data[0];
+    };
+    return handler;
+  };
+
+  
 
   return villagebus;
 };

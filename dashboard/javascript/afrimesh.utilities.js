@@ -104,12 +104,14 @@
    * Also see: http://stackoverflow.com/questions/55633/where-is-the-console-api-for-webkitsafari
    *           http://code.google.com/p/fbug/source/browse/trunk/lite/firebug.js?r=366
    */
+  try {  window; } catch (e) { var window = undefined; }
   if (typeof window === "undefined") {  // running from the command line
-    var console = { };
-    console.native_log   = print; 
-    console.native_info  = print;
-    console.native_warn  = print;
-    console.native_error = print; 
+    window = {};
+    window.console = { };
+    window.console.native_log   = print; 
+    window.console.native_info  = print;
+    window.console.native_warn  = print;
+    window.console.native_error = print; 
   } else if (!window.console) { // not running in firebug, not safari
     // assuming firefox , TODO - we need to do some decent platform detection at some point - jquery ?
     window.console = { };
