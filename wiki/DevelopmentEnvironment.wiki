@@ -5,7 +5,7 @@ Configuring an afrimesh development environment.
   * gcc 
   * subversion
   * Any httpd  
-  ** I'm using apache for a Linux or FreeBSD install and busybox when running under OpenWRT
+    ** I'm using apache for a Linux or FreeBSD install and busybox when running under OpenWRT
   * net-snmp 
   * bash   (to be deprecated)
   * curl     (to be deprecated)
@@ -15,9 +15,9 @@ Configuring an afrimesh development environment.
 = Optional Dependencies =
 
   * openwrt 
-  ** you'll need either a copy of the source or the latest toolchain release to build OpenWRT packages
+    ** you'll need either a copy of the source or the latest toolchain release to build OpenWRT packages
   * mysql 
-  ** if you plan to work with the radius support
+    ** if you plan to work with the radius support
 
 = Check Out The Sources =
  
@@ -28,4 +28,3 @@ Configuring an afrimesh development environment.
 = Compile & Install =
 
 = Test Installation =
-
