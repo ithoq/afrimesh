@@ -88,6 +88,7 @@ endef
 
 define Package/afrimesh-base/install
 	$(CP) ./files/* $(1)/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/village-bus-uci $(1)/www/cgi-bin/village-bus-uci
 	find $(1) -name 'CVS' -o -name '.svn' -o -name '*~' | $(XARGS) rm -rf
 endef
 
