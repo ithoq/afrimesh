@@ -1,0 +1,12 @@
+Instructions for preparing an afrimesh development environment under Ubuntu
+
+= Dependencies =
+
+Run as required:
+
+  * Apache: 
+     `apt-get install apache2`
+  * Radius:   
+     `apt-get install freeradius freeradius-mysql`
+  * MySQL:  
+    `apt-get install mysql-server mysql-client mysql-common`   
