@@ -27,9 +27,10 @@ Configuring an afrimesh development environment.
 = Source =
 
 == Check Out The Sources ==
-{{{
-svn checkout http://afrimesh.googlecode.com/svn/trunk/ afrimesh
-}}}
+  * Run:
+  {{{
+  svn checkout http://afrimesh.googlecode.com/svn/trunk/ afrimesh
+  }}}
 
 == Install external build dependencies  (TODO - deprecate this step) ==
   * Step 1: Download this: [http://afrimesh.googlecode.com/files/ext.tar.gz ext.tar.gz]
@@ -47,9 +48,9 @@ svn checkout http://afrimesh.googlecode.com/svn/trunk/ afrimesh
 
 In the top-level afrimesh source directory type:
 
-{{{
-make <platform>
-}}}
+  {{{
+  make <platform>
+  }}}
 
 Where `<platform>` is one of:  `linux, freebsd or openwrt`
 
