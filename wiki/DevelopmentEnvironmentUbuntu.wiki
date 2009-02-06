@@ -13,6 +13,5 @@ Run as required:
   * net-snmp:  
   {{{
   apt-get install snmp
-  ln -s /usr/lib/libnetsnmp.so.15.1.0 /usr/lib/libnetsnmp.so # grrf
+  apt-get install libsnmp-dev 
   }}}
-
