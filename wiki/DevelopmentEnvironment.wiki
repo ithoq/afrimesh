@@ -35,17 +35,21 @@ Configuring an afrimesh development environment.
   {{{
   cd your-afrimesh-source-directory
   tar xzvf ext.tar.gz
-  cd ext
-  }}}
-  * Step 3: For Linux:
-    `ln -s ./lib-x86-linux ./lib`
-  * Step 3: For FreeBSD:
-    `ln -s ./lib-x86-freebsd ./lib`
- 
+  }}} 
 
 = Configure =
 
-= Compile & Install =
+= Compile =
+
+= Install = (TODO - deprecate complexity with platform detection in Makefile)
+
+In the top-level afrimesh source directory type:
+
+  `make <platform>`
+
+Where <platform> is one of: linux, freebsd or openwrt
+
+
 
 = Test Installation =
   * Install /etc/config/afrimesh
