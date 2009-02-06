@@ -53,4 +53,5 @@ village-bus-uci.o : village-bus-uci.c
 	$(CC) -c village-bus-uci.c $(INCLUDES)
 
 clean : 
-	rm -f *.o *~
+	rm -f *.o *~ village-bus-uci
+

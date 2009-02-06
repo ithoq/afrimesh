@@ -53,4 +53,5 @@ village-bus-snmp.o : village-bus-snmp.c
 
 
 clean : 
-	rm -f *.o *~
+	rm -f *.o *~ village-bus-snmp
+
