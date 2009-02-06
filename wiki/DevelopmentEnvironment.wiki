@@ -24,14 +24,12 @@ Configuring an afrimesh development environment.
   * DevelopmentEnvironmentBSD
 
 
-= Check Out The Sources =
- 
+= Source =
+
+== Check Out The Sources ==
   * svn checkout http://afrimesh.googlecode.com/svn/trunk/ afrimesh
 
-= Configure =
-
 == Install external build dependencies  (TODO - deprecate this step) ==
-
   * Step 1: Download this: [http://afrimesh.googlecode.com/files/ext.tar.gz ext.tar.gz]
   * Step 2: Move it to your afrimesh source directory and:
   {{{
@@ -43,7 +41,9 @@ Configuring an afrimesh development environment.
     `ln -s ./lib-x86-linux ./lib`
   * Step 3: For FreeBSD:
     `ln -s ./lib-x86-freebsd ./lib`
-  
+ 
+
+= Configure =
 
 = Compile & Install =
 
