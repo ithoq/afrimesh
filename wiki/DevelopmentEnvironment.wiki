@@ -47,7 +47,7 @@ In the top-level afrimesh source directory type:
 
   `make <platform>`
 
-Where <platform> is one of: linux, freebsd or openwrt
+Where `<platform>` is one of: linux, freebsd or openwrt
 
 
 
