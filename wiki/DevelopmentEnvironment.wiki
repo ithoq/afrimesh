@@ -30,6 +30,19 @@ Configuring an afrimesh development environment.
 
 = Configure =
 
+== Install external build dependencies  (TODO - deprecate this step) ==
+
+  * Download this: [http://afrimesh.googlecode.com/files/ext.tar.gz ext.tar.gz]
+  * Move it to your afrimesh source directory and:
+    `cd your-afrimesh-source-directory`
+    `tar xzvf ext.tar.gz`
+    `cd ext`
+  * For Linux:
+    `ln -s ./lib-x86-linux ./lib`
+  * For FreeBSD:
+    `ln -s ./lib-x86-freebsd ./lib`
+  
+
 = Compile & Install =
 
 = Test Installation =
