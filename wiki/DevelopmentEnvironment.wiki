@@ -11,12 +11,14 @@ Configuring an afrimesh development environment.
   * curl     (to be deprecated)
   * wget   (to be deprecated)
 
+
 = Optional Dependencies =
 
   * openwrt 
     ** you'll need either a copy of the source or the latest toolchain release to build OpenWRT packages
   * mysql 
     ** you'll need this if you plan to work with the radius support
+
 
 = Platform Specific Instructions =
 
@@ -40,11 +42,8 @@ Configuring an afrimesh development environment.
   tar xzvf ext.tar.gz
   }}} 
 
-= Configure =
 
-= Compile =
-
-= Install (TODO - deprecate complexity with platform detection in Makefile) =
+= Compile (TODO - deprecate complexity with platform detection in Makefile) =
 
 In the top-level afrimesh source directory type:
 
@@ -54,6 +53,8 @@ In the top-level afrimesh source directory type:
 
 Where `<platform>` is one of:  `linux, freebsd or openwrt`
 
+
+= Install =
 
 
 = Test Installation =
