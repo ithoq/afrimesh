@@ -39,12 +39,42 @@ MKDIR=mkdir -p
 # TODO - crunch all javascript into a single file ?
 
 
+# - linux --------------------------------------------------------------------
+
+VILLAGERS=village-bus-batman village-bus-radius village-bus-snmp village-bus-uci
+
+clean :
+	cd village-bus-batman ; make clean
+	cd village-bus-radius ; make clean
+	cd village-bus-snmp   ; make clean
+	cd village-bus-uci    ; make clean
+
+linux : linux-symlink village-bus
+
+linux-symlink :
+	rm ext/lib
+	cd ext ; ln -s ./lib-x86-linux ./lib
+
+village-bus : $(VILLAGERS)
+	cd village-bus-batman ; make
+	cd village-bus-radius ; make
+	cd village-bus-snmp   ; make
+	cd village-bus-uci    ; make
+
+
 # - freebsd ------------------------------------------------------------------
 clean-freebsd : 
 	echo "Cleaning"
 	rm -rf $(DASHBOARD_WWW)/*
 	rm -rf $(DASHBOARD_CGI)/*
 	rm -f dashboard/www/javascript
+
+freebsd : freebsd-symlink village-bus
+
+freebsd-symlink :
+	rm ext/lib
+	cd ext ; ln -s ./lib-x86-freebsd ./lib
+
 
 village-bus-freebsd : village-bus-snmp/village-bus-snmp
 	cd village-bus-snmp ; make village-bus-snmp
@@ -64,8 +94,6 @@ install-freebsd : clean-freebsd village-bus-freebsd
 	find $(DASHBOARD_CGI) -name ".svn" | xargs rm -rf
 	echo "Finishing up"
 	cd dashboard/www ; ln -s ../javascript ./javascript # replace symlink
-
-
 
 # - openwrt ------------------------------------------------------------------
 all-openwrt :
@@ -96,6 +124,6 @@ distclean : clean
 	cd village-bus-radius ; make distclean
 	cd village-bus-batman ; make distclean
 
-clean :
-	./clean.sh
 
+
+# - common ------------------------------------------------------------------
