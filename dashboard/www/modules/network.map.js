@@ -75,7 +75,6 @@ var Map = undefined;
       selector.onSelect = on_select;
       map.addControl(selector);
       selector.activate();
-      console.debug("MADE MAP");
       return map;
     };
 
@@ -87,8 +86,6 @@ var Map = undefined;
       }
       return add_router(router);
     };
-
-
     function add_router(router) {
       var feature = new OpenLayers.Feature.Vector();
       feature.id = router.address;
@@ -98,6 +95,25 @@ var Map = undefined;
           feature.geometry = new Point(config.afrimesh.location.longitude, config.afrimesh.location.latitude);
           the_map.routers.redraw();
         }, router.address, "afrimesh.location");
+      return feature;
+    };
+
+
+    this.route = function(route) {
+      var feature = the_map.routes.getFeatureById(route.router + "->" + route.neighbour);
+      if (feature) {
+        return feature;
+      }
+      return add_route(route);
+    };
+    function add_route(route) {
+      var feature = new OpenLayers.Feature.Vector();
+      feature.id = route.router + "->" + route.neighbour;
+
+      console.debug("Added route for router: " + route.parent.address);
+
+
+
       return feature;
     };
     

@@ -22,7 +22,7 @@ function() {
   ready = function() {
     console.debug("loaded network.map.html");
     $("div#network-map").html("");
-    var network_map = new Map("network-map",  // TODO - consider caching the map
+    var network_map = new Map("network-map",  // TODO - consider caching the map :)
                               afrimesh.settings.location.longitude,
                               afrimesh.settings.location.latitude,
                               afrimesh.settings.map.extent,
@@ -44,16 +44,22 @@ function() {
     clearTimeout(timer);
     var now = new Date();
 
+    // tag all active network elements, adding new ones to the map as needed
     afrimesh.network.mesh.routers().map(function(router) { 
-
-        var feature = network_map.router(router);
-        //console.debug(router.address + " - " + feature.router.address);
-        feature.last_seen = now;
+        //console.debug(dump_object(router));
+        var router_feature = network_map.router(router);
+        router_feature.last_seen = now;
+        router.routes.map(function(route) {
+            //console.debug(dump_object(route));
+            route.parent = router; // TODO - afrimesh.js should be taking care of referential transparency!
+            var route_feature = network_map.route(route);
+            console.debug(route_feature);
+            route_feature.last_seen = now;
+          });
       });
 
     
     // go through all map features and set transparency relative to when they were last seen
-    
   
 
     console.debug("updated network map");
