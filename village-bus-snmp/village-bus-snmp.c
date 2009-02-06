@@ -28,12 +28,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-#include <json/json.h>
-
+#include <strings.h>
 #include <net-snmp/net-snmp-config.h>
 #include <net-snmp/net-snmp-includes.h>
-
+#include <json/json.h>
 #include <json_cgi.h>
 
 
