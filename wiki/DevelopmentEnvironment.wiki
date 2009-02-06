@@ -48,3 +48,4 @@ Configuring an afrimesh development environment.
 = Compile & Install =
 
 = Test Installation =
+  * Install /etc/config/afrimesh
