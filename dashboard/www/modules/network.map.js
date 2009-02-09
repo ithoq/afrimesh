@@ -79,6 +79,10 @@ var Map = undefined;
     };
 
 
+    /** 
+     * Return the map feature representing the given router, creating it and 
+     * adding it to the map if it doesn't exist yet.
+     */
     this.router = function(router) {
       var feature = the_map.routers.getFeatureById(router.address);
       if (feature) {
@@ -99,7 +103,12 @@ var Map = undefined;
     };
 
 
+    /** 
+     * Return the map feature representing the given route, creating it and 
+     * adding it to the map if it doesn't exist yet.
+     */
     this.route = function(route) {
+      if (route.gateway) { return {}; } // skip gateways for now
       var feature = the_map.routes.getFeatureById(route.router + "->" + route.neighbour);
       if (feature) {
         return feature;
@@ -107,13 +116,19 @@ var Map = undefined;
       return add_route(route);
     };
     function add_route(route) {
+      var feature_origin      = the_map.routers.getFeatureById(route.router);
+      var feature_destination = the_map.routers.getFeatureById(route.neighbour);
+      if (!feature_origin      || !feature_origin.geometry ||
+          !feature_destination || !feature_destination.geometry) {
+        //console.debug("Still waiting for location information for route: " + (route.router + "->" + route.neighbour));
+        return {};
+      }
       var feature = new OpenLayers.Feature.Vector();
       feature.id = route.router + "->" + route.neighbour;
-
-      console.debug("Added route for router: " + route.parent.address);
-
-
-
+      feature.route = route;
+      feature.geometry = new OpenLayers.Geometry.LineString([ feature_origin.geometry, feature_destination.geometry ]);
+      the_map.routes.addFeatures([feature]);
+      //console.debug("Added route for route: " + (route.router + "->" + route.neighbour));
       return feature;
     };
     
@@ -124,6 +139,23 @@ var Map = undefined;
 
     function on_position(feature) {
       console.log("on_position: " + dump_object(feature.router));
+      // update router location config
+
+      // update route geometry
+      feature.router.routes.map(function(route) {
+          if (route.gateway) { return; } // skip gateways for now
+          console.debug("Updating route geometry for: " + (route.router + "->" + route.neighbour));
+          var feature_destination = the_map.routers.getFeatureById(route.neighbour);
+          var feature_route       = the_map.routes.getFeatureById(route.router + "->" + route.neighbour);
+          if (!feature_destination || !feature_route) {
+            continue;
+          }
+          // just a tad irritating to have to remove and re-add features when changing geometry!
+          the_map.routes.removeFeatures([feature_route]); 
+          feature_route.geometry = new OpenLayers.Geometry.LineString([ feature.geometry, feature_destination.geometry ]); 
+          the_map.routes.addFeatures([feature_route]);
+          the_map.routes.redraw();
+        });
     };
 
   };

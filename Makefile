@@ -27,73 +27,100 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 #
 
+
 DEPROOT=/Volumes/afrimesh-dev/ext
 KAMIKAZE=/Volumes/afrimesh-dev/ext/kamikaze
 
+
+# - binaries -----------------------------------------------------------------
+VILLAGERS=village-bus-batman village-bus-radius village-bus-snmp village-bus-uci
+
+
+# - platform detection -------------------------------------------------------
+UNAME = $(shell uname)
+ifeq ($(UNAME),Linux)
+DASHBOARD_WWW=/var/www
+DASHBOARD_CGI=/var/www/cgi-bin
+endif
+ifeq ($(UNAME),FreeBSD)
 DASHBOARD_WWW=/usr/local/www/apache22/data
 DASHBOARD_CGI=/usr/local/www/apache22/cgi-bin
+endif
+
+
+
 INSTALL=cp -rf
 MKDIR=mkdir -p
 
 
+
 # TODO - crunch all javascript into a single file ?
 
-
-# - linux --------------------------------------------------------------------
-
-VILLAGERS=village-bus-batman village-bus-radius village-bus-snmp village-bus-uci
-
-clean :
-	cd village-bus-batman ; make clean
-	cd village-bus-radius ; make clean
-	cd village-bus-snmp   ; make clean
-	cd village-bus-uci    ; make clean
-
-linux : linux-symlink village-bus
-
-linux-symlink :
-	rm ext/lib
-	cd ext ; ln -s ./lib-x86-linux ./lib
-
+# - common -------------------------------------------------------------------
 village-bus : $(VILLAGERS)
 	cd village-bus-batman ; make
 	cd village-bus-radius ; make
 	cd village-bus-snmp   ; make
 	cd village-bus-uci    ; make
 
+install-www:
+	@echo "Installing dashboard web interface in: $(DASHBOARD_WWW)"
+	#rm dashboard/www/javascript
+	$(INSTALL) dashboard/www/index.html $(DASHBOARD_WWW)
+	$(INSTALL) dashboard/www/images     $(DASHBOARD_WWW)
+	$(INSTALL) dashboard/www/style      $(DASHBOARD_WWW)
+	$(INSTALL) dashboard/www/modules    $(DASHBOARD_WWW)
+	$(INSTALL) dashboard/javascript     $(DASHBOARD_WWW)
+	$(INSTALL) dashboard/cgi-bin/ajax-proxy.cgi $(DASHBOARD_CGI)
+	find $(DASHBOARD_WWW) -name "*~"   | xargs rm -f
+	find $(DASHBOARD_WWW) -name ".svn" | xargs rm -rf
+	find $(DASHBOARD_CGI) -name "*~"   | xargs rm -f
+	find $(DASHBOARD_CGI) -name ".svn" | xargs rm -rf
+	#cd dashboard/www ; ln -s ../javascript ./javascript # replace symlink
+
+clean-www: 
+	@echo "Cleaning"
+	rm -rf $(DASHBOARD_WWW)/index.html
+	rm -rf $(DASHBOARD_WWW)/images
+	rm -rf $(DASHBOARD_WWW)/style
+	rm -rf $(DASHBOARD_WWW)/modules
+	rm -rf $(DASHBOARD_WWW)/javascript
+	rm -rf $(DASHBOARD_CGI)/*
+
+clean : clean-www
+	cd village-bus-batman ; make clean
+	cd village-bus-radius ; make clean
+	cd village-bus-snmp   ; make clean
+	cd village-bus-uci    ; make clean
+
+
+
+# - linux --------------------------------------------------------------------
+linux : symlink-linux village-bus
+
+symlink-linux:
+	rm ext/lib
+	cd ext ; ln -s ./lib-x86-linux ./lib
+
+install-linux: linux install-www
+
+
 
 # - freebsd ------------------------------------------------------------------
-clean-freebsd : 
-	echo "Cleaning"
-	rm -rf $(DASHBOARD_WWW)/*
-	rm -rf $(DASHBOARD_CGI)/*
-	rm -f dashboard/www/javascript
+freebsd : symlink-freebsd village-bus-freebsd
 
-freebsd : freebsd-symlink village-bus
-
-freebsd-symlink :
+symlink-freebsd:
 	rm ext/lib
 	cd ext ; ln -s ./lib-x86-freebsd ./lib
-
 
 village-bus-freebsd : village-bus-snmp/village-bus-snmp
 	cd village-bus-snmp ; make village-bus-snmp
 	$(INSTALL) village-bus-snmp/village-bus-snmp $(DASHBOARD_CGI)
 
-install-freebsd : clean-freebsd village-bus-freebsd
-	echo "Installing on FreeBSD machine"
-	$(INSTALL) dashboard/www/index.html $(DASHBOARD_WWW)
-	$(INSTALL) dashboard/www/images     $(DASHBOARD_WWW)
-	$(INSTALL) dashboard/www/style      $(DASHBOARD_WWW)
-	$(INSTALL) dashboard/www/widgets    $(DASHBOARD_WWW)
-	$(INSTALL) dashboard/javascript     $(DASHBOARD_WWW)
-	$(INSTALL) dashboard/cgi-bin/ajax-proxy.cgi $(DASHBOARD_CGI)
-	find $(DASHBOARD_WWW) -name "*~"   | xargs rm
-	find $(DASHBOARD_WWW) -name ".svn" | xargs rm -rf
-	find $(DASHBOARD_CGI) -name "*~"   | xargs rm
-	find $(DASHBOARD_CGI) -name ".svn" | xargs rm -rf
-	echo "Finishing up"
-	cd dashboard/www ; ln -s ../javascript ./javascript # replace symlink
+install-freebsd : freebsd install-www
+
+
+
 
 # - openwrt ------------------------------------------------------------------
 all-openwrt :

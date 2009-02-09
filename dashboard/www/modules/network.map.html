@@ -44,17 +44,13 @@ function() {
     clearTimeout(timer);
     var now = new Date();
 
-    // tag all active network elements, adding new ones to the map as needed
+    // tag all active network elements with last seen time and add new elements to the map
     afrimesh.network.mesh.routers().map(function(router) { 
-        //console.debug(dump_object(router));
         var router_feature = network_map.router(router);
         router_feature.last_seen = now;
         router.routes.map(function(route) {
-            //console.debug(dump_object(route));
-            route.parent = router; // TODO - afrimesh.js should be taking care of referential transparency!
             var route_feature = network_map.route(route);
-            console.debug(route_feature);
-            route_feature.last_seen = now;
+            route_feature.last_seen = now; 
           });
       });
 
@@ -62,7 +58,7 @@ function() {
     // go through all map features and set transparency relative to when they were last seen
   
 
-    console.debug("updated network map");
+    //console.debug("updated network map");
     //timer = setTimeout(function() { update(network_map); }, 10000);
   };
 
