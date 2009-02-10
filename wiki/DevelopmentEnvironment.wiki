@@ -7,6 +7,8 @@ Configuring an afrimesh development environment.
   * Any httpd  
     ** I'm using apache for a Linux or FreeBSD install and busybox when running under OpenWRT
   * net-snmp 
+  * uci
+  * json-c
   * bash   (to be deprecated)
   * curl     (to be deprecated)
   * wget   (to be deprecated)
