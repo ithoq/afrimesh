@@ -21,3 +21,11 @@ Run as required:
   apt-get install snmp
   apt-get install libsnmp-dev 
   }}}
+  * curl:
+  {{{
+  apt-get install curl
+  }}}
+  * wget:
+  {{{
+  apt-get install wget
+  }}}
