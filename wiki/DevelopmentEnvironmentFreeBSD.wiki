@@ -11,7 +11,8 @@ Run as required:
   }}}
   * uci:   
   {{{
-  cd /usr/ports/devel
+  cd /usr/ports/misc/uci
+  make install clean
   }}}
 
 
