@@ -23,7 +23,7 @@ Configuring an afrimesh development environment.
 = Platform Specific Instructions =
 
   * DevelopmentEnvironmentUbuntu
-  * DevelopmentEnvironmentFreeBSD
+  * [DevelopmentEnvironmentFreeBSD]
 
 
 = Source =
