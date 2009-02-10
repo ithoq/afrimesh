@@ -133,6 +133,14 @@ var BootVillageBus = function (afrimesh) {
         async   : true });
   };
 
+  villagebus.uci.set.sync = function(address, entries) {
+    return make_json_request({ 
+        url     : villagebus.uci.url(address), 
+        request : { package: "uci", command: "set", arguments: entries }, 
+        success : make_sync_response_handler(address, "villagebus.uci"),
+        async   : false });
+  };
+
   villagebus.uci.set.async = function(f, address, entries) {
     return make_json_request({ 
         url     : villagebus.uci.url(address), 
