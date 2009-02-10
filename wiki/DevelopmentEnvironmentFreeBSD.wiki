@@ -17,5 +17,6 @@ Run as required:
 
 Alternatively, if you don't want to clutter your system with a long list of dependencies you can compile the sources manually and install them into the ext/ directory off the afrimesh buildroot
 
-uci : http://downloads.openwrt.org/sources/uci-0.7.3.tar.gz
-libjson : http://oss.metaparadigm.com/json-c/      
+uci : `http://downloads.openwrt.org/sources/uci-0.7.3.tar.gz`
+
+libjson : `http://oss.metaparadigm.com/json-c/`
