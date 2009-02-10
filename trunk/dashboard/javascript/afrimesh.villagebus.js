@@ -62,6 +62,7 @@ var BootVillageBus = function (afrimesh) {
 
 
   /** - villagebus.snmp --------------------------------------------------- */
+  // snmpwalk -v 2c -c public 196.211.3.106 SysDescr
   villagebus.snmp = function(address, community, oids) {
     return villagebus.snmp.sync(address, community, oids);
   };
