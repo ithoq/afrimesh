@@ -138,13 +138,18 @@ var Map = undefined;
     };
 
     function on_position(feature) {
-      console.log("on_position: " + dump_object(feature.router));
       // update router location config
-
+      var location = new OpenLayers.LonLat(feature.geometry.x, feature.geometry.y).transform(epsg_900913, epsg_4326);
+      afrimesh.villagebus.uci.set.async(function (response) {
+          console.debug("Updated router location for:" + feature.router.address);
+        }, 
+        feature.router.address, 
+        [ { config: "afrimesh", section: "location", option: "longitude", value: location.lon }, 
+          { config: "afrimesh", section: "location", option: "latitude",  value: location.lat } ]);
+      
       // update route geometry
       feature.router.routes.map(function(route) {
           if (route.gateway) { return; } // skip gateways for now
-          console.debug("Updating route geometry for: " + (route.router + "->" + route.neighbour));
           var feature_destination = the_map.routers.getFeatureById(route.neighbour);
           var feature_route       = the_map.routes.getFeatureById(route.router + "->" + route.neighbour);
           if (!feature_destination || !feature_route) {
@@ -155,6 +160,7 @@ var Map = undefined;
           feature_route.geometry = new OpenLayers.Geometry.LineString([ feature.geometry, feature_destination.geometry ]); 
           the_map.routes.addFeatures([feature_route]);
           the_map.routes.redraw();
+          console.debug("Updated route geometry for: " + (route.router + "->" + route.neighbour));
         });
     };
 

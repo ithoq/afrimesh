@@ -19,36 +19,35 @@ if [ -f /usr/local/bin/curl ]; then
 fi
 
     
-
+# read & parse query
 QUERY=$QUERY_STRING
 if [ "$REQUEST_METHOD" = "POST" ]; then
-    read QUERY
-    QUERY=`echo "$QUERY" | sed 's/\"/\\\"/g'`
+    read RAW_QUERY
+    #QUERY=`echo "$RAW_QUERY" | sed 's/\"/\\\"/g'`
+    QUERY=`echo "$RAW_QUERY" | sed "s/\"/"\\\\\'"/g"`
 fi
-#echo "ajax-proxy.cgi - QUERY: $QUERY" >> /tmp/village-bus.log
-
 URL=`echo "$QUERY_STRING" | grep -oE "(^|[?&])url=[^&]+" | sed "s/%20/ /g" | cut -f 2- -d "="`
 
-#echo "ajax-proxy.cgi - QUERY_STRING: $QUERY_STRING" >> /tmp/village-bus.log
-echo "ajax-proxy.cgi - URL: |$URL|" >> /tmp/village-bus.log
 
-COMMAND="$WGET -q -O - $URL"
+REQUEST="$WGET -q -O - $URL"
 if [ "$REQUEST_METHOD" = "POST" ]; then
-#    COMMAND="wget --post-data="$QUERY" -q -O - $URL"
-    COMMAND="$CURL -d \"$QUERY\" $URL"
+    #REQUEST="wget --post-data="$QUERY" -q -O - $URL"
+    REQUEST="$CURL -d \"$QUERY\" $URL"
 fi
 
-#echo "ajax-proxy.cgi - REQUEST_METHOD: $REQUEST_METHOD" >> /tmp/village-bus.log
-#echo "ajax-proxy.cgi - QUERY_STRING: $QUERY_STRING" >> /tmp/village-bus.log
-#echo "ajax-proxy.cgi - QUERY: $QUERY" >> /tmp/village-bus.log
-#echo "ajax-proxy.cgi - COMMAND: $COMMAND" >> /tmp/village-bus.log
-#echo "ajax-proxy.cgi - Started Fetching: $URL" >> /tmp/village-bus.log
+#echo "ajax-proxy.cgi - METHOD:    $REQUEST_METHOD" >> /tmp/village-bus.log
+#echo "ajax-proxy.cgi - RAW_QUERY: $RAW_QUERY" >> /tmp/village-bus.log
+#echo "ajax-proxy.cgi - QUERY:     $QUERY"     >> /tmp/village-bus.log
+#echo "ajax-proxy.cgi - REQUEST:   $REQUEST"   >> /tmp/village-bus.log
+#echo "ajax-proxy.cgi - URL:       $URL"       >> /tmp/village-bus.log
 
 echo "Content-type: text/html"
 echo
-#result=`$COMMAND`
-#echo "RESULT: |$result|" >> /tmp/village-bus.log
-#echo $result
-eval $COMMAND
+RESPONSE=`eval $REQUEST`
+echo $RESPONSE
+
+
+#echo RESPONSE: $RESPONSE >> /tmp/village-bus.log
+
 
 #echo "ajax-proxy.cgi - Finished Fetching: $URL" >> /tmp/village-bus.log

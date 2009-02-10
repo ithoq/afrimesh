@@ -102,17 +102,13 @@ var BootVillageBus = function (afrimesh) {
   // INJ - TODO - modify ajax_proxy.cgi to be able to chain ajax proxy calls ?
   // INJ.alt - the way open mesh deals with this is to have the mesh nodes pull requests to the
   //           dashboard rather than the dashboard pushing to the nodes. Hrmm. Must ponder.
-  if (afrimesh.settings.hosts.mesh_gateway == afrimesh.settings.hosts.dashboard_server) {
-    villagebus.uci.url = function(address) { 
-      return afrimesh.villagebus.ajax_proxy + "http://" + address + "/cgi-bin/village-bus-uci";
-    };
-  } else {
-    villagebus.uci.url = function(address) { 
-      var s = afrimesh.villagebus.ajax_proxy  + "http://" + afrimesh.settings.hosts.mesh_gateway + 
-      afrimesh.settings.ajax_proxy    + "http://" + address + "/cgi-bin/village-bus-uci";
-      return s;
-    };
-  }
+  villagebus.uci.url = function(address) { 
+    //return afrimesh.villagebus.ajax_proxy + "http://" + address + "/cgi-bin/village-bus-uci";
+    //return "http://" + afrimesh.settings.hosts.mesh_gateway + afrimesh.settings.ajax_proxy + 
+    //       "http://" + address + "/cgi-bin/village-bus-uci"
+    return afrimesh.villagebus.ajax_proxy  + "http://" + afrimesh.settings.hosts.mesh_gateway + 
+           afrimesh.settings.ajax_proxy    + "http://" + address + "/cgi-bin/village-bus-uci";
+  };
 
   villagebus.uci.get = function(address, selector) {
     return villagebus.uci.get.sync(address, selector);
@@ -137,7 +133,12 @@ var BootVillageBus = function (afrimesh) {
         async   : true });
   };
 
-  villagebus.uci.set.sync = function(address, entries) {
+  villagebus.uci.set.async = function(f, address, entries) {
+    return make_json_request({ 
+        url     : villagebus.uci.url(address), 
+        request : { package: "uci", command: "set", arguments: entries }, 
+        success : make_async_response_handler(f, address, "villagebus.uci"),
+        async   : true });
   };
 
 
