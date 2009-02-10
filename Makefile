@@ -37,10 +37,12 @@ VILLAGERS=village-bus-batman village-bus-radius village-bus-snmp village-bus-uci
 
 
 # - platform detection -------------------------------------------------------
+DASHBOARD_WWW=/tmp/www
+DASHBOARD_CGI=/tmp/www/cgi-bin
 UNAME = $(shell uname)
 ifeq ($(UNAME),Linux)
 DASHBOARD_WWW=/var/www
-DASHBOARD_CGI=/var/www/cgi-bin
+DASHBOARD_CGI=/usr/lib/cgi-bin
 endif
 ifeq ($(UNAME),FreeBSD)
 DASHBOARD_WWW=/usr/local/www/apache22/data
@@ -66,12 +68,14 @@ village-bus : $(VILLAGERS)
 install-www:
 	@echo "Installing dashboard web interface in: $(DASHBOARD_WWW)"
 	#rm dashboard/www/javascript
+	#[ -f $(DASHBOARD_CGI) ] && echo "HAVE CGI"
 	$(INSTALL) dashboard/www/index.html $(DASHBOARD_WWW)
 	$(INSTALL) dashboard/www/images     $(DASHBOARD_WWW)
 	$(INSTALL) dashboard/www/style      $(DASHBOARD_WWW)
 	$(INSTALL) dashboard/www/modules    $(DASHBOARD_WWW)
 	$(INSTALL) dashboard/javascript     $(DASHBOARD_WWW)
 	$(INSTALL) dashboard/cgi-bin/ajax-proxy.cgi $(DASHBOARD_CGI)
+	for i in $(VILLAGERS); do echo "Installing: $$i"; $(INSTALL) $$i/$$i $(DASHBOARD_CGI); done
 	find $(DASHBOARD_WWW) -name "*~"   | xargs rm -f
 	find $(DASHBOARD_WWW) -name ".svn" | xargs rm -rf
 	find $(DASHBOARD_CGI) -name "*~"   | xargs rm -f

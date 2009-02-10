@@ -22,6 +22,7 @@ var BootVillageBus = function (afrimesh) {
     for (var p in this) { if (p != "prototype") ret.push(p); }
     return ret;
   };
+  villagebus.ajax_proxy = "http://" + afrimesh.settings.hosts.dashboard_server + afrimesh.settings.ajax_proxy;
 
 
   /** - villagebus.batman ------------------------------------------------- */
@@ -30,18 +31,14 @@ var BootVillageBus = function (afrimesh) {
     return this.vis.sync(); 
   }; 
 
-  villagebus.batman.vis.url  = "http://" + afrimesh.settings.hosts.batman_vis_server + ":2004";
-  villagebus.batman.vis.urlf = function() { return "http://" + afrimesh.settings.hosts.batman_vis_server + ":2004"; };
+  villagebus.batman.vis.url  = villagebus.ajax_proxy + "http://" + afrimesh.settings.hosts.batman_vis_server + ":2004";
   
-  villagebus.batman.vis.async = function(f) { 
-    var xml = new XMLHttpRequest();
-    xml.open("POST", this.url, true); 
-    xml.onreadystatechange = function() {
-      if (xml.readyState == 4) {
-        f(eval(xml.responseText));
-      }
-    };
-    xml.send("{}");
+  villagebus.batman.vis.async = function(handler) { 
+    var xml = make_json_request({
+        url     : this.url,
+        request : {},
+        success : handler,
+        async   : true });
     return xml;
   };
   villagebus.batman.vis.poll = function(f, frequency) {   
@@ -49,33 +46,16 @@ var BootVillageBus = function (afrimesh) {
     setTimeout(function() { afrimesh.villagebus.batman.vis.poll(f, frequency); }, 
                frequency);
   };
-  // UDE - we can't use the sleep() approach because browser javascript is single threaded
-  // and gives no access to the event loop
-  // INJ - Use a synchronous XMLHttpRequest
-  // NB  - Now it no longer works in xpcshell!   
-  villagebus.batman.vis.sync = function() { // TODO - error handling + timeout 
-    var request  = new XMLHttpRequest();
-    var response;
-    request.open("POST", this.url, false);
-    request.onreadystatechange = function() {
-      if (request.readyState == 4) {
-        response = eval(request.responseText);
-      }
-    };
-    request.send("{}");
-    return response;
+  villagebus.batman.vis.sync = function() { 
+    var handler  = function(data) { handler.response = data;  };
+    var xml = make_json_request({
+        url     : this.url,
+        request : {},
+        success : handler,
+        async   : false });
+    return handler.response;
   };
-  /**villagebus.batman.vis.sync = function() { 
-    var response = undefined;
-    var xml = this.async(function(routes) { 
-        response = routes;
-      });
-    while (!response) { 
-      sleep(); 
-    }
-    return response; 
-  };*/
-  
+
   
   /** - villagebus.radius ------------------------------------------------- */
   villagebus.radius = undefined;
@@ -87,6 +67,7 @@ var BootVillageBus = function (afrimesh) {
   };
 
   villagebus.snmp.url = "http://" + afrimesh.settings.hosts.dashboard_server + "/cgi-bin/village-bus-snmp";
+  console.log("snmp.url=" + villagebus.snmp.url);
 
   villagebus.snmp.async = function(f, address, community, oids) {
     // TODO
@@ -120,8 +101,17 @@ var BootVillageBus = function (afrimesh) {
   // INJ - TODO - modify ajax_proxy.cgi to be able to chain ajax proxy calls ?
   // INJ.alt - the way open mesh deals with this is to have the mesh nodes pull requests to the
   //           dashboard rather than the dashboard pushing to the nodes. Hrmm. Must ponder.
-  villagebus.uci.ajax_proxy = "http://" + afrimesh.settings.hosts.mesh_gateway + afrimesh.settings.ajax_proxy;
-  villagebus.uci.url = function(address) { return villagebus.uci.ajax_proxy + "http://" + address + "/cgi-bin/village-bus-uci"; }
+  if (afrimesh.settings.hosts.mesh_gateway == afrimesh.settings.hosts.dashboard_server) {
+    villagebus.uci.url = function(address) { 
+      return afrimesh.villagebus.ajax_proxy + "http://" + address + "/cgi-bin/village-bus-uci";
+    };
+  } else {
+    villagebus.uci.url = function(address) { 
+      var s = afrimesh.villagebus.ajax_proxy  + "http://" + afrimesh.settings.hosts.mesh_gateway + 
+      afrimesh.settings.ajax_proxy    + "http://" + address + "/cgi-bin/village-bus-uci";
+      return s;
+    };
+  }
 
   villagebus.uci.get = function(address, selector) {
     return villagebus.uci.get.sync(address, selector);
@@ -171,8 +161,9 @@ var BootVillageBus = function (afrimesh) {
 
   function make_sync_response_handler(address, name) {
     var handler = function(data) {
-      if (data.length != 1) {
+      if (data.length == 0) {
         console.error(name + " failed to get data from address: " + address);
+        console.error(data);
         return;
       } 
       if (data[0].error) {
@@ -186,8 +177,9 @@ var BootVillageBus = function (afrimesh) {
 
   function make_async_response_handler(f, address, name) {
     var handler = function(data) {
-      if (data.length != 1) {
+      if (data.length == 0) {
         console.error(name + " failed to get data from address: " + address);
+        console.error(data);
         return;
       } 
       if (data[0].error) {

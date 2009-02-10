@@ -23,11 +23,15 @@ fi
 QUERY=$QUERY_STRING
 if [ "$REQUEST_METHOD" = "POST" ]; then
     read QUERY
-    echo "ajax-proxy.cgi - QUERY: $QUERY" >> /tmp/village-bus.log
     QUERY=`echo "$QUERY" | sed 's/\"/\\\"/g'`
 fi
+#echo "ajax-proxy.cgi - QUERY: $QUERY" >> /tmp/village-bus.log
 
-URL=`echo "$QUERY_STRING" | grep -oE "(^|[?&])url=[^&]+" | sed "s/%20/ /g" | cut -f 2 -d "="`
+URL=`echo "$QUERY_STRING" | grep -oE "(^|[?&])url=[^&]+" | sed "s/%20/ /g" | cut -f 2- -d "="`
+
+#echo "ajax-proxy.cgi - QUERY_STRING: $QUERY_STRING" >> /tmp/village-bus.log
+echo "ajax-proxy.cgi - URL: |$URL|" >> /tmp/village-bus.log
+
 COMMAND="$WGET -q -O - $URL"
 if [ "$REQUEST_METHOD" = "POST" ]; then
 #    COMMAND="wget --post-data="$QUERY" -q -O - $URL"

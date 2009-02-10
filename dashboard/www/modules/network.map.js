@@ -148,7 +148,7 @@ var Map = undefined;
           var feature_destination = the_map.routers.getFeatureById(route.neighbour);
           var feature_route       = the_map.routes.getFeatureById(route.router + "->" + route.neighbour);
           if (!feature_destination || !feature_route) {
-            continue;
+            return;
           }
           // just a tad irritating to have to remove and re-add features when changing geometry!
           the_map.routes.removeFeatures([feature_route]); 
