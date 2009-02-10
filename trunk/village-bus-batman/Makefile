@@ -34,9 +34,9 @@ SRC_FILES= "\(\.c\)\|\(\.h\)\|\(Makefile\)\|\(INSTALL\)\|\(LIESMICH\)\|\(README\
 SRC_C= allocate.c hash.c list-batman.c vis.c udp_server.c
 SRC_H= allocate.h hash.h list-batman.h vis.h vis-types.h
 
-PACKAGE_NAME=	vis
+PACKAGE_NAME=	village-bus-batman
 
-BINARY_NAME=	vis
+BINARY_NAME=	village-bus-batman
 SOURCE_VERSION_HEADER= vis.h
 
 REVISION=		$(shell svn info | grep "Rev:" | sed -e '1p' -n | awk '{print $$4}')

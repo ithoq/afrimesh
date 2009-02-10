@@ -22,7 +22,7 @@ var afrimesh = undefined;
         server    : "openstreetmaps.org",
         extent    : 0.025, // in degrees 
         zoom      : 16,
-        aerial    : true
+        aerial    : false
       },
       locale       : "en_US.UTF-8",
       hosts        : {

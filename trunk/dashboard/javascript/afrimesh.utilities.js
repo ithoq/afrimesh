@@ -104,7 +104,7 @@
    * Also see: http://stackoverflow.com/questions/55633/where-is-the-console-api-for-webkitsafari
    *           http://code.google.com/p/fbug/source/browse/trunk/lite/firebug.js?r=366
    */
-  try {  window; } catch (e) { var window = undefined; }
+  //try { window; } catch (e) { var window = undefined; } // TODO - breaks firefox
   if (typeof window === "undefined") {  // running from the command line
     window = {};
     window.console = { };
