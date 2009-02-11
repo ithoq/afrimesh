@@ -29,17 +29,13 @@ Run as required:
   {{{
   apt-get install wget
   }}}
-
-Also download and run:
-  * libuci - http://afrimesh.googlecode.com/files/libuci-0.7.3_i386.deb
-  * libjson - http://afrimesh.googlecode.com/files/libjson-0.8_i386.deb
-
-After all dependencies have been installed, copy the following files from /usr/local/lib to the ext/lib folder in the afrimesh source directory, before starting the afrimesh build process.
-  * libuci.a
-  * libuci.so
-  * libuci.so.7
-  * libjson.a
-  * libjson.la
-  * libjson.so
-  * libjson.so.0
-  * libjson.so.0.0.1
+  * libuci:
+  {{{
+  wget http://afrimesh.googlecode.com/files/libuci-0.7.3_i386.deb
+  dpkg -i libuci-0.7.3_i386.deb
+  }}}
+  * libjson:
+  {{{
+  wget http://afrimesh.googlecode.com/files/libjson-0.8_i386.deb
+  dpkg -i libjson-0.8_i386.deb
+  }}}
