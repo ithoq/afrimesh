@@ -29,7 +29,6 @@
 
 
 # json
-DEPROOT=../ext/
 JSON_INCLUDES=-I$(DEPROOT)/include
 JSON_LDFLAGS=$(DEPROOT)/lib/libjson.a
 

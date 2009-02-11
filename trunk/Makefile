@@ -28,7 +28,7 @@
 #
 
 
-DEPROOT=/Volumes/afrimesh-dev/ext
+DEPROOT=`pwd`/ext
 KAMIKAZE=/Volumes/afrimesh-dev/ext/kamikaze
 
 
@@ -37,12 +37,13 @@ VILLAGERS=village-bus-batman village-bus-radius village-bus-snmp village-bus-uci
 
 
 # - platform detection -------------------------------------------------------
-DASHBOARD_WWW=/tmp/www
-DASHBOARD_CGI=/tmp/www/cgi-bin
+DASHBOARD_WWW=/www
+DASHBOARD_CGI=/www/cgi-bin
 UNAME = $(shell uname)
 ifeq ($(UNAME),Linux)
 DASHBOARD_WWW=/var/www
 DASHBOARD_CGI=/usr/lib/cgi-bin
+#DEPROOT=/usr/local
 endif
 ifeq ($(UNAME),FreeBSD)
 DASHBOARD_WWW=/usr/local/www/apache22/data
@@ -60,10 +61,10 @@ MKDIR=mkdir -p
 
 # - common -------------------------------------------------------------------
 village-bus : $(VILLAGERS)
-	cd village-bus-batman ; make
-	cd village-bus-radius ; make
-	cd village-bus-snmp   ; make
-	cd village-bus-uci    ; make
+	export DEPROOT=$(DEPROOT); cd village-bus-batman ; make
+	export DEPROOT=$(DEPROOT); cd village-bus-radius ; make
+	export DEPROOT=$(DEPROOT); cd village-bus-snmp   ; make
+	export DEPROOT=$(DEPROOT); cd village-bus-uci    ; make
 
 install-www:
 	@echo "Installing dashboard web interface in: $(DASHBOARD_WWW)"
