@@ -43,7 +43,7 @@ UNAME = $(shell uname)
 ifeq ($(UNAME),Linux)
 DASHBOARD_WWW=/var/www
 DASHBOARD_CGI=/usr/lib/cgi-bin
-#DEPROOT=/usr/local
+DEPROOT=/usr/local
 endif
 ifeq ($(UNAME),FreeBSD)
 DASHBOARD_WWW=/usr/local/www/apache22/data
