@@ -8,6 +8,13 @@
  */
 
 
+function BootCustomers(parent) {
+
+  var customers = function() { return afrimesh.villagebus.radius(); };
+
+
+  return customers;
+};
 console.debug("loaded afrimesh.customers.js");
 
 

@@ -1,0 +1,111 @@
+<!--
+ * Afrimesh: easy management for B.A.T.M.A.N. wireless mesh networks
+ * Copyright (C) 2008-2009 Meraka Institute of the CSIR
+ * All rights reserved.
+ *  
+ * This software is licensed as free software under the terms of the
+ * New BSD License. See /LICENSE for more information.
+-->
+
+<h2>Recharge Customers</h2>
+
+<div id="widget-customers-recharge" class="widget customers-recharge">
+  <table id="choose">
+    <tr>
+      <td><div class="button" id="60"><p><b>R10.00</b><i>60 minutes</i></p></div></td>
+      <td><div class="button" id="120"><p><b>R25.00</b><i>180 minutes</i></p></div></td>
+      <td><div class="button" id="300"><p><b>R50.00</b><i>480 minutes</i></p></div></td>
+      <td class="spacer"></td>
+      <td><div class="button-submit" id="prepaid-recharge"><p><b>recharge</b></p></div></td>
+    </tr>
+    <tr>
+      <td colspan="3" class="h-brace"></td>
+      <td class="spacer"></td>
+      <td class="h-brace"></td>
+    </tr>
+    <tr>
+      <td colspan="3" class="instructions">1. select plan</center></td>
+      <td class="spacer"></td>
+      <td class="instructions">2. profit!</td>
+    </tr>
+  </table>
+</div>
+
+
+
+<script type="text/javascript"> //<![CDATA[    
+(function() {
+
+  /** includes ------------------------------------------------------------ */
+
+
+  /** construction -------------------------------------------------------- */
+  ready = function() { // INJ 'ready' should be the only symbol we're exposing to the global namespace
+    $(".button").corner("8px");
+    $(".button-submit").corner("8px");
+    console.debug("loaded customers.recharge.html");
+    return unload;
+  };
+
+  function unload() {
+    console.debug("unloaded customers.recharge.html");
+  };
+
+
+  $("div.button").hover(function() { $(this).addClass   ("hover"); },
+                        function() { $(this).removeClass("hover"); });
+  $("div.button-submit").hover(function() { if (!$("div.button").hasClass("selected")) return; else $(this).addClass   ("hover"); },
+                               function() { $(this).removeClass("hover"); });
+  $("div.button").click(function() {
+      $("div.button-submit").removeClass("selected");
+      $("div.button").removeClass("selected");
+      $(this).addClass("selected");
+    });
+  $("div.button-submit").mousedown(function() {
+      if (!$("div.button").hasClass("selected")) return;
+      $(this).addClass("selected");
+    });
+  $("div.button-submit").mouseup(function() {
+      $(this).removeClass("selected");
+      // TODO - constructors for radius commands or maybe something else ?
+      radius_new.username = "mesh";
+      radius_new.type = "prepaid";
+      radius_new.seconds = $("div#widget-customers-recharge div.button.selected").get(0).id;
+      $.ajax({ 
+          url: config.dashboard_host + "/cgi-bin/village-bus-radius",
+            type: "POST", 
+            contentType: "application/json", 
+            processData: false,
+            dataType: "json", data: $.toJSON(radius_new),
+            success: 
+          function(data) { 
+            if (data.length < 1) { $("div#widget-customers-recharge").html("no data"); return; }
+            var s = "";
+            if (data[0].error) { s += "TODO: " + customer.error; }
+            s += "<center><table>";
+            s += "<tr><td><div class='voucher button'>";
+            s += "<p><b>" + data[0].username + "</b><i>username</i></p>";
+            s += "<p><b>" + data[0].password + "</b><i>password</i></p>";
+            s += "</div></td></tr>";
+            s += "<tr><td><div class='button-submit' id='menu-customers-recharge' style='float:center;'><p><b>print</b></p></div></td></tr>";
+            s += "</table><center>";
+            $("#widget-customers-recharge table").hide();
+            $("#widget-customers-recharge").html(s);
+            $(".voucher").corner("8px");
+            $(".button-submit").corner("8px");
+            $("div.button-submit").hover(function() { $(this).addClass   ("hover"); },
+                                         function() { $(this).removeClass("hover"); });
+            $("div.button-submit").click(function() { $("#menu-customers-recharge").click(); });
+          }
+        });
+    });
+
+
+
+  /** done ---------------------------------------------------------------- */
+  console.debug("loaded customers.recharge.js");
+
+})();
+//]]></script>
+
+

@@ -22,7 +22,7 @@
     <script type="text/javascript" src="javascript/jquery/jquery.js"></script>
     <script type="text/javascript" src="javascript/jquery/jquery.json.js"></script>
     <!-- script type="text/javascript" src="javascript/jquery/jquery.ui.js"></script -->
-    <!-- script type="text/javascript" src="javascript/jquery/jquery.corner.js"></script --> <!-- http://jrc.meerbox.nl/ - TODO deprecate -->
+    <script type="text/javascript" src="javascript/jquery/jquery.corner.js"></script> <!-- http://jrc.meerbox.nl/ - TODO deprecate -->
                                                                                       <!-- also look at: http://www.malsup.com/jquery/corner/ -->
                                                                                       <!--               http://www.ruzee.com/files/shadedborder/ -->
     <!-- afrimesh -->
@@ -73,29 +73,25 @@
         // UDE as the code currently stands we cannot load a module into the
         //     browser as a standalone
         var unloader = function() {  };
-        //var ready    = function() {  };
-        $("div#menu li#network a#health").click(function(event) { 
-            unloader();  // UDE ready() and unloader() should really be Objekt constructors and destructors
-            $("div#content").hide();
-            $("div#content").load("modules/network.health.html", function(page) { 
-                $("div#content").fadeIn("slow"); 
-                // UDE fades mess with load completion and require a ready() method :(
-                unloader = ready();
+        function add_menu_item(section, item) {
+          $("div#menu li#" + section + " a#" + item).click(function(event) {
+              unloader(); 
+              $("div#content").hide();
+              $("div#content").load("modules/" + section + "." + item + ".html", function(page) { 
+                  $("div#content").fadeIn("slow"); 
+                  unloader = ready(); // UDE fades mess with load completion and require a ready() method :(
+                });
+              return false;
             });
-            return false;
-          });
-        $("div#menu li#network a#map").click(function(event) { 
-            unloader();
-            $("div#content").hide();
-            $("div#content").load("modules/network.map.html", function(page) { 
-                $("div#content").fadeIn("slow"); 
-                unloader = ready();
-            });
-            return false;
-          });
+        };
+        add_menu_item("customers", "recharge");
+        add_menu_item("customers", "manage");
+        add_menu_item("customers", "prices");
+        add_menu_item("network",   "map");
+        add_menu_item("network",   "health");
 
         /** set default page */
-        $("div#menu li#network a#map").click();
+        $("div#menu li#customers a#manage").click();
 
         /** loading complete, we can now remove our message */
         $("#message-loading").html("");
@@ -129,9 +125,9 @@
             <li id="customers" class="drawer">
               <h2 class="drawer-handle">Customers</h2>
               <ul> 
-                <li><a href="#" id="recharge" class="todo">Recharge</a></li>
-                <li><a href="#" id="manage"   class="todo">Manage</a></li>
-                <li><a href=""  id="prices"   class="todo">TODO: Prices</a></li>
+                <li><a href="#" id="recharge">Recharge</a></li>
+                <li><a href="#" id="manage">Manage</a></li>
+                <li><a href=""  id="prices">Prices</a></li>
               </ul>
             </li>
 
