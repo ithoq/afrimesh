@@ -48,17 +48,34 @@ var BootVillageBus = function (afrimesh) {
   };
   villagebus.batman.vis.sync = function() { 
     var handler  = function(data) { handler.response = data;  };
-    var xml = make_json_request({
+    return make_json_request({
         url     : this.url,
         request : {},
         success : handler,
         async   : false });
-    return handler.response;
   };
 
   
   /** - villagebus.radius ------------------------------------------------- */
-  villagebus.radius = undefined;
+  villagebus.radius = function() {
+    return villagebus.radius.list();
+  };
+
+  villagebus.radius.list = function() {
+    return villagebus.radius.list.sync();
+  };
+
+  villagebus.radius.list.sync = function() {
+    var handler = function(data) { handler.response = data; };
+    return make_json_request({
+        url     : villagebus.radius.url,
+        request : { package : "radius",
+                    command : "list" },
+        success : handler,
+        async   : false });
+  };
+
+  villagebus.radius.url = "http://" + afrimesh.settings.hosts.dashboard_server + "/cgi-bin/village-bus-radius";
 
 
   /** - villagebus.snmp --------------------------------------------------- */

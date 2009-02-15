@@ -13,7 +13,8 @@
   Array.prototype.cdr = function() { return (this.length > 1) ? this.slice(1) : []; };
   Array.prototype.first = Array.prototype.car;
   Array.prototype.rest  = Array.prototype.cdr;
-
+  Array.prototype.head  = Array.prototype.car;
+  Array.prototype.tail  = Array.prototype.cdr;
   
   /** - Make Javascript a better Javascript ------------------------------- */
   // See: http://thinkweb2.com/projects/prototype/instanceof-considered-harmful-or-how-to-write-a-robust-isarray/

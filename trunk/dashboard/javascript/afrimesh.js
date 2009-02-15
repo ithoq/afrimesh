@@ -45,7 +45,7 @@ var afrimesh = undefined;
       ajax_proxy    : "/cgi-bin/ajax-proxy.cgi?url="
     };
     this.network    = BootNetwork(this);
-    this.customers  = undefined;
+    this.customers  = BootCustomers(this);
     this.villagebus = BootVillageBus(this);
   };
   afrimesh = new Afrimesh();

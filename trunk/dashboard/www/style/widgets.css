@@ -51,14 +51,14 @@
 .customers-watch th      {   
   background-repeat: no-repeat;
   background-position: center right;
-  /*background-image: url(blue/bg.gif); */
-  /*cursor: hand;  TODO firefox */
+  background-image: url(images/bg.gif); 
+  cursor: hand;  /* TODO firefox */
 } 
 .customers-watch th.headerSortUp {
-  background-image: url(blue/asc.gif);
+  background-image: url(images/asc.gif);
 }
 .customers-watch th.headerSortDown {
-  background-image: url(blue/desc.gif);
+  background-image: url(images/desc.gif);
 }
 .customers-watch td      {  } 
 .customers-watch tr.idle { color: lightgray;  }
@@ -70,14 +70,14 @@
 .customers-manage th      {   
   background-repeat: no-repeat;
   background-position: center right;
-  /*background-image: url(blue/bg.gif); */
-  /*cursor: hand;  TODO firefox */
+  background-image: url(images/bg.gif); 
+  cursor: hand;  /* TODO firefox */
 } 
 .customers-manage th.headerSortUp {
-  background-image: url(blue/asc.gif);
+  background-image: url(images/asc.gif);
 }
 .customers-manage th.headerSortDown {
-  background-image: url(blue/desc.gif);
+  background-image: url(images/desc.gif);
 }
 .customers-manage td         { 
   padding-top: 0.5em;
@@ -88,13 +88,13 @@
 } 
 .customers-manage td.command span { 
   background: lightgray;  
-  /*border: 1px solid gray;*/
+  /*border: 1px solid red;*/
   padding: 0.1em 0.4em 0.2em 0.4em; /* top right bottom left */     
   /*padding-left: 0.4em;   
   padding-right: 0.4em;
   padding-bottom: 0.1em;*/
   margin-left: 0.3em;
-  /*cursor: hand;  TODO firefox */
+  cursor: hand;  /* TODO firefox */
 } 
 .customers-manage .button.hover {
   background: darkgray;
@@ -103,10 +103,12 @@
   background: gray;
 }
 .customers-manage .edit-username {  
-  /*cursor: caret;  TODO firefox */
+  width: 15em;
+  cursor: caret;  /* TODO firefox */
 }
 .customers-manage .edit-type {  
-  /*cursor: hand;  TODO firefox */
+  width: 7.5em;
+  cursor: hand;  /* TODO firefox */
 }
 
 
@@ -120,7 +122,7 @@
   background: lightgray;
   /*border: 1px solid gray;*/
   float: left;
-  /*cursor: hand;  TODO firefox */
+  cursor: hand;  /* TODO firefox */
 }
 .customers-recharge div.button-submit {
   background: #B2C3DD;
@@ -153,7 +155,7 @@
   background: white;
   border: 1px solid gray;
   width: 30em;
-  /*cursor: default;  TODO firefox */
+  cursor: default;  /* TODO firefox */
 }
 
 
