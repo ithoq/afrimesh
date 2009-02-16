@@ -122,7 +122,10 @@ int mysql(MYSQL** connection, const char* query, ...)
 			    radius_mysql_username,
 			    radius_mysql_password,
 			    radius_mysql_database, 0 , NULL, 0)) {
-      printf("\t{\n\t\terror : \"%s\"\n\t}\n", mysql_error(*connection));
+      char* message = mysql_error(*connection);
+      log_message("Failed to connect to mysql server: %s\n", radius_mysql_server);
+      log_message("Message was: %s\n", message);
+      printf("\t{\n\t\terror : \"%s\"\n\t}\n", message);
       return -1;
     }
   }
@@ -139,7 +142,10 @@ int mysql(MYSQL** connection, const char* query, ...)
 
   /* execute query */
   if (mysql_query(*connection, final_query) != 0) {
-    printf("\t{\n\t\terror : \"%s\"\n\t}\n", mysql_error(*connection));
+    char* message = mysql_error(*connection);
+    log_message("Error executing mysql query: %s\n", final_query);
+    log_message("Message was: %s\n", message);
+    printf("\t{\n\t\terror : \"%s\"\n\t}\n", message);
     return -1;
   } 
   free(final_query);
