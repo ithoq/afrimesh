@@ -10,10 +10,26 @@
 
 function BootCustomers(parent) {
 
-  var customers = function() { return afrimesh.villagebus.radius(); };
+  var customers = function() { return this.customers.status(); };
 
-  customers.status = function() { return afrimesh.villagebus.radius.who(); };
+  customers.select = function() { 
+    return afrimesh.villagebus.radius.select();
+  }
+  customers.insert = function(username, type, seconds) { 
+    return afrimesh.villagebus.radius.insert(username, type, seconds); 
+  };
+  customers.update = function(username, new_username, new_password, new_type) { 
+    return afrimesh.villagebus.radius.update(username, new_username, new_password, new_type); 
+  };
+  customers.remove = function(username) { 
+    return afrimesh.villagebus.radius.remove(username); 
+  };
+  customers.status  = function() {
+    return afrimesh.villagebus.radius.who();
+  };
 
+
+  
 
   return customers;
 };
