@@ -150,7 +150,7 @@ var BootVillageBus = function (afrimesh) {
 
   /** - villagebus.uci ---------------------------------------------------- */
   villagebus.uci = function(address) {
-    return villagebus.uci.get.sync(address, "*");
+    return villagebus.uci.get.sync(address, "");
   };
 
   // UDE - when dashboard_host != mesh_gateway then we need a way to be able to proxy

@@ -42,14 +42,17 @@ CFLAGS=$(INCLUDES) $(DEFINES) -g
 LDFLAGS=$(JSON_LDFLAGS) $(UCI_LDFLAGS) -L/usr/local/lib
 
 
-village-bus-uci : json_cgi.o village-bus-uci.o
-	$(CC) -o village-bus-uci *.o $(LDFLAGS) -lnetsnmp
+village-bus-uci : json_cgi.o village-bus-uci.o main.o
+	$(CC) -o village-bus-uci *.o $(LDFLAGS) 
 
 json_cgi.o : ../common/json_cgi.h ../common/json_cgi.c
 	$(CC) $(CFLAGS) -c ../common/json_cgi.c
 
-village-bus-uci.o : village-bus-uci.c
-	$(CC) -c village-bus-uci.c $(INCLUDES)
+village-bus-uci.o : village-bus-uci.c village-bus-uci.h
+	$(CC) $(CFLAGS) -c village-bus-uci.c
+
+main.o : village-bus-uci.h main.c
+	$(CC) $(CFLAGS) -c main.c 
 
 clean : 
 	rm -f *.o *~ village-bus-uci
