@@ -12,6 +12,7 @@
     browser : {},
     shell   : {}
   };
+  // TODO - investigate http://code.google.com/p/ajaxsoft/wiki/xLazyLoader
   platform.browser.load = function(uri) {
     if (!this.includes) { this.includes = {}; }
     if (this.includes.hasOwnProperty(uri)) {
