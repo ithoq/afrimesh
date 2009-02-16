@@ -58,14 +58,17 @@ var BootVillageBus = function (afrimesh) {
   
   /** - villagebus.radius ------------------------------------------------- */
   villagebus.radius = function() {
-    return villagebus.radius.list();
+    return villagebus.radius.select();
   };
+  villagebus.radius.url = "http://" + afrimesh.settings.hosts.dashboard_server + "/cgi-bin/village-bus-radius";
 
-  villagebus.radius.list = function() {
-    return villagebus.radius.list.sync();
-  };
+  villagebus.radius.select = function() { return villagebus.radius.select.sync(); };
+  villagebus.radius.insert = function() { return villagebus.radius.insert.sync(); };
+  villagebus.radius.update = function() { return villagebus.radius.update.sync(); };
+  villagebus.radius.remove = function() { return villagebus.radius.remove.sync(); };
+  villagebus.radius.who    = function() { return villagebus.radius.who.sync();    };
 
-  villagebus.radius.list.sync = function() {
+  villagebus.radius.select.sync = function() {
     var handler = function(data) { handler.response = data; };
     return make_json_request({
         url     : villagebus.radius.url,
@@ -74,8 +77,46 @@ var BootVillageBus = function (afrimesh) {
         success : handler,
         async   : false });
   };
-
-  villagebus.radius.url = "http://" + afrimesh.settings.hosts.dashboard_server + "/cgi-bin/village-bus-radius";
+  villagebus.radius.insert.sync = function(username, type, seconds) {
+    return make_json_request({
+        url     : villagebus.radius.url,
+        request : { package  : "radius",
+                    command  : "new",
+                    username : username,
+                    type     : type,
+                    seconds  : seconds },
+        success : make_sync_response_handler(address, "villagebus.radius"),
+        async   : false });
+  };
+  villagebus.radius.update.sync = function(username, new_username, new_password, new_type) {
+    return make_json_request({
+        url     : villagebus.radius.url,
+        request : { package      : "radius",
+                    command      : "modify",
+                    username     : username,
+                    new_username : new_username,
+                    new_password : new_password,
+                    new_type     : new_type },
+        success : make_sync_response_handler(address, "villagebus.radius"),
+        async   : false });
+  };
+  villagebus.radius.remove.sync = function(username, type, seconds) {
+    return make_json_request({
+        url     : villagebus.radius.url,
+        request : { package  : "radius",
+                    command  : "remove",
+                    username : username },
+        success : make_sync_response_handler(address, "villagebus.radius"),
+        async   : false });
+  };
+  villagebus.radius.who.sync = function(username, type, seconds) {
+    return make_json_request({
+        url     : villagebus.radius.url,
+        request : { package  : "radius",
+                    command  : "who" },
+        success : make_sync_response_handler(address, "villagebus.radius"),
+        async   : false });
+  };
 
 
   /** - villagebus.snmp --------------------------------------------------- */
