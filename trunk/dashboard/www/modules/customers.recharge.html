@@ -67,44 +67,26 @@
     });
   $("div.button-submit").mouseup(function() {
       $(this).removeClass("selected");
-      // TODO - constructors for radius commands or maybe something else ?
-      radius_new.username = "mesh";
-      radius_new.type = "prepaid";
-      radius_new.seconds = $("div#widget-customers-recharge div.button.selected").get(0).id;
-
-      afrimesh.customers.
-
-      $.ajax({ 
-          url: config.dashboard_host + "/cgi-bin/village-bus-radius",
-            type: "POST", 
-            contentType: "application/json", 
-            processData: false,
-            dataType: "json", data: $.toJSON(radius_new),
-            success: 
-          function(data) { 
-            if (data.length < 1) { $("div#widget-customers-recharge").html("no data"); return; }
-            var s = "";
-            if (data[0].error) { s += "TODO: " + customer.error; }
-            s += "<center><table>";
-            s += "<tr><td><div class='voucher button'>";
-            s += "<p><b>" + data[0].username + "</b><i>username</i></p>";
-            s += "<p><b>" + data[0].password + "</b><i>password</i></p>";
-            s += "</div></td></tr>";
-            s += "<tr><td><div class='button-submit' id='menu-customers-recharge' style='float:center;'><p><b>print</b></p></div></td></tr>";
-            s += "</table><center>";
-            $("#widget-customers-recharge table").hide();
-            $("#widget-customers-recharge").html(s);
-            $(".voucher").corner("8px");
-            $(".button-submit").corner("8px");
-            $("div.button-submit").hover(function() { $(this).addClass   ("hover"); },
-                                         function() { $(this).removeClass("hover"); });
-            $("div.button-submit").click(function() { $("#menu-customers-recharge").click(); });
-          }
-        });
-
+      var customer = afrimesh.customers.generate("mesh", "prepaid", $("div#widget-customers-recharge div.button.selected").get(0).id);
+      if (customer && !customer.error) {
+        var s = "<center><table>";
+        s += "<tr><td><div class='voucher button'>";
+        s += "<p><b>" + customer.username + "</b><i>username</i></p>";
+        s += "<p><b>" + customer.password + "</b><i>password</i></p>";
+        s += "</div></td></tr>";
+        s += "<tr><td><div class='button-submit' id='menu-customers-recharge' style='float:center;'><p><b>print</b></p></div></td></tr>";
+        s += "</table><center>";
+        $("#widget-customers-recharge table").hide();
+        $("#widget-customers-recharge").html(s);
+        $(".voucher").corner("8px");
+        $(".button-submit").corner("8px");
+        $("div.button-submit").hover(function() { $(this).addClass   ("hover"); },
+                                     function() { $(this).removeClass("hover"); });
+        $("div.button-submit").click(function() { $("div#menu li#customers a#recharge").click(); });
+      } else {
+        console.error("Could not generate new customer: " + customer.error);
+      }
     });
-
-
 
   /** done ---------------------------------------------------------------- */
   console.debug("loaded customers.recharge.js");

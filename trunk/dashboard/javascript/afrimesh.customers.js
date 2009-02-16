@@ -15,8 +15,8 @@ function BootCustomers(parent) {
   customers.select = function() { 
     return afrimesh.villagebus.radius.select();
   }
-  customers.insert = function(username, type, seconds) { 
-    return afrimesh.villagebus.radius.insert(username, type, seconds); 
+  customers.generate = function(username, type, seconds) { 
+    return afrimesh.villagebus.radius.insert(username, type, seconds);  // TODO - split insert into generate & insert
   };
   customers.update = function(username, new_username, new_password, new_type) { 
     return afrimesh.villagebus.radius.update(username, new_username, new_password, new_type); 
