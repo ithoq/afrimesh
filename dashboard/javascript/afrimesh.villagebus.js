@@ -57,17 +57,23 @@ var BootVillageBus = function (afrimesh) {
 
   
   /** - villagebus.radius ------------------------------------------------- */
-  villagebus.radius = function() {
-    return villagebus.radius.select();
-  };
-  villagebus.radius.url = "http://" + afrimesh.settings.hosts.dashboard_server + "/cgi-bin/village-bus-radius";
-
+  villagebus.radius        = function() { return villagebus.radius.who(); };
+  villagebus.radius.url    = "http://" + afrimesh.settings.hosts.dashboard_server + "/cgi-bin/village-bus-radius";
+  villagebus.radius.who    = function() { return villagebus.radius.who.sync(); };
   villagebus.radius.select = function() { return villagebus.radius.select.sync(); };
-  villagebus.radius.insert = function() { return villagebus.radius.insert.sync(); };
-  villagebus.radius.update = function() { return villagebus.radius.update.sync(); };
-  villagebus.radius.remove = function() { return villagebus.radius.remove.sync(); };
-  villagebus.radius.who    = function() { return villagebus.radius.who.sync();    };
+  villagebus.radius.insert = function(username, type, seconds) { return villagebus.radius.insert.sync(username, type, seconds); };
+  villagebus.radius.update = function(username, new_username, new_password, new_type) { return villagebus.radius.update.sync(username, new_username, new_password, new_type); };
+  villagebus.radius.remove = function(username) { return villagebus.radius.remove.sync(username); };
 
+  villagebus.radius.who.sync = function() {
+    var handler = function(data) { handler.response = data; };
+    return make_json_request({
+        url     : villagebus.radius.url,
+        request : { package  : "radius",
+                    command  : "who" },
+        success : handler,
+        async   : false });
+  };
   villagebus.radius.select.sync = function() {
     var handler = function(data) { handler.response = data; };
     return make_json_request({
@@ -109,15 +115,6 @@ var BootVillageBus = function (afrimesh) {
         request : { package  : "radius",
                     command  : "remove",
                     username : username },
-        success : handler,
-        async   : false });
-  };
-  villagebus.radius.who.sync = function() {
-    var handler = function(data) { handler.response = data; };
-    return make_json_request({
-        url     : villagebus.radius.url,
-        request : { package  : "radius",
-                    command  : "who" },
         success : handler,
         async   : false });
   };

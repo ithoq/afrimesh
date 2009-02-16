@@ -71,6 +71,9 @@
       radius_new.username = "mesh";
       radius_new.type = "prepaid";
       radius_new.seconds = $("div#widget-customers-recharge div.button.selected").get(0).id;
+
+      afrimesh.customers.
+
       $.ajax({ 
           url: config.dashboard_host + "/cgi-bin/village-bus-radius",
             type: "POST", 
@@ -98,6 +101,7 @@
             $("div.button-submit").click(function() { $("#menu-customers-recharge").click(); });
           }
         });
+
     });
 
 

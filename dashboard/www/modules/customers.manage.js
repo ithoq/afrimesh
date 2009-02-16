@@ -19,7 +19,7 @@ var populate_control = undefined;
     var s = "<table>";
     s += "<thead><tr><th>username</th><th>type</th><th class='command'>command</th></tr></thead>";
     s += "<tbody>";
-    afrimesh.customers().map(function(customer) {
+    afrimesh.customers.select().map(function(customer) {
         s += "<tr>";
         s += "<td><div id='" + customer.username + "' class='edit-username'>" + customer.username + "</div></td>";
         s += "<td><div id='" + customer.username + "' class='edit-type'>" + customer.type + "</div></td>";
