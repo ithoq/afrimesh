@@ -8,15 +8,14 @@
  */
 
 
-var populate_customers = undefined;
+var populate_control = undefined;
 (function() {
   
-
   /** 
    * Query the villagebus interface to radius for all customers and populate the
    * customer management interface with the result.
    */
-  populate_customers = function() {
+  populate_control = function() {
     var s = "<table>";
     s += "<thead><tr><th>username</th><th>type</th><th class='command'>command</th></tr></thead>";
     s += "<tbody>";
