@@ -78,6 +78,7 @@ var BootVillageBus = function (afrimesh) {
         async   : false });
   };
   villagebus.radius.insert.sync = function(username, type, seconds) {
+    var handler = function(data) { handler.response = data; };
     return make_json_request({
         url     : villagebus.radius.url,
         request : { package  : "radius",
@@ -85,10 +86,11 @@ var BootVillageBus = function (afrimesh) {
                     username : username,
                     type     : type,
                     seconds  : seconds },
-        success : make_sync_response_handler(address, "villagebus.radius"),
+        success : handler,
         async   : false });
   };
   villagebus.radius.update.sync = function(username, new_username, new_password, new_type) {
+    var handler = function(data) { handler.response = data; };
     return make_json_request({
         url     : villagebus.radius.url,
         request : { package      : "radius",
@@ -97,24 +99,26 @@ var BootVillageBus = function (afrimesh) {
                     new_username : new_username,
                     new_password : new_password,
                     new_type     : new_type },
-        success : make_sync_response_handler(address, "villagebus.radius"),
+        success : handler,
         async   : false });
   };
-  villagebus.radius.remove.sync = function(username, type, seconds) {
+  villagebus.radius.remove.sync = function(username) {
+    var handler = function(data) { handler.response = data; };
     return make_json_request({
         url     : villagebus.radius.url,
         request : { package  : "radius",
                     command  : "remove",
                     username : username },
-        success : make_sync_response_handler(address, "villagebus.radius"),
+        success : handler,
         async   : false });
   };
-  villagebus.radius.who.sync = function(username, type, seconds) {
+  villagebus.radius.who.sync = function() {
+    var handler = function(data) { handler.response = data; };
     return make_json_request({
         url     : villagebus.radius.url,
         request : { package  : "radius",
                     command  : "who" },
-        success : make_sync_response_handler(address, "villagebus.radius"),
+        success : handler,
         async   : false });
   };
 

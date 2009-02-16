@@ -12,6 +12,8 @@ function BootCustomers(parent) {
 
   var customers = function() { return afrimesh.villagebus.radius(); };
 
+  customers.status = function() { return afrimesh.villagebus.radius.who(); };
+
 
   return customers;
 };
