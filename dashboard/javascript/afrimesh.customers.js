@@ -21,6 +21,12 @@ function BootCustomers(parent) {
   customers.update = function(username, new_username, new_password, new_type) { 
     return afrimesh.villagebus.radius.update(username, new_username, new_password, new_type); 
   };
+  customers.update.username = function(username, new_username) { 
+    return afrimesh.villagebus.radius.update(username, new_username, null, null); 
+  };
+  customers.update.type = function(username, new_type) { 
+    return afrimesh.villagebus.radius.update(username, null, null, new_type); 
+  };
   customers.remove = function(username) { 
     return afrimesh.villagebus.radius.remove(username); 
   };

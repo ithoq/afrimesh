@@ -23,9 +23,11 @@ GRANT SELECT ON radius.* TO 'radius'@'localhost';
 # The server can create 
 GRANT CREATE ON radius.* TO 'radius'@'localhost';
 
-# The server can create,delete  users
+# The server can create,delete,update  users
 GRANT INSERT ON radius.radcheck TO 'radius'@'localhost';
 GRANT INSERT ON radius.radreply TO 'radius'@'localhost';
+GRANT UPDATE ON radius.radcheck TO 'radius'@'localhost';
+GRANT UPDATE ON radius.radreply TO 'radius'@'localhost';
 GRANT DELETE ON radius.radcheck TO 'radius'@'localhost';
 GRANT DELETE ON radius.radreply TO 'radius'@'localhost';
 

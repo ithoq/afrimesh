@@ -23,8 +23,10 @@ var populate_control = undefined;
         s += "<tr>";
         s += "<td><div id='" + customer.username + "' class='edit-username'>" + customer.username + "</div></td>";
         s += "<td><div id='" + customer.username + "' class='edit-type'>" + customer.type + "</div></td>";
-        s += "<td class='command'><span onclick='on_customer_delete(\"" + customer.username + "\")' class='button'>delete</span>";
-        s += "<span id='" + customer.username + "' onclick='on_customer_password(id)' class='button'>password</span></td>";
+        s += "<td class='command'>";
+        s += "<span id='" + customer.username + "' class='button delete'>delete</span>";
+        //s += "<span id='" + customer.username + "' class='button password'>password</span>";
+        s += "</td>";
         s += "</tr>";
       });
     s += "</tbody>";
@@ -33,63 +35,89 @@ var populate_control = undefined;
     s += "<br/>";
     $("div#widget-customers-manage").html(s)
 
-
-    $(".edit-username").editable(on_customer_modify, { name : 'username',
+    /** wire event handlers */
+    $(".edit-username").editable(on_customer_update, { name : 'username',
           type   : "text",
           onblur : "submit",
           select : true,
           indicator : '<img src="widgets/indicator.gif">'  });
-    $(".edit-type").editable(on_customer_modify, { name : 'type',
+    $(".edit-type").editable(on_customer_update, { name : 'type',
           type   : "select",
           //data   : "{'disabled':'disabled','metered':'metered','prepaid':'prepaid','flatrate':'flatrate'}",
           data   : "{'disabled':'disabled','prepaid':'prepaid','flatrate':'flatrate'}",
           indicator : '<img src="widgets/indicator.gif">',
           onblur : "submit",
           style  : "inherit" });
+    $(".button.delete").click(function()   { on_customer_remove(this.id);   });
+    $(".button.password").click(function() { on_customer_password(this.id); });
+    $("#new .button").click(on_customer_new);
     $("div#widget-customers-manage table").tablesorter(); 
 
-    /* button logic */
+    /** button logic - TODO - move to afrimesh.ui.js */
     $(".button").corner("4px");
     $(".button").mousedown(function() { $(this).addClass("selected"); });
     $(".button").mouseup(function() { $(".button").removeClass("selected"); });
 
-    $("div#widget-customers-manage .button#new").click(function() { 
-        $("div#widget-customers-manage table tr#new").html($("#widget-customers-new table tr#save").html());
-        $("div#widget-customers-manage input#username").focus();
-        $(".button").corner("4px");
-        $(".button").mousedown(function() { $(this).addClass("selected"); });
-        $(".button").mouseup(function() { $(".button").removeClass("selected"); });
-        $("div#widget-customers-manage .button#new").click(function() { 
-            radius_new.username = $("#widget-customers-manage input#username").val();
-            radius_new.type = "flatrate";
-            $.ajax({ 
-                url: config.dashboard_host + "/cgi-bin/village-bus-radius",
-                  type: "POST", 
-                  contentType: "application/json", 
-                  processData: false,
-                  dataType: "json", data: $.toJSON(radius_new),
-                  success: 
-                function(data) { 
-                  /*alert(data[0].foo);*/
-                  $("#menu-customers-manage").click(); 
-                }
-              });
-          });
-      });
   }; /* populate customers */
 
-  function on_customer_modify(value, settings) {
-    //alert("id: " + this.id  + "\n" + settings.name + " : " + value);
-    //alert(this.innerHTML + "\n" + this.innerText);
-    // send update to village-bus-radius
-    if (settings.name == "username") { // update other field ids to reflect new username
-      $(".edit-type#" + this.id).get(0).id = value;
-      this.id = value;
-    }
-    return value;
+
+  /**
+   * Create the ui for entering a new customer record
+   */
+  function on_customer_new(username) {
+    $("div#widget-customers-manage table tr#new").html($("#widget-customers-new table tr#new_active").html());
+    $("div#widget-customers-manage input#username").focus();
+    $("#save").click(on_customer_save);
+    $(".button").corner("4px"); // TODO - json 3 added functionality to only have to do this once 
+    $(".button").mousedown(function() { $(this).addClass("selected"); });
+    $(".button").mouseup(function() { $(".button").removeClass("selected"); });
+    console.debug("display_customer_insert");
+  };
+
+  /**
+   * Callback to insert new customer
+   */
+  function on_customer_save() {
+    var username = $("#widget-customers-manage input#username").val();
+    var ret = afrimesh.customers.insert(username, "flatrate", 0);
+    console.debug("Inserted: " + ret);
+    $("div#menu li#customers a#manage").click();
   };
 
 
-  
+  /**
+   * Callback to commit modified customer information
+   */
+  function on_customer_update(new_value, settings) {
+    var username = this.id;
+    if (settings.name == "username") { 
+      $("#" + username).each(function(e) {  // update all elements to new username - TODO this needs to be tested
+          this.id = new_value; 
+        });
+      afrimesh.customers.update.username(username, new_value);
+    } else if (settings.name == "type") {
+      afrimesh.customers.update.type(username, new_value);
+    }
+    return new_value;
+  };
+
+
+  /**
+   * Callback to remove customer 
+   */
+  function on_customer_remove(username) {
+    console.debug("Removing: " + username);
+    var ret = afrimesh.customers.remove(username);
+    console.debug("Removed: " + ret);
+    $("div#menu li#customers a#manage").click();
+  };
+ 
+
+  /**
+   * Callback to change customer password
+   */
+  function on_customer_password(username) {
+    console.debug("Changing password for: " + username);
+  };
   
 })();

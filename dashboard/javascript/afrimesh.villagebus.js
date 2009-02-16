@@ -62,11 +62,11 @@ var BootVillageBus = function (afrimesh) {
   villagebus.radius.who    = function() { return villagebus.radius.who.sync(); };
   villagebus.radius.select = function() { return villagebus.radius.select.sync(); };
   villagebus.radius.insert = function(username, type, seconds) { return villagebus.radius.insert.sync(username, type, seconds); };
-  villagebus.radius.update = function(username, new_username, new_password, new_type) { return villagebus.radius.update.sync(username, new_username, new_password, new_type); };
   villagebus.radius.remove = function(username) { return villagebus.radius.remove.sync(username); };
+  villagebus.radius.update = function(username, new_username, new_password, new_type) { return villagebus.radius.update.sync(username, new_username, new_password, new_type); };
 
   villagebus.radius.who.sync = function() {
-    var handler = function(data) { handler.response = data; };
+    var handler = function(data) { handler.response = data; }; // TODO - extend sync handler to handle array data
     return make_json_request({
         url     : villagebus.radius.url,
         request : { package  : "radius",
@@ -75,7 +75,7 @@ var BootVillageBus = function (afrimesh) {
         async   : false });
   };
   villagebus.radius.select.sync = function() {
-    var handler = function(data) { handler.response = data; };
+    var handler = function(data) { handler.response = data; }; // TODO - extend sync handler to handle array data
     return make_json_request({
         url     : villagebus.radius.url,
         request : { package : "radius",
@@ -84,7 +84,6 @@ var BootVillageBus = function (afrimesh) {
         async   : false });
   };
   villagebus.radius.insert.sync = function(username, type, seconds) {
-    var handler = function(data) { handler.response = data; };
     return make_json_request({
         url     : villagebus.radius.url,
         request : { package  : "radius",
@@ -92,11 +91,10 @@ var BootVillageBus = function (afrimesh) {
                     username : username,
                     type     : type,
                     seconds  : seconds },
-        success : handler,
+        success : make_sync_response_handler(villagebus.radius.url, "villagebus.radius.insert"),
         async   : false });
   };
   villagebus.radius.update.sync = function(username, new_username, new_password, new_type) {
-    var handler = function(data) { handler.response = data; };
     return make_json_request({
         url     : villagebus.radius.url,
         request : { package      : "radius",
@@ -105,17 +103,16 @@ var BootVillageBus = function (afrimesh) {
                     new_username : new_username,
                     new_password : new_password,
                     new_type     : new_type },
-        success : handler,
+        success : make_sync_response_handler(villagebus.radius.url, "villagebus.radius.update"),
         async   : false });
   };
   villagebus.radius.remove.sync = function(username) {
-    var handler = function(data) { handler.response = data; };
     return make_json_request({
         url     : villagebus.radius.url,
         request : { package  : "radius",
-                    command  : "remove",
+                    command  : "delete",
                     username : username },
-        success : handler,
+        success : make_sync_response_handler(villagebus.radius.url, "villagebus.radius.remove"),
         async   : false });
   };
 

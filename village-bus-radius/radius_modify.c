@@ -37,20 +37,27 @@ void radius_modify_mysql(const char* username, const char* new_username, const c
   unsigned long count;
 
   /* update user information */
-  if (mysql(&connection, "UPDATE radcheck SET username='%s' WHERE username='%s'", new_username, username) != 0) {
-    return;
+  if (new_username) {
+    if (mysql(&connection, "UPDATE radcheck SET username='%s' WHERE username='%s'", new_username, username) != 0) {
+      return;
+    }
+    username = new_username;
   }
-  if (mysql(&connection, "UPDATE radcheck SET value='%s' WHERE username='%s' AND attribute='ClearText-Password'", new_password, new_username) != 0) {
-    return;
+  if (new_password) {
+    if (mysql(&connection, "UPDATE radcheck SET value='%s' WHERE username='%s' AND attribute='ClearText-Password'", new_password, username) != 0) {
+      return;
+    }
   }
   count = mysql_affected_rows(connection);
 
-  if (strncasecmp("prepaid", new_type, 7)) {
-  } else if (strncasecmp("flatrate", new_type, 8)) {
-  } else if (strncasecmp("disabled", new_type, 8)) { 
-  } else if (strncasecmp("metered", new_type, 7)) { // TODO - implement
-  } else {
-    // TODO - handle 
+  if (new_type) {
+    if (strncasecmp("prepaid", new_type, 7)) {
+    } else if (strncasecmp("flatrate", new_type, 8)) {
+    } else if (strncasecmp("disabled", new_type, 8)) { 
+    } else if (strncasecmp("metered", new_type, 7)) { // TODO - implement
+    } else {
+      // TODO - handle 
+    }
   }
 
   /* output result */
@@ -62,4 +69,5 @@ void radius_modify_mysql(const char* username, const char* new_username, const c
   }
 
 }
+
 
