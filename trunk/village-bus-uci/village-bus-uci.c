@@ -107,25 +107,29 @@ bool uci_show_section(const char* section)
  */
 bool uci_set_config(const char* config, const char* section, const char* option, const char* value)
 {
+  char* msg;
   char buf[1024];
   sprintf(buf, "%s.%s.%s=%s", config, section, option, value);
 
   struct uci_ptr ptr;
   if (uci_lookup_ptr(UCI_CONTEXT, &ptr, buf, true) != UCI_OK) {
-    log_message("uci_set_config: could not lookup config %s\n", buf);
-    uci_perror(UCI_CONTEXT, "village-bus-uci");
+    uci_get_errorstr(UCI_CONTEXT, &msg, "uci_set_config");
+    log_message("Could not lookup config %s - %s\n", buf, msg);
+    free(msg);
     return false;
   }
 
   if (uci_set(UCI_CONTEXT, &ptr) != UCI_OK) {
-    log_message("uci_set_config: could not set config %s\n", buf);
-    uci_perror(UCI_CONTEXT, "village-bus-uci");
+    uci_get_errorstr(UCI_CONTEXT, &msg, "uci_set_config");
+    log_message("Could not set config %s - %s\n", buf, msg);
+    free(msg);
     return false;
   }
 
   if (uci_commit(UCI_CONTEXT, &ptr.p, false) != UCI_OK) {
-    log_message("uci_set_config: could not commit config %s\n", buf);
-    uci_perror(UCI_CONTEXT, "village-bus-uci");
+    uci_get_errorstr(UCI_CONTEXT, &msg, "uci_set_config");
+    log_message("Could not commit config %s - %s\n", buf, msg);
+    free(msg);
     return false;
   }
 

@@ -52,11 +52,12 @@
         console.debug("$(document).ready() -------------------- start");
 
         /** global error handler for Ajax requests */
-        $(document).ajaxError(function(response) {
-            var s = "AJAX ERROR: " + response;
-            //for (property in response) { s += property + " : " + response[property] + "\n"; }
-            console.error(s);
+        $(document).ajaxError(function(ajax, response, request) {
+            console.error("AJAX: "  + ajax.type);
+            console.error(response.status + " " + response.statusText + "\n" + response.responseText);
+            console.error(dump_object(request));
           });
+
 
         /** populate DOM references to afrimesh.settings */
         var elements = $("[id*=afrimesh|settings]");

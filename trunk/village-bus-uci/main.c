@@ -107,7 +107,7 @@ int main(int argc, char** argv)
         printf("%s{ error : \"could not set: %s.%s.%s=%s\" }", (i ? "," : ""), config, section, option, value);
         break;
       } else {
-        printf("%s{ %s : %s }", (i ? "," : ""), option, value);
+        printf("%s { \"%s\" : \"%s\" }", (i ? "," : ""), option, value);
       }
     }
     struct uci_element *e;
@@ -116,7 +116,7 @@ int main(int argc, char** argv)
     printf("{ error: \"unknown command\" }");
   }
 
-  printf("]\n");
+  printf(" ]\n");
 
 
   /* clean up UCI */

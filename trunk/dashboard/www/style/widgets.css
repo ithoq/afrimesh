@@ -8,36 +8,28 @@
  */
 
 
-/* - global widget styles ------------------------------------------------- */
-.widget        {  }
-.widget thead  { color:gray; }
-.widget th,td  { padding: 0.3em; }
-.widget th     { border-bottom: 1px solid lightgray; }
 
-.widget td.h-brace {
+/* - funky braces --------------------------------------------------------- */
+td.h-brace {
   border-left: 1px solid lightgray;
   border-right: 1px solid lightgray;
   border-bottom: 1px solid lightgray;
 }
-.widget td.v-brace {
+td.v-brace {
   border-top: 1px solid lightgray;
   border-right: 1px solid lightgray;
   border-bottom: 1px solid lightgray;
 }
-.widget td.v-instructions {
+td.v-instructions {
   text-align: left;
   font-size: 1.5em;
   color: lightgray;
 }
-.widget td.instructions {
+td.instructions {
   text-align: center;
   font-size: 1.5em;
   color: lightgray;
 }
-.widget input {  
-  border: 1px solid gray;
-}
-
 
 
 /* - everything-watch widget ---------------------------------------------- */
@@ -112,6 +104,19 @@
 }
 
 
+/* - customers-plans ------------------------------------------------------ */
+.customers-plans              {  }
+.customers-plans table        { width: 40em; } 
+.customers-plans th           {  } 
+.customers-plans td           { padding-top: 0.5em; } 
+.customers-plans td.name      { cursor: caret; width: 20em; }
+.customers-plans td.minutes   { cursor: caret; width: 5em; text-align: center; }
+.customers-plans td.currency  { cursor: caret; width: 5em; text-align: center; }
+.customers-plans td.price     { cursor: caret;  }
+
+
+
+
 
 /* - customers-recharge widget -------------------------------------------- */
 .customers-recharge      { margin: 1em;  }
@@ -157,9 +162,6 @@
   width: 30em;
   cursor: default;  /* TODO firefox */
 }
-
-
-
 
 
 /* - internet-configure widget -------------------------------------------- */

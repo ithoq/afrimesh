@@ -40,12 +40,12 @@ var populate_control = undefined;
           type   : "text",
           onblur : "submit",
           select : true,
-          indicator : '<img src="widgets/indicator.gif">'  });
+          indicator : '<img src="images/indicator.gif">'  });
     $(".edit-type").editable(on_customer_update, { name : 'type',
           type   : "select",
           //data   : "{'disabled':'disabled','metered':'metered','prepaid':'prepaid','flatrate':'flatrate'}",
           data   : "{'disabled':'disabled','prepaid':'prepaid','flatrate':'flatrate'}",
-          indicator : '<img src="widgets/indicator.gif">',
+          indicator : '<img src="images/indicator.gif">',
           onblur : "submit",
           style  : "inherit" });
     $(".button.delete").click(function()   { on_customer_remove(this.id);   });
