@@ -35,8 +35,12 @@
   String.prototype.rtrim = function() {
     return this.replace(/\s+$/g,"");
   };
-  
-
+  function extend(object_1, object_2) {
+    for (var property in object_2) {
+      object_1[property] = object_2[property];
+    }
+    return object_1;
+  };
   
   /** - Query object graphs using simple selectors ------------------------ */
   //Object.prototype.Q = function(selector) {

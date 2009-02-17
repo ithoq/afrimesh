@@ -149,6 +149,7 @@ var BootVillageBus = function (afrimesh) {
 
 
   /** - villagebus.uci ---------------------------------------------------- */
+  // UDE - sometimes there are problems with permissions on /etc/config & /tmp/.uci 
   villagebus.uci = function(address) {
     return villagebus.uci.get.sync(address, "");
   };
@@ -162,6 +163,9 @@ var BootVillageBus = function (afrimesh) {
     //return afrimesh.villagebus.ajax_proxy + "http://" + address + "/cgi-bin/village-bus-uci";
     //return "http://" + afrimesh.settings.hosts.mesh_gateway + afrimesh.settings.ajax_proxy + 
     //       "http://" + address + "/cgi-bin/village-bus-uci"
+    if (address == afrimesh.settings.hosts.dashboard_server) {
+      return "http://" + address + "/cgi-bin/village-bus-uci";
+    }
     return afrimesh.villagebus.ajax_proxy  + "http://" + afrimesh.settings.hosts.mesh_gateway + 
            afrimesh.settings.ajax_proxy    + "http://" + address + "/cgi-bin/village-bus-uci";
   };
@@ -213,12 +217,12 @@ var BootVillageBus = function (afrimesh) {
   function make_json_request(request) {
     var xml = $.ajax({
         url: request.url,
-          type        : "POST",
-          contentType : "application/json",
-          dataType    : "json",
-          async       : request.async,
-          data        : $.toJSON(request.request),
-          success     : request.success });
+        type        : "POST",
+        contentType : "application/json",
+        dataType    : "json",
+        async       : request.async,
+        data        : $.toJSON(request.request),
+        success     : request.success });
     if (request.async) {
       return xml;
     }
