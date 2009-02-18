@@ -35,6 +35,10 @@ KAMIKAZE=/Volumes/afrimesh-dev/ext/kamikaze
 # - binaries -----------------------------------------------------------------
 VILLAGERS=village-bus-batman village-bus-radius village-bus-snmp village-bus-uci
 
+# - commands -----------------------------------------------------------------
+INSTALL=cp -rf
+MKDIR=mkdir -p
+MAKE=make
 
 # - platform detection -------------------------------------------------------
 DASHBOARD_WWW=/www
@@ -48,12 +52,11 @@ endif
 ifeq ($(UNAME),FreeBSD)
 DASHBOARD_WWW=/usr/local/www/apache22/data
 DASHBOARD_CGI=/usr/local/www/apache22/cgi-bin
+MAKE=gmake
 endif
 
 
 
-INSTALL=cp -rf
-MKDIR=mkdir -p
 
 
 
@@ -61,10 +64,10 @@ MKDIR=mkdir -p
 
 # - common -------------------------------------------------------------------
 village-bus : $(VILLAGERS)
-	export DEPROOT=$(DEPROOT); cd village-bus-batman ; make
-	export DEPROOT=$(DEPROOT); cd village-bus-radius ; make
-	export DEPROOT=$(DEPROOT); cd village-bus-snmp   ; make
-	export DEPROOT=$(DEPROOT); cd village-bus-uci    ; make
+	export DEPROOT=$(DEPROOT); cd village-bus-batman ; $(MAKE)
+	export DEPROOT=$(DEPROOT); cd village-bus-radius ; $(MAKE)
+	export DEPROOT=$(DEPROOT); cd village-bus-snmp   ; $(MAKE)
+	export DEPROOT=$(DEPROOT); cd village-bus-uci    ; $(MAKE)
 
 install-www:
 	@echo "Installing dashboard web interface in: $(DASHBOARD_WWW)"
@@ -93,10 +96,10 @@ clean-www:
 	rm -rf $(DASHBOARD_CGI)/*
 
 clean : clean-www
-	cd village-bus-batman ; make clean
-	cd village-bus-radius ; make clean
-	cd village-bus-snmp   ; make clean
-	cd village-bus-uci    ; make clean
+	cd village-bus-batman ; $(MAKE) clean
+	cd village-bus-radius ; $(MAKE) clean
+	cd village-bus-snmp   ; $(MAKE) clean
+	cd village-bus-uci    ; $(MAKE) clean
 
 
 
@@ -112,15 +115,11 @@ install-linux: linux install-www
 
 
 # - freebsd ------------------------------------------------------------------
-freebsd : symlink-freebsd village-bus-freebsd
+freebsd : symlink-freebsd village-bus
 
 symlink-freebsd:
 	rm ext/lib
 	cd ext ; ln -s ./lib-x86-freebsd ./lib
-
-village-bus-freebsd : village-bus-snmp/village-bus-snmp
-	cd village-bus-snmp ; make village-bus-snmp
-	$(INSTALL) village-bus-snmp/village-bus-snmp $(DASHBOARD_CGI)
 
 install-freebsd : freebsd install-www
 

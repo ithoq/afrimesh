@@ -29,6 +29,8 @@
  */
 
 
+#include <sys/socket.h>
+
 #include "village-bus-radius.h"
 
 

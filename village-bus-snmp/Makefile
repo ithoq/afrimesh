@@ -32,7 +32,6 @@
 JSON_INCLUDES=-I$(DEPROOT)/include
 JSON_LDFLAGS=$(DEPROOT)/lib/libjson.a
 
-
 CC=gcc 
 #-std=c99 breaks linux build
 INCLUDES=-I. -I../common -I/usr/local/include $(JSON_INCLUDES)
