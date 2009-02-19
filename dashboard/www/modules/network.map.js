@@ -83,6 +83,7 @@ var Map = undefined;
      * Return the map feature representing the given router, creating it and 
      * adding it to the map if it doesn't exist yet.
      */
+    this.routers = the_map.routers;
     this.router = function(router) {
       var feature = the_map.routers.getFeatureById(router.address);
       if (feature) {
@@ -107,8 +108,9 @@ var Map = undefined;
      * Return the map feature representing the given route, creating it and 
      * adding it to the map if it doesn't exist yet.
      */
+    this.routes = the_map.routes;
     this.route = function(route) {
-      if (route.gateway) { return {}; } // skip gateways for now
+      if (route.gateway) { return { }; } // skip gateways for now
       var feature = the_map.routes.getFeatureById(route.router + "->" + route.neighbour);
       if (feature) {
         return feature;
@@ -124,6 +126,12 @@ var Map = undefined;
         return {};
       }
       var feature = new OpenLayers.Feature.Vector();
+      feature.style = { strokeOpacity: 0.5,
+                        strokeColor: "black",
+                        strokeWidth: 10,
+                        strokeDashstyle: "solid",
+                        strokeLinecap: "round",
+                        pointRadius: 0 };
       feature.id = route.router + "->" + route.neighbour;
       feature.route = route;
       feature.geometry = new OpenLayers.Geometry.LineString([ feature_origin.geometry, feature_destination.geometry ]);
@@ -131,8 +139,29 @@ var Map = undefined;
       //console.debug("Added route for route: " + (route.router + "->" + route.neighbour));
       return feature;
     };
+
+
+    /**
+     * Take a B.A.T.M.A.N. link quality value and convert it to a HTML color string
+     */
+    this.lq_to_color = function(lq) {
+      if (lq == "HNA") {
+        return "black";
+      }
+      lq = lq + 0.0;
+      if (lq > 1.03) {
+        return "red";
+      } else if (lq > 1.02) {
+        return "orange";
+      } else if (lq > 1.01) {
+        return "green";
+      } 
+      return "lightblue";
+    }
     
 
+    
+    /* ------------------------------------------------------------------ */
     function on_select(feature) {
       console.log("on_select: " + dump_object(feature.router));
     };
@@ -180,6 +209,8 @@ var Map = undefined;
   function Point(longitude, latitude) {
     return new OpenLayers.Geometry.Point(longitude, latitude).transform(epsg_4326, epsg_900913);  
   };
+
+
 
 })();
 
