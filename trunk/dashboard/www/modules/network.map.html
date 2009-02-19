@@ -44,19 +44,25 @@ function() {
     clearTimeout(timer);
     var now = new Date();
 
-    // tag all active network elements with last seen time and add new elements to the map
+    // Update LQ display, tag all active network elements with last seen time and add new elements to the map
     afrimesh.network.mesh.routers().map(function(router) { 
         var router_feature = network_map.router(router);
         router_feature.last_seen = now;
         router.routes.map(function(route) {
             var route_feature = network_map.route(route);
+            if (route_feature.style) { // TODO - this should be a network_map method
+              route_feature.style.strokeColor = network_map.lq_to_color(route.label);
+              network_map.routes.drawFeature(route_feature);
+            }
             route_feature.last_seen = now; 
           });
       });
 
     
-    // go through all map features and set transparency relative to when they were last seen
-  
+    // go through all features and set transparency relative to when they were last seen
+    network_map.routes.features.map(function(router_feature) {
+      //console.debug("Last: " + router_feature.last_seen);
+      });
 
     //console.debug("updated network map");
     timer = setTimeout(function() { update(network_map); }, 10000);
