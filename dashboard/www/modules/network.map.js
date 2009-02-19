@@ -93,6 +93,12 @@ var Map = undefined;
     };
     function add_router(router) {
       var feature = new OpenLayers.Feature.Vector();
+      feature.style = { fillColor: "blue", 
+                        fillOpacity: 0.5, 
+                        strokeOpacity: 1.0,
+                        strokeColor: "black",
+                        strokeWidth: 1.0,
+                        pointRadius: 10.0 };
       feature.id = router.address;
       feature.router = router;
       the_map.routers.addFeatures([feature]);
