@@ -110,9 +110,9 @@ td.instructions {
 .customers-plans th           {  } 
 .customers-plans td           { padding-top: 0.5em; } 
 .customers-plans td.name      { cursor: caret; width: 20em; }
-.customers-plans td.minutes   { cursor: caret; width: 5em; text-align: center; }
+.customers-plans td.minutes   { cursor: caret; width: 7.5em; text-align: center; }
 .customers-plans td.currency  { cursor: caret; width: 5em; text-align: center; }
-.customers-plans td.price     { cursor: caret;  }
+.customers-plans td.price     { cursor: caret; text-align: right; }
 
 
 
