@@ -72,18 +72,20 @@ var Map = undefined;
       dragger.onComplete = on_position;
       map.addControl(dragger);
       dragger.activate();
-      var click_selector = new OpenLayers.Control.SelectFeature(map.routers);
+      /**var click_selector = new OpenLayers.Control.SelectFeature(map.routers);
+      click_selector.multiple = false;
       click_selector.toggle = true;
       click_selector.onSelect = on_select_router;
       click_selector.onUnselect = on_unselect_router;
       map.addControl(click_selector);
-      click_selector.activate();
-      /**var hover_selector = new OpenLayers.Control.SelectFeature(map.routers);
-      hover_selector.hover = true;
-      hover_selector.onSelect = function() { console.debug("hover on"); }
-      hover_selector.onUnselect = function() { console.debug("hover on"); }
+      click_selector.activate();*/
+      var hover_selector = new OpenLayers.Control.SelectFeature(map.routers, 
+                                                                { multiple : false, 
+                                                                  hover    : true });
+      hover_selector.onSelect = on_select_router;
+      hover_selector.onUnselect = on_unselect_router;
       map.addControl(hover_selector);
-      hover_selector.activate();*/
+      hover_selector.activate();
       return map;
     };
 
