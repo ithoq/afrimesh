@@ -28,8 +28,9 @@ var Map = undefined;
 
 
   /** Map ----------------------------------------------------------------- */
-  function _Map(id, longitude, latitude, extent, zoom) {
+  function _Map(id, longitude, latitude, extent, zoom, update_frequency) {
 
+    this.update_frequency = update_frequency;
     the_map = create_map();
 
     function create_map() { 
@@ -71,10 +72,18 @@ var Map = undefined;
       dragger.onComplete = on_position;
       map.addControl(dragger);
       dragger.activate();
-      var selector = new OpenLayers.Control.SelectFeature(map.routers);
-      selector.onSelect = on_select;
-      map.addControl(selector);
-      selector.activate();
+      var click_selector = new OpenLayers.Control.SelectFeature(map.routers);
+      click_selector.toggle = true;
+      click_selector.onSelect = on_select_router;
+      click_selector.onUnselect = on_unselect_router;
+      map.addControl(click_selector);
+      click_selector.activate();
+      /**var hover_selector = new OpenLayers.Control.SelectFeature(map.routers);
+      hover_selector.hover = true;
+      hover_selector.onSelect = function() { console.debug("hover on"); }
+      hover_selector.onUnselect = function() { console.debug("hover on"); }
+      map.addControl(hover_selector);
+      hover_selector.activate();*/
       return map;
     };
 
@@ -94,7 +103,7 @@ var Map = undefined;
     function add_router(router) {
       var feature = new OpenLayers.Feature.Vector();
       feature.style = { fillColor: "blue", 
-                        fillOpacity: 0.5, 
+                        fillOpacity: 0.0, 
                         strokeOpacity: 1.0,
                         strokeColor: "black",
                         strokeWidth: 1.0,
@@ -132,7 +141,7 @@ var Map = undefined;
         return {};
       }
       var feature = new OpenLayers.Feature.Vector();
-      feature.style = { strokeOpacity: 0.5,
+      feature.style = { strokeOpacity: 0.0,
                         strokeColor: "black",
                         strokeWidth: 10,
                         strokeDashstyle: "solid",
@@ -155,21 +164,50 @@ var Map = undefined;
         return "black";
       }
       lq = lq + 0.0;
-      if (lq > 1.03) {
+      if (lq > 1.15) {
         return "red";
-      } else if (lq > 1.02) {
+      } else if (lq > 1.10) {
         return "orange";
-      } else if (lq > 1.01) {
+      } else if (lq > 1.05) {
         return "green";
       } 
       return "lightblue";
     }
     
-
     
-    /* ------------------------------------------------------------------ */
-    function on_select(feature) {
-      console.log("on_select: " + dump_object(feature.router));
+    /* event handling ----------------------------------------------------- */
+
+    function on_select_router(feature) {
+      the_map.selected = feature;
+      var html = "<div class='popup'>";
+      html += "<p><span id='ip'>" + feature.router.address + "</span>&nbsp;&nbsp;<span id='mac'>ma:ca:dd:rr:es:ss</span></p><br/>";
+      var now = new Date();
+      var last_seen = now - feature.last_seen;
+      if (last_seen <= (update_frequency * 2.0)) { // UDE - this is a bit clumsy
+        html += "<p><span id='health'>node is healthy</span></p>";
+      } else {
+        html += "<p><span id='health' style='color:red;'>node is missing</span></p>";
+        html += "<p><span id='message'>last checked in " + Math.floor(last_seen / 1000) + " seconds ago</span></p>";
+      }
+      html += "</div>";
+      var popup = new OpenLayers.Popup.AnchoredBubble("Chicken" + feature.router.address,
+                                                      feature.geometry.getBounds().getCenterLonLat(),
+                                                      null, html, null, true, 
+                                                      function(event){on_unselect_router(the_map.selected);} );
+      popup.setBackgroundColor("black");
+      popup.setOpacity(0.9);
+      popup.autoSize = true;
+      feature.popup = popup;
+      the_map.addPopup(popup);
+    };
+
+    function on_unselect_router(feature_router) {
+      the_map.selected = null;
+      if (feature_router.popup) {
+        the_map.removePopup(feature_router.popup);
+        feature_router.popup.destroy();
+        feature_router.popup = null;
+      }
     };
 
     function on_position(feature) {

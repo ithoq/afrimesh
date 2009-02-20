@@ -1,2 +1,22 @@
 .olControlAttribution   { bottom:  2px!important } 
 .olControlMousePosition { left: 8px!important } 
+
+div#network-map .popup { 
+  color: white;
+}
+div#network-map .popup #ip { 
+  color: orange;
+  font-size: 125%;
+  font-weight: bold;
+}
+div#network-map .popup #mac { 
+  color: darkgray;
+  font-size: 75%;
+  font-style: italic;
+}
+div#network-map .popup #health { 
+  color: green;
+}
+div#network-map .popup #message { 
+  color: white;
+}
