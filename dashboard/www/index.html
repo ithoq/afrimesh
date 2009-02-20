@@ -53,9 +53,9 @@
 
         /** global error handler for Ajax requests */
         $(document).ajaxError(function(ajax, response, request) {
-            console.error("AJAX: "  + ajax.type);
-            console.error(response.status + " " + response.statusText + "\n" + response.responseText);
-            console.error(dump_object(request));
+            console.error("AJAX: " + ajax.type);
+            console.error("RESPONSE: " + response.status + " " + response.statusText + "\n" + response.responseText);
+            console.error("REQUEST:  " + request.data);
           });
 
 

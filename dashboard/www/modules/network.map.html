@@ -26,7 +26,8 @@ function() {
                               afrimesh.settings.location.longitude,
                               afrimesh.settings.location.latitude,
                               afrimesh.settings.map.extent,
-                              afrimesh.settings.map.zoom);
+                              afrimesh.settings.map.zoom,
+                              10.0 * 1000.0);
     update(network_map);
     return unload;
   };
@@ -60,12 +61,30 @@ function() {
 
     
     // go through all features and set transparency relative to when they were last seen
-    network_map.routes.features.map(function(router_feature) {
-      //console.debug("Last: " + router_feature.last_seen);
+    network_map.routers.features.map(function(router_feature) {
+        // TODO - this should also be encapsulated in a network_map method
+        var fade_time = 60.0 * 1000.0;
+        var min_opacity = 0.1;
+        var start_opacity = 0.75;
+        var last_seen = now - router_feature.last_seen;
+        var opacity = Math.max(min_opacity, start_opacity - (last_seen / fade_time));        
+        //console.debug("Router last seen: " + last_seen + " opacity: " + opacity);
+        router_feature.style.fillOpacity = opacity;
+        network_map.routers.drawFeature(router_feature);
+        router_feature.router.routes.map(function(route) {
+            var route_feature = network_map.route(route);
+            if (route_feature.last_seen) {
+               var last_seen = now - route_feature.last_seen;
+               var opacity = Math.max(min_opacity, start_opacity - (last_seen / fade_time));        
+               //console.debug("Route last seen: " + last_seen + " opacity: " + opacity);
+               route_feature.style.strokeOpacity = opacity;
+               network_map.routes.drawFeature(route_feature);
+            }
+          });
       });
 
     //console.debug("updated network map");
-    timer = setTimeout(function() { update(network_map); }, 10000);
+    timer = setTimeout(function() { update(network_map); }, network_map.update_frequency);
   };
 
 })();
