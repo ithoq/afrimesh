@@ -192,9 +192,9 @@ var Map = undefined;
         html += "<p><span id='message'>last checked in " + Math.floor(last_seen / 1000) + " seconds ago</span></p>";
       }
       html += "</div>";
-      var popup = new OpenLayers.Popup.AnchoredBubble("Chicken" + feature.router.address,
+      var popup = new OpenLayers.Popup.AnchoredBubble("id" + feature.router.address,
                                                       feature.geometry.getBounds().getCenterLonLat(),
-                                                      null, html, null, true, 
+                                                      null, html, null, false, 
                                                       function(event){on_unselect_router(the_map.selected);} );
       popup.setBackgroundColor("black");
       popup.setOpacity(0.9);
