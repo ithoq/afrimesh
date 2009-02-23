@@ -28,6 +28,13 @@ strong, em, b, i {
   font-family: "Lucida Grande", "Lucida Sans", "Lucida Sans Unicode", Helvetica, Verdana, Arial, sans-serif;   
 }
 
+/* - clean links - */
+a         { text-decoration: none; }
+a:link    { text-decoration: none; }
+a:visited { text-decoration: none; }
+a:focus   { text-decoration: none; -moz-outline-style: none; }
+a:active  { text-decoration: none; outline: none; }
+a:hover   { text-decoration: none; }
 
 /* - styles --------------------------------------------------------------- */
 h1 {
@@ -48,29 +55,27 @@ h3 {
 
 /* - layout --------------------------------------------------------------- */
 #container {
-  margin: 10px;
-  background-color: white;  
+  background: white;  
   /*border: 1px solid blue;*/
+  margin: 30px;
+  margin-top: 0px;
 }
 
 #header {
+  /*border: 1px solid green;*/
   padding-left: .5em;
-  /*border: 1px solid green;*/
-}
-
-#menu {
-  float: left;
-  width: 138px;  /* 188 */
-  padding: .5em;
-  /*border: 1px solid green;*/
+  margin-bottom: 1.75em;
+  float:right;
 }
 
 #content {
-  margin-left: 160px;  /* 220 */
+  clear:both;
+  /*margin-left: 160px;*/  /* 220 */
   padding: .75em;
   padding-left: .95em;
   border-left: 1px solid lightgray;       
   /*border: 1px solid green;*/
+
 }
 
 #footer {
@@ -79,7 +84,6 @@ h3 {
   color: #333;
   /*border: 1px solid green;*/
 }
-
 
 
 /* - better default tables ------------------------------------------------ */
@@ -92,3 +96,5 @@ th     { border-bottom: 1px solid lightgray; }
 input {  
   border: 1px solid gray;
 }
+
+
