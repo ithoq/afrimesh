@@ -166,11 +166,11 @@ var Map = undefined;
         return "black";
       }
       lq = lq + 0.0;
-      if (lq > 1.15) {
+      if (lq > 1.06) {
         return "red";
-      } else if (lq > 1.10) {
+      } else if (lq > 1.04) {
         return "orange";
-      } else if (lq > 1.05) {
+      } else if (lq > 1.02) {
         return "green";
       } 
       return "lightblue";

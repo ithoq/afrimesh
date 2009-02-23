@@ -87,7 +87,26 @@
     }
     return s;
   };
+
   
+  function pretty_print(item) {
+    var s = "";
+    for (var p in item) {
+      s += p + ": " + item[p] + "\t";
+    }
+    return s;
+  }
+
+  function pretty_print_json(item) {
+    var s = "{ ";
+    var first_property = true;
+    for (var p in item) {
+      s += (first_property ? "" : ", ") + p + ": " + item[p];
+      first_property = false;
+    }
+    s += " }";
+    return s;
+  };
   
   
   /**
