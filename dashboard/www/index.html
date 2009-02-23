@@ -11,9 +11,9 @@
   <head>
     <link rel="stylesheet" type="text/css" href="style/reset.css"> 
     <link rel="stylesheet" type="text/css" href="style/default.css"> 
-    <link rel="stylesheet" type="text/css" href="style/drawers.css"> 
+    <link rel="stylesheet" type="text/css" href="style/menu.css"> 
     <link rel="stylesheet" type="text/css" href="style/map.css"> 
-    <link rel="stylesheet" type="text/css" href="style/widgets.css"> 
+    <link rel="stylesheet" type="text/css" href="style/modules.css"> 
 
 
     <!-- includes ---------------------------------------------------------- -->
@@ -42,12 +42,12 @@
           async: false,
           success: function(js) { console.debug("finished loading"); } });*/
 
-        /** menu drawers */
-        $("li.drawer h2:not(.open)").next().hide();
-        $("h2.drawer-handle").mouseover(function () {
-          $("h2.drawer-handle.open").removeClass("open").next().hide();
-          $(this).addClass("open").next().show(); 
-        });
+        /** round menu item corners */
+        $("#menu .left").corner("bl 15px");
+        $("#menu .right").corner("br 15px");
+        /*$("#menu li").mouseover(function() {  // UDE - we have to manually round invisible elements
+          $(this).find("ul").corner("bottom 15px");  
+        }); */
 
         console.debug("$(document).ready() -------------------- start");
 
@@ -75,7 +75,7 @@
         //     browser as a standalone
         var unloader = function() {  };
         function add_menu_item(section, item) {
-          $("div#menu li#" + section + " a#" + item).click(function(event) {
+          $("ul#menu li#" + section + " li#" + item).click(function(event) {
               unloader(); 
               $("div#content").hide();
               $("div#content").load("modules/" + section + "." + item + ".html", function(page) { 
@@ -93,7 +93,7 @@
         add_menu_item("network",   "health");
 
         /** set default page */
-        $("div#menu li#network a#map").click();
+        $("ul#menu li#customers li#recharge").click();
 
         /** loading complete, we can now remove our message */
         $("#message-loading").html("");
@@ -105,75 +105,89 @@
   </head>
   <body>
 
-    <div id="message-loading" style="text-align:center;">please wait...</div> <!-- TODO -->
+    <!-- div id="message-loading" style="text-align:center;">please wait...</div --> <!-- TODO -->
 
     <div id="container">
 
       <div id="header">
-        <h1>
-          <span style="color:lightbrown; float:left;" 
-                id="afrimesh|settings|network_name"></span>
-          <span style="color:lightgray; float:right;"
-                id="afrimesh|settings|hosts|dashboard_server"></span>
-          <div style="clear: both;"></div>
-        </h1>
+
+        <ul id="menu">
+          <li class="left">
+            <span id="afrimesh|settings|network_name"></span>
+            <!-- ul id="main"> 
+              <h1><span style="color:lightgray;" id="afrimesh|settings|hosts|dashboard_server"></span></h1>
+              <li><a href="#">Logout</a></li> 
+            </ul --> 
+          </li> 
+          <li>&nbsp;</li>
+          <li id="customers"> Customers
+            <ul> 
+              <img class="top_left" alt="" src="style/images/top_left.png"/>
+              <li id="recharge">Recharge</li>
+              <img class="top_right" alt="" src="style/images/top_right.png"/>
+              <li id="manage">Manage</li>
+              <li id="plans">Plans</li>
+              <li id="status">Status</li>
+              <li class="last">
+                <img class="bottom_left" alt="" src="style/images/bottom_left.png"/>
+                <img class="middle" alt="" src="style/images/dot.png"/>
+                <img class="bottom_right" alt="" src="style/images/bottom_right.png"/>
+              </li>
+            </ul> 
+          </li> 
+          <li id="network"> Network
+            <ul class="dropdown"> 
+              <img class="top_left" alt="" src="style/images/top_left.png"/>
+              <li id="map">Map</li>
+              <img class="top_right" alt="" src="style/images/top_right.png"/>
+              <li id="health">Health</li> 
+              <li class="last">
+                <img class="bottom_left" alt="" src="style/images/bottom_left.png"/>
+                <img class="middle" alt="" src="style/images/dot.png"/>
+                <img class="bottom_right" alt="" src="style/images/bottom_right.png"/>
+              </li>
+            </ul> 
+          </li> 
+          <li> Help
+            <ul id="help"> 
+              <img class="top_left" alt="" src="style/images/top_left.png"/>
+              <li>Documentation</li>
+              <img class="top_right" alt="" src="style/images/top_right.png"/>
+              <li>Support Forum</li>
+              <li>Live Chat</li>
+              <li class="last">
+                <img class="bottom_left" alt="" src="style/images/bottom_left.png"/>
+                <img class="middle" alt="" src="style/images/dot.png"/>
+                <img class="bottom_right" alt="" src="style/images/bottom_right.png"/>
+              </li>
+            </ul> 
+          </li> 
+          <li>&nbsp;</li>
+          <li class="searchContainer"> 
+            <div> 
+              <input type="text" size=16 id="searchField" /> 
+              <img src="style/images/magnifier.png" alt="Search" onclick="alert('You clicked on search button')" /></div> 
+            <!-- ul id="search"> 
+              <li><input id="cbxAll" type="checkbox" />All</li> 
+              <li><input id="Articles" type="checkbox" />Articles</li> 
+              <li><input id="Tutorials" type="checkbox" />Tutorials</li> 
+              <li><input id="Reviews" type="checkbox" />Reviews</li> 
+              <li><input id="Resources" type="checkbox" />Resources</li> 
+            </ul --> 
+          </li> 
+          <li class="right"></li>
+        </ul> 
       </div> <!-- /header -->
 
-      <div id="menu">
-        <div class="drawers-wrapper">
-          <div class="drawers-top"></div>
-          <ul class="drawers">
-
-            <li id="customers" class="drawer">
-              <h2 class="drawer-handle">Customers</h2>
-              <ul> 
-                <li><a href="#" id="recharge">Recharge</a></li>
-                <li><a href="#" id="manage">Manage</a></li>
-                <li><a href="#" id="plans">Plans</a></li>
-                <li><a href="#" id="status">Status</a></li>
-              </ul>
-            </li>
-
-            <li id="network" class="drawer">
-              <h2 class="drawer-handle">Network</h2>
-              <ul> 
-                <li><a href="#" id="map">Map</a></li>
-                <li><a href="#" id="health">Health</a></li>
-              </ul>
-            </li>
-
-            <li id="settings" class="drawer">
-              <h2 class="drawer-handle">Settings</h2> 
-              <ul> 
-                <li><a href="#" id="mesh" class="todo">Mesh</a></li>
-                <li><a href="#" id="internet" class="todo">Internet</a></li>
-              </ul>
-            </li>
-
-            <!-- li id="install" class="drawer">
-              <h2 class="drawer-handle">Install</h2> 
-              <ul> 
-                <li><a href="#" id="dashboard" class="todo">Dashboard</a></li>
-                <li><a href="#" id="router" class="todo">Router</a></li>
-              </ul>
-            </li -->
-
-          </ul>
-          <div class="drawers-bottom"></div>
-        </div>
-      </div> <!-- /menu -->
 
       <div id="content">
         please wait a moment...
       </div> <!-- /content -->
 
       <div id="footer">
-<!--
-        <h3>Important Routers</h3>
--->
       </div> <!-- /footer -->
 
-    <div id="console"></div> <!-- TODO -->
+      <div id="console"></div> <!-- TODO -->
 
     </div> <!-- /container -->
       
