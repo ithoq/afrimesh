@@ -9,7 +9,7 @@
 
 <h2>Forum</h2>
 
-Module HTML
+<div class="help" id="groupcontent">please wait a moment...</div>
 
 <script type="text/javascript"> //<![CDATA[    
 (function() {
@@ -19,6 +19,10 @@ Module HTML
 
   /** construction -------------------------------------------------------- */
   ready = function() { // INJ 'ready' should be the only symbol we're exposing to the global namespace
+
+    var ajax_proxy = "http://" + afrimesh.settings.hosts.dashboard_server + afrimesh.settings.ajax_proxy;
+    $("#groupcontent").load(ajax_proxy + "http://groups.google.com/group/afrimesh/topics div.maincontboxhead");
+
     console.debug("loaded help.forum.html");
     return unload;
   };
