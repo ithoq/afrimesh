@@ -1,0 +1,7 @@
+#simple instructions for simple (and not so simple) tasks
+
+= How to... =
+
+  * configure a new mesh node
+  * run the dashboard without an internet connection
+  * scale tall buildings in a single bound
