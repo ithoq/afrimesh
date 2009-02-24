@@ -1,7 +1,3 @@
-#simple instructions for simple (and not so simple) tasks
-
-= How to... =
-
   * configure a new mesh node
   * install the dashboard software on a Linux or FreeBSD server
   * install the dashboard software on an OpenWRT based router
