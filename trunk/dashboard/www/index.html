@@ -75,7 +75,7 @@
         //     browser as a standalone
         var unloader = function() {  };
         function add_menu_item(section, item) {
-          $("ul#menu li#" + section + " li#" + item).click(function(event) {
+          $("ul#menu ul#" + section + " li#" + item).click(function(event) {
               unloader(); 
               $("div#content").hide();
               $("div#content").load("modules/" + section + "." + item + ".html", function(page) { 
@@ -91,9 +91,12 @@
         add_menu_item("customers", "status");
         add_menu_item("network",   "map");
         add_menu_item("network",   "health");
+        add_menu_item("help",      "howto");
+        add_menu_item("help",      "forum");
+        add_menu_item("help",      "chat");
 
         /** set default page */
-        $("ul#menu li#customers li#recharge").click();
+        $("ul#menu ul#help li#howto").click();
 
         /** loading complete, we can now remove our message */
         $("#message-loading").html("");
@@ -120,8 +123,8 @@
             </ul --> 
           </li> 
           <li>&nbsp;</li>
-          <li id="customers"> Customers
-            <ul> 
+          <li> Customers
+            <ul id="customers"> 
               <img class="top_left" alt="" src="style/images/top_left.png"/>
               <li id="recharge">Recharge</li>
               <img class="top_right" alt="" src="style/images/top_right.png"/>
@@ -135,8 +138,8 @@
               </li>
             </ul> 
           </li> 
-          <li id="network"> Network
-            <ul class="dropdown"> 
+          <li> Network
+            <ul id="network" class="dropdown"> 
               <img class="top_left" alt="" src="style/images/top_left.png"/>
               <li id="map">Map</li>
               <img class="top_right" alt="" src="style/images/top_right.png"/>
@@ -151,10 +154,10 @@
           <li> Help
             <ul id="help"> 
               <img class="top_left" alt="" src="style/images/top_left.png"/>
-              <li>Documentation</li>
+              <li id="howto">How to...</li>
               <img class="top_right" alt="" src="style/images/top_right.png"/>
-              <li>Support Forum</li>
-              <li>Live Chat</li>
+              <li id="forum">Support forum</li>
+              <li id="chat">Live chat</li>
               <li class="last">
                 <img class="bottom_left" alt="" src="style/images/bottom_left.png"/>
                 <img class="middle" alt="" src="style/images/dot.png"/>

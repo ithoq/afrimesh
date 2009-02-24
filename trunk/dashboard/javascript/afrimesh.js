@@ -26,7 +26,7 @@ var afrimesh = undefined;
       },
       locale       : "en_US.UTF-8",
       hosts        : {
-        dashboard_server  : "meraka.7degrees.co.za",
+        dashboard_server  : "afrimesh.7degrees.co.za",
         batman_vis_server : "dashboard.7degrees.co.za",
         mesh_gateway      : "192.168.20.200"
       },
