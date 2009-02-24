@@ -3,5 +3,8 @@
 = How to... =
 
   * configure a new mesh node
-  * run the dashboard without an internet connection
+  * install the dashboard software on a Linux or FreeBSD server
+  * install the dashboard software on an OpenWRT based router
+  * configure the dashboard software for a R.O.B.I.N. mesh
+  * configure the dashboard to run without an internet connection
   * scale tall buildings in a single bound
