@@ -7,7 +7,7 @@
  * New BSD License. See /LICENSE for more information.
 -->
 
-<h2>Forum</h2>
+<h2>Support group</h2>
 
 <div class="help" id="groupcontent">please wait a moment...</div>
 
@@ -19,10 +19,7 @@
 
   /** construction -------------------------------------------------------- */
   ready = function() { // INJ 'ready' should be the only symbol we're exposing to the global namespace
-
-    var ajax_proxy = "http://" + afrimesh.settings.hosts.dashboard_server + afrimesh.settings.ajax_proxy;
-    $("#groupcontent").load(ajax_proxy + "http://groups.google.com/group/afrimesh/topics div.maincontboxhead");
-
+    load_remote_content("http://groups.google.com", "group/afrimesh/topics", "div.maincontboxhead", "#groupcontent");
     console.debug("loaded help.forum.html");
     return unload;
   };
@@ -30,6 +27,7 @@
   function unload() {
     console.debug("unloaded help.forum.html");
   };
+
 
   /** done ---------------------------------------------------------------- */
   console.debug("loaded help.forum.js");

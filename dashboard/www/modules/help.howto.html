@@ -18,8 +18,10 @@
   /** construction -------------------------------------------------------- */
   ready = function() { // INJ 'ready' should be the only symbol we're exposing to the global namespace
     
-    var ajax_proxy = "http://" + afrimesh.settings.hosts.dashboard_server + afrimesh.settings.ajax_proxy;
-    $("#wikicontent").load(ajax_proxy + "http://code.google.com/p/afrimesh/wiki/HowTo div#wikicontent");
+    /**var ajax_proxy = "http://" + afrimesh.settings.hosts.dashboard_server + afrimesh.settings.ajax_proxy;
+    $("#wikicontent").load(ajax_proxy + "http://code.google.com/p/afrimesh/wiki/HowTo div#wikicontent");*/
+
+    load_remote_content("http://code.google.com", "p/afrimesh/wiki/HowTo", "div#wikicontent", "#wikicontent");
 
     console.debug("loaded help.howto.html");
     return unload;

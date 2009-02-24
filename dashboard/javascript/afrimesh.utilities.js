@@ -73,7 +73,28 @@
     //return this[selector.car()].__q(selector.cdr());
     return __q(this_object[selector.car()], selector.cdr());
   };
-  
+
+
+  /** 
+   * Pull in remote content
+   */
+  function load_remote_content(base, uri, src_selector, dest_selector) {
+    var ajax_proxy = "http://" + afrimesh.settings.hosts.dashboard_server + afrimesh.settings.ajax_proxy;
+    $(dest_selector).load(ajax_proxy + base + "/" + uri + " " + src_selector,
+                          null,
+                          function() {
+                              rewrite_urls(base, src_selector, dest_selector);
+                            });
+  };
+  function rewrite_urls(base, src_selector, dest_selector) {
+    $("a").click(function() {
+        var uri = this.href.replace("file:///", "");
+        console.debug("Rewrote url: " + base + "/" + uri);
+        load_remote_content(base, uri, src_selector, dest_selector);
+        return false;
+      });
+  };  
+
   
   
   /**
@@ -87,8 +108,6 @@
     }
     return s;
   };
-
-  
   function pretty_print(item) {
     var s = "";
     for (var p in item) {
@@ -96,7 +115,6 @@
     }
     return s;
   }
-
   function pretty_print_json(item) {
     var s = "{ ";
     var first_property = true;
