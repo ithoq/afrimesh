@@ -7,17 +7,7 @@
  * New BSD License. See /LICENSE for more information.
 -->
 
-<h2>How to...</h2>
-
-<ul class = "help">
-  <li> configure a new mesh node </li>
-  <li> install the dashboard software on a Linux or FreeBSD server </li>
-  <li> install the dashboard software on an OpenWRT based router </li>
-  <li> configure the dashboard software for a R.O.B.I.N. mesh </li>
-  <li> configure the dashboard to run without an internet connections </li>
-  <li> scale tall buildings in a single bound </li>
-</ul>
-
+<div class="help" id="wikicontent">please wait a moment...</div>
 
 <script type="text/javascript"> //<![CDATA[    
 (function() {
@@ -27,6 +17,10 @@
 
   /** construction -------------------------------------------------------- */
   ready = function() { // INJ 'ready' should be the only symbol we're exposing to the global namespace
+    
+    var ajax_proxy = "http://" + afrimesh.settings.hosts.dashboard_server + afrimesh.settings.ajax_proxy;
+    $("#wikicontent").load(ajax_proxy + "http://code.google.com/p/afrimesh/wiki/HowTo div#wikicontent");
+
     console.debug("loaded help.howto.html");
     return unload;
   };
