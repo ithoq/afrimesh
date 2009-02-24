@@ -29,10 +29,10 @@ fi
 URL=`echo "$QUERY_STRING" | grep -oE "(^|[?&])url=[^&]+" | sed "s/%20/ /g" | cut -f 2- -d "="`
 
 
-REQUEST="$WGET -q -O - $URL"
+REQUEST="$WGET --user-agent=\"Afrimesh/1.0 XHR Proxy\" -q -O - $URL"
 if [ "$REQUEST_METHOD" = "POST" ]; then
     #REQUEST="wget --post-data="$QUERY" -q -O - $URL"
-    REQUEST="$CURL -d \"$QUERY\" $URL"
+    REQUEST="$CURL --user-agent=\"Afrimesh/1.0 XHR Proxy\" -d \"$QUERY\" $URL"
 fi
 
 #echo "ajax-proxy.cgi - METHOD:    $REQUEST_METHOD" >> /tmp/village-bus.log

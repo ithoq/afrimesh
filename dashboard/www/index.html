@@ -92,11 +92,11 @@
         add_menu_item("network",   "map");
         add_menu_item("network",   "health");
         add_menu_item("help",      "howto");
-        add_menu_item("help",      "forum");
+        add_menu_item("help",      "group");
         add_menu_item("help",      "chat");
 
         /** set default page */
-        $("ul#menu ul#help li#howto").click();
+        $("ul#menu ul#help li#group").click();
 
         /** loading complete, we can now remove our message */
         $("#message-loading").html("");
@@ -156,7 +156,7 @@
               <img class="top_left" alt="" src="style/images/top_left.png"/>
               <li id="howto">How to...</li>
               <img class="top_right" alt="" src="style/images/top_right.png"/>
-              <li id="forum">Support forum</li>
+              <li id="group">Support group</li>
               <li id="chat">Live chat</li>
               <li class="last">
                 <img class="bottom_left" alt="" src="style/images/bottom_left.png"/>
