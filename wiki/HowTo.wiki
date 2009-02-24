@@ -4,3 +4,4 @@
   * configure the dashboard software for a R.O.B.I.N. mesh
   * configure the dashboard to run without an internet connection
   * scale tall buildings in a single bound
+  * set up a DevelopmentEnvironment
