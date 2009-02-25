@@ -28,7 +28,10 @@
 #
 
 
-DEPROOT=`pwd`/ext
+
+# - configuration ------------------------------------------------------------
+# If you want to build packages for OpenWRT you need to set this to the
+# location of a copy of the kamikaze sources
 KAMIKAZE=/Volumes/afrimesh-dev/ext/kamikaze
 
 
@@ -41,6 +44,7 @@ MKDIR=mkdir -p
 MAKE=make
 
 # - platform detection -------------------------------------------------------
+DEPROOT=/usr
 DASHBOARD_WWW=/www
 DASHBOARD_CGI=/www/cgi-bin
 UNAME = $(shell uname)
@@ -52,11 +56,9 @@ endif
 ifeq ($(UNAME),FreeBSD)
 DASHBOARD_WWW=/usr/local/www/apache22/data
 DASHBOARD_CGI=/usr/local/www/apache22/cgi-bin
+DEPROOT=/usr/local
 MAKE=gmake
 endif
-
-
-
 
 
 
@@ -104,25 +106,14 @@ clean : clean-www
 
 
 # - linux --------------------------------------------------------------------
-linux : symlink-linux village-bus
-
-symlink-linux:
-	rm ext/lib
-	cd ext ; ln -s ./lib-x86-linux ./lib
-
+linux : village-bus
 install-linux: linux install-www
 
 
 
 # - freebsd ------------------------------------------------------------------
-freebsd : symlink-freebsd village-bus
-
-symlink-freebsd:
-	rm ext/lib
-	cd ext ; ln -s ./lib-x86-freebsd ./lib
-
+freebsd : village-bus
 install-freebsd : freebsd install-www
-
 
 
 
@@ -140,14 +131,12 @@ all-openwrt :
 	make package/index
 
 prep-openwrt :
-	ln -s $(DEPROOT) $(shell pwd)/ext
 	ln -s $(shell pwd)/package-scripts/openwrt/afrimesh-base $(KAMIKAZE)/package/afrimesh-base
 	ln -s $(shell pwd)/package-scripts/openwrt/afrimesh-portal $(KAMIKAZE)/package/afrimesh-portal
 	ln -s $(shell pwd)/package-scripts/openwrt/afrimesh-webif $(KAMIKAZE)/package/afrimesh-webif
 	#ln -s $(shell pwd)/package-scripts/openwrt/afrimesh-webif $(KAMIKAZE)/package/afrimesh-dashboard
 
 distclean : clean
-	rm -f $(shell pwd)/ext
 	rm -f $(KAMIKAZE)/package/afrimesh-base
 	rm -f $(KAMIKAZE)/package/afrimesh-portal
 	rm -f $(KAMIKAZE)/package/afrimesh-webif
