@@ -4,7 +4,7 @@ Instructions for preparing an afrimesh development environment under FreeBSD
 
 Run as required:
 
-  * json-c:  (Optional - the original version pulls in a huge chunk of Gnome with itself)
+  * json-c:  (Alternatively you can cd /usr/ports/devel/json-c if you don't mind half of gnome being pulled in!)
   {{{
   cd package-scripts/freebsd/devel/json-c
   make install clean
