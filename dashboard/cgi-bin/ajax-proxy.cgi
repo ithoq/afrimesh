@@ -38,7 +38,7 @@ fi
 #echo "ajax-proxy.cgi - METHOD:    $REQUEST_METHOD" >> /tmp/village-bus.log
 #echo "ajax-proxy.cgi - RAW_QUERY: $RAW_QUERY" >> /tmp/village-bus.log
 #echo "ajax-proxy.cgi - QUERY:     $QUERY"     >> /tmp/village-bus.log
-echo "ajax-proxy.cgi - REQUEST:   $REQUEST"   >> /tmp/village-bus.log
+#echo "ajax-proxy.cgi - REQUEST:   $REQUEST"   >> /tmp/village-bus.log
 #echo "ajax-proxy.cgi - URL:       $URL"       >> /tmp/village-bus.log
 
 echo "Content-type: text/html"

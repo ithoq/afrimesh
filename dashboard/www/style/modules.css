@@ -201,3 +201,9 @@ dl.sort dd { background-color:red;  }
   list-style-type: disc;
   list-style-position: outside;
 }
+.help div.spacer {
+  height: 2.0em;
+}
+.help div.navigation {
+  background: #f7f7f7;
+}
