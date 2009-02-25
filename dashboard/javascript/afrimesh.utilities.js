@@ -76,7 +76,7 @@
 
 
   /** 
-   * Pull in remote content
+   * Pull in remote content - TODO - merge refactors from help.group.html
    */
   function load_remote_content(base, uri, src_selector, dest_selector) {
     var ajax_proxy = "http://" + afrimesh.settings.hosts.dashboard_server + afrimesh.settings.ajax_proxy;
@@ -88,12 +88,23 @@
   };
   function rewrite_urls(base, src_selector, dest_selector) {
     $("a").click(function() {
-        var uri = this.href.replace("file:///", "");
+        var uri = url_to_uri(this.href);
         console.debug("Rewrote url: " + base + "/" + uri);
         load_remote_content(base, uri, src_selector, dest_selector);
         return false;
       });
   };  
+  function url_to_uri(url) {
+    var file_uri = ("file:///");
+    var http_uri = ("http://" + afrimesh.settings.hosts.dashboard_server + "/");
+    var uri = url;
+    if (uri.indexOf(file_uri) == 0) {
+      uri = uri.replace(file_uri, "");
+    } else if (uri.indexOf(http_uri) == 0) {
+      uri = uri.replace(http_uri, "");
+    }
+    return uri;
+  }
 
   
   
