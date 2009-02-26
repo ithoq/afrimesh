@@ -130,6 +130,17 @@ all-openwrt :
 	cd $(KAMIKAZE) ; \
 	make package/index
 
+clean-openwrt :
+	cd $(KAMIKAZE) ; \
+	make package/afrimesh-base-clean V=99
+	cd $(KAMIKAZE) ; \
+	make package/afrimesh-portal-clean V=99
+	cd $(KAMIKAZE) ; \
+	make package/afrimesh-webif-clean V=99
+	#cd $(KAMIKAZE) ; \
+	#make package/afrimesh-dashboard-clean V=99
+
+
 prep-openwrt :
 	ln -s $(shell pwd)/package-scripts/openwrt/afrimesh-base $(KAMIKAZE)/package/afrimesh-base
 	ln -s $(shell pwd)/package-scripts/openwrt/afrimesh-portal $(KAMIKAZE)/package/afrimesh-portal

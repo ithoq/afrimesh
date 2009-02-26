@@ -104,7 +104,7 @@ test-new : village-bus-radius
 
 test-modify : village-bus-radius
 	export REQUEST_METHOD="GET" ; \
-	export QUERY_STRING="{ \"command\" : \"modify\" }" ; \
+	export QUERY_STRING="{ \"command\" : \"modify\", \"username\": \"Joan\", \"new_username\": null, \"new_password\": null, \"new_type\": \"flatrate\" }" ; \
 	./village-bus-radius
 
 test-delete : village-bus-radius
