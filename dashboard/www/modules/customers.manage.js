@@ -79,9 +79,9 @@ var populate_control = undefined;
    */
   function on_customer_save() {
     var username = $("#widget-customers-manage input#username").val();
-    var ret = afrimesh.customers.insert(username, "flatrate", 0);
+    var ret = afrimesh.customers.generate(username, "flatrate", 0);
     console.debug("Inserted: " + ret);
-    $("div#menu li#customers a#manage").click();
+    $("ul#menu ul#customers li#manage").click();
   };
 
 
@@ -109,7 +109,7 @@ var populate_control = undefined;
     console.debug("Removing: " + username);
     var ret = afrimesh.customers.remove(username);
     console.debug("Removed: " + ret);
-    $("div#menu li#customers a#manage").click();
+    $("ul#menu ul#customers li#manage").click();
   };
  
 
