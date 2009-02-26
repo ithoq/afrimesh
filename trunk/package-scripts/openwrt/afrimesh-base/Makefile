@@ -82,7 +82,7 @@ endef
 
 define Build/Compile
 	cd $(PKG_BUILD_DIR) ; \
-	$(COMPILE_COMMAND) -o $(PKG_BUILD_DIR)/village-bus-uci json_cgi.c village-bus-uci.c  -ljson -luci
+	$(COMPILE_COMMAND) -o $(PKG_BUILD_DIR)/village-bus-uci json_cgi.c village-bus-uci.c main.c -ljson -luci
 	$(STRIP) $(PKG_BUILD_DIR)/village-bus-uci
 endef
 
