@@ -90,7 +90,7 @@ var BootVillageBus = function (afrimesh) {
                     command  : "new",
                     username : username,
                     type     : type,
-                    seconds  : seconds },
+                    seconds  : seconds },  
         success : make_sync_response_handler(villagebus.radius.url, "villagebus.radius.insert"),
         async   : false });
   };

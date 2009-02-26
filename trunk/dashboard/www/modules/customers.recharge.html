@@ -102,7 +102,7 @@
       $(".button-submit").corner("8px");
       $("div.button-submit").hover(function() { $(this).addClass   ("hover"); },
                                    function() { $(this).removeClass("hover"); });
-      $("div.button-submit").click(function() { $("div#menu li#customers a#recharge").click(); });
+      $("div.button-submit").click(function() { $("ul#menu ul#customers li#recharge").click(); });
     } else {
       console.error("Could not generate new customer: " + customer.error);
     }
