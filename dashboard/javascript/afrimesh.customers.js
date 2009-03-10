@@ -32,10 +32,7 @@ function BootCustomers(parent) {
   };
   customers.status  = function() {
     return afrimesh.villagebus.radius.who();
-  };
-
-
-  
+  };  
 
   return customers;
 };
