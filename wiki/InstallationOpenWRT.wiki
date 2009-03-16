@@ -1,13 +1,13 @@
 = Configuration Parameters =
 
 || *parameter* || *description* || *example* || *actual* ||
-|| ifname || Your wireless interface || wl0 on broadcom & ath0 on atheros || . . . . . . . . . . ||
-|| channel || The channel your mesh is running on || e.g. 5 || _ _ _ _ _ _ _ _ _ _ ||
-|| ssid || The SSID your mesh is using || e.g. batman || _ _ _ _ _ _ _ _ _ _ ||
-|| bssid || The BSSID your mesh is using || e.g. "BB:BB:BB:BB:BB:BB" || _ _ _ _ _ _ _ _ _ _  ||
-|| ipaddr || The ip address your router will have on the mesh || e.g. 10.0.0.6 || _ _ _ _ _ _ _ _ _ _ ||
-|| netmask || The netmask your mesh uses || e.g. 255.0.0.0 || _ _ _ _ _ _ _ _ _ _ ||
-|| visualisation_srv || The ip address of the B.A.T.M.A.N. vis server || e.g. 192.168.20.225 || _ _ _ _ _ _ _ _ _ _ ||
+|| ifname || Your wireless interface || wl0 on broadcom & ath0 on atheros || . . . . . . . . . . . . . . . . . . . . ||
+|| channel || The channel your mesh is running on || e.g. 5 || . . . . . . . . . . . . . . . . . . . . ||
+|| ssid || The SSID your mesh is using || e.g. batman || . . . . . . . . . . . . . . . . . . . . ||
+|| bssid || The BSSID your mesh is using || e.g. "BB:BB:BB:BB:BB:BB" || . . . . . . . . . . . . . . . . . . . . ||
+|| ipaddr || The ip address your router will have on the mesh || e.g. 10.0.0.6 || . . . . . . . . . . . . . . . . . . . . ||
+|| netmask || The netmask your mesh uses || e.g. 255.0.0.0 || . . . . . . . . . . . . . . . . . . . . ||
+|| visualisation_srv || The ip address of the B.A.T.M.A.N. vis server || e.g. 192.168.20.225 || . . . . . . . . . . . . . . . . . . . . ||
 
 
 = Flashing The Router =
