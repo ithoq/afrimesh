@@ -1,0 +1,68 @@
+= Configuration Parameters =
+
+  * ifname - Your wireless interface, wl0 on broadcom & ath0 on atheros
+  * channel - The channel your mesh is running on e.g. 5
+  * ssid - The SSID your mesh is using e.g. batman
+  * bssid - The BSSID your mesh is using e.g. "BB:BB:BB:BB:BB:BB"
+  * ipaddr - The ip address your router will have on the mesh e.g. 10.0.0.6
+  * netmask - The netmask your mesh uses e.g. 255.0.0.0
+  * visualisation_srv - The ip address of the B.A.T.M.A.N. vis server e.g. 192.168.20.225
+
+
+= Flashing The Router =
+
+  * FlashRouterBroadcom
+  * FlashRouterAtheros
+
+
+= Basic Router Configuration =
+
+  * Run:
+  {{{
+  uci delete network.lan.type
+  uci set network.wifi=interface
+  uci set network.wifi.ifname=<ifname>
+  uci set network.wifi.proto=static
+  uci set network.wifi.ipaddr=<ipaddr>
+  uci set network.wifi.netmask=<netmask>
+  uci set wireless.wifi0.disabled=0
+  uci set wireless.wifi0.channel=<channel>
+  uci set wireless.@wifi-iface[0].ssid=<ssid>
+  uci set wireless.@wifi-iface[0].mode=adhoc 
+  uci set wireless.@wifi-iface[0].bssid=<bssid>
+  uci set wireless.@wifi-iface[0].network=wifi           
+  uci commit
+  }}}  
+
+
+= B.A.T.M.A.N. =
+
+  * Run:
+  {{{
+  opkg update
+  opkg install batmand
+  uci set batmand.general.routing_class=3
+  uci set batmand.general.visualisation_srv=192.168.20.225
+  uci commit
+  cd /etc/rc.d
+  ln -s ../init.d/batmand S80batmand
+  }}}
+
+
+= Afrimesh Base = 
+
+  * Run:
+  {{{
+  opkg update
+  opkg install afrimesh-base
+  }}}
+
+
+= Afrimesh Portal = 
+
+  * Run:
+  {{{
+  opkg update
+  opkg install afrimesh-portal
+  }}}
+
