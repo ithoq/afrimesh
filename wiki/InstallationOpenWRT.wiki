@@ -1,7 +1,7 @@
 = Configuration Parameters =
 
 || *parameter* || *description* || *example* || *actual* ||
-|| ifname || Your wireless interface || wl0 on broadcom & ath0 on atheros || .......... ||
+|| ifname || Your wireless interface || wl0 on broadcom & ath0 on atheros || . . . . . . . . . . ||
 || channel || The channel your mesh is running on || e.g. 5 || _ _ _ _ _ _ _ _ _ _ ||
 || ssid || The SSID your mesh is using || e.g. batman || _ _ _ _ _ _ _ _ _ _ ||
 || bssid || The BSSID your mesh is using || e.g. "BB:BB:BB:BB:BB:BB" || _ _ _ _ _ _ _ _ _ _  ||
