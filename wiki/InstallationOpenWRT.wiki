@@ -61,7 +61,7 @@ Afrimesh base provides the minimum of packages required for a router to communic
 
 
 = Afrimesh Portal = 
-  Afrimesh portal provides the configuration files to run a [http://coova.org CoovaChilli] captive portal on each mesh router.
+Afrimesh portal provides the configuration files to run a [http://coova.org CoovaChilli] captive portal on each mesh router.
 
 The captive portal software is used to control access to the mesh&internet as well as enforcing bandwidth allocation.
 
