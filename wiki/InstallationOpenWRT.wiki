@@ -36,6 +36,7 @@
 
 
 = B.A.T.M.A.N. =
+batmand is the mesh routing daemon and is responsible for ensuring that all packets on the mesh end up where they belong.
 
   * Run:
   {{{
@@ -50,6 +51,7 @@
 
 
 = Afrimesh Base = 
+Afrimesh base provides the minimum of packages required for a router to communicate with the management dashboard.
 
   * Run:
   {{{
@@ -59,10 +61,12 @@
 
 
 = Afrimesh Portal = 
+  Afrimesh portal provides the configuration files to run a [Coova http://coova.org] captive portal on each mesh router.
+
+The captive portal software is used to control access to the mesh&internet as well as enforcing bandwidth allocation.
 
   * Run:
   {{{
   opkg update
   opkg install afrimesh-portal
   }}}
-
