@@ -52,7 +52,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/afrimesh-portal
 	SECTION:=admin
 	CATEGORY:=Administration
-	DEPENDS:=+afrimesh-base
+	DEPENDS:=+afrimesh-base +coova-chilli
 	TITLE:=Coova Chilli captive portal support
 	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
 endef
