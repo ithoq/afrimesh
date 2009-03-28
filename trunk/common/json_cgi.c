@@ -39,6 +39,17 @@ void log_message(const char* message, ...)
 #ifdef DISABLE_LOG
   return;
 #endif
+  va_list args;
+  va_start(args, message);
+  vlog_message(message, args);
+  va_end(args);
+}
+
+void vlog_message(const char* message, va_list ap)
+{
+#ifdef DISABLE_LOG
+  return;
+#endif
 
   /* Initialize log */
   if (json_cgi_log_file == NULL) {
@@ -51,12 +62,10 @@ void log_message(const char* message, ...)
     fprintf(json_cgi_log_file, "Started logging...\n");
   }
 
-  va_list args;
-  va_start(args, message);
-  vfprintf(json_cgi_log_file, message, args);
-  va_end(args);
+  vfprintf(json_cgi_log_file, message, ap);
   fflush(json_cgi_log_file);
 }
+
 
 
 

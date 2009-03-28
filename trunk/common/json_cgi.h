@@ -41,6 +41,7 @@ static FILE* json_cgi_log_file = NULL;
 static char* json_cgi_post_buffer = NULL;
 
 void log_message(const char* message, ...);
+void vlog_message(const char* message, va_list ap);
 void json_cgi_release();
 char* json_cgi_request();
 
