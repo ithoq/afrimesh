@@ -42,7 +42,7 @@ We provide binary firmware images and packages for OpenWRT Kamikaze based router
   * Open Mesh Instructions
 
 === Configure Router ==
-  * Plug computer into router or join router SSID
-  * Go to http://192.168.1.1
-  * Answer the questions
-  * Reboot router
+  # Plug computer into router or join router SSID
+  # Go to http://192.168.1.1
+  # Answer the questions
+  # Reboot router
