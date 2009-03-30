@@ -2,16 +2,18 @@
 
 == Manual Configuration ==
 
-Via LAN interface:
+Given, a freshly flashed router with the afrimesh-webconfig package installed.
+
+Connecting Via LAN interface:
   # Plug computer into mesh router LAN socket
   # Mesh router assigns client DHCP in the range 192.168.1.0/24
 
-Via WIFI interface:
+Connecting Via WIFI interface:
   # Join router SSID
-  # Router assigns DHCP in the range 192.168.2.0/24 ???
+  # Router assigns client DHCP in the range 192.168.2.0/24 ???
 
 Common:
-  # Mesh router re-routes all web requests to own internal web server
+  # Mesh router re-routes all client web requests to configuration page on own internal web server
   # When client tries to surf s/he is presented with a series of steps:
     # Specify WIFI IP                               (default: 10.x.x.x)
     # Specify B.A.T.M.A.N. Vis server  (default: 10.0.0.2)
@@ -19,6 +21,9 @@ Common:
     # Router reconfigures
     # (Optional) Position router on map or via entering Lon/Lat
     # (Optional) Enter personal information
+    # Reboot
+  # Router disables web redirection
+  # Router reboots
     
 
 == Auto Configuration ==
