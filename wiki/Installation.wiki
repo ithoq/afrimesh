@@ -2,12 +2,22 @@
 
 = Afrimesh Installation =
 
-Add your content here.
+  * Dashboard
+  * Mesh Nodes
 
 
-= Details =
+== Dashboard ==
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+  * The network management dashboard software can be installed on a:
+  ** Linux Server
+  ** FreeBSD Server
+  ** OpenWRT Kamikaze based router
+
+
+== Mesh Nodes ==
+ 
+  * We provide binary firmware images and packages for OpenWRT routers based on:
+  ** The Broadcom Chipset (e.g. Linksys)
+  ** The Atheros Chipset (e.g. Ubiquity, Open-Mesh, Meraki)
+
+
