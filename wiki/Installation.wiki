@@ -9,11 +9,6 @@
 
 == Dashboard ==
 
-The network management dashboard software can be installed on a:
-  * Linux Server
-  * FreeBSD Server
-  * OpenWRT Kamikaze based router
-
 === Install From Source ===
   # Download latest
   # Unpack: tar xjf afrimesh-0.1.tar.bz2
@@ -27,6 +22,10 @@ The network management dashboard software can be installed on a:
 === Install FreeBSD Port ===
   # cd /usr/ports/net-mgmt/afrimesh-dashboard
   # make install clean
+
+=== Install OpenWRT Package ===
+  # opkg update
+  # opkg install afrimesh-dashboard
 
 
 == Mesh Nodes ==
