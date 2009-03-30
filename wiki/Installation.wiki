@@ -1,4 +1,5 @@
 #summary Installation Instructions <- Start Here!
+#labels Phase-Deploy
 
 = Afrimesh Installation =
 
