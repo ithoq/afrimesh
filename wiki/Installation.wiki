@@ -8,14 +8,14 @@
 
 == Dashboard ==
 
-  * The network management dashboard software can be installed on a:
-    ** Linux Server
-    ** FreeBSD Server
-    ** OpenWRT Kamikaze based router
+The network management dashboard software can be installed on a:
+  * Linux Server
+  * FreeBSD Server
+  * OpenWRT Kamikaze based router
 
 
 == Mesh Nodes ==
  
-  * We provide binary firmware images and packages for OpenWRT routers based on:
-    ** The Broadcom Chipset (e.g. Linksys)
-    ** The Atheros Chipset (e.g. Ubiquity, Open-Mesh, Meraki)
+We provide binary firmware images and packages for OpenWRT Kamikaze based routers based on:
+  * The Broadcom Chipset (e.g. Linksys)
+  * The Atheros Chipset (e.g. Ubiquity, Open-Mesh, Meraki)
