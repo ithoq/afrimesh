@@ -14,9 +14,35 @@ The network management dashboard software can be installed on a:
   * FreeBSD Server
   * OpenWRT Kamikaze based router
 
+=== Install From Source ===
+  # Download latest
+  # Unpack: tar xjf afrimesh-0.1.tar.bz2
+  # Compile: make
+  # Install: make install
+
+=== Install Ubuntu Package ===
+  # Download latest
+  # dpkg --install file.deb
+
+=== Install FreeBSD Port ===
+  # cd /usr/ports/net-mgmt/afrimesh-dashboard
+  # make install clean
+
 
 == Mesh Nodes ==
  
 We provide binary firmware images and packages for OpenWRT Kamikaze based routers based on:
   * The Broadcom Chipset (e.g. Linksys)
   * The Atheros Chipset (e.g. Ubiquity, Open-Mesh, Meraki)
+
+=== Flash Router ===
+  * Linksys Instructions
+  * Meraki Instructions
+  * Ubiquity Instructions
+  * Open Mesh Instructions
+
+=== Configure Router ==
+  * Plug computer into router or join router SSID
+  * Go to http://192.168.1.1
+  * Answer the questions
+  * Reboot router
