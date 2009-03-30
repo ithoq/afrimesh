@@ -13,12 +13,12 @@ Via WIFI interface:
 Common:
   # Mesh router re-routes all web requests to own internal web server
   # When client tries to surf s/he is presented with a series of steps:
-    # Specify WIFI IP                               [default: 10.x.x.x]
-    # Specify B.A.T.M.A.N. Vis server  [default: 10.0.0.2]
-    # Specify B.A.T.M.A.N. routeing_class [default: 3]
+    # Specify WIFI IP                               (default: 10.x.x.x)
+    # Specify B.A.T.M.A.N. Vis server  (default: 10.0.0.2)
+    # Specify B.A.T.M.A.N. routing_class (default: 3)
     # Router reconfigures
-    # [Optional] Position router on map or via entering Lon/Lat
-    # [Optional] Enter personal information
+    # (Optional) Position router on map or via entering Lon/Lat
+    # (Optional) Enter personal information
     
 
 == Auto Configuration ==
