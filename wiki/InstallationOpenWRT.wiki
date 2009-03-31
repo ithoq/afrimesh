@@ -19,8 +19,13 @@
 
 
 = Basic Router Configuration =
-
-  * Run:
+  # Plug computer into router ethernet
+  # Set computer IP to 192.168.1.9
+  # Telnet into router
+  {{{
+  telnet 192.168.1.1
+  }}}
+  # Run:
   {{{
   uci delete network.lan.type
   uci set network.wifi=interface
@@ -41,7 +46,16 @@
 = B.A.T.M.A.N. =
 batmand is the mesh routing daemon and is responsible for ensuring that all packets on the mesh end up where they belong.
 
-  * Run:
+  # Configure router to connect to the server address listed in the router's /etc/opkg.conf 
+  {{{
+  route add default gw <internet-gateway-on-the-routers-subnet>
+  }}}
+  # Configure router to resolve the server address listed in the router's /etc/opkg.conf. 
+  Edit /etc/resolv.conf:
+  {{{
+  nameserver <your-dns-server>
+  }}}  
+  # Run:
   {{{
   opkg update
   opkg install batmand
