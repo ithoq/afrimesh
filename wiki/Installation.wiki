@@ -9,38 +9,36 @@
 
 == Dashboard ==
 
-=== Install From Source ===
+=== Option 1: TODO Install FreeBSD Port ===
+  # cd /usr/ports/net-mgmt/afrimesh-dashboard
+  # make install clean
+
+=== Option 2: TODO Install Ubuntu Package ===
+  # Download latest
+  # dpkg --install file.deb
+
+=== Option 3: TODO Install From Source ===
   # Download latest
   # Unpack: tar xjf afrimesh-0.1.tar.bz2
   # Compile: make
   # Install: make install
 
-=== Install Ubuntu Package ===
-  # Download latest
-  # dpkg --install file.deb
-
-=== Install FreeBSD Port ===
-  # cd /usr/ports/net-mgmt/afrimesh-dashboard
-  # make install clean
-
-=== Install OpenWRT Package ===
-  # opkg update
-  # opkg install afrimesh-dashboard
-
 
 == Mesh Nodes ==
  
+NB: [InstallationOpenWRT Manual installation instructions]
+
 We provide binary firmware images and packages for OpenWRT Kamikaze based routers based on:
   * The Broadcom Chipset (e.g. Linksys)
   * The Atheros Chipset (e.g. Ubiquity, Open-Mesh, Meraki)
 
-=== Flash Router ===
+=== TODO Flash Router ===
   * Linksys Instructions
   * Meraki Instructions
   * Ubiquity Instructions
   * Open Mesh Instructions
 
-=== Configure Router ==
+=== TODO Configure Router ==
   # Plug computer into router or join router SSID
   # Go to http://192.168.1.1
   # Answer the questions
