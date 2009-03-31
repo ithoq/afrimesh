@@ -1,6 +1,7 @@
+#summary TODO - replace with afrimesh-config package
 #labels Phase-Deploy
-= Configuration Parameters =
 
+= Configuration Parameters =
 || *parameter* || *description* || *example* || *actual* . . . . . . . . . . . . . . . . . . . . ||
 || ifname || Your wireless interface || wl0 on broadcom & ath0 on atheros ||  ||
 || channel || The channel your mesh is running on || e.g. 5 ||  ||
@@ -13,8 +14,8 @@
 
 = Flashing The Router =
 
-  * FlashRouterBroadcom
-  * FlashRouterAtheros
+  * FlashMerakiMini
+  * FlashLinksysWRT54GL
 
 
 = Basic Router Configuration =
