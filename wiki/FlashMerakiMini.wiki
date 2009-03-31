@@ -1,0 +1,8 @@
+#summary One-sentence summary of this page.
+#labels Phase-Deploy
+
+= Flashing a Meraki Mini Router =
+
+  # Download the appropriate afrimesh firmware image  TODO
+  # See: http://wiki.openwrt.org/OpenWrtDocs/Hardware/Meraki/Mini
+
