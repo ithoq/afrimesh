@@ -75,19 +75,7 @@ Afrimesh base provides the minimum of packages required for a router to communic
   opkg install afrimesh-base
   }}}
 
-
-= Afrimesh Portal = 
-Afrimesh portal provides the configuration files to run a [http://coova.org CoovaChilli] captive portal on each mesh router.
-
-The captive portal software is used to control access to the mesh&internet as well as enforcing bandwidth allocation.
-
-  # Run:
-  {{{
-  opkg install afrimesh-portal
-  }}}
-
-
-= TODO =
+== TODO ==
   * Mesh node cannot resolve DNS from local login after flashing and installation
   {{{
   }}}
@@ -102,3 +90,15 @@ The captive portal software is used to control access to the mesh&internet as we
   iptables -t nat -I POSTROUTING --source 192.168.1.0/24 -o gate0 -j MASQUERADE
   iptables -I FORWARD -j ACCEPT
   }}}
+
+
+= Afrimesh Portal = 
+Afrimesh portal provides the configuration files to run a [http://coova.org CoovaChilli] captive portal on each mesh router.
+
+The captive portal software is used to control access to the mesh&internet as well as enforcing bandwidth allocation.
+
+  # Run:
+  {{{
+  opkg install afrimesh-portal
+  }}}
+
