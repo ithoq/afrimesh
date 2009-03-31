@@ -34,4 +34,8 @@ Steps:
     >> fis load -d linux
     >> exec
     }}}
+  # Check boot script:
+    {{{
+    fconfig -l
+    }}}
   # Reboot
