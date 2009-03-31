@@ -46,21 +46,21 @@
 = B.A.T.M.A.N. =
 batmand is the mesh routing daemon and is responsible for ensuring that all packets on the mesh end up where they belong.
 
-  # Configure router to connect to the server address listed in the router's /etc/opkg.conf 
-  {{{
-  route add default gw <internet-gateway-on-the-routers-subnet>
-  }}}
-  # Configure router to resolve the server address listed in the router's /etc/opkg.conf. 
-  Edit /etc/resolv.conf:
-  {{{
-  nameserver <your-dns-server>
-  }}}  
+  # Configure router to resolve and connect to the server address listed in the router's /etc/opkg.conf 
+    # Edit /etc/resolv.conf:
+    {{{
+    nameserver <your-dns-server>
+    }}}  
+    # Run:
+    {{{
+    route add default gw <internet-gateway-on-the-routers-subnet>
+    }}}
   # Run:
   {{{
   opkg update
   opkg install batmand
   uci set batmand.general.routing_class=3
-  uci set batmand.general.visualisation_srv=192.168.20.225
+  uci set batmand.general.visualisation_srv=<visualisation_srv>
   uci commit
   cd /etc/rc.d
   ln -s ../init.d/batmand S80batmand
@@ -70,9 +70,8 @@ batmand is the mesh routing daemon and is responsible for ensuring that all pack
 = Afrimesh Base = 
 Afrimesh base provides the minimum of packages required for a router to communicate with the management dashboard.
 
-  * Run:
+  # Run:
   {{{
-  opkg update
   opkg install afrimesh-base
   }}}
 
@@ -82,8 +81,7 @@ Afrimesh portal provides the configuration files to run a [http://coova.org Coov
 
 The captive portal software is used to control access to the mesh&internet as well as enforcing bandwidth allocation.
 
-  * Run:
+  # Run:
   {{{
-  opkg update
   opkg install afrimesh-portal
   }}}
