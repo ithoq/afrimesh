@@ -6,3 +6,32 @@
   # Download the appropriate afrimesh firmware image  TODO
   # See: http://wiki.openwrt.org/OpenWrtDocs/Hardware/Meraki/Mini
 
+Steps:
+
+  # Set computer IP to 192.168.84.9
+  # Put firmware on a web server on your computer
+  # Plug computer ethernet into router ethernet
+  # Hook router up to computer serial port
+  # Start your favorite serial terminal software
+  # Power up router and hit ^C in serial terminal to break into boot loader
+  # Delete existing partitions:
+    {{{
+    fis init
+    }}}
+  # Flash the kernel:
+    {{{
+    load -r -b 0x80041000 -m http -p 80 -h 192.168.84.9 /path/to/firmware/openwrt-atheros-vmlinux.gz
+    fis create -r 0x80041000 -l 0x180000 -e 0x80041000 linux
+    }}}
+  # Flash the root filesystem:
+    {{{
+    load -r -b 0x80041000 -m http -p 80 -h 192.168.84.9 /path/to/firmware/openwrt-atheros-root.jffs2-64k
+    fis create -r 0x80041000 -e 0x80041000 rootfs
+    }}}
+  # Update boot script:
+    {{{
+    fconfig
+    >> fis load -d linux
+    >> exec
+    }}}
+  # Reboot
