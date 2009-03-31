@@ -76,14 +76,15 @@ Afrimesh base provides the minimum of packages required for a router to communic
   }}}
 
 == TODO ==
-  * Mesh node cannot resolve DNS from local login after flashing and installation
-  {{{
-  }}}
   * Laptop plugged into mesh node is not getting an ip via dhcp                                                                              
   {{{
   sudo ifconfig eth1 192.168.1.10
   sudo route add default gw 192.168.1.1
   sudo vi /etc/resolv.conf
+  }}}
+  * Mesh node cannot resolve DNS from local login after flashing and installation
+  {{{
+  vi /etc/resolv.conf
   }}}
   * Mesh node not forwarding client packets by default
   {{{
@@ -101,4 +102,3 @@ The captive portal software is used to control access to the mesh&internet as we
   {{{
   opkg install afrimesh-portal
   }}}
-
