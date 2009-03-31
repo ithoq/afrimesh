@@ -47,11 +47,11 @@
 batmand is the mesh routing daemon and is responsible for ensuring that all packets on the mesh end up where they belong.
 
   # Configure router to resolve and connect to the server address listed in the router's /etc/opkg.conf 
-    # Edit /etc/resolv.conf:
+    ** Edit /etc/resolv.conf:
     {{{
     nameserver <your-dns-server>
     }}}  
-    # Run:
+    ** Run:
     {{{
     route add default gw <internet-gateway-on-the-routers-subnet>
     }}}
