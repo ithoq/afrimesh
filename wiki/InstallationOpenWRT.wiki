@@ -59,6 +59,7 @@ The captive portal software is used to control access to the mesh&internet as we
 
   # Run:
   {{{
+  opkg update
   opkg install afrimesh-portal
   uci set network.lan.ipaddr=0.0.0.0
   uci commit
