@@ -52,8 +52,8 @@
   }}}  
 
 
-= Afrimesh Portal (Optional) = 
-Afrimesh portal provides the configuration files to run a [http://coova.org CoovaChilli] captive portal on each mesh router.
+= afrimesh-portal (Optional) = 
+afrimesh-portal provides the configuration files to run a [http://coova.org CoovaChilli] captive portal on each mesh router.
 
 The captive portal software is used to control access to the mesh&internet as well as enforcing bandwidth allocation.
 
