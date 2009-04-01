@@ -1,5 +1,5 @@
 HS_WANIF=gate0            # WAN Interface toward the Internet
-HS_LANIF=eth0.0             # Subscriber Interface for client devices
+HS_LANIF=eth0             # Subscriber Interface for client devices
 HS_NETWORK=192.168.0.0/24        # HotSpot Network (must include HS_UAMLISTEN)
 HS_NETMASK=255.255.255.0   # HotSpot Network Netmask
 HS_UAMLISTEN=192.168.0.1      # HotSpot IP Address (on subscriber network)
