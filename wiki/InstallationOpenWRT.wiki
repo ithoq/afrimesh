@@ -10,6 +10,7 @@
 || ipaddr || The ip address your router will have on the mesh || e.g. 10.0.0.6 || ||
 || netmask || The netmask your mesh uses || e.g. 255.0.0.0 || ||
 || visualisation_srv || The ip address of the B.A.T.M.A.N. vis server || e.g. 192.168.20.225 || ||
+|| dns || The ip address of your dns server || e.g. 192.168.20.5 || ||
 
 
 = Flashing The Router =
@@ -28,6 +29,7 @@
   # Run:
   {{{
   uci delete network.lan.type
+  uci set network.lan.dns=<dns>
   uci set network.wifi=interface
   uci set network.wifi.ifname=<ifname>
   uci set network.wifi.proto=static
@@ -82,14 +84,11 @@ Afrimesh base provides the minimum of packages required for a router to communic
   sudo route add default gw 192.168.1.1
   sudo vi /etc/resolv.conf
   }}}
-  * Mesh node cannot resolve DNS from local login after flashing and installation
-  {{{
-  vi /etc/resolv.conf
-  }}}
   * Mesh node not forwarding client packets by default
   {{{
   iptables -t nat -I POSTROUTING --source 192.168.1.0/24 -o gate0 -j MASQUERADE
-  iptables -I FORWARD -j ACCEPT
+  iptables -I FORWARD -o gate0 -j ACCEPT
+  iptables -I FORWARD -i gate0 -j ACCEPT
   }}}
 
 
