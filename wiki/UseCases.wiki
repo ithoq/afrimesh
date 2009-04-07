@@ -1,4 +1,5 @@
 #summary Only solve problems if they're going to make a difference
+#labels Phase-Requirements
 
 If I am able to `<some information or software feature>` then I will be able to `<some hopeful action>`, instead of what I'm having to do now, which is `<some unpleasant action>` to deal with `<annoying obstacle>`.
 
