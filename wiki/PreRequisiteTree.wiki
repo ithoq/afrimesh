@@ -1,4 +1,4 @@
-
+#summary Understanding your solution
 
 || *Obstacle* || *Injection* ||
 || foo           || bar          ||
