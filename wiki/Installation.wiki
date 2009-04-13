@@ -9,13 +9,13 @@
 
 == Dashboard ==
 
-=== Option 1: TODO Install FreeBSD Port ===
+=== Option 1: TODO Install Ubuntu Package ===
+  # Download latest
+  # dpkg --install afrimesh-dashboard-0.1.deb
+
+=== Option 2: TODO Install FreeBSD Port ===
   # cd /usr/ports/net-mgmt/afrimesh-dashboard
   # make install clean
-
-=== Option 2: TODO Install Ubuntu Package ===
-  # Download latest
-  # dpkg --install file.deb
 
 === Option 3: TODO Install From Source ===
   # Download latest
