@@ -40,3 +40,28 @@ Run as required:
   wget http://afrimesh.googlecode.com/files/libjson-0.8_i386.deb
   dpkg -i libjson-0.8_i386.deb
   }}}
+
+
+---- 
+
+== Package Build Environment ==
+
+  * pbuilder
+  {{{
+  apt-get install pbuilder
+  }}}
+  * configure:
+  {{{
+  * sudo pbuilder create --distribution <ubuntu_version> \
+        --othermirror "deb http://archive.ubuntu.com/ubuntu <ubuntu_version> main restricted universe multiverse"
+  }}}
+  * build:
+  {{{
+  sudo pbuilder build *.dsc
+  }}}
+  * update pbuilder environment
+  {{{
+  sudo pbuilder update
+  }}}
+  * use pbuilder-dist (of the ubuntu-dev-tools) to have several different pbuilder setups for different Ubuntu releases.
+
