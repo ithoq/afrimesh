@@ -48,11 +48,11 @@ Run as required:
 
   * pbuilder
   {{{
-  apt-get install pbuilder
+  sudo apt-get install  pbuilder devscripts  
   }}}
   * configure:
   {{{
-  sudo pbuilder create --distribution <ubuntu_version> \
+  sudo pbuilder create --distribution <ubuntu_version (e.g. hardy)> \
         --othermirror "deb http://archive.ubuntu.com/ubuntu <ubuntu_version> main restricted universe multiverse"
   }}}
   * build:
