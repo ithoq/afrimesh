@@ -1,5 +1,0 @@
-#summary Understanding your solution
-#labels Phase-Requirements
-
-|| *Obstacle* || *Injection* ||
-|| foo           || bar          ||
