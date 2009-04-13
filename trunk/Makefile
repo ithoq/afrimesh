@@ -30,6 +30,8 @@
 
 
 # - configuration ------------------------------------------------------------
+VERSION=0.1
+
 # If you want to build packages for OpenWRT you need to set this to the
 # location of a copy of the kamikaze sources
 KAMIKAZE=/Volumes/afrimesh-dev/ext/kamikaze
@@ -45,17 +47,17 @@ MAKE=make
 
 # - platform detection -------------------------------------------------------
 DEPROOT=/usr
-DASHBOARD_WWW=/www
-DASHBOARD_CGI=/www/cgi-bin
+DASHBOARD_WWW=$(DESTDIR)/www
+DASHBOARD_CGI=$(DESTDIR)/www/cgi-bin
 UNAME = $(shell uname)
 ifeq ($(UNAME),Linux)
-DASHBOARD_WWW=/var/www
-DASHBOARD_CGI=/usr/lib/cgi-bin
+DASHBOARD_WWW=$(DESTDIR)/var/www
+DASHBOARD_CGI=$(DESTDIR)/usr/lib/cgi-bin
 DEPROOT=/usr/local
 endif
 ifeq ($(UNAME),FreeBSD)
-DASHBOARD_WWW=/usr/local/www/apache22/data
-DASHBOARD_CGI=/usr/local/www/apache22/cgi-bin
+DASHBOARD_WWW=$(DESTDIR)/usr/local/www/apache22/data
+DASHBOARD_CGI=$(DESTDIR)/usr/local/www/apache22/cgi-bin
 DEPROOT=/usr/local
 MAKE=gmake
 endif
@@ -65,11 +67,12 @@ endif
 # TODO - crunch all javascript into a single file ?
 
 # - common -------------------------------------------------------------------
-village-bus : $(VILLAGERS)
-	export DEPROOT=$(DEPROOT); cd village-bus-batman ; $(MAKE)
-	export DEPROOT=$(DEPROOT); cd village-bus-radius ; $(MAKE)
-	export DEPROOT=$(DEPROOT); cd village-bus-snmp   ; $(MAKE)
-	export DEPROOT=$(DEPROOT); cd village-bus-uci    ; $(MAKE)
+all : # village-bus
+	@echo "This is all"
+
+install :
+	touch $(DESTDIR)/afrimesh-dashboard-installed
+	@echo "Installed in $(DESTDIR)"
 
 install-www:
 	@echo "Installing dashboard web interface in: $(DASHBOARD_WWW)"
@@ -80,6 +83,7 @@ install-www:
 	$(INSTALL) dashboard/www/style      $(DASHBOARD_WWW)
 	$(INSTALL) dashboard/www/modules    $(DASHBOARD_WWW)
 	$(INSTALL) dashboard/javascript     $(DASHBOARD_WWW)
+	$(INSTALL) ./package-scripts/openwrt/afrimesh-portal/files/www/cgi-bin/uam.pl $(DASHBOARD_CGI)
 	$(INSTALL) dashboard/cgi-bin/ajax-proxy.cgi $(DASHBOARD_CGI)
 	for i in $(VILLAGERS); do echo "Installing: $$i"; $(INSTALL) $$i/$$i $(DASHBOARD_CGI); done
 	find $(DASHBOARD_WWW) -name "*~"   | xargs rm -f
@@ -103,12 +107,50 @@ clean : clean-www
 	cd village-bus-snmp   ; $(MAKE) clean
 	cd village-bus-uci    ; $(MAKE) clean
 
+distclean : clean
+	cd village-bus-radius ; make distclean
+	cd village-bus-batman ; make distclean
+
+sources : clean
+	rm -rf /tmp/afrimesh-$(VERSION).tar.gz
+	cp -r ../trunk /tmp/afrimesh-$(VERSION)
+	find /tmp/afrimesh-$(VERSION) -name "*~"   | xargs rm -f
+	find /tmp/afrimesh-$(VERSION) -name ".svn" | xargs rm -rf
+	cd /tmp ; tar cf - afrimesh-$(VERSION) > afrimesh-$(VERSION).tar
+	cd /tmp ; gzip afrimesh-$(VERSION).tar
+	rm -rf /tmp/afrimesh-$(VERSION)
+	ls -al /tmp/afrimesh-$(VERSION).tar.gz
+
+village-bus : $(VILLAGERS)
+	export DEPROOT=$(DEPROOT); cd village-bus-batman ; $(MAKE)
+	export DEPROOT=$(DEPROOT); cd village-bus-radius ; $(MAKE)
+	export DEPROOT=$(DEPROOT); cd village-bus-snmp   ; $(MAKE)
+	export DEPROOT=$(DEPROOT); cd village-bus-uci    ; $(MAKE)
+
 
 
 # - linux --------------------------------------------------------------------
+# read: https://wiki.ubuntu.com/PackagingGuide/Complete
+PKG_BUILD_DIR=/tmp/build
 linux : village-bus
-install-linux: linux install-www
-
+install-linux : linux install-www
+prep-linux : sources
+	@echo "Initializing linux package scripts for build"
+	rm -rf $(PKG_BUILD_DIR)
+	mkdir $(PKG_BUILD_DIR)
+	cd $(PKG_BUILD_DIR) ; cp /tmp/afrimesh-$(VERSION).tar.gz .
+	cd $(PKG_BUILD_DIR) ; tar xzvf afrimesh-$(VERSION).tar.gz
+	cd $(PKG_BUILD_DIR) ; mv afrimesh-$(VERSION) afrimesh-dashboard-$(VERSION)
+	cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; dh_make -e antoine@7degrees.co.za -s --createorig
+	rm -rf $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION)/debian/*
+	rm -f package-scripts/debian/afrimesh-dashboard/*~
+	cp -a package-scripts/debian/afrimesh-dashboard/* $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION)/debian
+packages-linux : prep-linux
+	@echo "Building Debian/Ubuntu source packages"
+	cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; debuild -S
+	@echo "Building Debian/Ubuntu binary packages"
+	#cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; debuild 
+	cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; sudo pbuilder build ../*.dsc
 
 
 # - freebsd ------------------------------------------------------------------
@@ -118,9 +160,18 @@ install-freebsd : freebsd install-www
 
 
 # - openwrt ------------------------------------------------------------------
-all-openwrt :
+prep-openwrt :
+	ln -s $(shell pwd)/package-scripts/openwrt/afrimesh-base $(KAMIKAZE)/package/afrimesh-base
+	ln -s $(shell pwd)/package-scripts/openwrt/afrimesh-config $(KAMIKAZE)/package/afrimesh-config
+	ln -s $(shell pwd)/package-scripts/openwrt/afrimesh-portal $(KAMIKAZE)/package/afrimesh-portal
+	ln -s $(shell pwd)/package-scripts/openwrt/afrimesh-webif $(KAMIKAZE)/package/afrimesh-webif
+	#ln -s $(shell pwd)/package-scripts/openwrt/afrimesh-webif $(KAMIKAZE)/package/afrimesh-dashboard
+
+packages-openwrt :
 	cd $(KAMIKAZE) ; \
 	make package/afrimesh-base-compile V=99
+	cd $(KAMIKAZE) ; \
+	make package/afrimesh-config-compile V=99
 	cd $(KAMIKAZE) ; \
 	make package/afrimesh-portal-compile V=99
 	cd $(KAMIKAZE) ; \
@@ -134,27 +185,23 @@ clean-openwrt :
 	cd $(KAMIKAZE) ; \
 	make package/afrimesh-base-clean V=99
 	cd $(KAMIKAZE) ; \
+	make package/afrimesh-config-clean V=99
+	cd $(KAMIKAZE) ; \
 	make package/afrimesh-portal-clean V=99
 	cd $(KAMIKAZE) ; \
 	make package/afrimesh-webif-clean V=99
 	#cd $(KAMIKAZE) ; \
 	#make package/afrimesh-dashboard-clean V=99
 
-
-prep-openwrt :
-	ln -s $(shell pwd)/package-scripts/openwrt/afrimesh-base $(KAMIKAZE)/package/afrimesh-base
-	ln -s $(shell pwd)/package-scripts/openwrt/afrimesh-portal $(KAMIKAZE)/package/afrimesh-portal
-	ln -s $(shell pwd)/package-scripts/openwrt/afrimesh-webif $(KAMIKAZE)/package/afrimesh-webif
-	#ln -s $(shell pwd)/package-scripts/openwrt/afrimesh-webif $(KAMIKAZE)/package/afrimesh-dashboard
-
-distclean : clean
+distclean-openwrt : clean-openwrt
 	rm -f $(KAMIKAZE)/package/afrimesh-base
+	rm -f $(KAMIKAZE)/package/afrimesh-config
 	rm -f $(KAMIKAZE)/package/afrimesh-portal
 	rm -f $(KAMIKAZE)/package/afrimesh-webif
 	#rm -f $(KAMIKAZE)/package/afrimesh-dashboard
-	cd village-bus-radius ; make distclean
-	cd village-bus-batman ; make distclean
 
 
 
 # - common ------------------------------------------------------------------
+
+
