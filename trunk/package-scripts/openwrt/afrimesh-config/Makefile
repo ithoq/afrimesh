@@ -29,7 +29,7 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=afrimesh-webconfig
+PKG_NAME:=afrimesh-config
 PKG_VERSION:=0.1
 PKG_RELEASE:=1
 
@@ -39,7 +39,7 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/afrimesh-webconfig
+define Package/afrimesh-config
 	SECTION:=admin
 	CATEGORY:=Administration
 	DEPENDS:=+afrimesh-base
@@ -47,8 +47,8 @@ define Package/afrimesh-webconfig
 	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
 endef
 
-define Package/afrimesh-webconfig/description
-	
+define Package/afrimesh-config/description
+	Manual configuration for Mesh nodes
 endef
 
 define Build/Prepare
@@ -61,12 +61,11 @@ define Build/Configure
 endef
 
 define Build/Compile
-
 endef
 
-define Package/afrimesh-webconfig/install
-	$(CP) ./files/* $(1)/
+define Package/afrimesh-config/install
+	#$(CP) ./files/* $(1)/
 	find $(1) -name 'CVS' -o -name '.svn' -o -name '*~' | $(XARGS) rm -rf
 endef
 
-$(eval $(call BuildPackage,afrimesh-webconfig))
+$(eval $(call BuildPackage,afrimesh-config))
