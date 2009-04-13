@@ -52,7 +52,7 @@ Run as required:
   }}}
   * configure:
   {{{
-  * sudo pbuilder create --distribution <ubuntu_version> \
+  sudo pbuilder create --distribution <ubuntu_version> \
         --othermirror "deb http://archive.ubuntu.com/ubuntu <ubuntu_version> main restricted universe multiverse"
   }}}
   * build:
@@ -64,4 +64,3 @@ Run as required:
   sudo pbuilder update
   }}}
   * use pbuilder-dist (of the ubuntu-dev-tools) to have several different pbuilder setups for different Ubuntu releases.
-
