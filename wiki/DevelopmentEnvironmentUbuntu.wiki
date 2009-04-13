@@ -64,3 +64,8 @@ Run as required:
   sudo pbuilder update
   }}}
   * use pbuilder-dist (of the ubuntu-dev-tools) to have several different pbuilder setups for different Ubuntu releases.
+  * read:
+  {{{
+  https://wiki.ubuntu.com/PbuilderHowto
+  https://wiki.ubuntu.com/PackagingGuide/Complete
+  }}}
