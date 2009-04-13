@@ -48,7 +48,7 @@ Run as required:
 
   * pbuilder
   {{{
-  sudo apt-get install  pbuilder devscripts  
+  sudo apt-get install  pbuilder devscripts  fakeroot
   }}}
   * configure:
   {{{
