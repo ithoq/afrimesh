@@ -48,7 +48,8 @@ Run as required:
 
   * pbuilder
   {{{
-  sudo apt-get install  pbuilder devscripts  fakeroot dput mini-dinstall
+  sudo apt-get install pbuilder devscripts  fakeroot
+  sudo apt-get install dput mini-dinstall # if you need a local repository
   }}}
   * configure:
   {{{
