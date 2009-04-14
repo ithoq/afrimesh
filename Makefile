@@ -67,30 +67,39 @@ endif
 # TODO - crunch all javascript into a single file ?
 
 # - common -------------------------------------------------------------------
-all : # village-bus
-	@echo "This is all"
+all : 
+	export DEPROOT=$(DEPROOT); cd village-bus-batman ; $(MAKE)
+	export DEPROOT=$(DEPROOT); cd village-bus-radius ; $(MAKE)
+	export DEPROOT=$(DEPROOT); cd village-bus-snmp   ; $(MAKE)
+	export DEPROOT=$(DEPROOT); cd village-bus-uci    ; $(MAKE)
 
-install :
-	touch $(DESTDIR)/afrimesh-dashboard-installed
-	@echo "Installed in $(DESTDIR)"
+install : install-www
 
 install-www:
 	@echo "Installing dashboard web interface in: $(DASHBOARD_WWW)"
 	#rm dashboard/www/javascript
-	#[ -f $(DASHBOARD_CGI) ] && echo "HAVE CGI"
+	[ ! -d $(DASHBOARD_WWW) ] && mkdir -p $(DASHBOARD_WWW)
 	$(INSTALL) dashboard/www/index.html $(DASHBOARD_WWW)
 	$(INSTALL) dashboard/www/images     $(DASHBOARD_WWW)
 	$(INSTALL) dashboard/www/style      $(DASHBOARD_WWW)
 	$(INSTALL) dashboard/www/modules    $(DASHBOARD_WWW)
 	$(INSTALL) dashboard/javascript     $(DASHBOARD_WWW)
+	@echo "Installing dashboard cgi scripts in: $(DASHBOARD_CGI)"
+	[ ! -d $(DASHBOARD_CGI) ] && mkdir -p $(DASHBOARD_CGI)
 	$(INSTALL) ./package-scripts/openwrt/afrimesh-portal/files/www/cgi-bin/uam.pl $(DASHBOARD_CGI)
 	$(INSTALL) dashboard/cgi-bin/ajax-proxy.cgi $(DASHBOARD_CGI)
-	for i in $(VILLAGERS); do echo "Installing: $$i"; $(INSTALL) $$i/$$i $(DASHBOARD_CGI); done
+	for i in $(VILLAGERS); do echo "Installing: $$i"; $(INSTALL) ./$$i/$$i $(DASHBOARD_CGI); done
 	find $(DASHBOARD_WWW) -name "*~"   | xargs rm -f
 	find $(DASHBOARD_WWW) -name ".svn" | xargs rm -rf
 	find $(DASHBOARD_CGI) -name "*~"   | xargs rm -f
 	find $(DASHBOARD_CGI) -name ".svn" | xargs rm -rf
 	#cd dashboard/www ; ln -s ../javascript ./javascript # replace symlink
+
+clean : clean-www
+	cd village-bus-batman ; $(MAKE) clean
+	cd village-bus-radius ; $(MAKE) clean
+	cd village-bus-snmp   ; $(MAKE) clean
+	cd village-bus-uci    ; $(MAKE) clean
 
 clean-www: 
 	@echo "Cleaning"
@@ -100,12 +109,6 @@ clean-www:
 	rm -rf $(DASHBOARD_WWW)/modules
 	rm -rf $(DASHBOARD_WWW)/javascript
 	rm -rf $(DASHBOARD_CGI)/*
-
-clean : clean-www
-	cd village-bus-batman ; $(MAKE) clean
-	cd village-bus-radius ; $(MAKE) clean
-	cd village-bus-snmp   ; $(MAKE) clean
-	cd village-bus-uci    ; $(MAKE) clean
 
 distclean : clean
 	cd village-bus-radius ; make distclean
@@ -121,23 +124,32 @@ sources : clean
 	rm -rf /tmp/afrimesh-$(VERSION)
 	ls -al /tmp/afrimesh-$(VERSION).tar.gz
 
-village-bus : $(VILLAGERS)
-	export DEPROOT=$(DEPROOT); cd village-bus-batman ; $(MAKE)
-	export DEPROOT=$(DEPROOT); cd village-bus-radius ; $(MAKE)
-	export DEPROOT=$(DEPROOT); cd village-bus-snmp   ; $(MAKE)
-	export DEPROOT=$(DEPROOT); cd village-bus-uci    ; $(MAKE)
 
 
 
 # - linux --------------------------------------------------------------------
 # read: https://wiki.ubuntu.com/PackagingGuide/Complete
 PKG_BUILD_DIR=/tmp/build
-linux : village-bus
-install-linux : linux install-www
-prep-linux : sources
-	@echo "Initializing linux package scripts for build"
+#DEPS_URL="http://afrimesh.googlecode.com/files"
+DEPS_URL="http://l-cube.artifactual.org.za/~antoine/binaries"
+DEPS_HOOK="A70deps"
+linux : all
+install-linux : install
+clean-linux : clean
 	rm -rf $(PKG_BUILD_DIR)
-	mkdir $(PKG_BUILD_DIR)
+
+packages-linux : prep-linux
+	#@echo "Building Debian/Ubuntu source packages"
+	#cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; debuild -S
+	#cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; pdebuild -S
+	@echo "Building Debian/Ubuntu binary packages"
+	#cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; sudo pbuilder build ../*.dsc
+	cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; pdebuild 
+	@echo "Built: "
+	ls -al /var/cache/pbuilder/result
+prep-linux : clean-linux sources hooks-linux
+	@echo "Initializing linux package scripts for build"
+	mkdir -p $(PKG_BUILD_DIR)
 	cd $(PKG_BUILD_DIR) ; cp /tmp/afrimesh-$(VERSION).tar.gz .
 	cd $(PKG_BUILD_DIR) ; tar xzvf afrimesh-$(VERSION).tar.gz
 	cd $(PKG_BUILD_DIR) ; mv afrimesh-$(VERSION) afrimesh-dashboard-$(VERSION)
@@ -145,12 +157,19 @@ prep-linux : sources
 	rm -rf $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION)/debian/*
 	rm -f package-scripts/debian/afrimesh-dashboard/*~
 	cp -a package-scripts/debian/afrimesh-dashboard/* $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION)/debian
-packages-linux : prep-linux
-	@echo "Building Debian/Ubuntu source packages"
-	cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; debuild -S
-	@echo "Building Debian/Ubuntu binary packages"
-	#cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; debuild 
-	cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; sudo pbuilder build ../*.dsc
+hooks-linux :
+	@echo "Installing hooks to install unofficial packages needed to build Afrimesh"
+	mkdir -p $(PKG_BUILD_DIR)
+	rm -f ~/.pbuilderrc
+	echo "HOOKDIR=$(PKG_BUILD_DIR)/hook.d" >> ~/.pbuilderrc
+	mkdir -p $(PKG_BUILD_DIR)/hook.d
+	echo "#!/bin/sh" > $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
+	echo "echo \"Installing unofficial dependencies for Afrimesh\"" >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
+	echo "cd /tmp ; wget $(DEPS_URL)/libuci-0.7.3_i386.deb" >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
+	echo "cd /tmp ; wget $(DEPS_URL)/libjson-0.8_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
+	echo "dpkg -i /tmp/libuci-0.7.3_i386.deb" >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
+	echo "dpkg -i /tmp/libjson-0.8_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
+	chmod 0755 $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
 
 
 # - freebsd ------------------------------------------------------------------

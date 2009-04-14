@@ -2,13 +2,13 @@ Source: afrimesh-dashboard
 Section: net
 Priority: optional
 Maintainer: Antoine van Gelder <antoine@7degrees.co.za>
-Build-Depends: debhelper (>= 5)
+Build-Depends: wget, snmp, libsnmp-dev, freeradius, libmysql++-dev, debhelper (>= 5)
 Standards-Version: 3.7.3
 Homepage: http://code.google.com/p/afrimesh
 
 Package: afrimesh-dashboard
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: apache2, snmp, wget, curl, mysql-client, ${shlibs:Depends}, ${misc:Depends}
 Description: Easy management for B.A.T.M.A.N. wireless mesh networks.
  The ability to easily create an IP network in rural areas, developing
  countries and disaster zones can significantly contribute to the ability
