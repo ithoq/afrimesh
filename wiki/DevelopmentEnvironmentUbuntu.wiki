@@ -48,7 +48,7 @@ Run as required:
 
   * pbuilder
   {{{
-  sudo apt-get install  pbuilder devscripts  fakeroot
+  sudo apt-get install  pbuilder devscripts  fakeroot dput mini-dinstall
   }}}
   * configure:
   {{{
@@ -57,7 +57,7 @@ Run as required:
   }}}
   * build:
   {{{
-  sudo pbuilder build *.dsc
+  make packages-linux
   }}}
   * update pbuilder environment
   {{{
