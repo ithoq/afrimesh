@@ -33,7 +33,7 @@ build-stamp: configure-stamp
 	dh_testdir
 
 	# Add here commands to compile the package.
-	$(MAKE)
+	$(MAKE) linux
 	#docbook-to-man debian/afrimesh-dashboard.sgml > afrimesh-dashboard.1
 
 	touch $@
@@ -55,7 +55,7 @@ install: build
 	dh_installdirs
 
 	# Add here commands to install the package into debian/afrimesh-dashboard.
-	$(MAKE) DESTDIR=$(CURDIR)/debian/afrimesh-dashboard install
+	$(MAKE) DESTDIR=$(CURDIR)/debian/afrimesh-dashboard install-linux
 
 
 # Build architecture-independent files here.
