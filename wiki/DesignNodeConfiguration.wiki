@@ -1,6 +1,15 @@
 #labels Phase-Design
 = Node Configuration =
 
+== Mesh Potato Configuration ==
+
+  # Plug Mesh Potato into power outlet
+  # Plug POTS handset into mesh potato
+  # Pick up Phone
+  # Router asks you for your name
+  # Voila! Dial tone!
+
+
 == Manual Configuration ==
 
 Given, a freshly flashed router with the afrimesh-webconfig package installed.
