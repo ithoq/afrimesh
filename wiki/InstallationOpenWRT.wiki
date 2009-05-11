@@ -62,7 +62,6 @@ The captive portal software is used to control access to the mesh&internet as we
   opkg install afrimesh-portal
   uci set network.lan.ipaddr=0.0.0.0
   uci commit
-  cd /etc/rc.d
-  ln -s ../init.d/chilli S70chilli
+  /etc/init.d/chilli enable
   reboot
   }}}
