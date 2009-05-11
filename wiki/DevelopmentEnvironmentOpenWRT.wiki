@@ -1,0 +1,35 @@
+
+= OpenWRT =
+
+  * Sources
+  {{{
+  svn co svn://svn.openwrt.org/openwrt/branches/8.09 kamikaze
+  }}}
+  * Packages
+  {{{
+  cd kamikaze
+  ./scripts/feeds update -a
+  }}}
+
+
+= Dependencies =
+
+  * libjson  
+  {{{
+  ./scripts/feeds install libjson
+  }}}
+
+
+= Build = 
+
+  * Configure:
+  {{{
+  make menuconfig
+  # Global build settings -> Select all packages by default 
+  }}}
+  
+  * Build
+  {{{
+  make world
+  }}}
+
