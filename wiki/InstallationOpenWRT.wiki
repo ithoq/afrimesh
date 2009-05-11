@@ -46,8 +46,7 @@
   uci add firewall include
   uci set firewall.@include[-1].path="/etc/firewall.afrimesh"   
   uci commit
-  cd /etc/rc.d
-  ln -s ../init.d/batmand S80batmand
+  /etc/init.d/batmand enable
   reboot
   }}}  
 
