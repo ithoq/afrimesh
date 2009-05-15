@@ -30,11 +30,11 @@
 
 
 # - configuration ------------------------------------------------------------
-VERSION=223
+VERSION=227
 RELEASE=1
 
 # If you want to build packages for OpenWRT you need to set this to the
-# location of a copy of the kamikaze sources
+# location of a copy of the kamikaze sources or SDK
 KAMIKAZE=/Volumes/afrimesh-dev/ext/kamikaze
 
 # Ubuntu Launchpad Personal Package Archive 
@@ -66,7 +66,7 @@ ifeq ($(UNAME),Linux)
   # TODO sanity checks
   DASHBOARD_WWW=$(DESTDIR)/var/www
   DASHBOARD_CGI=$(DESTDIR)/usr/lib/cgi-bin
-  DEPROOT=/usr/local
+  #DEPROOT=/usr/local
   #ifeq ($(shell [ ! -f $(DEPROOT)/include/uci.h ] || [ ! -f $(DEPROOT)/include/json/json.h ] && echo YES), YES)
   #  $(warning Could not locate libuci or libjson - fetching)
   #  DEPROOT=/tmp/afrimesh-deps
@@ -151,6 +151,9 @@ sources : clean
 # - linux --------------------------------------------------------------------
 # read: https://wiki.ubuntu.com/PackagingGuide/Complete
 PKG_BUILD_DIR=/tmp/build
+OTHERMIRROR=deb http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu hardy main|deb-src http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu hardy main
+#DEPS_URL="http://afrimesh.googlecode.com/files"
+DEPS_URL="http://l-cube.artifactual.org.za/~antoine/binaries"
 DEPS_HOOK="A70deps"
 linux : all
 install-linux : install
@@ -163,68 +166,103 @@ source-packages-linux : prep-linux
 	@echo "Building Debian/Ubuntu source packages"
 	cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; debuild -S
 
+launchpad-linux : 
+	@echo "Pushing packages to launchpad.net ppa"
+	# TODO run lintian & linda
+	dput -c package-scripts/debian/dput.cf antoine-7degrees-ppa $(PKG_BUILD_DIR)/afrimesh-dashboard_$(VERSION)-$(RELEASE)_source.changes
+
+
+pbuilder-create-linux :
+	#sudo DIST=hardy pbuilder create 
+	sudo pbuilder create
+	#--othermirror "deb http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu hardy main"
+pbuilder-keys-linux :
+	gpg --keyserver keyserver.ubuntu.com --recv 382AF1D2
+	gpg --export --armor 382AF1D2 | sudo apt-key add -
+	sudo apt-get update
+pbuilder-update-linux :
+	sudo pbuilder update --override-config --othermirror "deb http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu hardy main"
+	#sudo pbuilder execute --override-config package-scripts/debian/pbuilder-keys.sh --othermirror "deb http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu hardy main"
+  # --override-config --autocleanaptcache
+
 binary-packages-linux : prep-linux
 	@echo "Building Debian/Ubuntu packages"
-	#cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; sudo pbuilder build ../*.dsc
-	cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; pdebuild 
+	cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; sudo pbuilder build --override-config ../*.dsc --othermirror "deb http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu hardy main"
+
+	# install deps from ppa 
+	#rm -f ~/.pbuilderrc
+	#echo "HOOKDIR=$(PKG_BUILD_DIR)/hook.d" >> ~/.pbuilderrc
+	##echo "OTHERMIRROR=\"$(OTHERMIRROR)\"" >> ~/.pbuilderrc
+	#mkdir -p $(PKG_BUILD_DIR)/hook.d
+	#cp package-scripts/debian/pbuilder-keys.sh $(PKG_BUILD_DIR)/hook.d/D70fetch-ppa-keys
+
+	#cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; pdebuild 
 	sudo chmod -R a+rw /var/cache/pbuilder/result
 	debsign /var/cache/pbuilder/result/afrimesh-dashboard_$(VERSION)-$(RELEASE)_i386.changes
 	@echo "Built: "
 	ls -al /var/cache/pbuilder/result
 
-prep-linux : clean-linux sources # hooks-linux
+prep-linux : clean-linux sources hooks-linux
 	@echo "Initializing linux package scripts for build"
 	mkdir -p $(PKG_BUILD_DIR)
 	cd $(PKG_BUILD_DIR) ; cp /tmp/afrimesh-$(VERSION).tar.gz .
 	cd $(PKG_BUILD_DIR) ; tar xzvf afrimesh-$(VERSION).tar.gz
 	cd $(PKG_BUILD_DIR) ; mv afrimesh-$(VERSION) afrimesh-dashboard-$(VERSION)
-	cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; dh_make -e antoine@7degrees.co.za -s --createorig
+	cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; dh_make -c BSD -e antoine@7degrees.co.za -s --createorig
 	rm -rf $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION)/debian/*
 	rm -f package-scripts/debian/afrimesh-dashboard/*~
 	cp -a package-scripts/debian/afrimesh-dashboard/* $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION)/debian
 
-#hooks-linux :
-#	@echo "Installing hooks to install unofficial packages needed to build Afrimesh"
-#	mkdir -p $(PKG_BUILD_DIR)
-#	rm -f ~/.pbuilderrc
-#	echo "HOOKDIR=$(PKG_BUILD_DIR)/hook.d" >> ~/.pbuilderrc
-#	mkdir -p $(PKG_BUILD_DIR)/hook.d
-#	echo "#!/bin/sh" > $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-#	echo "echo \"Installing unofficial dependencies for Afrimesh\"" >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-#	echo "cd /tmp ; wget $(DEPS_URL)/libuci-0.7.3_i386.deb" >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-#	echo "cd /tmp ; wget $(DEPS_URL)/libjson-0.8_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-#	echo "dpkg -i /tmp/libuci-0.7.3_i386.deb" >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-#	echo "dpkg -i /tmp/libjson-0.8_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-#	chmod 0755 $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
+hooks-linux :
+	@echo "Installing hooks to install unofficial packages needed to build Afrimesh"
+	mkdir -p $(PKG_BUILD_DIR)
+	rm -f ~/.pbuilderrc
+	echo "HOOKDIR=$(PKG_BUILD_DIR)/hook.d" >> ~/.pbuilderrc
+	mkdir -p $(PKG_BUILD_DIR)/hook.d
+	echo "#!/bin/sh" > $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
+	echo "echo \"Installing unofficial dependencies for Afrimesh\"" >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
+	echo "cd /tmp ; wget $(DEPS_URL)/libuci-0.7.3_i386.deb" >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
+	echo "cd /tmp ; wget $(DEPS_URL)/libjson-0.8_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
+	echo "dpkg -i /tmp/libuci-0.7.3_i386.deb" >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
+	echo "dpkg -i /tmp/libjson-0.8_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
+	chmod 0755 $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
 
-launchpad-linux : 
-	@echo "Uploading/Refreshing packages to launchpad.net ppa"
-	# TODO run lintian & linda
-	dput -c package-scripts/debian/dput.cf antoine-7degrees-ppa $(PKG_BUILD_DIR)/afrimesh-dashboard_$(VERSION)-$(RELEASE)_source.changes
 
 depends-packages-linux :
+	# json-c
 	wget --no-clobber -c -P $(PKG_BUILD_DIR) http://oss.metaparadigm.com/json-c/json-c-0.8.tar.gz
 	rm -rf $(PKG_BUILD_DIR)/json-c-0.8
 	rm -rf $(PKG_BUILD_DIR)/json-c-0.8.orig
 	cd $(PKG_BUILD_DIR) ; tar xzvf json-c-0.8.tar.gz 
 	@cd $(PKG_BUILD_DIR)/json-c-0.8 ; dh_make --library -c BSD -e antoine@7degrees.co.za --packagename json-c --createorig 
+	rm -rf  $(PKG_BUILD_DIR)/json-c-0.8/*.ex
+	rm -rf  $(PKG_BUILD_DIR)/json-c-0.8/*.EX
+	rm -rf  $(PKG_BUILD_DIR)/json-c-0.8/*.install
 	cp package-scripts/debian/json-c/* $(PKG_BUILD_DIR)/json-c-0.8/debian
 	#@cd $(PKG_BUILD_DIR)/json-c-0.8 ; fakeroot dpkg-buildpackage -b -uc
+	# Ugly workaround for launchpad lameness
+	rm -rf $(PKG_BUILD_DIR)/json-c-0.8.orig.tar.gz
+	wget -P $(PKG_BUILD_DIR) http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu/pool/main/j/json-c/json-c_0.8.orig.tar.gz
 	@cd $(PKG_BUILD_DIR)/json-c-0.8 ; debuild -S
 
-foo :
+	# uci
 	wget --no-clobber -P $(PKG_BUILD_DIR) http://downloads.openwrt.org/sources/uci-0.7.3.tar.gz
 	rm -rf $(PKG_BUILD_DIR)/uci-0.7.3
 	rm -rf $(PKG_BUILD_DIR)/uci-0.7.3.orig
 	cd $(PKG_BUILD_DIR) ; tar xzvf uci-0.7.3.tar.gz 
-	@cd $(PKG_BUILD_DIR)/uci-0.7.3 ; dh_make --library -c LGPL -e antoine@7degrees.co.za --packagename json-c --createorig 
+	@cd $(PKG_BUILD_DIR)/uci-0.7.3 ; dh_make --library -c LGPL -e antoine@7degrees.co.za --packagename uci --createorig 
+	rm -rf  $(PKG_BUILD_DIR)/uci-0.7.3/*.ex
+	rm -rf  $(PKG_BUILD_DIR)/uci-0.7.3/*.EX
+	rm -rf  $(PKG_BUILD_DIR)/uci-0.7.3/*.install
 	cp package-scripts/debian/uci/changelog    $(PKG_BUILD_DIR)/uci-0.7.3/debian
 	cp package-scripts/debian/uci/control      $(PKG_BUILD_DIR)/uci-0.7.3/debian
 	cp package-scripts/debian/uci/copyright    $(PKG_BUILD_DIR)/uci-0.7.3/debian
+	cp package-scripts/debian/uci/rules        $(PKG_BUILD_DIR)/uci-0.7.3/debian
+	cp package-scripts/debian/uci/*.install    $(PKG_BUILD_DIR)/uci-0.7.3/debian
 	cp package-scripts/debian/uci/Makefile     $(PKG_BUILD_DIR)/uci-0.7.3
 	cp package-scripts/debian/uci/Makefile.inc $(PKG_BUILD_DIR)/uci-0.7.3
 	#@cd $(PKG_BUILD_DIR)/uci-0.7.3 ; fakeroot dpkg-buildpackage -b -uc
-	# Ugly workaround for M$-level launchpad lameness
+	# Ugly workaround for launchpad lameness
 	rm -rf $(PKG_BUILD_DIR)/uci-0.7.3.orig.tar.gz
 	wget -P $(PKG_BUILD_DIR) http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu/pool/main/u/uci/uci_0.7.3.orig.tar.gz
 	@cd $(PKG_BUILD_DIR)/uci-0.7.3 ; debuild -S
@@ -233,8 +271,9 @@ foo :
 depends-launchpad-linux :
 	@echo "Uploading/Refreshing packages to launchpad.net ppa"
 	# TODO run lintian & linda
-	#dput -c package-scripts/debian/dput.cf antoine-7degrees-ppa $(PKG_BUILD_DIR)/json-c_0.8-1_source.changes
-	dput -c package-scripts/debian/dput.cf antoine-7degrees-ppa $(PKG_BUILD_DIR)/uci_0.7.3-2_source.changes
+	# TODO read package release # from changelogs
+	dput -c package-scripts/debian/dput.cf antoine-7degrees-ppa $(PKG_BUILD_DIR)/json-c_0.8-2_source.changes
+	dput -c package-scripts/debian/dput.cf antoine-7degrees-ppa $(PKG_BUILD_DIR)/uci_0.7.3-3_source.changes
 
 
 
