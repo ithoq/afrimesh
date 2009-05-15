@@ -30,7 +30,8 @@
 
 
 # - configuration ------------------------------------------------------------
-VERSION=0.1
+VERSION=222
+RELEASE=1
 
 # If you want to build packages for OpenWRT you need to set this to the
 # location of a copy of the kamikaze sources
@@ -56,9 +57,21 @@ DASHBOARD_WWW=$(DESTDIR)/www
 DASHBOARD_CGI=$(DESTDIR)/www/cgi-bin
 UNAME = $(shell uname)
 ifeq ($(UNAME),Linux)
-DASHBOARD_WWW=$(DESTDIR)/var/www
-DASHBOARD_CGI=$(DESTDIR)/usr/lib/cgi-bin
-DEPROOT=/usr/local
+  # TODO sanity checks
+  DASHBOARD_WWW=$(DESTDIR)/var/www
+  DASHBOARD_CGI=$(DESTDIR)/usr/lib/cgi-bin
+  DEPROOT=/usr/local
+  ifeq ($(shell [ ! -f $(DEPROOT)/include/uci.h ] || [ ! -f $(DEPROOT)/include/json/json.h ] && echo YES), YES)
+    $(warning Could not locate libuci or libjson - fetching)
+    DEPROOT=/tmp/afrimesh-deps
+    DEPS_URL="http://afrimesh.googlecode.com/files"
+    #DEPS_URL="http://l-cube.artifactual.org.za/~antoine/binaries"
+    $(shell mkdir -p $(DEPROOT))
+    $(shell wget --no-clobber -c -P $(DEPROOT) $(DEPS_URL)/libuci-0.7.3_i386.deb)
+    $(shell dpkg --extract $(DEPROOT)/libuci-0.7.3_i386.deb $(DEPROOT))
+    $(shell wget --no-clobber -c -P $(DEPROOT) $(DEPS_URL)/libjson-0.8_i386.deb)
+    $(shell dpkg --extract $(DEPROOT)/libjson-0.8_i386.deb $(DEPROOT))
+  endif
 endif
 ifeq ($(UNAME),FreeBSD)
 DASHBOARD_WWW=$(DESTDIR)/usr/local/www/apache22/data
@@ -98,7 +111,7 @@ install-www:
 	find $(DASHBOARD_CGI) -name ".svn" | xargs rm -rf
 	#cd dashboard/www ; ln -s ../javascript ./javascript # replace symlink
 
-clean : clean-www
+clean : # clean-www
 	cd village-bus-batman ; $(MAKE) clean
 	cd village-bus-radius ; $(MAKE) clean
 	cd village-bus-snmp   ; $(MAKE) clean
@@ -132,22 +145,24 @@ sources : clean
 # - linux --------------------------------------------------------------------
 # read: https://wiki.ubuntu.com/PackagingGuide/Complete
 PKG_BUILD_DIR=/tmp/build
-#DEPS_URL="http://afrimesh.googlecode.com/files"
-DEPS_URL="http://l-cube.artifactual.org.za/~antoine/binaries"
 DEPS_HOOK="A70deps"
 linux : all
 install-linux : install
 clean-linux : clean
 	rm -rf $(PKG_BUILD_DIR)
 
-packages-linux : prep-linux
+packages-linux : source-packages-linux # binary-packages-linux
+
+source-packages-linux : prep-linux
 	@echo "Building Debian/Ubuntu source packages"
 	cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; debuild -S
+
+binary-packages-linux : 
 	@echo "Building Debian/Ubuntu packages"
-	##cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; sudo pbuilder build ../*.dsc
-	#cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; pdebuild 
-	#sudo chmod -R a+rw /var/cache/pbuilder/result
-	#debsign /var/cache/pbuilder/result/afrimesh-dashboard_0.1-1_i386.changes
+	#cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; sudo pbuilder build ../*.dsc
+	cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; pdebuild 
+	sudo chmod -R a+rw /var/cache/pbuilder/result
+	debsign /var/cache/pbuilder/result/afrimesh-dashboard_$(VERSION)-$(RELEASE)_i386.changes
 	@echo "Built: "
 	ls -al /var/cache/pbuilder/result
 
@@ -179,8 +194,8 @@ hooks-linux :
 launchpad-ppa-linux : 
 	@echo "Uploading/Refreshing packages to launchpad.net ppa"
 	# TODO run lintian & linda
-	#dput -c package-scripts/debian/dput.cf antoine-7degrees-ppa /var/cache/pbuilder/result/afrimesh-dashboard_0.1-1_i386.changes
-	dput -c package-scripts/debian/dput.cf antoine-7degrees-ppa $(PKG_BUILD_DIR)/afrimesh-dashboard_0.1-1_source.changes
+	#dput -c package-scripts/debian/dput.cf antoine-7degrees-ppa /var/cache/pbuilder/result/afrimesh-dashboard_$(VERSION)-$(RELEASE)_i386.changes
+	dput -c package-scripts/debian/dput.cf antoine-7degrees-ppa $(PKG_BUILD_DIR)/afrimesh-dashboard_$(VERSION)-$(RELEASE)_source.changes
 
 
 # - freebsd ------------------------------------------------------------------
