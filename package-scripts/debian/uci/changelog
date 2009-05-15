@@ -1,0 +1,13 @@
+uci (0.7.3-2) hardy; urgency=low
+
+  * Patched Makefile to build properly under Ubuntu
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Fri, 15 May 2009 20:11:34 +0200
+
+
+uci (0.7.3-1) hardy; urgency=low
+
+  * Initial release
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Fri, 15 May 2009 18:15:56 +0200
+

@@ -1,0 +1,20 @@
+Source: uci
+Priority: extra
+Maintainer: Antoine van Gelder <antoine@7degrees.co.za>
+Build-Depends: debhelper (>= 5)
+Standards-Version: 3.7.2
+Section: libs
+
+Package: uci-dev
+Section: libdevel
+Architecture: any
+Depends: uci (= ${Source-Version})
+Description: Development package for the Unified Configuration Interface (UCI)
+ <insert long description, indented with spaces>
+
+Package: uci
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Library for the Unified Configuration Interface (UCI)
+ <insert long description, indented with spaces>
