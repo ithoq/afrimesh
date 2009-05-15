@@ -84,13 +84,29 @@ define Package/afrimesh-base/install
 endef
 
 
+# - afrimesh-config ----------------------------------------------------------
+define Package/afrimesh-config
+	SECTION:=admin
+	CATEGORY:=Administration
+	DEPENDS:=+afrimesh-base
+	TITLE:=Easy management for B.A.T.M.A.N. wireless mesh networks
+endef
+
+define Package/afrimesh-config/description
+	Manual configuration for Mesh nodes
+endef
+
+define Package/afrimesh-config/install
+	$(INSTALL_DIR)  $(1)/etc/config
+endef
+
+
 # - afrimesh-portal ----------------------------------------------------------
 define Package/afrimesh-portal
 	SECTION:=admin
 	CATEGORY:=Administration
 	DEPENDS:=+afrimesh-base +coova-chilli
 	TITLE:=Afrimesh captive portal support
-	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
 endef
 
 define Package/afrimesh-portal/description
@@ -108,6 +124,23 @@ define Package/afrimesh-portal/install
 	$(INSTALL_BIN)  ./files/www/cgi-bin/hotspotlogin.cgi $(1)/www/cgi-bin
 	$(INSTALL_BIN)  ./files/www/cgi-bin/portal-auth.cgi $(1)/www/cgi-bin
 	$(INSTALL_BIN)  ./files/www/cgi-bin/uam.pl $(1)/www/cgi-bin
+endef
+
+
+# - afrimesh-webif -----------------------------------------------------------
+define Package/afrimesh-webif
+	SECTION:=admin
+	CATEGORY:=Administration
+	DEPENDS:=+afrimesh-base
+	TITLE:=Web interface for mesh nodes
+endef
+
+define Package/afrimesh-webif/description
+	Web interface for mesh nodes
+endef
+
+define Package/afrimesh-webif/install
+	$(INSTALL_DIR)  $(1)/www/cgi-bin
 endef
 
 
@@ -129,5 +162,7 @@ endef
 
 
 $(eval $(call BuildPackage,afrimesh-base))
+$(eval $(call BuildPackage,afrimesh-config))
 $(eval $(call BuildPackage,afrimesh-portal))
+$(eval $(call BuildPackage,afrimesh-webif))
 
