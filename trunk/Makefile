@@ -160,49 +160,51 @@ install-linux : install
 clean-linux : clean
 	rm -rf $(PKG_BUILD_DIR)
 
+launchpad-linux : source-packages-linux
+	@echo "Pushing packages to launchpad.net ppa"
+	# TODO run lintian & linda
+	dput -c package-scripts/debian/dput.cf antoine-7degrees-ppa $(PKG_BUILD_DIR)/afrimesh-dashboard_$(VERSION)-$(RELEASE)_source.changes
+
 packages-linux : source-packages-linux binary-packages-linux
 
 source-packages-linux : prep-linux
 	@echo "Building Debian/Ubuntu source packages"
 	cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; debuild -S
 
-launchpad-linux : 
-	@echo "Pushing packages to launchpad.net ppa"
-	# TODO run lintian & linda
-	dput -c package-scripts/debian/dput.cf antoine-7degrees-ppa $(PKG_BUILD_DIR)/afrimesh-dashboard_$(VERSION)-$(RELEASE)_source.changes
+binary-packages-linux : prep-linux
+	@echo "Building Debian/Ubuntu packages"
+	#cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; sudo pbuilder build --override-config ../*.dsc --othermirror "deb http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu hardy main"
+
+	# install deps from ppa 
+	rm -f ~/.pbuilderrc
+	echo "HOOKDIR=$(PKG_BUILD_DIR)/hook.d" >> ~/.pbuilderrc
+	##echo "OTHERMIRROR=\"$(OTHERMIRROR)\"" >> ~/.pbuilderrc
+	mkdir -p $(PKG_BUILD_DIR)/hook.d
+	cp package-scripts/debian/pbuilder-update-ppa-keys.sh $(PKG_BUILD_DIR)/hook.d/D70update-ppa-keys
+
+	cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; pdebuild 
+	#sudo chmod -R a+rw /var/cache/pbuilder/result
+	#debsign /var/cache/pbuilder/result/afrimesh-dashboard_$(VERSION)-$(RELEASE)_i386.changes
+	@echo "Built: "
+	ls -al /var/cache/pbuilder/result
 
 
 pbuilder-create-linux :
-	#sudo DIST=hardy pbuilder create 
-	sudo pbuilder create
-	#--othermirror "deb http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu hardy main"
+	sudo pbuilder create --distribution hardy \
+                       --othermirror "deb http://archive.ubuntu.com/ubuntu hardy main restricted universe multiverse"
 pbuilder-keys-linux :
 	gpg --keyserver keyserver.ubuntu.com --recv 382AF1D2
 	gpg --export --armor 382AF1D2 | sudo apt-key add -
 	sudo apt-get update
 pbuilder-update-linux :
-	sudo pbuilder update --override-config --othermirror "deb http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu hardy main"
+	sudo pbuilder update
+	#sudo pbuilder update --override-config  --othermirror "deb http://archive.ubuntu.com/ubuntu hardy main restricted universe multiverse"
+	#sudo pbuilder update --override-config --othermirror "deb http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu hardy main"
 	#sudo pbuilder execute --override-config package-scripts/debian/pbuilder-keys.sh --othermirror "deb http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu hardy main"
   # --override-config --autocleanaptcache
 
-binary-packages-linux : prep-linux
-	@echo "Building Debian/Ubuntu packages"
-	cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; sudo pbuilder build --override-config ../*.dsc --othermirror "deb http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu hardy main"
 
-	# install deps from ppa 
-	#rm -f ~/.pbuilderrc
-	#echo "HOOKDIR=$(PKG_BUILD_DIR)/hook.d" >> ~/.pbuilderrc
-	##echo "OTHERMIRROR=\"$(OTHERMIRROR)\"" >> ~/.pbuilderrc
-	#mkdir -p $(PKG_BUILD_DIR)/hook.d
-	#cp package-scripts/debian/pbuilder-keys.sh $(PKG_BUILD_DIR)/hook.d/D70fetch-ppa-keys
-
-	#cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; pdebuild 
-	sudo chmod -R a+rw /var/cache/pbuilder/result
-	debsign /var/cache/pbuilder/result/afrimesh-dashboard_$(VERSION)-$(RELEASE)_i386.changes
-	@echo "Built: "
-	ls -al /var/cache/pbuilder/result
-
-prep-linux : clean-linux sources hooks-linux
+prep-linux : clean-linux sources #hooks-linux
 	@echo "Initializing linux package scripts for build"
 	mkdir -p $(PKG_BUILD_DIR)
 	cd $(PKG_BUILD_DIR) ; cp /tmp/afrimesh-$(VERSION).tar.gz .
@@ -261,12 +263,13 @@ depends-packages-linux :
 	cp package-scripts/debian/uci/*.install    $(PKG_BUILD_DIR)/uci-0.7.3/debian
 	cp package-scripts/debian/uci/Makefile     $(PKG_BUILD_DIR)/uci-0.7.3
 	cp package-scripts/debian/uci/Makefile.inc $(PKG_BUILD_DIR)/uci-0.7.3
-	#@cd $(PKG_BUILD_DIR)/uci-0.7.3 ; fakeroot dpkg-buildpackage -b -uc
 	# Ugly workaround for launchpad lameness
 	rm -rf $(PKG_BUILD_DIR)/uci-0.7.3.orig.tar.gz
 	wget -P $(PKG_BUILD_DIR) http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu/pool/main/u/uci/uci_0.7.3.orig.tar.gz
 	@cd $(PKG_BUILD_DIR)/uci-0.7.3 ; debuild -S
-
+  # to build binaries:
+	#@cd $(PKG_BUILD_DIR)/uci-0.7.3 ; pdebuild
+	#@cd $(PKG_BUILD_DIR)/uci-0.7.3 ; fakeroot dpkg-buildpackage -b -uc
 
 depends-launchpad-linux :
 	@echo "Uploading/Refreshing packages to launchpad.net ppa"

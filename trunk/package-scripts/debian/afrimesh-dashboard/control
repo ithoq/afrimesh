@@ -2,7 +2,7 @@ Source: afrimesh-dashboard
 Section: net
 Priority: optional
 Maintainer: Antoine van Gelder <antoine@7degrees.co.za>
-Build-Depends: wget, json-c-dev, uci-dev, snmp, libsnmp-dev, freeradius, libmysql++-dev, debhelper (>= 5)
+Build-Depends: json-c-dev, uci-dev, snmp, libsnmp-dev, freeradius, libmysql++-dev, debhelper (>= 5)
 Standards-Version: 3.7.3
 Homepage: http://code.google.com/p/afrimesh
 
