@@ -80,9 +80,17 @@
 }
 
 
+/* utility menu */
+#menu #utility {          /* utility menu container */
+  top: -9px;
+  left: -120px;
+}
+#menu #utility li {       /* utility menu item */
+  text-align: right;
+}
 
-/*
-#menu #main { 
+
+/*#menu #main { 
   left: 0px; 
   top: -20px; 
   padding-top: 20px; 

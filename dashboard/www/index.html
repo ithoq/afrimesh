@@ -43,8 +43,8 @@
           success: function(js) { console.debug("finished loading"); } });*/
 
         /** round menu item corners */
-        $("#menu .left").corner("bl 15px");
-        $("#menu .right").corner("br 15px");
+        $("#menu .left").corner("bl 13px");
+        $("#menu .right").corner("br 13px");
         /*$("#menu li").mouseover(function() {  // UDE - we have to manually round invisible elements
           $(this).find("ul").corner("bottom 15px");  
         }); */
@@ -94,6 +94,8 @@
         add_menu_item("help",      "howto");
         add_menu_item("help",      "group");
         add_menu_item("help",      "chat");
+        add_menu_item("utility",   "settings");
+        add_menu_item("utility",   "logout");
 
         /** set default page */
         $("ul#menu ul#customers li#status").click();
@@ -178,7 +180,19 @@
               <li><input id="Resources" type="checkbox" />Resources</li> 
             </ul --> 
           </li> 
-          <li class="right"></li>
+          <li class="right">&nbsp;@
+            <ul id="utility">
+              <img class="top_left" style="top: 8px;" alt="" src="style/images/top_left.png"/>
+              <li style="margin-top: 10px" id="settings">Settings</li>
+              <li id="logout">Logout</li>
+              <li class="last">
+                <img class="bottom_left" alt="" src="style/images/bottom_left.png"/>
+                <img class="middle" alt="" src="style/images/dot.png"/>
+                <img class="bottom_right" alt="" src="style/images/bottom_right.png"/>
+              </li>
+            </ul>
+
+          </li>
         </ul> 
       </div> <!-- /header -->
 
