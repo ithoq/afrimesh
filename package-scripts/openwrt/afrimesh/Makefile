@@ -32,7 +32,7 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ------------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=211
+PKG_REV:=229
 PKG_VERSION:=r$(PKG_REV)
 PKG_RELEASE:=1
 
@@ -41,13 +41,17 @@ LOCAL_SOURCES:=../../../
 # See: http://downloads.openwrt.org/people/florian/fosdem/openwrt_cfp_fosdem2008.pdf
 #      https://dev.openwrt.org/ticket/3815
 #      http://forum.openwrt.org/viewtopic.php?id=18090
-#PKG_SOURCE_MIRROR=0
-#PKG_SOURCE_PROTO:=svn
-#PKG_SOURCE_URL:=http://afrimesh.googlecode.com/svn/trunk/src/$(PKG_NAME)
-#PKG_SOURCE_SUBDIR:=$(PKG_NAME)
-#PKG_SOURCE:=$(PKG_SOURCE_SUBDIR).tar.gz
+##PKG_SOURCE_MIRROR=0
+PKG_SOURCE_PROTO:=svn
+PKG_SOURCE_VERSION:=$(PKG_REV)
+PKG_SOURCE_SUBDIR:=$(if $(PKG_BRANCH),$(PKG_BRANCH),$(PKG_NAME))-$(PKG_VERSION)
+PKG_SOURCE_URL:=http://afrimesh.googlecode.com/svn/trunk
+PKG_SOURCE:=$(PKG_SOURCE_SUBDIR).tar.gz
+PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_SOURCE_SUBDIR)
 
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+#PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+
+
 
 COMPILE_COMMAND:=	$(TARGET_CC) $(TARGET_CFLAGS) \
                 -DDISABLE_LOG \
@@ -58,6 +62,24 @@ COMPILE_COMMAND:=	$(TARGET_CC) $(TARGET_CFLAGS) \
                 -I$(STAGING_DIR)/usr/include \
                 $(TARGET_CFLAGS_EXTRA) \
                 $(TARGET_LDFLAGS) 
+
+PKG_EXTRA_CFLAGS= \
+	-DDISABLE_LOG                 \
+	-D_METAPACK                   \
+	-DOPENWRT                     \
+	-I$(PKG_BUILD_DIR)            \
+	-I$(PKG_BUILD_DIR)/common     \
+  -I$(STAGING_DIR)/usr/include  \
+  -I$(STAGING_DIR)/include-host \
+	-I$(STAGING_DIR_HOST)/include \
+	-include endian.h             \
+
+
+MAKE_UCI_ARGS += \
+	CC='$(TARGET_CC) $(PKG_EXTRA_CFLAGS) $(TARGET_CFLAGS_EXTRA) ' \
+	CFLAGS='$(TARGET_CFLAGS) ' \
+	LDFLAGS='$(TARGET_LDFLAGS) -ljson -luci'
+
 
 
 # - afrimesh-base ------------------------------------------------------------
@@ -79,7 +101,7 @@ define Package/afrimesh-base/install
 	$(INSTALL_DIR)  $(1)/etc/config
 	$(INSTALL_DIR)  $(1)/www/cgi-bin
 	$(INSTALL_BIN)  ./files/etc/firewall.afrimesh $(1)/etc
-	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/village-bus-uci $(1)/www/cgi-bin/village-bus-uci
+	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/village-bus-uci/village-bus-uci $(1)/www/cgi-bin/village-bus-uci
 	$(INSTALL_DATA) ./files/etc/config/afrimesh $(1)/etc/config
 endef
 
@@ -147,18 +169,29 @@ endef
 # - build rules --------------------------------------------------------------
 define Build/Prepare
 	$(call Build/Prepare/Default)
-	$(CP) $(LOCAL_SOURCES)/common/*          $(PKG_BUILD_DIR)
-	$(CP) $(LOCAL_SOURCES)/village-bus-uci/* $(PKG_BUILD_DIR)
 endef
 
 define Build/Configure
 endef
 
 define Build/Compile
+	cd $(PKG_BUILD_DIR)/village-bus-uci ; make $(MAKE_UCI_ARGS)
+endef
+
+
+define Build/Prepare-local
+	$(call Build/Prepare/Default)
+	$(CP) $(LOCAL_SOURCES)/common/*          $(PKG_BUILD_DIR)
+	$(CP) $(LOCAL_SOURCES)/village-bus-uci/* $(PKG_BUILD_DIR)
+endef
+
+define Build/Compile-local
 	cd $(PKG_BUILD_DIR) ; \
 	$(COMPILE_COMMAND) -o $(PKG_BUILD_DIR)/village-bus-uci json_cgi.c village-bus-uci.c main.c -ljson -luci
 	$(STRIP) $(PKG_BUILD_DIR)/village-bus-uci
 endef
+
+
 
 
 $(eval $(call BuildPackage,afrimesh-base))
