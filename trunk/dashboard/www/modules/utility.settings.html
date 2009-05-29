@@ -9,28 +9,115 @@
 
 <h2>Settings</h2>
 
-<div id="foo">Foo!</a>
+<form class="two-column">
+
+  <fieldset>
+    <legend>Global Settings</legend>
+
+    <label for="afrimesh|settings|network_name">Network Name</label>
+    <input id="afrimesh|settings|network_name"  type="text" />
+    
+    <label for="afrimesh|settings|location|longitude">Location Longitude</label>
+    <input id="afrimesh|settings|location|longitude"  type="text" />
+    
+    <label for="afrimesh|settings|location|latitude">Location Latitude</label>
+    <input id="afrimesh|settings|location|latitude"  type="text" />
+    
+    <label for="afrimesh|settings|map|server">Map Server</label>
+    <input id="afrimesh|settings|map|server"  type="text" />
+    
+    <label for="afrimesh|settings|map|extent">Map Extents</label>
+    <input id="afrimesh|settings|map|extent"  type="text" />
+    
+    <label for="afrimesh|settings|map|zoom">Map Zoom</label>
+    <input id="afrimesh|settings|map|zoom"  type="text" />
+    
+    <label for="afrimesh|settings|locale">Locale</label>
+    <input id="afrimesh|settings|locale"  type="text" />
+    
+    <label for="afrimesh|settings|hosts|dashboard_server">Dashboard Server</label>
+    <input id="afrimesh|settings|hosts|dashboard_server" type="text" />
+    
+    <label for="afrimesh|settings|hosts|batman_vis_server">Mesh Topology Server</label>
+    <input id="afrimesh|settings|hosts|batman_vis_server" type="text" />
+    
+    <label for="afrimesh|settings|internet_gateway|address">Internet Gateway</label>
+    <input id="afrimesh|settings|internet_gateway|address" type="text" />
+    
+    <label for="afrimesh|settings|internet_gateway|snmp|community">Internet Gateway Community String</label>
+    <input id="afrimesh|settings|internet_gateway|snmp|community" type="text" />
+    
+    <label for="afrimesh|settings|internet_gateway|snmp|interface">Internet Gateway Interface</label>
+    <input id="afrimesh|settings|internet_gateway|snmp|interface" type="text" />
+    
+    <label for="afrimesh|settings|internet_gateway|bandwidth|down">Internet Gateway Download Bandwith</label>
+    <input id="afrimesh|settings|internet_gateway|bandwidth|down" type="text" />
+    
+    <label for="afrimesh|settings|internet_gateway|bandwidth|up">Internet Gateway Upload Bandwith</label>
+    <input id="afrimesh|settings|internet_gateway|bandwidth|up" type="text" />
+    
+    <label for="afrimesh|settings|network_name">Mesh Gateway <span>(If different to Internet Gateway)</span></label>
+    <input id="afrimesh|settings|hosts|mesh_gateway" type="text" />
+  </fieldset>
+</form>
+
+
+
+
+<br/><p></p><br/>
+
+Enter: <input id="bar" type="text" onBlur="save_input(this);" /><br/>
+Network Name: <input id="afrimesh|settings|network_name" type="text" onBlur="save_input(this);" />
+
 
 <script type="text/javascript"> //<![CDATA[    
 (function() {
 
   /** includes ------------------------------------------------------------ */
-  /* load includes with: load("path/to/file.js");   */
-  /* often a good idea:  load("modules/example.module.js"); *;/
+  load("modules/utility.settings.js"); 
 
   /** construction -------------------------------------------------------- */
   ready = function() { // INJ 'ready' should be the only symbol we're exposing to the global namespace
     /* often a good place to do this: populate_control(); */
-    console.debug("loaded example.module.html");
+    console.debug("loaded utility.settings.html");
+
+    //$("#bar").val(afrimesh.storage("my_cookie"));
+
+    /** populate DOM references to afrimesh.settings */
+    function populate() {
+      //var elements = $("input.[id*=afrimesh|settings]");
+      var elements = $("[id*=afrimesh|settings]");
+      elements.each(function(element) { 
+          element = elements[element];
+          if (element instanceof HTMLInputElement) {
+            $(element).val(Q(afrimesh, element.id) + ""); 
+          } else if (element instanceof HTMLElement) {
+            $(element).html(Q(afrimesh, element.id) + ""); 
+          } else {
+            console.warn("UNKNOWN ELEMENT TYPE: " + element);
+          }
+        });
+    };
+    populate();
+
+    /** callback to save settings */
+    $("input.[id*=afrimesh|settings]").bind("blur", function(event) { 
+        if (Q(afrimesh, this.id) == this.value) {
+          return;
+        }
+        afrimesh.settings.save(this.id, this.value);
+        populate(); // refresh dom elements
+      });
+
     return unload;
   };
 
   function unload() {
-    console.debug("unloaded example.module.html");
+    console.debug("unloaded utility.settings.html");
   };
 
   /** done ---------------------------------------------------------------- */
-  console.debug("loaded example.module.js");
+  console.debug("loaded utility.settings.js");
  
 })();
 //]]></script>

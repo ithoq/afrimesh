@@ -13,7 +13,15 @@ var afrimesh = undefined;
 (function() {
   function Afrimesh() {
     this.settings = { 
+      address      : "dashboard.7degrees.co.za", /* dynamic settings bootstraps off this */
       network_name : "development testbed",
+      locale       : "en_US.UTF-8",
+      ajax_proxy   : "/cgi-bin/ajax-proxy.cgi?url=",
+      hosts        : {
+        dashboard_server  : "afrimesh.7degrees.co.za",   /* dynamic settings bootstraps off this */
+        batman_vis_server : "dashboard.7degrees.co.za",
+        mesh_gateway      : "192.168.20.200"
+      },
       location : {
         longitude : 18.339733,
         latitude  : -34.138061
@@ -23,12 +31,6 @@ var afrimesh = undefined;
         extent    : 0.025, // in degrees 
         zoom      : 16,
         aerial    : false
-      },
-      locale       : "en_US.UTF-8",
-      hosts        : {
-        dashboard_server  : "afrimesh.7degrees.co.za",
-        batman_vis_server : "dashboard.7degrees.co.za",
-        mesh_gateway      : "192.168.20.200"
       },
       internet_gateway : {
         address   : "192.168.20.1",
@@ -41,12 +43,15 @@ var afrimesh = undefined;
           down : 512,    // with protocol overhead the max observed is 430
           up   : 256     // with protocol overhead the max observed is 228
         }
-      },
-      ajax_proxy    : "/cgi-bin/ajax-proxy.cgi?url="
+      }
     };
+    this.storage    = BootStorage(this);
     this.network    = BootNetwork(this);
     this.customers  = BootCustomers(this);
     this.villagebus = BootVillageBus(this);
+
+    // override default settings with live settings from the server
+    this.settings = BootSettings(this, this.settings.address); 
   };
   afrimesh = new Afrimesh();
 })();

@@ -10,11 +10,17 @@
 
   /** - Make Javascript a better Lisp ------------------------------------- */
   Array.prototype.car = function() { return (this.length > 0) ? this[0]       : []; };
+  //Array.prototype.rac = function() { return (this.length > 0) ? this[this.length() - 1] : [] };
   Array.prototype.cdr = function() { return (this.length > 1) ? this.slice(1) : []; };
+  //Array.prototype.rdc = function() { return (this.length > 1) ? this.slice(0, this.length() - 2) : [] };
   Array.prototype.first = Array.prototype.car;
   Array.prototype.rest  = Array.prototype.cdr;
   Array.prototype.head  = Array.prototype.car;
   Array.prototype.tail  = Array.prototype.cdr;
+  //Array.prototype.init  = Array.prototype.rdc;
+  //Array.prototype.last  = Array.prototype.rac;
+
+
   
   /** - Make Javascript a better Javascript ------------------------------- */
   // See: http://thinkweb2.com/projects/prototype/instanceof-considered-harmful-or-how-to-write-a-robust-isarray/
@@ -26,6 +32,20 @@
     //return toString.call(object) === "[object Array]";
     return Object.prototype.toString.call(object) === "[object Array]";
   };
+  function isFunction(object) {
+    return typeof object == 'function';
+  };
+  function isNumber(object) {
+    return object instanceof Number;
+  };
+  function isDate(object) {
+    return object instanceof Date;
+  };
+  function isString(object) {
+    return object instanceof Date;
+  };
+
+
   String.prototype.trim = function() {
     return this.replace(/^\s+|\s+$/g,"");
   };
@@ -43,24 +63,26 @@
   };
   
   /** - Query object graphs using simple selectors ------------------------ */
-  //Object.prototype.Q = function(selector) {
-  function Q(this_object, selector) {
+  // TODO - rewrite w/ phlo object model
+  function Qsplit(selector) {
+    return selector.split(/ |\.|-|\|/);
+  };
+  function Qsugar(selector, root) {     // SUGAR drop the first selector element if it is the same as the object name:
+    if (selector.car().toLowerCase() == (root ? root : "afrimesh")) { // TODO UDE we don't have an automagic way to get root object names
+      selector = selector.cdr();
+    };
+    return selector;
+  };
+  function Q(this_object, selector, root) {
     if (!selector.split) {
       console.warn("Q(" + this_object.valueOf() + "): Invalid type for selector - " + selector.valueOf());
       return undefined;
     }
-    selector = selector.split(/ |\.|-|\|/);
-    // SUGAR drop the first selector element if it is the same as the object name:
-    if (selector.car().toLowerCase() == "afrimesh") { // TODO UDE we don't have a friendly way to get object names
-      selector = selector.cdr();
-    };
-    //return this_object.__q(selector);
+    selector = Qsplit(selector);
+    selector = Qsugar(selector, root);
     return __q(this_object, selector);
   };
-  //Object.prototype.__q = function(selector) {  // TODO these are being called by DOMWindow!? and causing all kinds of problems
   function __q(this_object, selector) {
-    //return (selector.length > 0) ? this[selector.car()].__q(selector.cdr()) : this;
-    //if (!selector.isArray()) {
     if (!isArray(selector)) {
       console.warn("__q(" + this_object.valueOf() + "): Invalid type for selector - " + selector.valueOf());
       return undefined;
@@ -70,9 +92,32 @@
       console.warn("__q(" + this_object.valueOf() + "): Invalid selector - " + selector.join("|"));
       return undefined;
     } 
-    //return this[selector.car()].__q(selector.cdr());
     return __q(this_object[selector.car()], selector.cdr());
   };
+
+
+  function Qset(this_object, selector, value, root) {
+    if (!selector.split) {
+      console.warn("Qset(" + this_object.valueOf() + "): Invalid type for selector - " + selector.valueOf());
+      return undefined;
+    }
+    selector = Qsplit(selector);
+    selector = Qsugar(selector, root); // TODO - fix this, really, just fix it.
+    var last = selector.pop();
+    for (var i = 0; i < selector.length; i++) { // node in selector) {
+      node = selector[i];
+      if (!this_object[node]) {
+        console.warn("Qset(" + this_object.valueOf() + "): Creating node '" + node + "' for selector '" + selector.join("|") + "'");
+        this_object[node] = {};
+      }
+      this_object = this_object[node];
+    }
+    if (value) {
+      this_object[last] = value;
+    }
+    return this_object[last];
+  };
+
 
 
   /** 
@@ -123,6 +168,36 @@
     var s = "";
     for (var p in item) {
       s += p + ": " + item[p] + "\t";
+    }
+    return s;
+  }
+  function typeOf(obj) { 
+    //console.error("TYPE: " + obj + " -> " + (typeof obj));
+    if (isArray(obj)) {
+      return "array";
+    } else if (typeof obj == 'function') {
+      return "function";
+    } else if (typeof obj == 'string') {
+      return "string";
+    } else if (typeof obj == 'number') {
+      return "number";
+    } else if (typeof obj == 'boolean') {
+      return "boolean";
+    } else if (typeof obj == 'undefined') {
+      return "undefined";
+    } else if (obj == null) {
+      return "null";
+    }
+    return "object";
+  }
+  function rpretty_print(item) {
+    var s = "";
+    for (var property in item) {
+      if (typeOf(item[property]) == 'object') {
+        s += property + " : { " + rpretty_print(item[property]) + " } \n";
+      } else {
+        s += property + " : |" + item[property] + "|\t";
+      }
     }
     return s;
   }
