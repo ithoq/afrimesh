@@ -29,8 +29,10 @@
     <script type="text/javascript" src="javascript/afrimesh.utilities.js"></script>
     <script type="text/javascript" src="javascript/afrimesh.platform.js"></script>
     <script type="text/javascript" src="javascript/afrimesh.villagebus.js"></script>
+    <script type="text/javascript" src="javascript/afrimesh.storage.js"></script>
     <script type="text/javascript" src="javascript/afrimesh.network.js"></script>
     <script type="text/javascript" src="javascript/afrimesh.customers.js"></script>
+    <script type="text/javascript" src="javascript/afrimesh.settings.js"></script>
     <script type="text/javascript" src="javascript/afrimesh.js"></script>
 
     <!-- One-time initialization/bootstrap ------------------------------- -->
@@ -98,7 +100,7 @@
         add_menu_item("utility",   "logout");
 
         /** set default page */
-        $("ul#menu ul#customers li#status").click();
+        $("ul#menu ul#utility li#settings").click();
 
         /** loading complete, we can now remove our message */
         $("#message-loading").html("");

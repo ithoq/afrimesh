@@ -8,8 +8,17 @@
  */
 
 
-
 /* - funky braces --------------------------------------------------------- */
+td.instructions {
+  text-align: center;
+  font-size: 1.5em;
+  color: lightgray;
+}
+td.v-instructions {
+  text-align: left;
+  font-size: 1.5em;
+  color: lightgray;
+}
 td.h-brace {
   border-left: 1px solid lightgray;
   border-right: 1px solid lightgray;
@@ -20,24 +29,14 @@ td.v-brace {
   border-right: 1px solid lightgray;
   border-bottom: 1px solid lightgray;
 }
-td.v-instructions {
-  text-align: left;
-  font-size: 1.5em;
-  color: lightgray;
-}
-td.instructions {
-  text-align: center;
-  font-size: 1.5em;
-  color: lightgray;
-}
 
 
-/* - everything-watch widget ---------------------------------------------- */
+/* - everything-watch module ---------------------------------------------- */
 .everything-watch    {  }
 .everything-watch td { padding-right: 1em; }
 
 
-/* - customers-watch widget ----------------------------------------------- */
+/* - customers-watch module ----------------------------------------------- */
 .customers-watch         {  }
 .customers-watch table   { width: 40em; } 
 .customers-watch th      {   
@@ -56,7 +55,7 @@ td.instructions {
 .customers-watch tr.idle { color: lightgray;  }
 
 
-/* - customers-manage widget ----------------------------------------------- */
+/* - customers-manage module ----------------------------------------------- */
 .customers-manage         {  }
 .customers-manage table   { width: 40em; } 
 .customers-manage th      {   
@@ -118,7 +117,7 @@ td.instructions {
 
 
 
-/* - customers-recharge widget -------------------------------------------- */
+/* - customers-recharge module -------------------------------------------- */
 .customers-recharge      { margin: 1em;  }
 
 .customers-recharge td.spacer { width: 2em; }
@@ -164,7 +163,7 @@ td.instructions {
 }
 
 
-/* - internet-configure widget -------------------------------------------- */
+/* - internet-configure module -------------------------------------------- */
 .ui-sortable, .ui-sortable-brace, .ui-sortable-instructions { width: 310px; padding: 5px; }
 .ui-sortable        { border:1px solid gray; min-height: 230px; margin: 5px; }
 .ui-sortable-brace  {   
@@ -206,4 +205,34 @@ dl.sort dd { background-color:red;  }
 }
 .help div.navigation {
   background: #f7f7f7;
+}
+
+
+
+/* - setting module ------------------------------------------------------- */
+.two-column-form {
+  border: 1px solid darkgrey;
+  /*margin:0 auto;*/
+  /*width:400px;*/
+  padding:14px;
+}
+
+form.two-column {
+  border: 1px solid darkgrey;
+}
+
+form.two-column input {
+  display:block;
+  width: 300px;
+}
+form.two-column label {
+  color: green; 
+  float:left;
+  width: 300px;
+}
+form.two-column label span {
+  color: red;
+}
+form.two-column br {
+  clear: both;
 }
