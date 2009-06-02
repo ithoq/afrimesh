@@ -74,7 +74,6 @@ void print_snmp_variable(struct variable_list* variable)
 }
 
 
-
 /**
  * Perform a snmpget on an array of oids
  */
@@ -100,18 +99,17 @@ void snmpget(struct snmp_session* session, struct json_object* oids)
 
   /* perform query */
   status = snmp_synch_response(session, pdu, &response); // TODO - better error logging
-  if (response->errstat != SNMP_ERR_NOERROR) {
-    log_message("There was a problem querying snmp\n");
-    if (status == STAT_SUCCESS)  {
+  if (status != STAT_SUCCESS)  {
+    if (response && response->errstat != SNMP_ERR_NOERROR) {
       log_message("Error in packet\nReason: %s\n", snmp_errstring(response->errstat));
-    } else {
-      snmp_sess_perror("snmpget", session);
-    }
-    if (response) {
       snmp_free_pdu(response);
     }
+    int liberr, syserr;
+    char* errstr;
+    snmp_error(session, &liberr, &syserr, &errstr);
+    printf(" \"error\" : \"%s\"", errstr);
     return;
-  } 
+  }
 
   /* print query results */
   count = 0;
@@ -157,18 +155,17 @@ void snmpwalk(struct snmp_session* session, const char* name_oid)
     snmp_add_null_var(pdu, name, name_length);
 
     status = snmp_synch_response(session, pdu, &response); // TODO - better error logging
-    if (response->errstat != SNMP_ERR_NOERROR) {
-      log_message("There was a problem querying snmp\n");
-      if (status == STAT_SUCCESS)  {
+    if (status != STAT_SUCCESS)  {
+      if (response && response->errstat != SNMP_ERR_NOERROR) {
         log_message("Error in packet\nReason: %s\n", snmp_errstring(response->errstat));
-      } else {
-        snmp_sess_perror("snmpget", session);
-      }
-      if (response) {
         snmp_free_pdu(response);
       }
-      return;
-    } 
+      int liberr, syserr;
+      char* errstr;
+      snmp_error(session, &liberr, &syserr, &errstr);
+      printf(" \"error\" : \"%s\" } ]", errstr);
+      exit(1);
+    }
 
     /* check if we've reached the end of the trail */
     for (variable = response->variables; variable; variable = variable->next_variable) {
@@ -247,6 +244,7 @@ int main(int argc, char** argv)
 
   /* initialize snmp */
   init_snmp("village-bus-snmp");
+  snmp_enable_syslog(); 
   snmp_sess_init(&session);            
   session.peername = (char*)address;
   session.version = SNMP_VERSION_1;
@@ -254,9 +252,15 @@ int main(int argc, char** argv)
   session.community_len = strlen(community);
   sessionp = snmp_open(&session); 
   if (!sessionp) {
-    snmp_log(LOG_ERR, "something horrible happened!!!\n");
-    log_message("Could not initialize net-snmp\n");
-    printf("\t{ error: \"Could not initialize net-snmp\" }\n");  /* TODO - better error reporting please */
+    /*snmp_perror("ack");
+      snmp_log(LOG_ERR, "something horrible happened!!!\n");*/
+    log_message("Failed to initialize net-snmp\n");
+
+    int liberr, syserr;
+    char* errstr;
+    snmp_error(&session, &liberr, &syserr, &errstr);
+
+    printf("[ { \n\t\"error\" : \"%s\" \n } ]\n", errstr);
     return;
   } 
   SOCK_STARTUP;

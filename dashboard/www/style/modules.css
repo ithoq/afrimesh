@@ -226,7 +226,7 @@ form.two-column input {
   width: 300px;
 }
 form.two-column label {
-  color: green; 
+  color: darkgray; 
   float:left;
   width: 300px;
 }

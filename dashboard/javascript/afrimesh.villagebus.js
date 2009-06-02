@@ -243,12 +243,11 @@ var BootVillageBus = function (afrimesh) {
         console.error(name + " failed to get data from address: " + address);
         console.error(data);
         return;
-      } 
-      if (data[0].error) {
-        console.error(name + " failed with error: " + data[0].error);
-        return;
       }
-      handler.response = data[0];
+      handler.response = data[0]; 
+      if (handler.response.error) {
+        console.error(name + " failed with error: " + data[0].error);
+      }
     };
     return handler;
   };
@@ -260,9 +259,9 @@ var BootVillageBus = function (afrimesh) {
         console.error(data);
         return;
       } 
-      if (data[0].error) {
+      handler.response = data[0]; 
+      if (handler.response.error) {
         console.error(name + " failed with error: " + data[0].error);
-        return;
       }
       f(data[0]);
     };
