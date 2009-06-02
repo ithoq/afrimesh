@@ -53,3 +53,44 @@ village-bus-snmp.o : village-bus-snmp.c
 clean : 
 	rm -f *.o *~ village-bus-snmp
 
+
+test-sysdescr : village-bus-snmp
+	export REQUEST_METHOD="GET" ; \
+        export QUERY_STRING="{ \"package\"   : \"snmp\",                             \
+                               \"command\"   : \"get\",                              \
+                               \"address\"   : \"192.168.20.1\",                     \
+                               \"community\" : \"public\",                           \
+	                             \"oids\"      : [ \".1.3.6.1.2.1.1.1.0\" ] }" ;       \
+        ./village-bus-snmp
+
+test-iflist : village-bus-snmp
+	export REQUEST_METHOD="GET" ; \
+        export QUERY_STRING="{ \"package\"   : \"snmp\",                             \
+                               \"command\"   : \"walk\",                              \
+                               \"address\"   : \"192.168.20.1\",                     \
+                               \"community\" : \"public\",                           \
+	                             \"oids\"      : [ \".1.3.6.1.2.1.2.2.1.2\", \".1.3.6.1.2.1.2.2.1.10\" ] }" ;  \
+        ./village-bus-snmp
+
+test-traffic : village-bus-snmp
+	export REQUEST_METHOD="GET" ; \
+        export QUERY_STRING="{ \"package\"   : \"snmp\",                             \
+                               \"command\"   : \"get\",                              \
+                               \"address\"   : \"192.168.20.1\",                     \
+                               \"community\" : \"public\",                           \
+	                             \"oids\"      : [ \".1.3.6.1.2.1.2.2.1.10.1\",        \
+                                                 \".1.3.6.1.2.1.2.2.1.16.1\" ] }" ;  \
+        ./village-bus-snmp
+
+test-all : village-bus-snmp
+	export REQUEST_METHOD="GET" ; \
+        export QUERY_STRING="{ \"package\"   : \"snmp\",                             \
+                               \"command\"   : \"get\",                              \
+                               \"address\"   : \"192.168.20.1\",                     \
+                               \"community\" : \"public\",                           \
+	                             \"oids\"      : [ \".1.3.6.1.2.1.1.1.0\",             \
+                                                 \".1.3.6.1.2.1.2.2.1.10.1\",        \
+                                                 \".1.3.6.1.2.1.2.2.1.16.1\",        \
+                                                 \".1.3.6.1.2.1.2.2.1.10.2\",        \
+                                                 \".1.3.6.1.2.1.2.2.1.16.2\" ] }" ;  \
+        ./village-bus-snmp
