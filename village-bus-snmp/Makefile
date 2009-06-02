@@ -54,16 +54,16 @@ clean :
 	rm -f *.o *~ village-bus-snmp
 
 
-test-sysdescr : village-bus-snmp
+test-sysinfo : village-bus-snmp
 	export REQUEST_METHOD="GET" ; \
         export QUERY_STRING="{ \"package\"   : \"snmp\",                             \
-                               \"command\"   : \"get\",                              \
+                               \"command\"   : \"walk\",                              \
                                \"address\"   : \"192.168.20.1\",                     \
                                \"community\" : \"public\",                           \
-	                             \"oids\"      : [ \".1.3.6.1.2.1.1.1.0\" ] }" ;       \
+	                             \"oids\"      : [ \".1.3.6.1.2.1.1\" ] }" ;       \
         ./village-bus-snmp
 
-test-iflist : village-bus-snmp
+test-interfaces : village-bus-snmp
 	export REQUEST_METHOD="GET" ; \
         export QUERY_STRING="{ \"package\"   : \"snmp\",                             \
                                \"command\"   : \"walk\",                             \
@@ -84,7 +84,7 @@ test-traffic : village-bus-snmp
                                                  \".1.3.6.1.2.1.2.2.1.16.1\" ] }" ;  \
         ./village-bus-snmp
 
-test-all : village-bus-snmp
+test-multiple : village-bus-snmp
 	export REQUEST_METHOD="GET" ; \
         export QUERY_STRING="{ \"package\"   : \"snmp\",                             \
                                \"command\"   : \"get\",                              \
