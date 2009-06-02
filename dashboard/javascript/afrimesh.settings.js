@@ -97,18 +97,6 @@ function BootSettings(parent, address) {
   /** - apply persistent settings ------------------------------------------ */
   var load_remote = function() {
     var config = parent.villagebus.uci.get.sync(address, "afrimesh");
-    //settings.load(settings,          config.afrimesh.dashboard, "network_name");
-    //settings.load(settings.location, config.afrimesh.location, "longitude");
-    //settings.load(settings.location, config.afrimesh.location, "latitude");
-    //console.debug("CONFIG:\n" + rpretty_print(config));
-    
-    /*console.debug("TEST 1: " + parent.settings.network_name);
-    console.debug("TEST 2: " + Q(parent, "afrimesh|settings|network_name"));
-    console.debug("TEST 3: " + Q(parent, "settings|network_name"));
-    console.debug("TEST 4: " + Q(parent.settings, "settings|network_name", "settings"));
-    console.debug("TEST 5: " + Q(config.afrimesh, "dashboard|network_name"));
-    console.debug("TEST 6: " + Q(config, "afrimesh|dashboard|network_name", "config"));*/
-    
     for (var local in map) {
       var value = Q(config, map[local].remote, "config");
       if (value) {
@@ -122,9 +110,6 @@ function BootSettings(parent, address) {
     
     /*
       parent.villagebus.uci.get.async(function (config) {
-        settings.load(settings,          config.afrimesh.dashboard, "network_name");
-        settings.load(settings.location, config.afrimesh.location,  "longitude");
-        settings.load(settings.location, config.afrimesh.location,  "latitude");
         console.debug("CONFIG:\n" + rpretty_print(config));
         },
         address, "afrimesh");
