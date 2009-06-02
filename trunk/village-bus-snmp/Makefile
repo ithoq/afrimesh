@@ -66,10 +66,12 @@ test-sysdescr : village-bus-snmp
 test-iflist : village-bus-snmp
 	export REQUEST_METHOD="GET" ; \
         export QUERY_STRING="{ \"package\"   : \"snmp\",                             \
-                               \"command\"   : \"walk\",                              \
+                               \"command\"   : \"walk\",                             \
                                \"address\"   : \"192.168.20.1\",                     \
                                \"community\" : \"public\",                           \
-	                             \"oids\"      : [ \".1.3.6.1.2.1.2.2.1.2\", \".1.3.6.1.2.1.2.2.1.10\" ] }" ;  \
+	                             \"oids\"      : [ \".1.3.6.1.2.1.2.2.1.2\",           \
+                                                 \".1.3.6.1.2.1.2.2.1.10\",          \
+                                                 \".1.3.6.1.2.1.2.2.1.16\" ] }" ;    \
         ./village-bus-snmp
 
 test-traffic : village-bus-snmp
