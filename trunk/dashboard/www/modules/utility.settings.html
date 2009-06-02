@@ -17,20 +17,20 @@
     <label for="afrimesh|settings|network_name">Network Name</label>
     <input id="afrimesh|settings|network_name"  type="text" />
     
-    <label for="afrimesh|settings|location|longitude">Location Longitude</label>
+    <!-- label for="afrimesh|settings|location|longitude">Location Longitude</label>
     <input id="afrimesh|settings|location|longitude"  type="text" />
     
     <label for="afrimesh|settings|location|latitude">Location Latitude</label>
-    <input id="afrimesh|settings|location|latitude"  type="text" />
+    <input id="afrimesh|settings|location|latitude"  type="text" / -->
     
     <label for="afrimesh|settings|map|server">Map Server</label>
     <input id="afrimesh|settings|map|server"  type="text" />
     
-    <label for="afrimesh|settings|map|extent">Map Extents</label>
+    <!-- label for="afrimesh|settings|map|extent">Map Extents</label>
     <input id="afrimesh|settings|map|extent"  type="text" />
     
     <label for="afrimesh|settings|map|zoom">Map Zoom</label>
-    <input id="afrimesh|settings|map|zoom"  type="text" />
+    <input id="afrimesh|settings|map|zoom"  type="text" / -->
     
     <label for="afrimesh|settings|locale">Locale</label>
     <input id="afrimesh|settings|locale"  type="text" />
@@ -40,6 +40,14 @@
     
     <label for="afrimesh|settings|hosts|batman_vis_server">Mesh Topology Server</label>
     <input id="afrimesh|settings|hosts|batman_vis_server" type="text" />
+
+    <label for="afrimesh|settings|hosts|mesh_gateway">Mesh Gateway</label>
+    <input id="afrimesh|settings|hosts|mesh_gateway" type="text" />
+  </fieldset>
+
+
+  <fieldset>
+    <legend>Internet Gateway</legend>
     
     <label for="afrimesh|settings|internet_gateway|address">Internet Gateway</label>
     <input id="afrimesh|settings|internet_gateway|address" type="text" />
@@ -48,17 +56,15 @@
     <input id="afrimesh|settings|internet_gateway|snmp|community" type="text" />
     
     <label for="afrimesh|settings|internet_gateway|snmp|interface">Internet Gateway Interface</label>
-    <input id="afrimesh|settings|internet_gateway|snmp|interface" type="text" />
+    <select id="afrimesh|settings|internet_gateway|snmp|interface" />
     
     <label for="afrimesh|settings|internet_gateway|bandwidth|down">Internet Gateway Download Bandwith</label>
     <input id="afrimesh|settings|internet_gateway|bandwidth|down" type="text" />
     
     <label for="afrimesh|settings|internet_gateway|bandwidth|up">Internet Gateway Upload Bandwith</label>
-    <input id="afrimesh|settings|internet_gateway|bandwidth|up" type="text" />
-    
-    <label for="afrimesh|settings|network_name">Mesh Gateway <span>(If different to Internet Gateway)</span></label>
-    <input id="afrimesh|settings|hosts|mesh_gateway" type="text" />
+    <input id="afrimesh|settings|internet_gateway|bandwidth|up" type="text" />    
   </fieldset>
+
 </form>
 
 
@@ -74,7 +80,7 @@ Network Name: <input id="afrimesh|settings|network_name" type="text" onBlur="sav
 (function() {
 
   /** includes ------------------------------------------------------------ */
-  load("modules/utility.settings.js"); 
+  //load("modules/utility.settings.js"); 
 
   /** construction -------------------------------------------------------- */
   ready = function() { // INJ 'ready' should be the only symbol we're exposing to the global namespace
@@ -85,8 +91,7 @@ Network Name: <input id="afrimesh|settings|network_name" type="text" onBlur="sav
 
     /** populate DOM references to afrimesh.settings */
     function populate() {
-      //var elements = $("input.[id*=afrimesh|settings]");
-      var elements = $("[id*=afrimesh|settings]");
+      var elements = $("input.[id*=afrimesh|settings]");
       elements.each(function(element) { 
           element = elements[element];
           if (element instanceof HTMLInputElement) {
@@ -100,15 +105,42 @@ Network Name: <input id="afrimesh|settings|network_name" type="text" onBlur="sav
     };
     populate();
 
-    /** callback to save settings */
-    $("input.[id*=afrimesh|settings]").bind("blur", function(event) { 
-        if (Q(afrimesh, this.id) == this.value) {
-          return;
-        }
-        afrimesh.settings.save(this.id, this.value);
-        populate(); // refresh dom elements
-      });
+    function save_element(id, value) {
+      //console.debug("Setting " + id + " -> " + value);
+      if (Q(afrimesh, id) == value) {
+        return;
+      }
+      afrimesh.settings.save(id, value);
+    };
 
+    /** install callbacks to save settings */
+    $("input.[id*=afrimesh|settings]").bind("blur", function(event) { 
+        save_element(this.id, this.value); 
+        populate(); 
+      });
+    $("select.[id*=afrimesh|settings]").bind("blur", function(event) { 
+        save_element(this.id, this.value); 
+    });
+
+    /** query snmp interfaces */
+    function populate_snmp_interfaces() {
+      var interfaces = afrimesh.villagebus.snmp.walk(afrimesh.settings.internet_gateway.address, 
+                                                     afrimesh.settings.internet_gateway.snmp.community, 
+                                                     [ ".1.3.6.1.2.1.2.2.1.2" ]);  // IF-MIB::ifDescr
+      var interface_current = afrimesh.settings.internet_gateway.snmp.interface;
+      var interface_count = 1;
+      var options = "";
+      for (var interface in interfaces) {
+        options += "<option value='" + interface_count + "' ";
+        options += (interface_count == interface_current ? "selected" : "") + ">";
+        options += interfaces[interface];
+        options += "</option>";
+        interface_count++;
+      }
+      $("select.[id*=afrimesh|settings|internet_gateway|snmp|interface]").html(options);
+    }
+    populate_snmp_interfaces();
+    
     return unload;
   };
 

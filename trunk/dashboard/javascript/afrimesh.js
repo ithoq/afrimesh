@@ -36,6 +36,7 @@ var afrimesh = undefined;
         address   : "192.168.20.1",
         snmp      : {
           community : "public",
+          interface : 1,
           down      : ".1.3.6.1.2.1.2.2.1.10.4",  // interfaces.ifTable.ifEntry.ifInOctets.4  ->  eth0.1 == .4
           up        : ".1.3.6.1.2.1.2.2.1.16.4"   // interfaces.ifTable.ifEntry.ifOutOctets.4 ->  eth0.1 == .4
         },

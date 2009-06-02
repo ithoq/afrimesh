@@ -120,7 +120,15 @@ var BootVillageBus = function (afrimesh) {
   /** - villagebus.snmp --------------------------------------------------- */
   // snmpwalk -v 2c -c public 196.211.3.106 SysDescr
   villagebus.snmp = function(address, community, oids) {
-    return villagebus.snmp.sync(address, community, oids);
+    return villagebus.snmp.get(address, community, oids);
+  };
+
+  villagebus.snmp.get = function(address, community, oids) {
+    return villagebus.snmp.sync("get", address, community, oids);
+  };
+
+  villagebus.snmp.walk = function(address, community, oids) {
+    return villagebus.snmp.sync("walk", address, community, oids);
   };
 
   villagebus.snmp.url = "http://" + afrimesh.settings.hosts.dashboard_server + "/cgi-bin/village-bus-snmp";
@@ -134,11 +142,11 @@ var BootVillageBus = function (afrimesh) {
     // TODO
   };
 
-  villagebus.snmp.sync = function(address, community, oids) {
+  villagebus.snmp.sync = function(command, address, community, oids) {
     return make_json_request({
         url     : this.url,
         request : { package   : "snmp",
-                    command   : "get",
+                    command   : command,
                     address   : address,
                     community : community, 
                     oids      : oids        },
