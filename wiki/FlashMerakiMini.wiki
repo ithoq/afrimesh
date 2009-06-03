@@ -4,7 +4,7 @@
 = Flashing a Meraki Mini Router =
 
   # Download the appropriate afrimesh firmware image  TODO
-  # See: http://wiki.openwrt.org/OpenWrtDocs/Hardware/Meraki/Mini
+  # See: http://oldwiki.openwrt.org/OpenWrtDocs(2f)Hardware(2f)Meraki(2f)Mini.html
 
 Steps:
 
