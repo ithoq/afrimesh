@@ -28,46 +28,77 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
+#include <json_cgi.h> /* for log_message */
 #include "village-bus-radius.h"
 
+
+/* utility functions */
+void radius_set_type(MYSQL* connection, const char* username, const char* new_type);
+
+
+
+/**
+ * Modify radius user
+ */
 void radius_modify_mysql(const char* username, const char* new_username, const char* new_password, const char* new_type)
 {
   MYSQL* connection = NULL;
-  unsigned long count;
+  unsigned long count = 0;
 
   /* update user information */
   if (new_username) {
     if (mysql(&connection, "UPDATE radcheck SET username='%s' WHERE username='%s'", new_username, username) != 0) {
+      printf("{ error : \"Failed to update username\" }");
       return;
     }
     username = new_username;
   }
   if (new_password) {
     if (mysql(&connection, "UPDATE radcheck SET value='%s' WHERE username='%s' AND attribute='ClearText-Password'", new_password, username) != 0) {
+      printf("{ error : \"Failed to update password\" }");
       return;
     }
   }
-  count = mysql_affected_rows(connection);
-
   if (new_type) {
-    if (strncasecmp("prepaid", new_type, 7)) {
-    } else if (strncasecmp("flatrate", new_type, 8)) {
-    } else if (strncasecmp("disabled", new_type, 8)) { 
-    } else if (strncasecmp("metered", new_type, 7)) { // TODO - implement
-    } else {
-      // TODO - handle 
-    }
+    radius_set_type(connection, username, new_type);
   }
 
   /* output result */
+  if (connection) {
+    count = mysql_affected_rows(connection);
+  }
   printf("\t{ count : %d }\n", count); 
 
   /* close connection */
-  if (connection != NULL) {
+  if (connection) {
     mysql_close(connection);
   }
-
 }
 
 
+
+/**
+ * Set account type for radius user
+ */
+void radius_set_type(MYSQL* connection, const char* username, const char* new_type)
+{
+  char* query = NULL;
+  
+  /* clear all existing rules for username */
+  if (mysql(&connection, "DELETE FROM radcheck WHERE username='%s' AND attribute='Max-Prepaid-Session'", username) != 0) {
+    return;
+  }
+
+  /* create rules for new type */
+  if (strncasecmp("prepaid", new_type, 7) == 0) {
+    if (mysql(&connection, "INSERT INTO radcheck (UserName, Attribute, op, Value) VALUES ('%s', 'Max-Prepaid-Session', ':=', '3600')", username) != 0) {
+      log_message("Could not set new type '%s' for '%s'\n", new_type, username);
+      return;
+    }
+  } else if (strncasecmp("flatrate", new_type, 8) == 0) {
+    // flatrate has no attributes
+  } else if (strncasecmp("disabled", new_type, 8) == 0) { // TODO - implement
+  } else if (strncasecmp("metered", new_type, 7) == 0)  { // TODO - implement
+  }
+
+}
