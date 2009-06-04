@@ -85,6 +85,9 @@ mysql-populate :
 	cat sql/defaults.sql  | mysql $(MYSQL_RADIUS) $(RADIUS_DATABASE)
 	cat sql/test-data.sql | mysql $(MYSQL_RADIUS) $(RADIUS_DATABASE)
 
+mysql-login :
+	mysql $(MYSQL_RADIUS) $(RADIUS_DATABASE)
+
 all : village-bus-radius
 
 test-who : village-bus-radius
@@ -104,7 +107,7 @@ test-new : village-bus-radius
 
 test-modify : village-bus-radius
 	export REQUEST_METHOD="GET" ; \
-	export QUERY_STRING="{ \"command\" : \"modify\", \"username\": \"Joan\", \"new_username\": null, \"new_password\": null, \"new_type\": \"flatrate\" }" ; \
+	export QUERY_STRING="{ \"command\" : \"modify\", \"username\": \"Joan\", \"new_username\": \"Penny\", \"new_password\": \"plink\", \"new_type\": \"flatrate\" }" ; \
 	./village-bus-radius
 
 test-delete : village-bus-radius

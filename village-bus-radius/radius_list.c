@@ -28,7 +28,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <json_cgi.h> /* for log_message */
 #include "village-bus-radius.h"
+
+
+void print_customer(const char* username, const char* cleartext_password, const char* max_prepaid_session)
+{
+  printf("{ ");
+  printf("username : \"%s\", ", username);
+  if (max_prepaid_session) {
+    printf("type : \"prepaid\", ");
+    printf("seconds : %s", max_prepaid_session);
+  } else {
+    printf("type : \"flatrate\"");
+  }
+  printf(" }");
+}
 
 
 void radius_list_mysql()
@@ -43,36 +58,29 @@ void radius_list_mysql()
   }
   result = mysql_use_result(connection);
 
-  /* parse user attributes and output results */
-  int first_time = 1;
-  char* last_username = NULL;
-  char is_prepaid = 0;
+  char* username    = NULL;
+  char* cleartext_password = NULL;
+  char* max_prepaid_session = NULL;
   while ((row = mysql_fetch_row(result)) != NULL) {
-
-    /* username & type */
-    if ((last_username == NULL) || strcasecmp(last_username, row[0]) != 0) { 
-      if (!first_time) {
-	printf("\t\ttype : \"%s\"\n", (is_prepaid ? "prepaid" : "flatrate"));
-        printf("\t},");
-      }
-      first_time = 0;
-      printf("\n\t{\n");
-      printf("\t\tusername : \"%s\",\n", row[0]);
+    if (username && strcasecmp(username, row[0]) != 0) {
+      print_customer(username, cleartext_password, max_prepaid_session);
+      printf(", ");
+      cleartext_password = NULL;
+      max_prepaid_session = NULL;
     }
-
-    /* parse attributes */
+    username = strdup(row[0]);
     if (strcasecmp("ClearText-Password", row[1]) == 0) {
-      printf("\t\tpassword : \"%s\",\n", row[3]);
+      cleartext_password = strdup(row[3]);
     } else if (strcasecmp("Max-Prepaid-Session", row[1]) == 0) {
-      is_prepaid = 1;
-      printf("\t\tseconds : \"%s\",\n", row[3]);
+      max_prepaid_session = strdup(row[3]);
+    } else {
+      log_message("Unknown attribute: %s %s %s %s\n", row[0], row[1], row[2], row[3]);
     }
-
-    if (last_username != NULL) free(last_username);
-    last_username = strdup(row[0]);
   }
-  printf("\t\ttype : \"%s\"\n", (is_prepaid ? "prepaid" : "flatrate"));
-  printf("\t}");
+  if (username) { /* don't forget the last one */
+    print_customer(username, cleartext_password, max_prepaid_session);
+  }
+
 
   /* release memory used to store results and close connection */
   if (result != NULL) {
