@@ -77,9 +77,8 @@
     clearTimeout(timer);
     var data = afrimesh.villagebus.snmp(afrimesh.settings.internet_gateway.address, 
                                         afrimesh.settings.internet_gateway.snmp.community, 
-                                        [ ".1.3.6.1.2.1.1.1.0",                             // system.sysDescr.0
-                                          afrimesh.settings.internet_gateway.snmp.down,   
-                                          afrimesh.settings.internet_gateway.snmp.up ]);
+                                        [ ".1.3.6.1.2.1.2.2.1.10." + afrimesh.settings.internet_gateway.snmp.interface,    // interfaces.ifTable.ifEntry.ifInOctets.interface
+                                          ".1.3.6.1.2.1.2.2.1.16." + afrimesh.settings.internet_gateway.snmp.interface ]); // interfaces.ifTable.ifEntry.ifOutOctets.interface
     update_internet_traffic(data);
     timer = setTimeout(update, 5000);
   };
@@ -103,19 +102,19 @@
     //console.debug("update: " + dump_object(traffic));
     var now = new Date();
     if (traffic.last_down == 0      || traffic.last.getTime() > now.getTime() ||
-        traffic.last_down > snmp[1] ||  traffic.last_up   > snmp[2])  {  // IF_MIB__ifInOctets_4 | IF_MIB__ifOutOctets_4
+        traffic.last_down > snmp[0] ||  traffic.last_up   > snmp[1])  {  // IF_MIB__ifInOctets_4 | IF_MIB__ifOutOctets_4
       traffic.last = now;
-      traffic.last_down = snmp[1];
-      traffic.last_up   = snmp[2];
+      traffic.last_down = snmp[0];
+      traffic.last_up   = snmp[1];
       return;
     } 
     var interval = now.getTime() - traffic.last.getTime();
-    var traffic_down = Math.min(traffic.max_down, ((snmp[1] - traffic.last_down) / interval) * 10.0);
-    var traffic_up   = Math.min(traffic.max_up,   ((snmp[2] - traffic.last_up)   / interval) * 10.0);
+    var traffic_down = Math.min(traffic.max_down, ((snmp[0] - traffic.last_down) / interval) * 10.0);
+    var traffic_up   = Math.min(traffic.max_up,   ((snmp[1] - traffic.last_up)   / interval) * 10.0);
     traffic.down.push(traffic_down);
     traffic.up.push(traffic_up);
-    traffic.last_down = snmp[1];
-    traffic.last_up   = snmp[2];
+    traffic.last_down = snmp[0];
+    traffic.last_up   = snmp[1];
     traffic.last = now;
     if (traffic.down.length > traffic.length) {
       traffic.down.splice(2, traffic.down.length - traffic.length); // leave 0 for scaling
