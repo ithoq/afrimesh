@@ -22,7 +22,9 @@ var BootVillageBus = function (afrimesh) {
     for (var p in this) { if (p != "prototype") ret.push(p); }
     return ret;
   };
-  villagebus.ajax_proxy = "http://" + afrimesh.settings.hosts.dashboard_server + afrimesh.settings.ajax_proxy;
+  villagebus.ajax_proxy = function() { 
+    return "http://" + afrimesh.settings.address + afrimesh.settings.ajax_proxy; 
+  };
 
 
   /** - villagebus.batman ------------------------------------------------- */
@@ -31,11 +33,13 @@ var BootVillageBus = function (afrimesh) {
     return this.vis.sync(); 
   }; 
 
-  villagebus.batman.vis.url  = villagebus.ajax_proxy + "http://" + afrimesh.settings.hosts.batman_vis_server + ":2004";
+  villagebus.batman.vis.url  = function() { 
+    return villagebus.ajax_proxy() + "http://" + afrimesh.settings.hosts.batman_vis_server + ":2004"; 
+  };
   
   villagebus.batman.vis.async = function(handler) { 
     var xml = make_json_request({
-        url     : this.url,
+        url     : this.url(),
         request : {},
         success : handler,
         async   : true });
@@ -49,7 +53,7 @@ var BootVillageBus = function (afrimesh) {
   villagebus.batman.vis.sync = function() { 
     var handler  = function(data) { handler.response = data;  };
     return make_json_request({
-        url     : this.url,
+        url     : this.url(),
         request : {},
         success : handler,
         async   : false });
@@ -58,7 +62,9 @@ var BootVillageBus = function (afrimesh) {
   
   /** - villagebus.radius ------------------------------------------------- */
   villagebus.radius        = function() { return villagebus.radius.who(); };
-  villagebus.radius.url    = "http://" + afrimesh.settings.hosts.dashboard_server + "/cgi-bin/village-bus-radius";
+  villagebus.radius.url    = function() {
+    return "http://" + afrimesh.settings.hosts.dashboard_server + "/cgi-bin/village-bus-radius"; 
+  };
   villagebus.radius.who    = function() { return villagebus.radius.who.sync(); };
   villagebus.radius.select = function() { return villagebus.radius.select.sync(); };
   villagebus.radius.insert = function(username, type, seconds) { return villagebus.radius.insert.sync(username, type, seconds); };
@@ -68,7 +74,7 @@ var BootVillageBus = function (afrimesh) {
   villagebus.radius.who.sync = function() {
     var handler = function(data) { handler.response = data; }; // TODO - extend sync handler to handle array data
     return make_json_request({
-        url     : villagebus.radius.url,
+        url     : villagebus.radius.url(),
         request : { package  : "radius",
                     command  : "who" },
         success : handler,
@@ -77,7 +83,7 @@ var BootVillageBus = function (afrimesh) {
   villagebus.radius.select.sync = function() {
     var handler = function(data) { handler.response = data; }; // TODO - extend sync handler to handle array data
     return make_json_request({
-        url     : villagebus.radius.url,
+        url     : villagebus.radius.url(),
         request : { package : "radius",
                     command : "list" },
         success : handler,
@@ -85,34 +91,34 @@ var BootVillageBus = function (afrimesh) {
   };
   villagebus.radius.insert.sync = function(username, type, seconds) {
     return make_json_request({
-        url     : villagebus.radius.url,
+        url     : villagebus.radius.url(),
         request : { package  : "radius",
                     command  : "new",
                     username : username,
                     type     : type,
                     seconds  : seconds },  
-        success : make_sync_response_handler(villagebus.radius.url, "villagebus.radius.insert"),
+        success : make_sync_response_handler(villagebus.radius.url(), "villagebus.radius.insert"),
         async   : false });
   };
   villagebus.radius.update.sync = function(username, new_username, new_password, new_type) {
     return make_json_request({
-        url     : villagebus.radius.url,
+        url     : villagebus.radius.url(),
         request : { package      : "radius",
                     command      : "modify",
                     username     : username,
                     new_username : new_username,
                     new_password : new_password,
                     new_type     : new_type },
-        success : make_sync_response_handler(villagebus.radius.url, "villagebus.radius.update"),
+        success : make_sync_response_handler(villagebus.radius.url(), "villagebus.radius.update"),
         async   : false });
   };
   villagebus.radius.remove.sync = function(username) {
     return make_json_request({
-        url     : villagebus.radius.url,
+        url     : villagebus.radius.url(),
         request : { package  : "radius",
                     command  : "delete",
                     username : username },
-        success : make_sync_response_handler(villagebus.radius.url, "villagebus.radius.remove"),
+        success : make_sync_response_handler(villagebus.radius.url(), "villagebus.radius.remove"),
         async   : false });
   };
 
@@ -131,8 +137,9 @@ var BootVillageBus = function (afrimesh) {
     return villagebus.snmp.sync("walk", address, community, oids);
   };
 
-  villagebus.snmp.url = "http://" + afrimesh.settings.hosts.dashboard_server + "/cgi-bin/village-bus-snmp";
-  console.log("snmp.url=" + villagebus.snmp.url);
+  villagebus.snmp.url = function() {
+    return "http://" + afrimesh.settings.hosts.dashboard_server + "/cgi-bin/village-bus-snmp";
+  };
 
   villagebus.snmp.async = function(f, address, community, oids) {
     // TODO
@@ -144,7 +151,7 @@ var BootVillageBus = function (afrimesh) {
 
   villagebus.snmp.sync = function(command, address, community, oids) {
     return make_json_request({
-        url     : this.url,
+        url     : this.url(),
         request : { package   : "snmp",
                     command   : command,
                     address   : address,
@@ -171,11 +178,11 @@ var BootVillageBus = function (afrimesh) {
     //return afrimesh.villagebus.ajax_proxy + "http://" + address + "/cgi-bin/village-bus-uci";
     //return "http://" + afrimesh.settings.hosts.mesh_gateway + afrimesh.settings.ajax_proxy + 
     //       "http://" + address + "/cgi-bin/village-bus-uci"
-    if (address == afrimesh.settings.hosts.dashboard_server) {
+    if (address == afrimesh.settings.address) {
       return "http://" + address + "/cgi-bin/village-bus-uci";
     }
-    return afrimesh.villagebus.ajax_proxy  + "http://" + afrimesh.settings.hosts.mesh_gateway + 
-           afrimesh.settings.ajax_proxy    + "http://" + address + "/cgi-bin/village-bus-uci";
+    return afrimesh.villagebus.ajax_proxy()  + "http://" + afrimesh.settings.hosts.mesh_gateway + 
+           afrimesh.settings.ajax_proxy()    + "http://" + address + "/cgi-bin/village-bus-uci";
   };
 
   villagebus.uci.get = function(address, selector) {

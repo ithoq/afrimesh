@@ -33,7 +33,7 @@ function BootSettings(parent, address) {
    *  . set the value of the node at that position
    */
   var map = { 
-    "afrimesh|settings|network_name" : { remote : "afrimesh|dashboard|network_name", init : "mesh testbed" },
+    "afrimesh|settings|network_name" : { remote : "afrimesh|dashboard|network_name", init : "mesh testbed", explain : "the name of the network" },
     "afrimesh|settings|locale"       : { remote : "afrimesh|settings|locale",        init : "en_US.UTF-8"  },
     "afrimesh|settings|ajax_proxy"   : { remote : "afrimesh|settings|ajax_proxy",    init : "/cgi-bin/ajax-proxy.cgi?url=" },
 
@@ -97,6 +97,7 @@ function BootSettings(parent, address) {
   /** - apply persistent settings ------------------------------------------ */
   var load_remote = function() {
     var config = parent.villagebus.uci.get.sync(address, "afrimesh");
+    console.debug("REMOTE CONFIG: " + rpretty_print(config));
     for (var local in map) {
       var value = Q(config, map[local].remote, "config");
       if (value) {
