@@ -166,6 +166,23 @@ define Package/afrimesh-webif/install
 endef
 
 
+# - afrimesh-dashboard -------------------------------------------------------
+define Package/afrimesh-dashboard
+	SECTION:=admin
+	CATEGORY:=Administration
+	DEPENDS:=+afrimesh-webif
+	TITLE:=Mesh management dashboard
+endef
+
+define Package/afrimesh-dashboard/description
+	Mesh management dashboard
+endef
+
+define Package/afrimesh-dashboard/install
+	$(INSTALL_DIR)  $(1)/www/cgi-bin
+endef
+
+
 # - build rules --------------------------------------------------------------
 define Build/Prepare
 	$(call Build/Prepare/Default)
@@ -192,10 +209,9 @@ define Build/Compile-local
 endef
 
 
-
-
 $(eval $(call BuildPackage,afrimesh-base))
 $(eval $(call BuildPackage,afrimesh-config))
 $(eval $(call BuildPackage,afrimesh-portal))
 $(eval $(call BuildPackage,afrimesh-webif))
+$(eval $(call BuildPackage,afrimesh-dashboard))
 
