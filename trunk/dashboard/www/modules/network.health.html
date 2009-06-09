@@ -77,8 +77,10 @@
     clearTimeout(timer);
     var data = afrimesh.villagebus.snmp(afrimesh.settings.internet_gateway.address, 
                                         afrimesh.settings.internet_gateway.snmp.community, 
-                                        [ ".1.3.6.1.2.1.2.2.1.10." + afrimesh.settings.internet_gateway.snmp.interface,    // interfaces.ifTable.ifEntry.ifInOctets.interface
-                                          ".1.3.6.1.2.1.2.2.1.16." + afrimesh.settings.internet_gateway.snmp.interface ]); // interfaces.ifTable.ifEntry.ifOutOctets.interface
+                                        [ // interfaces.ifTable.ifEntry.ifInOctets.interface
+                                          ".1.3.6.1.2.1.2.2.1.10." + afrimesh.settings.internet_gateway.snmp.interface,    
+                                          // interfaces.ifTable.ifEntry.ifOutOctets.interface
+                                          ".1.3.6.1.2.1.2.2.1.16." + afrimesh.settings.internet_gateway.snmp.interface ]); 
     update_internet_traffic(data);
     timer = setTimeout(update, 5000);
   };
