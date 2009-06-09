@@ -13,12 +13,16 @@ var afrimesh = undefined;
 (function() {
   function Afrimesh() {
     this.settings = { 
-      address      : "dashboard.7degrees.co.za", /* dynamic settings bootstraps off this */
+      address      : window.location.hostname ? window.location.hostname : "afrimesh.7degrees.co.za",
+      ajax_proxy   : "/cgi-bin/ajax-proxy.cgi?url="
+    };
+    /*this.settings = { 
+      address      : "dashboard.7degrees.co.za", // dynamic settings bootstraps off this 
       network_name : "development testbed",
       locale       : "en_US.UTF-8",
       ajax_proxy   : "/cgi-bin/ajax-proxy.cgi?url=",
       hosts        : {
-        dashboard_server  : "afrimesh.7degrees.co.za",   /* dynamic settings bootstraps off this */
+        dashboard_server  : "afrimesh.7degrees.co.za",   // dynamic settings bootstraps off this 
         batman_vis_server : "dashboard.7degrees.co.za",
         mesh_gateway      : "192.168.20.200"
       },
@@ -45,14 +49,16 @@ var afrimesh = undefined;
           up   : 256     // with protocol overhead the max observed is 228
         }
       }
-    };
+    };*/
     this.storage    = BootStorage(this);
     this.network    = BootNetwork(this);
     this.customers  = BootCustomers(this);
     this.villagebus = BootVillageBus(this);
 
     // override default settings with live settings from the server
+    console.debug("Booting from: " + window.location.hostname ? window.location.hostname : "local-" + this.settings.address);
     this.settings = BootSettings(this, this.settings.address); 
+
   };
   afrimesh = new Afrimesh();
 })();

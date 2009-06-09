@@ -74,7 +74,10 @@
     return selector;
   };
   function Q(this_object, selector, root) {
-    if (!selector.split) {
+    console.debug("Q(" + this_object + ", " + selector + ", " + root + ")");
+    if (!this_object) {
+      return "NONE";
+    } else  if (!selector.split) {
       console.warn("Q(" + this_object.valueOf() + "): Invalid type for selector - " + selector.valueOf());
       return undefined;
     }
