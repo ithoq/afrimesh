@@ -38,8 +38,8 @@
 
 int main(int argv, char** argc)
 {
-  printf("Content-type: text/plain\n\n");
-  //printf("Content-type: application/json\n\n");
+  //printf("Content-type: text/plain\n\n");
+  printf("Content-type: application/json\n\n");
 
   /* parse request */
   char* request = json_cgi_request(); 
