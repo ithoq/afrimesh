@@ -605,8 +605,8 @@ void *master() {
   char* end; 
 
   if (output_format == json) {
-    /*begin = "HTTP/1.0 200 OK\nContent-type: application/json\n\n[\n";*/
-    begin = "HTTP/1.0 200 OK\nContent-type: text/plain\n\n[\n";
+    begin = "HTTP/1.0 200 OK\nContent-type: application/json\n\n[\n";
+    /*begin = "HTTP/1.0 200 OK\nContent-type: text/plain\n\n[\n";*/
     end = "\n]\n";
   } else {
     begin = "digraph topology\n{\n";

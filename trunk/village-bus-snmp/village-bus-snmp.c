@@ -218,8 +218,8 @@ int main(int argc, char** argv)
   struct snmp_session session, *sessionp;
   int i;
 
-  //printf("Content-type: application/json\n\n");
-  printf("Content-type: text/plain\n\n");
+  printf("Content-type: application/json\n\n");
+  /*printf("Content-type: text/plain\n\n");*/
 
   /* parse request */
   request = json_cgi_request();
