@@ -12,13 +12,22 @@
 <form class="two-column">
 
   <fieldset>
-    <legend>Global Settings</legend>
+    <legend>Who are you?</legend>
 
     <label for="afrimesh|settings|network_name">Network Name</label>
-    <input id="afrimesh|settings|network_name"  type="text" />
+    <input id="afrimesh|settings|network_name" type="text" />
+    <div class="tooltip">
+      <p class="explain">This is the name that appears on the main menu bar.</p>
+      <p class="default">afrimesh</p>
+    </div>
 
     <label for="afrimesh|settings|locale">Locale</label>
-    <input id="afrimesh|settings|locale"  type="text" />
+    <input id="afrimesh|settings|locale" type="text" />
+    <div class="tooltip">
+      <p class="explain">This sets the language and country for the dashboard interface.</p>
+      <p class="default">en_US.UTF-8</p>
+    </div>
+
         
     <!-- label for="afrimesh|settings|location|longitude">Location Longitude</label>
     <input id="afrimesh|settings|location|longitude"  type="text" />
@@ -28,8 +37,14 @@
     
     <label for="afrimesh|settings|hosts|dashboard_server">Dashboard Server</label>
     <input id="afrimesh|settings|hosts|dashboard_server" type="text" />
+    <div class="tooltip">
+      <p class="explain"></p>
+      <p class="typical"></p>
+      <p class="learnmore"></p>
+    </div>
+
     
-    <label for="afrimesh|settings|hosts|batman_vis_server">Mesh Topology Server</label>
+    <label for="afrimesh|settings|hosts|batman_vis_server">Mesh Vis Server</label>
     <input id="afrimesh|settings|hosts|batman_vis_server" type="text" />
 
     <label for="afrimesh|settings|hosts|mesh_gateway">Mesh Gateway</label>
@@ -48,7 +63,7 @@
 
 
   <fieldset>
-    <legend>Internet Gateway</legend>
+    <legend>How do you connect to the Internet?</legend>
     
     <label for="afrimesh|settings|internet_gateway|address">Internet Gateway</label>
     <input id="afrimesh|settings|internet_gateway|address" style="background:#FFAAAA;" type="text"></input>
@@ -69,6 +84,138 @@
 </form>
 
 
+<!-- a href="#" id="trigger"> 
+    Move the mouse over this box to see the tooltip in action. 
+</a> 
+<div class="fooltip"> 
+    <h3>The Tooltip</h3> 
+     <p> 
+        <strong>A great tool for designing better layouts and more intuitive user-interfaces.</strong> 
+    </p> 
+     <p> 
+        Tooltips can contain any HTML such as links, images, forms and tables. 
+        This tooltip is vertically centered on the top edge of the trigger element. 
+    </p> 
+</div -->
+
+
+<!-- table border=1>
+  <tr>
+    <td>Field Name</td>
+    <td><input/></td>
+    <td>
+      <p class="explain"></p>
+      <p class="typical"></p>
+      <p class="learnmore"></p>
+    </td>
+  </tr>
+</table>
+
+<table border=1>
+  <th colspan=3>Internet Gateway</th>
+  <tr>
+    <td>Address</td>
+    <td><input id="afrimesh|settings|internet_gateway|address" /></td>
+    <td>
+      <p class="explain">this explains</p>
+      <p class="typical"></p>
+      <p class="learnmore"></p>
+    </td>
+  </tr>
+  <tr>
+    <td>SNMP Community String</td>
+    <td><input/></td>
+    <td>
+      <p class="explain"></p>
+      <p class="typical"></p>
+      <p class="learnmore"></p>
+    </td>
+  </tr>
+  <tr>
+    <td>WAN Interface</td>
+    <td><input/></td>
+    <td>
+      <p class="explain"></p>
+      <p class="typical"></p>
+      <p class="learnmore"></p>
+    </td>
+  </tr>
+  <tr>
+    <td>Bandwidth</td>
+    <td><input/></td>
+    <td>
+      <p class="explain"></p>
+      <p class="typical"></p>
+      <p class="learnmore"></p>
+    </td>
+  </tr>
+
+</table -->
+
+
+<!-- table border=1>
+  <th colspan=3>Server Settings</th>
+  <tr>
+    <td>Mesh Visualization Server</td>
+    <td><input id="vis" />
+      <div class="tooltip">
+        <p class="explain">The Network Map gets the available mesh nodes and their connections from the server at this address.</p>
+        <p class="typical">
+          By default the visualization server runs on the same address as the dashboard server and you should not need to change it.
+        </p>
+        <p class="learnmore">
+          You can learn how to configure a different vis server by reading the
+          <a href="http://code.google.com/p/afrimesh/wiki/HowTo">VisServerHowto</a>
+        </p>
+      </div>
+    </td><td></td>
+  </tr>
+  <tr>
+    <td>Map Server</td>
+    <td><input/></td>
+    <td>
+      <p class="explain">The Network Map gets the terrain data from the server at this address.</p>
+      <p class="typical">If your mesh has internet access you will not need to change this setting.</p>
+      <p class="obstacle">
+        If your mesh does not have internet access you will need to set up your own map server and enter its address here.
+      </p>
+      <p class="learnmore">
+        You can learn how to set up your own map server by reading 
+        <a href="http://code.google.com/p/afrimesh/wiki/HowTo">http://code.google.com/p/afrimesh/wiki/HowTo</a>
+      </p>
+    </td>
+
+  </tr>
+</table -->
+
+
+<hr style="margin: 50px"; />
+
+<!-- div id="widget-setup-router" class="widget setup-router">
+  <table>
+    <tr>
+      <td><input type="text" size="40"/></td>
+      <td class="v-brace"></td>
+      <td class="v-instructions">1. enter your name</td>
+    </tr>
+
+   <tr><td colspan=3></td></tr>
+
+    <tr>
+      <td>
+        <div id="widget-village-map" style="border:0px red solid; width: 500px; height: 300px;">please wait a moment...</div>
+        <div id="widget-village-message"></div>
+      </td>
+      <td class="v-brace"></td>
+      <td class="v-instructions">2. set your location</td>
+    </tr>
+  </table>
+</div -->
+
+
+<hr style="margin: 50px"; />
+
+
 <!-- Network Name: <input id="afrimesh|settings|network_name" type="text" onBlur="save_input(this);" />  -->
 
 
@@ -76,79 +223,46 @@
 (function() {
 
   /** includes ------------------------------------------------------------ */
-  //load("modules/utility.settings.js"); 
+  load("modules/utility.settings.js"); 
 
   /** construction -------------------------------------------------------- */
   ready = function() { // INJ 'ready' should be the only symbol we're exposing to the global namespace
-    /* often a good place to do this: populate_control(); */
     console.debug("loaded utility.settings.html");
     //$("#bar").val(afrimesh.storage("my_cookie"));
 
-    /** populate DOM references to afrimesh.settings */
-    function populate() {
-      var elements = $("input.[id*=afrimesh|settings]");
-      elements.each(function(element) { 
-          element = elements[element];
-          if (element instanceof HTMLInputElement) {
-            $(element).val(Q(afrimesh, element.id) + ""); 
-          } else if (element instanceof HTMLElement) {
-            $(element).html(Q(afrimesh, element.id) + ""); 
-          } else {
-            console.warn("UNKNOWN ELEMENT TYPE: " + element);
-          }
-        });
-    };
-    populate();
+    populate_dom();
 
+    /** install tooltips -------------------------------------------------- */
+    $("div.tooltip").tooltip({
+        position : ['bottom', 'right'],   // place tooltip on the right edge 
+        offset   : [0, 0],              // a little tweaking of the position 
+        effect   : 'toggle',              // use a simple show/hide effect 
+        opacity  : 0.8                    // custom opacity setting 
+      });
+
+    /** install callbacks to save settings -------------------------------- */
     function save_element(id, value) {
-      if (Q(afrimesh, id) == value) {
-        return;
-      }
-      afrimesh.settings.save(id, value);
+      return (Q(afrimesh, id) != value) ? afrimesh.settings.save(id, value) : null;
     };
-
-    /** install callbacks to save settings */
     $("input.[id*=afrimesh|settings]").bind("blur", function(event) { 
         console.debug("Saving Setting: " + this.id + " -> " + this.value);
         save_element(this.id, this.value); 
-        populate(); 
+        populate_dom(); 
       });
     $("input.[id*=afrimesh|settings|internet_gateway|address]").unbind("blur").bind("blur", function(event) { 
         console.debug("Override Setting for gateway " + this.id + " -> " + this.value);
         save_element(this.id, this.value);
-        populate_snmp_interfaces();
+        populate_select_interface();
       });
     $("select.[id*=afrimesh|settings]").bind("blur", function(event) { 
         save_element(this.id, this.value); 
     });
 
-    /** query snmp interfaces */
-    function populate_snmp_interfaces() {
-      $("input.[id*=afrimesh|settings|internet_gateway|address]").css("background", "#FFAAAA");
-      var interfaces = afrimesh.villagebus.snmp.walk(afrimesh.settings.internet_gateway.address, 
-                                                     afrimesh.settings.internet_gateway.snmp.community, 
-                                                     [ ".1.3.6.1.2.1.2.2.1.2" ]);  // IF-MIB::ifDescr
-      if (!interfaces || interfaces.error) {
-        console.debug("GOT SNMP ERROR: " + interfaces.error);         // TODO display error in UI
-        $("select.[id*=afrimesh|settings|internet_gateway|snmp|interface]").html("");
-        return;
-      }
-      $("input.[id*=afrimesh|settings|internet_gateway|address]").css("background", "#AAFFAA");
-      var interface_current = afrimesh.settings.internet_gateway.snmp.interface;
-      var interface_count = 1;
-      var options = "";
-      for (var interface in interfaces) {
-        options += "<option value='" + interface_count + "' ";
-        options += (interface_count == interface_current ? "selected" : "") + ">";
-        options += interfaces[interface];
-        options += "</option>";
-        interface_count++;
-      }
-      $("select.[id*=afrimesh|settings|internet_gateway|snmp|interface]").html(options);
-
-    }
-    populate_snmp_interfaces();
+    populate_select_interface();
     
+    /* round corners */
+    $(".tooltip").corner("tr 8px bl 8px br 8px");
+
     return unload;
   };
 

@@ -221,9 +221,10 @@ form.two-column {
   border: 1px solid darkgrey;
 }
 
-form.two-column input {
+form.two-column input, select {
   display:block;
   width: 300px;
+  margin: 10px;
 }
 form.two-column label {
   color: darkgray; 
@@ -235,4 +236,25 @@ form.two-column label span {
 }
 form.two-column br {
   clear: both;
+}
+
+div.tooltip {
+  background-color : #000; 
+  /*outline:1px solid #669; */
+  /*border:2px solid #fff; */
+  /*padding:10px 15px; */
+  /*width:200px; */
+  padding: 10px;
+  margin-right: 20px;
+  display:none; 
+  color            : orange; 
+  font-size        : 1.1em; 
+  /* outline radius for mozilla/firefox only */ 
+  /*outline-radius : 8px; 
+  -moz-outline-radius    : 8px; 
+  -webkit-outline-radius : 8px; */
+}
+
+form.two-column p.explain {
+
 }
