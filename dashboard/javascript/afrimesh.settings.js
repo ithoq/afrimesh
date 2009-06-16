@@ -39,7 +39,6 @@ function BootSettings(parent, address) {
 
     "afrimesh|settings|hosts|dashboard_server"  : { remote : "afrimesh|dashboard|dashboard_server",  init : "afrimesh.7degrees.co.za"  },
     "afrimesh|settings|hosts|batman_vis_server" : { remote : "afrimesh|dashboard|visualisation_srv", init : "dashboard.7degrees.co.za" },
-    "afrimesh|settings|hosts|mesh_gateway"      : { remote : "afrimesh|dashboard|mesh_gateway",      init : "192.168.20.200" },
 
     "afrimesh|settings|location|longitude" : {  remote : "afrimesh|location|longitude", init : "18.339733" },
     "afrimesh|settings|location|latitude"  : {  remote : "afrimesh|location|latitude",  init : "-34.138061" },

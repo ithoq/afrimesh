@@ -83,9 +83,113 @@ void json_cgi_release()
 
   if (json_cgi_post_buffer != NULL) {
     free(json_cgi_post_buffer);
+    json_cgi_post_buffer = NULL;
+  }
+  if (json_cgi_parse_buffer != NULL) {
+    free(json_cgi_parse_buffer);
+    json_cgi_parse_buffer = NULL;
   }
 }
 
+
+
+char* request_to_json(const char* request, size_t length) 
+{
+  char c;
+  size_t index = 0;
+  size_t buffer_size = length * 2 * sizeof(char);
+  int first = 0;
+  int code = 0;
+
+  if (json_cgi_parse_buffer != NULL) {
+    free(json_cgi_parse_buffer);
+    json_cgi_parse_buffer = NULL;
+  }
+  
+  json_cgi_parse_buffer = malloc(buffer_size);
+  memset(json_cgi_parse_buffer, buffer_size, 0);
+  char * buffer = json_cgi_parse_buffer;
+
+  buffer += snprintf(buffer, buffer_size, "{ '");
+
+  for (index = 0; request[index] != '\0' && index < length; index++) {
+    c = request[index];
+    switch (c) {
+    case '=':
+      buffer += snprintf(buffer, buffer_size, "' : '");
+      break;
+    case '+':
+      buffer += snprintf(buffer, buffer_size, " ");
+      break;
+    case '%':
+      if(sscanf((request + index + 1), "%2x", &code) != 1) code = '?';
+      index += 2;
+      buffer += snprintf(buffer, buffer_size, "%c", code);
+      break;
+    case '?':
+      break;
+    case '&':
+      buffer += snprintf(buffer, buffer_size, "', '");
+      break;
+    default:
+      buffer += snprintf(buffer, buffer_size, "%c", c);
+      break;
+    }
+  }
+
+  buffer += snprintf(buffer, buffer_size, "' }");
+
+  log_message("CONVERTED REQUEST TO: %s\n\n", json_cgi_parse_buffer);
+  return json_cgi_parse_buffer;
+}
+
+
+char* _json_cgi_request(int argc, char** argv)
+{
+  char* request_method;
+  char* content_type;
+  char* content_length;
+  char* query_string;
+
+  request_method = getenv("REQUEST_METHOD");
+  query_string   = getenv("QUERY_STRING");
+  content_type   = getenv("CONTENT_TYPE");
+  content_length = getenv("CONTENT_LENGTH");
+
+  if (request_method) log_message("REQUEST_METHOD: %s\n", request_method);
+  if (content_type)   log_message("CONTENT_TYPE: %s\n", content_type);
+  if (content_length) log_message("CONTENT_LENGTH: %s\n", content_length);
+  if (query_string)   log_message("QUERY_STRING: %s\n", query_string);
+
+  if (query_string && request_method && strncmp(request_method, "GET", 3) == 0) {
+    //return query_string;
+    return request_to_json(query_string, strlen(query_string));
+
+  } else if (request_method && strncmp(request_method, "POST", 4) == 0) {
+    if (json_cgi_post_buffer != NULL) {
+      free(json_cgi_post_buffer);
+      json_cgi_post_buffer = NULL;
+    }
+    size_t read_actual = 0;
+    size_t read_expected = atoi(content_length);
+    json_cgi_post_buffer = malloc(read_expected + 1 * sizeof(char));
+    log_message("POST_CONTENT: ");
+    while (read_actual < read_expected) {
+      read_actual += fread(json_cgi_post_buffer, 1, read_expected, stdin);
+      json_cgi_post_buffer[read_actual] = 0;
+      log_message("%s", json_cgi_post_buffer);
+    }
+    log_message("\n");
+    return json_cgi_post_buffer;
+
+  } else if (argc == 2 && argv && argv[1]) {
+    return argv[1];
+
+  }
+
+  log_message("Unknown request: %s\n", request_method);
+  return NULL;
+}
 
 
 /**
@@ -114,6 +218,7 @@ char* json_cgi_request()
   } else if (request_method && strncmp(request_method, "POST", 4) == 0) {
     if (json_cgi_post_buffer != NULL) {
       free(json_cgi_post_buffer);
+      json_cgi_post_buffer = NULL;
     }
     size_t read_actual = 0;
     size_t read_expected = atoi(content_length);
