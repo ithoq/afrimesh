@@ -23,8 +23,7 @@ var afrimesh = undefined;
       ajax_proxy   : "/cgi-bin/ajax-proxy.cgi?url=",
       hosts        : {
         dashboard_server  : "afrimesh.7degrees.co.za",   // dynamic settings bootstraps off this 
-        batman_vis_server : "dashboard.7degrees.co.za",
-        mesh_gateway      : "192.168.20.200"
+        batman_vis_server : "dashboard.7degrees.co.za"
       },
       location : {
         longitude : 18.339733,

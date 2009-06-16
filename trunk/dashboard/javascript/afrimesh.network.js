@@ -17,7 +17,7 @@ function BootNetwork(parent) {
 
   network.backbone = function() { return this.backbone.routes(); }
   network.backbone.routes  = function() { return [ ] };
-  network.backbone.routers = function() { return [ { address : afrimesh.settings.hosts.mesh_gateway, routes : [] } ] };
+  network.backbone.routers = function() { return [ { address : afrimesh.settings.internet_gateway.address, routes : [] } ] };
 
   network.mesh = function() { return this.mesh.routes(); }; 
   network.mesh.routes  = function() { return this.routes.sync();  };
