@@ -34,6 +34,9 @@ var BootVillageBus = function (afrimesh) {
   }; 
 
   villagebus.batman.vis.url  = function() { 
+    if (afrimesh.settings.hosts.batman_vis_server == afrimesh.settings.address) {
+      return "http://" + afrimesh.settings.hosts.batman_vis_server + ":2005"; 
+    }
     return villagebus.ajax_proxy() + "http://" + afrimesh.settings.hosts.batman_vis_server + ":2005"; 
     //return "http://" + afrimesh.settings.hosts.batman_vis_server + ":2005?callback=foo"; 
   };
@@ -179,12 +182,12 @@ var BootVillageBus = function (afrimesh) {
   //           dashboard rather than the dashboard pushing to the nodes. Hrmm. Must ponder.
   //
   // e.g.  return afrimesh.villagebus.ajax_proxy()  + "http://" + afrimesh.settings.hosts.mesh_gateway + 
-  //              afrimesh.settings.ajax_proxy    + "http://" + address + "/cgi-bin/village-bus-uci";
+  //              afrimesh.settings.ajax_proxy      + "http://" + address + "/cgi-bin/village-bus-uci";
   villagebus.uci.url = function(address) { 
     if (address == afrimesh.settings.address) {
       return "http://" + address + "/cgi-bin/village-bus-uci";
     }
-    return afrimesh.villagebus.ajax_proxy + "http://" + address + "/cgi-bin/village-bus-uci";
+    return afrimesh.villagebus.ajax_proxy() + "http://" + address + "/cgi-bin/village-bus-uci";
   };
 
   villagebus.uci.get = function(address, selector) {

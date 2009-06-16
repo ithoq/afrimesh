@@ -21,6 +21,8 @@ function BootSettings(parent, address) {
    * Map our afrimesh.settings object to UCI for persistent storage
    *
    * TODO - do a formal abstraction of this whole mapping mechanism.
+   * TODO - include a way to specify type parsers as we're storing everything as strings on the backend 
+   *        e.g. see construction in network.map.html
    *
    * Given a settings object:
    *  . Populate it with the defaults from our map
