@@ -7,6 +7,7 @@ PKG_SOURCE:=p2p.tar.gz
 PKG_SOURCE_URL:=http://www1.cs.columbia.edu/~salman/peer/src/0_2
 PKG_MD5SUM:=
 PKG_BUILD_DIR:=$(BUILD_DIR)/p2p
+PKG_BUILD_DEPENDS:=pjproject
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -14,7 +15,7 @@ define Package/openvoip-p2pp
 	SECTION:=net
 	CATEGORY:=Network
 	URL:=http://www1.cs.columbia.edu/~salman/peer/
-	DEPENDS:=+e2fsprogs +pjproject
+	DEPENDS:=+uclibcxx +libuuid 
 	TITLE:=An Open Peer-to-Peer VoIP and IM System
 	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
 endef
@@ -23,8 +24,9 @@ define Package/openvoip-p2pp/description
 	An Open Peer-to-Peer VoIP and IM System
 endef
 
-TARGET_CFLAGS += -I$(STAGING_DIR)/usr/include -DOPENWRT $(FPIC) 
-TARGET_LDFLAGS += -L$(STAGING_DIR)/usr/lib -luuid 
+TARGET_CFLAGS  += -I$(STAGING_DIR)/usr/include/uClibc++ -I$(STAGING_DIR)/usr/include \
+                  -DOPENWRT $(FPIC) -fno-builtin -nostdinc++ -fno-rtti
+TARGET_LDFLAGS += -L$(STAGING_DIR)/usr/lib -nodefaultlibs -luClibc++ -lc -lm -lgcc -luuid 
 
 define Build/Configure
 	$(call Build/Configure/Default)
@@ -35,6 +37,8 @@ define Build/Compile
 endef
 
 define Package/openvoip-p2pp/install
+	$(STRIP) $(PKG_INSTALL_DIR)/usr/bin/checker
+	$(STRIP) $(PKG_INSTALL_DIR)/usr/bin/p2pmain
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/checker $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/p2pmain $(1)/usr/bin
