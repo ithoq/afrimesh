@@ -14,7 +14,7 @@ define Package/pjproject
 	SECTION:=net
 	CATEGORY:=Network
 	URL:=http://www.pjsip.org/
-	DEPENDS:=
+	DEPENDS:= +uclibcxx
 	TITLE:=Open source SIP stack
 	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
 endef
@@ -27,14 +27,18 @@ endef
 TARGET_CFLAGS += -DOPENWRT $(FPIC) -I$(STAGING_DIR)/usr/include -I$(STAGING_DIR_HOST)/include
 TARGET_LDFLAGS += 
 CONFIGURE_ARGS += 
-CONFIGURE_VARS += 
+CONFIGURE_VARS += CPPFLAGS="$$$$CPPFLAGS -I$(STAGING_DIR)/usr/include/uClibc++" \
+                  CXXFLAGS="$$$$CXXFLAGS -fno-builtin -fno-rtti -nostdinc++ -I$(LINUX_DIR)/include" \
+                  LIBS="-nodefaultlibs -luClibc++ -lm -lgcc"
 
 define Build/Configure
+	$(RM)    -rf $(PKG_INSTALL_DIR)
+	$(MKDIR) -p  $(PKG_INSTALL_DIR)
 	$(call Build/Configure/Default)
 endef
 
 define Build/Compile
-	$(MAKE) -C $(PKG_BUILD_DIR) DESTDIR=$(PKG_INSTALL_DIR) dep all install
+	$(MAKE) -C $(PKG_BUILD_DIR) DESTDIR=$(PKG_INSTALL_DIR) LD="\$$$$(CC)" dep all install
 endef
 
 define Build/InstallDev
@@ -54,9 +58,9 @@ define Build/InstallDev
 	$(CP) -r $(PKG_INSTALL_DIR)/usr/local/include/speex $(1)/usr/include/
 	mkdir -p $(1)/usr/lib
 	#$(CP) $(PKG_INSTALL_DIR)/usr/local/lib/lib*.{a,so*} $(1)/usr/lib/
-	$(CP) $(PKG_INSTALL_DIR)/usr/local/lib/lib*.a $(1)/usr/lib/	
+	$(CP) -f $(PKG_INSTALL_DIR)/usr/local/lib/lib*.a $(1)/usr/lib/	
 	mkdir -p $(1)/usr/lib/pkgconfig
-	$(CP) $(PKG_INSTALL_DIR)/usr/local/lib/pkgconfig/libpj.pc $(1)/usr/lib/pkgconfig/
+	$(CP) -f $(PKG_INSTALL_DIR)/usr/local/lib/pkgconfig/libpj.pc $(1)/usr/lib/pkgconfig/
 endef
 
 define Package/pjproject/install
