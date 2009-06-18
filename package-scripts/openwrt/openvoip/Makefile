@@ -42,6 +42,10 @@ define Package/openvoip-p2pp/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/checker $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/p2pmain $(1)/usr/bin
+	$(INSTALL_DIR) $(1)/etc/p2pp
+	$(INSTALL_DATA) ./files/configa.txt $(1)/etc/p2pp
+	$(INSTALL_DATA) ./files/configc.txt $(1)/etc/p2pp
+	$(INSTALL_DATA) ./files/configp.txt $(1)/etc/p2pp
 endef
 
 $(eval $(call BuildPackage,openvoip-p2pp))
