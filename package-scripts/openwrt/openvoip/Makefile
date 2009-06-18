@@ -37,8 +37,6 @@ define Build/Compile
 endef
 
 define Package/openvoip-p2pp/install
-	$(STRIP) $(PKG_INSTALL_DIR)/usr/bin/checker
-	$(STRIP) $(PKG_INSTALL_DIR)/usr/bin/p2pmain
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/checker $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/p2pmain $(1)/usr/bin
