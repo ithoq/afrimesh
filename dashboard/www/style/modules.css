@@ -210,40 +210,44 @@ dl.sort dd { background-color:red;  }
 
 
 /* - setting module ------------------------------------------------------- */
-.two-column-form {
-  border: 1px solid darkgrey;
-  /*margin:0 auto;*/
-  /*width:400px;*/
-  padding:14px;
-}
-
 form.two-column {
-  border: 1px solid darkgrey;
+  /*border: 1px solid darkgrey;*/
+  margin: 0px;  
+  padding: 0px; 
+}
+form.two-column fieldset {
+  /*border: 1px solid red;*/
+  padding-bottom: 1.0em;
+}
+form.two-column fieldset:last-child {
+  padding-bottom: 0px;
 }
 
-form.two-column input, select {
-  display:block;
-  width: 300px;
-  margin: 10px;
+form.two-column legend {
+  /*border: 1px solid green;*/
+  font-size: 1.25em;
+  padding-bottom: .25em;
 }
 form.two-column label {
+  /*border: 1px solid blue;*/
   color: darkgray; 
   float:left;
-  width: 300px;
+  width: 150px;
 }
-form.two-column label span {
-  color: red;
+form.two-column input, select {
+  margin-bottom: .5em;
+  display:block;
+  width: 150px;
 }
-form.two-column br {
-  clear: both;
+form.two-column #location {
+  width: 50%;
+  height: 300px;
 }
 
-div.tooltip {
+
+div.tooltip {   
+  z-index: 1000;
   background-color : #000; 
-  /*outline:1px solid #669; */
-  /*border:2px solid #fff; */
-  /*padding:10px 15px; */
-  /*width:200px; */
   padding: 10px;
   margin-right: 20px;
   display:none; 

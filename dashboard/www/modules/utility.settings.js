@@ -9,8 +9,13 @@
 
 var populate_dom = null;
 var populate_select_interface = null;
+var LocationMap = null;
 
 (function() {
+
+  /** mapping Includes ---------------------------------------------------- */
+  load("javascript/afrimesh.maps.js"); 
+  OpenLayers.ImgPath = "images/";
 
 
   /** populate DOM with the values in afrimesh.settings ------------------- */
@@ -53,8 +58,73 @@ var populate_select_interface = null;
         interface_count++;
       }
       $("select.[id*=afrimesh|settings|internet_gateway|snmp|interface]").html(options);
-
     }
 
+
+    /** create a map which can be used to set the router location --------- */
+    function _LocationMap(id, longitude, latitude, extent, on_position) {
+
+      var the_map = (function() { 
+          var options = {
+            projection        : epsg_900913,
+            displayProjection : epsg_4326,
+            units             : "m",
+            numZoomLevels     : 20,
+            restrictedExtent  : new OpenLayers.Bounds(),
+            theme             : "style/map.default.css"
+          };
+          options.restrictedExtent.extend(LonLat(longitude - extent, latitude - extent));
+          options.restrictedExtent.extend(LonLat(longitude + extent, latitude + extent));
+          var map = new OpenLayers.Map(id, options);
+          map.addLayers([ new OpenLayers.Layer.OSM.CycleMap("Relief Map") ]);
+          map.addControl(new OpenLayers.Control.Attribution());
+          map.addControl(new OpenLayers.Control.MousePosition());
+          map.addControl(new OpenLayers.Control.ScaleLine());
+          //map.setCenter(LonLat(longitude, latitude), zoom);
+          if (!map.getCenter()) { map.zoomToMaxExtent(); }
+          map.addLayer(new OpenLayers.Layer.Vector("Mesh Routers"));
+          map.routers  = map.getLayersByName("Mesh Routers")[0];
+          
+          var dragger = new OpenLayers.Control.DragFeature(map.routers);
+          dragger.onComplete = on_position;
+          map.addControl(dragger);
+          dragger.activate();
+          return map;
+        })(); /* create_map */
+      
+
+      /** 
+       * Return the map feature representing the given router, creating it and 
+       * adding it to the map if it doesn't exist yet.
+       */
+      this.routers = the_map.routers;
+      this.router = function(router) {
+        var feature = the_map.routers.getFeatureById(router.address);
+        if (feature) {
+          return feature;
+        }
+        return add_router(router);
+      };
+      function add_router(router) {
+        var feature = new OpenLayers.Feature.Vector();
+        feature.style = { fillColor: "black", 
+                          fillOpacity: 0.5, 
+                          strokeOpacity: 1.0,
+                          strokeColor: "black",
+                          strokeWidth: 1.0,
+                          pointRadius: 10.0 };
+        feature.id = router.address;
+        feature.router = router;
+        the_map.routers.addFeatures([feature]);
+        afrimesh.villagebus.uci.get.async(function (config) {
+            feature.geometry = new Point(config.afrimesh.location.longitude, config.afrimesh.location.latitude);
+            the_map.routers.redraw();
+          }, router.address, "afrimesh.location");
+        return feature;
+      };
+      
+    
+    };
+    LocationMap = _LocationMap;
 
 })();
