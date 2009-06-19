@@ -98,7 +98,7 @@ function BootSettings(parent, address) {
   /** - apply persistent settings ------------------------------------------ */
   var load_remote = function() {
     var config = parent.villagebus.uci.get.sync(address, "afrimesh");
-    console.debug("REMOTE CONFIG: " + rpretty_print(config));
+    //console.debug("REMOTE CONFIG: " + rpretty_print(config));
     for (var local in map) {
       var value = Q(config, map[local].remote, "config");
       if (value) {

@@ -7,12 +7,12 @@
  * New BSD License. See /LICENSE for more information.
 -->
 
-<h2>Settings</h2>
+<!-- h2>Settings</h2 -->
 
 <form class="two-column">
 
   <fieldset>
-    <legend>Who are you?</legend>
+    <legend>Dashboard</legend>
 
     <label for="afrimesh|settings|network_name">Network Name</label>
     <input id="afrimesh|settings|network_name" type="text" />
@@ -21,12 +21,12 @@
       <p class="default">afrimesh</p>
     </div>
 
-    <label for="afrimesh|settings|locale">Locale</label>
+    <!-- label for="afrimesh|settings|locale">Locale</label>
     <input id="afrimesh|settings|locale" type="text" />
     <div class="tooltip">
       <p class="explain">This sets the language and country for the dashboard interface.</p>
       <p class="default">en_US.UTF-8</p>
-    </div>
+    </div -->
 
         
     <!-- label for="afrimesh|settings|location|longitude">Location Longitude</label>
@@ -35,14 +35,14 @@
     <label for="afrimesh|settings|location|latitude">Location Latitude</label>
     <input id="afrimesh|settings|location|latitude"  type="text" / -->
     
-    <label for="afrimesh|settings|hosts|dashboard_server">Dashboard Server</label>
+    <!-- label for="afrimesh|settings|hosts|dashboard_server">Dashboard Server</label>
     <input id="afrimesh|settings|hosts|dashboard_server" type="text" />
     <div class="tooltip">
       <p class="explain"></p>
       <p class="typical"></p>
       <p class="learnmore"></p>
-    </div>
-
+    </div -->
+    
     
     <label for="afrimesh|settings|hosts|batman_vis_server">Mesh Vis Server</label>
     <input id="afrimesh|settings|hosts|batman_vis_server" type="text" />
@@ -55,26 +55,29 @@
     
     <label for="afrimesh|settings|map|zoom">Map Zoom</label>
     <input id="afrimesh|settings|map|zoom"  type="text" / -->
+
+    <label for="location">Location</label>
+    <input id="location" />
     
   </fieldset>
 
 
   <fieldset>
-    <legend>How do you connect to the Internet?</legend>
+    <legend>Internet Gateway</legend>
     
-    <label for="afrimesh|settings|internet_gateway|address">Internet Gateway</label>
+    <label for="afrimesh|settings|internet_gateway|address">IP Address</label>
     <input id="afrimesh|settings|internet_gateway|address" style="background:#FFAAAA;" type="text"></input>
     
-    <label for="afrimesh|settings|internet_gateway|snmp|community">Internet Gateway Community String</label>
+    <label for="afrimesh|settings|internet_gateway|snmp|community">Community String</label>
     <input id="afrimesh|settings|internet_gateway|snmp|community" type="text" />
     
-    <label for="afrimesh|settings|internet_gateway|snmp|interface">Internet Gateway Interface</label>
+    <label for="afrimesh|settings|internet_gateway|snmp|interface">Interface</label>
     <select id="afrimesh|settings|internet_gateway|snmp|interface" />
     
-    <label for="afrimesh|settings|internet_gateway|bandwidth|down">Internet Gateway Download Bandwith</label>
+    <label for="afrimesh|settings|internet_gateway|bandwidth|down">Download Bandwith</label>
     <input id="afrimesh|settings|internet_gateway|bandwidth|down" type="text" />
     
-    <label for="afrimesh|settings|internet_gateway|bandwidth|up">Internet Gateway Upload Bandwith</label>
+    <label for="afrimesh|settings|internet_gateway|bandwidth|up">Upload Bandwith</label>
     <input id="afrimesh|settings|internet_gateway|bandwidth|up" type="text" />    
   </fieldset>
 
@@ -186,8 +189,6 @@
 </table -->
 
 
-<hr style="margin: 50px"; />
-
 <!-- div id="widget-setup-router" class="widget setup-router">
   <table>
     <tr>
@@ -210,7 +211,7 @@
 </div -->
 
 
-<hr style="margin: 50px"; />
+<!-- hr style="margin: 50px"; / -->
 
 
 <!-- Network Name: <input id="afrimesh|settings|network_name" type="text" onBlur="save_input(this);" />  -->
@@ -221,6 +222,7 @@
 
   /** includes ------------------------------------------------------------ */
   load("modules/utility.settings.js"); 
+
 
   /** construction -------------------------------------------------------- */
   ready = function() { // INJ 'ready' should be the only symbol we're exposing to the global namespace
@@ -255,9 +257,32 @@
         save_element(this.id, this.value); 
     });
 
+    /** query internet gateway for network interfaces --------------------- */
     populate_select_interface();
+
+    /** create map to set dashboard location ------------------------------ */
+    $("#location").replaceWith("<div id='location' />");
+    var location_map = new LocationMap("location", 
+                                       parseFloat(afrimesh.settings.location.longitude),
+                                       parseFloat(afrimesh.settings.location.latitude),
+                                       parseFloat(afrimesh.settings.map.extent),
+                                       on_position);
+
+    var router = { address : afrimesh.settings.address };
+    location_map.router(router);
+
+    /** callback to update dashboard position ----------------------------- */
+    function on_position(feature) {
+      var location = new OpenLayers.LonLat(feature.geometry.x, feature.geometry.y).transform(epsg_900913, epsg_4326);
+      afrimesh.villagebus.uci.set.async(function (response) {
+          console.debug("Updated router location for:" + feature.router.address);
+        }, 
+        feature.router.address, 
+        [ { config: "afrimesh", section: "location", option: "longitude", value: location.lon }, 
+          { config: "afrimesh", section: "location", option: "latitude",  value: location.lat } ]);
+    };
     
-    /* round corners */
+    /** round corners ------------------------------------------------------ */
     $(".tooltip").corner("tr 8px bl 8px br 8px");
 
     return unload;

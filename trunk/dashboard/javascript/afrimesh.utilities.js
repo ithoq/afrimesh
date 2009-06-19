@@ -74,7 +74,7 @@
     return selector;
   };
   function Q(this_object, selector, root) {
-    console.debug("Q(" + this_object + ", " + selector + ", " + root + ")");
+    //console.debug("Q(" + this_object + ", " + selector + ", " + root + ")");
     if (!this_object) {
       return "NONE";
     } else  if (!selector.split) {
@@ -110,7 +110,7 @@
     for (var i = 0; i < selector.length; i++) { // node in selector) {
       node = selector[i];
       if (!this_object[node]) {
-        console.warn("Qset(" + this_object.valueOf() + "): Creating node '" + node + "' for selector '" + selector.join("|") + "'");
+        //console.warn("Qset(" + this_object.valueOf() + "): Creating node '" + node + "' for selector '" + selector.join("|") + "'");
         this_object[node] = {};
       }
       this_object = this_object[node];
