@@ -43,6 +43,27 @@ While we maintain a mirror of the openwrt package scripts in the afrimesh source
 
 
 = Ubuntu =
+* Bump revision number:
+{{{
+  vi Makefile
+  # edit VERSION to reflect the correct subversion revision number
+}}}
+
+* Update pbuilder environment
+{{{
+  sudo pbuilder update
+}}}
+
+* Test package build locally
+{{{
+  make packages-linux
+}}}
+
+* Update Launchpad PPA with the latest source package
+{{{
+  make launchpad-linux
+}}}
+
 
 
 = Announcements =
