@@ -232,26 +232,27 @@ form.two-column label {
   /*border: 1px solid blue;*/
   color: darkgray; 
   float:left;
-  width: 150px;
+  width: 200px;
 }
 form.two-column input, select {
   margin-bottom: .5em;
   display:block;
-  width: 150px;
+  width: 200px;
 }
 form.two-column #location {
-  width: 50%;
+  /*width: 50%;*/
+  width:  600px;
   height: 300px;
 }
 
 
 div.tooltip {   
-  z-index: 1000;
-  background-color : #000; 
-  padding: 10px;
-  margin-right: 20px;
-  display:none; 
-  color            : orange; 
+  z-index          : 1000;
+  background-color : black; 
+  padding          : 10px;
+  margin-right     : 20px;
+  display          : none; 
+  max-width        : 300px;
   font-size        : 1.1em; 
   /* outline radius for mozilla/firefox only */ 
   /*outline-radius : 8px; 
@@ -259,6 +260,13 @@ div.tooltip {
   -webkit-outline-radius : 8px; */
 }
 
-form.two-column p.explain {
+div.tooltip h3 {   
+}
+
+div.tooltip p {   
+  color : orange; 
+}
+
+div.tooltip p.explain {
 
 }
