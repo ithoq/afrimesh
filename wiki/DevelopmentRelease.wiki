@@ -67,5 +67,9 @@ While we maintain a mirror of the openwrt package scripts in the afrimesh source
 }}}
 
 
+= FreeBSD =
+
+TBD
+
 
 = Announcements =
