@@ -45,8 +45,10 @@ While we maintain a mirror of the openwrt package scripts in the afrimesh source
 = Ubuntu =
 * Bump revision number:
 {{{
-  vi Makefile
   # edit VERSION to reflect the correct subversion revision number
+  vi Makefile
+  # update changelog
+  vi ./package-scripts/debian/afrimesh-dashboard/changelog
 }}}
 
 * Update pbuilder environment
