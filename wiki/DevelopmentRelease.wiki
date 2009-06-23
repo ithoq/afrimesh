@@ -1,0 +1,39 @@
+#summary How to release a new version of afrimesh
+#labels Phase-Implementation
+
+Every once in a while the software tries to escape from its holding cell. 
+
+By following these instructions you can make this a painless process every time.
+
+= Subversion =
+* Run:
+{{{
+  tag repository
+}}}
+
+= OpenWRT =
+
+* Run:
+{{{
+  cd <kamikaze directory>
+  make package/afrimesh-compile
+}}}
+
+== Updating build scripts in OpenWRT ==
+
+While we maintain a mirror of the openwrt package scripts in the afrimesh source tree the master version lives in the openwrt repository.
+
+In the case of major changes in the build process or when creating new sub-packages it will be necessary to update those build scripts, which can be done as follows:
+{{{
+}}}
+
+
+
+= Ubuntu =
+
+
+= Announcements =
+
+
+
+
