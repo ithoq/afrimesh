@@ -16,49 +16,56 @@
 
     <label for="afrimesh|settings|network_name">Network Name</label>
     <input id="afrimesh|settings|network_name" type="text" />
-    <div class="tooltip">
-      <p class="explain">This is the name that appears on the main menu bar.</p>
-      <p class="default">afrimesh</p>
+    <div class="tooltip"><h3>network name</h3>
+      <p class="explain">
+        This is the name other people will see if you choose to register your network. 
+        You can change it later if you'd like. Even if you've already registered your 
+        network.
+      </p>
     </div>
 
     <!-- label for="afrimesh|settings|locale">Locale</label>
     <input id="afrimesh|settings|locale" type="text" />
     <div class="tooltip">
       <p class="explain">This sets the language and country for the dashboard interface.</p>
-      <p class="default">en_US.UTF-8</p>
-    </div -->
-
-        
-    <!-- label for="afrimesh|settings|location|longitude">Location Longitude</label>
-    <input id="afrimesh|settings|location|longitude"  type="text" />
-    
-    <label for="afrimesh|settings|location|latitude">Location Latitude</label>
-    <input id="afrimesh|settings|location|latitude"  type="text" / -->
-    
-    <!-- label for="afrimesh|settings|hosts|dashboard_server">Dashboard Server</label>
-    <input id="afrimesh|settings|hosts|dashboard_server" type="text" />
-    <div class="tooltip">
-      <p class="explain"></p>
-      <p class="typical"></p>
-      <p class="learnmore"></p>
     </div -->
     
-    
-    <label for="afrimesh|settings|hosts|batman_vis_server">Mesh Vis Server</label>
+    <label for="afrimesh|settings|hosts|batman_vis_server">Visualization Server</label>
     <input id="afrimesh|settings|hosts|batman_vis_server" type="text" />
+    <div class="tooltip"><h3>visualization server</h3>
+        <p class="explain">The Network Map gets the available mesh nodes and their connections from the server at this address.</p>
+        <p class="typical">
+          By default the visualization server runs on the same address as the dashboard server and you should not need to change it.
+        </p>
+        <p class="learnmore">
+          You can learn how to configure a different vis server by reading the
+          <a href="http://code.google.com/p/afrimesh/wiki/HowTo">HowtoVisServer</a>
+        </p>
+    </div>
 
     <label for="afrimesh|settings|map|server">Map Server</label>
     <input id="afrimesh|settings|map|server"  type="text" />
+    <div class="tooltip"><h3>map server</h3>
+      <p class="explain">The Network Map gets the terrain data from the server at this address.</p>
+      <p class="typical">If your mesh has internet access you will not need to change this setting.</p>
+      <p class="obstacle">
+        If your mesh does not have internet access you will need to set up your own map server and enter its address here.
+      </p>
+      <p class="learnmore">
+        You can learn how to set up your own map server by reading 
+        <a href="http://code.google.com/p/afrimesh/wiki/HowTo">HowToMapServer</a>
+      </p>
+    </div>
     
+    <label for="location">Location</label>
+    <input id="location" />
+
     <!-- label for="afrimesh|settings|map|extent">Map Extents</label>
     <input id="afrimesh|settings|map|extent"  type="text" />
     
     <label for="afrimesh|settings|map|zoom">Map Zoom</label>
     <input id="afrimesh|settings|map|zoom"  type="text" / -->
 
-    <label for="location">Location</label>
-    <input id="location" />
-    
   </fieldset>
 
 
@@ -67,154 +74,45 @@
     
     <label for="afrimesh|settings|internet_gateway|address">IP Address</label>
     <input id="afrimesh|settings|internet_gateway|address" style="background:#FFAAAA;" type="text"></input>
+    <div class="tooltip"><h3>internet gateway address</h3>
+        <p class="explain">Afrimesh needs the address of your internet gateway to be able to monitor it.</p>
+        <p class="typical" >
+          This would usually be the same address as the default gateway of devices on your network.
+        </p>
+    </div>
     
     <label for="afrimesh|settings|internet_gateway|snmp|community">Community String</label>
     <input id="afrimesh|settings|internet_gateway|snmp|community" type="text" />
+    <div class="tooltip"><h3>snmp community string</h3>
+      <p class="explain">Afrimesh uses the SNMP protocol to communicate with the Internet gateway.</p>
+      <p class="typical">The default setting is usually 'public'</p>
+    </div>
     
     <label for="afrimesh|settings|internet_gateway|snmp|interface">Interface</label>
     <select id="afrimesh|settings|internet_gateway|snmp|interface" />
-    
+    <div class="tooltip"><h3>internet gateway interface</h3>
+      <p class="explain">Select the interface on the Internet side of your gateway router.</p>
+    </div>
+
     <label for="afrimesh|settings|internet_gateway|bandwidth|down">Download Bandwith</label>
     <input id="afrimesh|settings|internet_gateway|bandwidth|down" type="text" />
+    <div class="tooltip"><h3>download bandwidth</h3>
+      <p class="explain">Enter the download speed of your Internet connection here.</p>
+    </div>
     
     <label for="afrimesh|settings|internet_gateway|bandwidth|up">Upload Bandwith</label>
     <input id="afrimesh|settings|internet_gateway|bandwidth|up" type="text" />    
+    <div class="tooltip"><h3>upload bandwidth</h3>
+      <p class="explain">Enter the upload speed of your Internet connection here.</p>
+      <p class="typical">On ADSL connections this is usually half of the download speed</p>
+    </div>
+
   </fieldset>
 
 </form>
 
 
-<!-- a href="#" id="trigger"> 
-    Move the mouse over this box to see the tooltip in action. 
-</a> 
-<div class="fooltip"> 
-    <h3>The Tooltip</h3> 
-     <p> 
-        <strong>A great tool for designing better layouts and more intuitive user-interfaces.</strong> 
-    </p> 
-     <p> 
-        Tooltips can contain any HTML such as links, images, forms and tables. 
-        This tooltip is vertically centered on the top edge of the trigger element. 
-    </p> 
-</div -->
 
-
-<!-- table border=1>
-  <tr>
-    <td>Field Name</td>
-    <td><input/></td>
-    <td>
-      <p class="explain"></p>
-      <p class="typical"></p>
-      <p class="learnmore"></p>
-    </td>
-  </tr>
-</table>
-
-<table border=1>
-  <th colspan=3>Internet Gateway</th>
-  <tr>
-    <td>Address</td>
-    <td><input id="afrimesh|settings|internet_gateway|address" /></td>
-    <td>
-      <p class="explain">this explains</p>
-      <p class="typical"></p>
-      <p class="learnmore"></p>
-    </td>
-  </tr>
-  <tr>
-    <td>SNMP Community String</td>
-    <td><input/></td>
-    <td>
-      <p class="explain"></p>
-      <p class="typical"></p>
-      <p class="learnmore"></p>
-    </td>
-  </tr>
-  <tr>
-    <td>WAN Interface</td>
-    <td><input/></td>
-    <td>
-      <p class="explain"></p>
-      <p class="typical"></p>
-      <p class="learnmore"></p>
-    </td>
-  </tr>
-  <tr>
-    <td>Bandwidth</td>
-    <td><input/></td>
-    <td>
-      <p class="explain"></p>
-      <p class="typical"></p>
-      <p class="learnmore"></p>
-    </td>
-  </tr>
-
-</table -->
-
-
-<!-- table border=1>
-  <th colspan=3>Server Settings</th>
-  <tr>
-    <td>Mesh Visualization Server</td>
-    <td><input id="vis" />
-      <div class="tooltip">
-        <p class="explain">The Network Map gets the available mesh nodes and their connections from the server at this address.</p>
-        <p class="typical">
-          By default the visualization server runs on the same address as the dashboard server and you should not need to change it.
-        </p>
-        <p class="learnmore">
-          You can learn how to configure a different vis server by reading the
-          <a href="http://code.google.com/p/afrimesh/wiki/HowTo">VisServerHowto</a>
-        </p>
-      </div>
-    </td><td></td>
-  </tr>
-  <tr>
-    <td>Map Server</td>
-    <td><input/></td>
-    <td>
-      <p class="explain">The Network Map gets the terrain data from the server at this address.</p>
-      <p class="typical">If your mesh has internet access you will not need to change this setting.</p>
-      <p class="obstacle">
-        If your mesh does not have internet access you will need to set up your own map server and enter its address here.
-      </p>
-      <p class="learnmore">
-        You can learn how to set up your own map server by reading 
-        <a href="http://code.google.com/p/afrimesh/wiki/HowTo">http://code.google.com/p/afrimesh/wiki/HowTo</a>
-      </p>
-    </td>
-
-  </tr>
-</table -->
-
-
-<!-- div id="widget-setup-router" class="widget setup-router">
-  <table>
-    <tr>
-      <td><input type="text" size="40"/></td>
-      <td class="v-brace"></td>
-      <td class="v-instructions">1. enter your name</td>
-    </tr>
-
-   <tr><td colspan=3></td></tr>
-
-    <tr>
-      <td>
-        <div id="widget-village-map" style="border:0px red solid; width: 500px; height: 300px;">please wait a moment...</div>
-        <div id="widget-village-message"></div>
-      </td>
-      <td class="v-brace"></td>
-      <td class="v-instructions">2. set your location</td>
-    </tr>
-  </table>
-</div -->
-
-
-<!-- hr style="margin: 50px"; / -->
-
-
-<!-- Network Name: <input id="afrimesh|settings|network_name" type="text" onBlur="save_input(this);" />  -->
 
 
 <script type="text/javascript"> //<![CDATA[    
@@ -234,7 +132,7 @@
     /** install tooltips -------------------------------------------------- */
     $("div.tooltip").tooltip({
         position : ['bottom', 'right'],   // place tooltip on the right edge 
-        offset   : [0, 0],              // a little tweaking of the position 
+        offset   : [-20, 20],             // a little tweaking of the position 
         effect   : 'toggle',              // use a simple show/hide effect 
         opacity  : 0.8                    // custom opacity setting 
       });
@@ -284,6 +182,8 @@
     
     /** round corners ------------------------------------------------------ */
     $(".tooltip").corner("tr 8px bl 8px br 8px");
+
+    //console.debug("DEFAULT: " + $(".explain").attr("default"));
 
     return unload;
   };
