@@ -31,8 +31,11 @@ By following these instructions you can make this a painless process for everyon
   scp -r bin/* antoine@downloads.afrimesh.org
 }}}
 
+
 * Update OpenWRT
+
 While we maintain a mirror of the openwrt package scripts in the afrimesh source tree the master version lives in the openwrt repository and will need to be updated to reflect new releases.
+
 {{{
 }}}
 
