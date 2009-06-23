@@ -28,7 +28,7 @@ By following these instructions you can make this a painless process for everyon
 
 * Upload to repository
 {{{
-  scp -r bin/* antoine@downloads.afrimesh.org
+  scp -r bin/* downloads.afrimesh.org:/usr/local/www/apache22/data/firmware
 }}}
 
 
