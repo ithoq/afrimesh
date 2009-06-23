@@ -30,7 +30,7 @@
 
 
 # - configuration ------------------------------------------------------------
-VERSION=227
+VERSION=r258-0.2-alpha
 RELEASE=1
 
 # If you want to build packages for OpenWRT you need to set this to the

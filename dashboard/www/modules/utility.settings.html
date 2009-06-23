@@ -90,9 +90,6 @@
     
     <label for="afrimesh|settings|internet_gateway|snmp|interface">Interface</label>
     <select id="afrimesh|settings|internet_gateway|snmp|interface" />
-    <div class="tooltip"><h3>internet gateway interface</h3>
-      <p class="explain">Select the interface on the Internet side of your gateway router.</p>
-    </div>
 
     <label for="afrimesh|settings|internet_gateway|bandwidth|down">Download Bandwith</label>
     <input id="afrimesh|settings|internet_gateway|bandwidth|down" type="text" />
@@ -110,9 +107,6 @@
   </fieldset>
 
 </form>
-
-
-
 
 
 <script type="text/javascript"> //<![CDATA[    
@@ -146,14 +140,15 @@
         save_element(this.id, this.value); 
         populate_dom(); 
       });
-    $("input.[id*=afrimesh|settings|internet_gateway|address]").unbind("blur").bind("blur", function(event) { 
+    $("select.[id*=afrimesh|settings]").bind("blur", function(event) { 
+        save_element(this.id, this.value); 
+    });
+    //$("input.[id*=afrimesh|settings|internet_gateway|address]").unbind("blur").bind("blur", function(event) { 
+    $("input.[id*=afrimesh|settings|internet_gateway|address]").bind("blur", function(event) { 
         console.debug("Override Setting for gateway " + this.id + " -> " + this.value);
         save_element(this.id, this.value);
         populate_select_interface();
       });
-    $("select.[id*=afrimesh|settings]").bind("blur", function(event) { 
-        save_element(this.id, this.value); 
-    });
 
     /** query internet gateway for network interfaces --------------------- */
     populate_select_interface();
