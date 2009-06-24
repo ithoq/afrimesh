@@ -41,8 +41,11 @@ var LocationMap = null;
       var interfaces = afrimesh.villagebus.snmp.walk(afrimesh.settings.internet_gateway.address, 
                                                      afrimesh.settings.internet_gateway.snmp.community, 
                                                      [ ".1.3.6.1.2.1.2.2.1.2" ]);  // IF-MIB::ifDescr
+      console.log("GETTING INTERFACES: " + interfaces);
       if (!interfaces || interfaces.error) {
-        console.debug("GOT SNMP ERROR: " + interfaces.error);         // TODO display error in UI
+        console.debug("SNMP ERROR: " + (interfaces ? interfaces.error : "unknown error"));
+        console.debug("dashboard server: " + afrimesh.settings.hosts.dashboard_server);
+        console.debug("settings  server: " + afrimesh.settings.address);
         $("select.[id*=afrimesh|settings|internet_gateway|snmp|interface]").html("");
         return;
       }

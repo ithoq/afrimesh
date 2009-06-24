@@ -1,3 +1,17 @@
+afrimesh-dashboard (r274-0.2alpha-1) hardy; urgency=low
+
+  * pre-release : set afrimesh.settings.dashboard_server correctly
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Wed, 24 June 2009 17:45:00 +0200
+
+
+afrimesh-dashboard (r272-0.2alpha-1) hardy; urgency=low
+
+  * pre-release-release-release release
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Tue, 23 June 2009 14:45:00 +0200
+
+
 afrimesh-dashboard (r258-0.2alpha-1) hardy; urgency=low
 
   * pre-release-release release
