@@ -12,6 +12,7 @@
 var afrimesh = undefined;
 (function() {
   function Afrimesh() {
+    console.log("Location: " + window.location.hostname);
     this.settings = { 
       address      : window.location.hostname ? window.location.hostname : "afrimesh.7degrees.co.za",
       ajax_proxy   : "/cgi-bin/ajax-proxy.cgi?url="

@@ -16,7 +16,6 @@
  */
 function BootSettings(parent, address) {
 
-
   /**
    * Map our afrimesh.settings object to UCI for persistent storage
    *
@@ -39,8 +38,8 @@ function BootSettings(parent, address) {
     "afrimesh|settings|locale"       : { remote : "afrimesh|settings|locale",        init : "en_US.UTF-8"  },
     "afrimesh|settings|ajax_proxy"   : { remote : "afrimesh|settings|ajax_proxy",    init : "/cgi-bin/ajax-proxy.cgi?url=" },
 
-    "afrimesh|settings|hosts|dashboard_server"  : { remote : "afrimesh|dashboard|dashboard_server",  init : "afrimesh.7degrees.co.za"  },
-    "afrimesh|settings|hosts|batman_vis_server" : { remote : "afrimesh|dashboard|visualisation_srv", init : "dashboard.7degrees.co.za" },
+    "afrimesh|settings|hosts|dashboard_server"  : { remote : "afrimesh|dashboard|dashboard_server",  init : "default.dashboard.server"  },
+    "afrimesh|settings|hosts|batman_vis_server" : { remote : "afrimesh|dashboard|visualisation_srv", init : "default.vis.server" },
 
     "afrimesh|settings|location|longitude" : {  remote : "afrimesh|location|longitude", init : "18.339733" },
     "afrimesh|settings|location|latitude"  : {  remote : "afrimesh|location|latitude",  init : "-34.138061" },
@@ -64,8 +63,6 @@ function BootSettings(parent, address) {
   };
   settings.address = address;
 
-
-
   /** - utility functions ------------------------------------------------- */
   settings.load = function(local, remote, key) {
     if (local && remote && remote[key]) {
@@ -84,9 +81,9 @@ function BootSettings(parent, address) {
     }
     Qset(parent, selector, value);                         // apply to local settings object
     parent.villagebus.uci.set.async(function (response) {  // apply to remote UCI
-        console.debug("afrimesh.settings.save(uci://" + settings.address + "/" + map[selector].remote + ", " + value + ") -> " + response);
+        console.debug("afrimesh.settings.save(uci://" + address + "/" + map[selector].remote + ", " + value + ") -> " + response);
       },
-      settings.address, 
+      address, 
       [ { config: "afrimesh", // hardcode it for security until we have better solutions
           section : remote[1], 
           option  : remote[2], 
@@ -98,7 +95,7 @@ function BootSettings(parent, address) {
   /** - apply persistent settings ------------------------------------------ */
   var load_remote = function() {
     var config = parent.villagebus.uci.get.sync(address, "afrimesh");
-    //console.debug("REMOTE CONFIG: " + rpretty_print(config));
+    console.debug("REMOTE CONFIG: " + rpretty_print(config));
     for (var local in map) {
       var value = Q(config, map[local].remote, "config");
       if (value) {
@@ -118,8 +115,8 @@ function BootSettings(parent, address) {
     */
   }
   load_remote();
-
-
+  //settings.hosts = { dashboard_server : settings.address };
+  settings.hosts.dashboard_server = settings.address;
 
   return settings;
 };
