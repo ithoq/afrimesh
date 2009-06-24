@@ -21,7 +21,7 @@
 
   Click on Add and enter the following line:
   {{{
-  deb http://ppa.launchpad.net/awn-testing/ubuntu jaunty main
+  deb http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu hardy main 
   }}}
   
   * Step 3 - Hit reload and install the afrimesh-dashboard package
