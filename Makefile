@@ -61,23 +61,13 @@ MAKE=make
 DEPROOT=/usr
 DASHBOARD_WWW=$(DESTDIR)/www
 DASHBOARD_CGI=$(DESTDIR)/www/cgi-bin
+DASHBOARD_ETC=$(DESTDIR)/etc
 UNAME = $(shell uname)
 ifeq ($(UNAME),Linux)
   # TODO sanity checks
   DASHBOARD_WWW=$(DESTDIR)/var/www
   DASHBOARD_CGI=$(DESTDIR)/usr/lib/cgi-bin
-  #DEPROOT=/usr/local
-  #ifeq ($(shell [ ! -f $(DEPROOT)/include/uci.h ] || [ ! -f $(DEPROOT)/include/json/json.h ] && echo YES), YES)
-  #  $(warning Could not locate libuci or libjson - fetching)
-  #  DEPROOT=/tmp/afrimesh-deps
-  #  DEPS_URL="http://afrimesh.googlecode.com/files"
-  #  #DEPS_URL="http://l-cube.artifactual.org.za/~antoine/binaries"
-  #  $(shell mkdir -p $(DEPROOT))
-  #  $(shell wget --no-clobber -c -P $(DEPROOT) $(DEPS_URL)/libuci-0.7.3_i386.deb)
-  #  $(shell dpkg --extract $(DEPROOT)/libuci-0.7.3_i386.deb $(DEPROOT))
-  #  $(shell wget --no-clobber -c -P $(DEPROOT) $(DEPS_URL)/libjson-0.8_i386.deb)
-  #  $(shell dpkg --extract $(DEPROOT)/libjson-0.8_i386.deb $(DEPROOT))
-  #endif
+	DEPS_URL="https://launchpad.net/~antoine-7degrees/+archive/ppa/+files/"
 endif
 ifeq ($(UNAME),FreeBSD)
 DASHBOARD_WWW=$(DESTDIR)/usr/local/www/apache22/data
@@ -95,7 +85,10 @@ all :
 	export DEPROOT=$(DEPROOT); cd village-bus-snmp   ; $(MAKE)
 	export DEPROOT=$(DEPROOT); cd village-bus-uci    ; $(MAKE)
 
-install : install-www
+install : install-config install-www
+
+install-config:
+	$(INSTALL) 
 
 install-www:
 	@echo "Installing dashboard web interface in: $(DASHBOARD_WWW)"
@@ -152,8 +145,6 @@ sources : clean
 # read: https://wiki.ubuntu.com/PackagingGuide/Complete
 PKG_BUILD_DIR=/tmp/build
 OTHERMIRROR=deb http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu hardy main|deb-src http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu hardy main
-#DEPS_URL="http://afrimesh.googlecode.com/files"
-DEPS_URL="http://l-cube.artifactual.org.za/~antoine/binaries"
 DEPS_HOOK="A70deps"
 linux : all
 install-linux : install
@@ -173,21 +164,13 @@ source-packages-linux : prep-linux
 
 binary-packages-linux : prep-linux
 	@echo "Building Debian/Ubuntu packages"
-	#cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; sudo pbuilder build --override-config ../*.dsc --othermirror "deb http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu hardy main"
-
-	# install deps from ppa 
 	rm -f ~/.pbuilderrc
 	echo "HOOKDIR=$(PKG_BUILD_DIR)/hook.d" >> ~/.pbuilderrc
-	##echo "OTHERMIRROR=\"$(OTHERMIRROR)\"" >> ~/.pbuilderrc
 	mkdir -p $(PKG_BUILD_DIR)/hook.d
 	cp package-scripts/debian/pbuilder-update-ppa-keys.sh $(PKG_BUILD_DIR)/hook.d/D70update-ppa-keys
-
 	cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; pdebuild 
-	#sudo chmod -R a+rw /var/cache/pbuilder/result
-	#debsign /var/cache/pbuilder/result/afrimesh-dashboard_$(VERSION)-$(RELEASE)_i386.changes
 	@echo "Built: "
 	ls -al /var/cache/pbuilder/result
-
 
 pbuilder-create-linux :
 	sudo pbuilder create --distribution hardy \
@@ -198,11 +181,6 @@ pbuilder-keys-linux :
 	sudo apt-get update
 pbuilder-update-linux :
 	sudo pbuilder update
-	#sudo pbuilder update --override-config  --othermirror "deb http://archive.ubuntu.com/ubuntu hardy main restricted universe multiverse"
-	#sudo pbuilder update --override-config --othermirror "deb http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu hardy main"
-	#sudo pbuilder execute --override-config package-scripts/debian/pbuilder-keys.sh --othermirror "deb http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu hardy main"
-  # --override-config --autocleanaptcache
-
 
 prep-linux : clean-linux sources #hooks-linux
 	@echo "Initializing linux package scripts for build"
@@ -228,7 +206,6 @@ hooks-linux :
 	echo "dpkg -i /tmp/libuci-0.7.3_i386.deb" >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
 	echo "dpkg -i /tmp/libjson-0.8_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
 	chmod 0755 $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-
 
 depends-packages-linux :
 	# json-c
@@ -283,7 +260,6 @@ depends-launchpad-linux :
 # - freebsd ------------------------------------------------------------------
 freebsd : village-bus
 install-freebsd : freebsd install-www
-
 
 
 # - openwrt ------------------------------------------------------------------
