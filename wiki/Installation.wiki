@@ -12,14 +12,15 @@
 
   * Step 1 - Add the Afrimesh package archive keys to your system:
   {{{
-  sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 382AF1D2
-  sudo echo "deb http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu hardy main" >> /etc/apt/sources.list 
-  sudo apt-get update
+  sudo  su -
+  apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 382AF1D2
+  echo "deb http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu hardy main" >> /etc/apt/sources.list 
+  apt-get update
   }}}
 
   * Step 2 - Install the afrimesh-dashboard package
   {{{
-  sudo apt-get install afrimesh-dashboard
+  apt-get install afrimesh-dashboard
   }}}
 
   Alternate Instructions for installing via Synaptic Package Manager can be found [https://launchpad.net/+help/soyuz/ppa-sources-list.html here]
