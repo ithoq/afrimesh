@@ -1,0 +1,7 @@
+config 'afrimesh' 'gateway'
+       option 'snmp_community' 'public'
+       option 'bandwidth_down' '512'
+       option 'bandiwdth_up' '256'
+       option 'snmp_interface' '1'
+       option 'address' '192.168.20.1'
+
