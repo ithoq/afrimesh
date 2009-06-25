@@ -1,3 +1,10 @@
+afrimesh-dashboard (r279-0.2alpha-1) hardy; urgency=low
+
+  * pre-release : install configuration files
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Thu, 25 June 2009 14:45:00 +0200
+
+
 afrimesh-dashboard (r274-0.2alpha-1) hardy; urgency=low
 
   * pre-release : set afrimesh.settings.dashboard_server correctly
