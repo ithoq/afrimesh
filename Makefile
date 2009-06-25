@@ -64,10 +64,9 @@ DASHBOARD_CGI=$(DESTDIR)/www/cgi-bin
 DASHBOARD_ETC=$(DESTDIR)/etc
 UNAME = $(shell uname)
 ifeq ($(UNAME),Linux)
-  # TODO sanity checks
-  DASHBOARD_WWW=$(DESTDIR)/var/www
-  DASHBOARD_CGI=$(DESTDIR)/usr/lib/cgi-bin
-	DEPS_URL="https://launchpad.net/~antoine-7degrees/+archive/ppa/+files/"
+DASHBOARD_WWW=$(DESTDIR)/var/www
+DASHBOARD_CGI=$(DESTDIR)/usr/lib/cgi-bin
+DEPS_URL="https://launchpad.net/~antoine-7degrees/+archive/ppa/+files/"
 endif
 ifeq ($(UNAME),FreeBSD)
 DASHBOARD_WWW=$(DESTDIR)/usr/local/www/apache22/data
@@ -79,18 +78,16 @@ endif
 
 
 # - common -------------------------------------------------------------------
-all : 
+all: 
 	export DEPROOT=$(DEPROOT); cd village-bus-batman ; $(MAKE)
 	export DEPROOT=$(DEPROOT); cd village-bus-radius ; $(MAKE)
 	export DEPROOT=$(DEPROOT); cd village-bus-snmp   ; $(MAKE)
 	export DEPROOT=$(DEPROOT); cd village-bus-uci    ; $(MAKE)
 
-install : install-config install-www
+install: install-www 
+	@if ! test -f $(DASHBOARD_ETC)/config/afrimesh ; then $(MAKE) install-config ; fi
 
-install-config:
-	$(INSTALL) 
-
-install-www:
+install-www: 
 	@echo "Installing dashboard web interface in: $(DASHBOARD_WWW)"
 	#rm dashboard/www/javascript
 	@if ! test -d $(DASHBOARD_WWW) ; then mkdir -p $(DASHBOARD_WWW) ; fi
@@ -109,6 +106,17 @@ install-www:
 	find $(DASHBOARD_CGI) -name "*~"   | xargs rm -f
 	find $(DASHBOARD_CGI) -name ".svn" | xargs rm -rf
 	#cd dashboard/www ; ln -s ../javascript ./javascript # replace symlink
+
+install-config: 
+	@echo "Installing configuration files in: $(DASHBOARD_ETC)"
+	mkdir -p $(DASHBOARD_ETC)/config
+	cat config/dashboard      >  $(DASHBOARD_ETC)/config/afrimesh
+	cat config/settings       >> $(DASHBOARD_ETC)/config/afrimesh
+	cat config/location       >> $(DASHBOARD_ETC)/config/afrimesh
+	cat config/map            >> $(DASHBOARD_ETC)/config/afrimesh
+	cat config/customer-plans >> $(DASHBOARD_ETC)/config/afrimesh
+	#cat config/router         >> $(DASHBOARD_ETC)/config/afrimesh
+	#cat config/batmand        >> $(DASHBOARD_ETC)/config/afrimesh
 
 clean : # clean-www
 	cd village-bus-batman ; $(MAKE) clean

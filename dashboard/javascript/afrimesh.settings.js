@@ -39,7 +39,7 @@ function BootSettings(parent, address) {
     "afrimesh|settings|ajax_proxy"   : { remote : "afrimesh|settings|ajax_proxy",    init : "/cgi-bin/ajax-proxy.cgi?url=" },
 
     "afrimesh|settings|hosts|dashboard_server"  : { remote : "afrimesh|dashboard|dashboard_server",  init : "default.dashboard.server"  },
-    "afrimesh|settings|hosts|batman_vis_server" : { remote : "afrimesh|dashboard|visualisation_srv", init : "default.vis.server" },
+    "afrimesh|settings|hosts|batman_vis_server" : { remote : "afrimesh|dashboard|visualisation_srv", init : "default.vis.server" },  // TODO - pull this from batmand conf file rather
 
     "afrimesh|settings|location|longitude" : {  remote : "afrimesh|location|longitude", init : "18.339733" },
     "afrimesh|settings|location|latitude"  : {  remote : "afrimesh|location|latitude",  init : "-34.138061" },
