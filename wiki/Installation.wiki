@@ -13,20 +13,16 @@
   * Step 1 - Add the Afrimesh package archive keys to your system:
   {{{
   sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 382AF1D2
+  sudo echo "deb http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu hardy main" >> /etc/apt/sources.list 
+  sudo apt-get update
   }}}
 
-  * Step 2 - Add the Afrimesh Package archive to  Synaptic Package Manager:
-  
-  Start Synaptic (System->Administration) and go to Settings->Repositories->Third-Party Software.
-
-  Click on Add and enter the following line:
+  * Step 2 - Install the afrimesh-dashboard package
   {{{
-  deb http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu hardy main 
+  sudo apt-get install afrimesh-dashboard
   }}}
-  
-  * Step 3 - Hit reload and install the afrimesh-dashboard package
 
-  More information [https://launchpad.net/+help/soyuz/ppa-sources-list.html here]
+  Alternate Instructions for installing via Synaptic Package Manager can be found [https://launchpad.net/+help/soyuz/ppa-sources-list.html here]
 
 
 === Option 2: TODO Install FreeBSD Port ===
