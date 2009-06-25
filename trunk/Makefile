@@ -30,7 +30,7 @@
 
 
 # - configuration ------------------------------------------------------------
-VERSION=r279-0.2alpha
+VERSION=r280-0.2alpha
 RELEASE=1
 
 # If you want to build packages for OpenWRT you need to set this to the
@@ -114,6 +114,7 @@ install-config:
 	cat config/settings       >> $(DASHBOARD_ETC)/config/afrimesh
 	cat config/location       >> $(DASHBOARD_ETC)/config/afrimesh
 	cat config/map            >> $(DASHBOARD_ETC)/config/afrimesh
+	cat config/gateway        >> $(DASHBOARD_ETC)/config/afrimesh
 	cat config/customer-plans >> $(DASHBOARD_ETC)/config/afrimesh
 	#cat config/router         >> $(DASHBOARD_ETC)/config/afrimesh
 	#cat config/batmand        >> $(DASHBOARD_ETC)/config/afrimesh
