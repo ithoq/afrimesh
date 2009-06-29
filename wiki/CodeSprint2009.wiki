@@ -6,6 +6,7 @@
   Dhiren Office: C-block Office 213
   Louis: 2444 / 083 4074610
   Elektra: C 234
+  Antoine: 082 448 5157
   }}}
 
 == Setting Regulatory Domain For Zyxel WiFi adaptor ==
