@@ -1,5 +1,11 @@
 #summary CodeSprint Notes
 
+== Extensions ==
+
+Dhiren: 4605
+Dhiren Office: C-block Office 213
+Louis: 2444 / 083 4074610
+
 == Setting Regulatory Domain For Zyxel WiFi adaptor ==
 
   * Run:
