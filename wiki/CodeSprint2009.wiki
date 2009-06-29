@@ -14,13 +14,16 @@ Louis: 2444 / 083 4074610
   }}}
 
 == Start B.A.T.M.A.N. ==
-killall -9 NetworkManager
-killall -9 nm-system-settings
-ip link set wlan0 down
-iwconfig wlan0 mode ad-hoc 
-iwconfig wlan0 channel 13
-iwconfig wlan0 essid afrimesh
-iwconfig wlan0 
 
-ifconfig wlan0 172.30.254.6/24
-batmand wlan0
+  * Run
+  {{{
+  killall -9 NetworkManager
+  killall -9 nm-system-settings
+  ip link set wlan0 down
+  iwconfig wlan0 mode ad-hoc 
+  iwconfig wlan0 channel 13
+  iwconfig wlan0 essid afrimesh
+  iwconfig wlan0 
+  ifconfig wlan0 172.30.254.x/24
+  batmand wlan0
+  }}}
