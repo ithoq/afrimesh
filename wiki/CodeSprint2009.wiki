@@ -10,7 +10,7 @@ Louis: 2444 / 083 4074610
 
   * Run:
   {{{
-  iw regset eu
+  iw reg set ZA
   }}}
 
 == Start B.A.T.M.A.N. ==
@@ -23,7 +23,6 @@ Louis: 2444 / 083 4074610
   iwconfig wlan0 mode ad-hoc 
   iwconfig wlan0 channel 13
   iwconfig wlan0 essid afrimesh
-  iwconfig wlan0 
   ifconfig wlan0 172.30.254.x/24
   batmand wlan0
   }}}
