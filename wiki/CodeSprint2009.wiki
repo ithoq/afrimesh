@@ -1,0 +1,8 @@
+#summary CodeSprint Notes
+
+== Setting Regulatory Domain For Zyxel WiFi adaptor ==
+
+  * Create /etc/modprobe.d/cfg80211
+  {{{
+  options cfg80211 ieee 800211_regdom="EU"
+  }}}
