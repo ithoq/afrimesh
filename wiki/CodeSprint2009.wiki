@@ -2,7 +2,7 @@
 
 == Setting Regulatory Domain For Zyxel WiFi adaptor ==
 
-  * Create /etc/modprobe.d/cfg80211
+  * Run:
   {{{
-  options cfg80211 ieee 800211_regdom="EU"
+  iw regset eu
   }}}
