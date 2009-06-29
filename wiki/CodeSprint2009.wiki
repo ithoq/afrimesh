@@ -25,6 +25,6 @@
   iwconfig wlan0 mode ad-hoc 
   iwconfig wlan0 channel 13
   iwconfig wlan0 essid afrimesh
-  ifconfig wlan0 172.30.254.x/24
+  ifconfig wlan0 172.30.1.x/24
   batmand wlan0
   }}}
