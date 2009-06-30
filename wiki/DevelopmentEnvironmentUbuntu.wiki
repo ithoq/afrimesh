@@ -30,17 +30,19 @@ Run as required:
   {{{
   apt-get install wget
   }}}
-  * libuci:
-  {{{
-  wget http://afrimesh.googlecode.com/files/libuci-0.7.3_i386.deb
-  dpkg -i libuci-0.7.3_i386.deb
-  }}}
-  * libjson:
-  {{{
-  wget http://afrimesh.googlecode.com/files/libjson-0.8_i386.deb
-  dpkg -i libjson-0.8_i386.deb
-  }}}
 
+
+----
+
+Also:
+  {{{
+  sudo  su -
+  apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 382AF1D2
+  echo "deb http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu hardy main" >> /etc/apt/sources.list 
+  apt-get update
+
+  apt-get install libuci-dev libjson-dev
+  }}}
 
 ----
 
