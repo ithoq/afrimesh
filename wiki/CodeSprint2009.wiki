@@ -28,7 +28,6 @@ INTERFACE=wlan0
 VIS_SERVER=172.30.1.1
 BATMAND=/home/sprinter/batman-svn/batman/batmand
 
-
 # nuke all batmand                                                                                                                                                                      
 killall -9 batmand
 
@@ -41,7 +40,6 @@ iwconfig $INTERFACE mode ad-hoc
 iwconfig $INTERFACE essid afrimesh
 iwconfig $INTERFACE channel 13
 ifconfig $INTERFACE $ADDRESS/24
-
 
 # start batmand and configure vis server                                                                                                                                                
 $BATMAND $INTERFACE -s $VIS_SERVER
