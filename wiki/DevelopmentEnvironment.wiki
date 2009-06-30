@@ -49,16 +49,14 @@ Configuring an afrimesh development environment.
 In the top-level afrimesh source directory type:
 
   {{{
-  make <platform>
+  make 
   }}}
-
-Where `<platform>` is one of:  `linux, freebsd or openwrt`
 
 
 = Install =
 
   {{{
-  make install-<platform>
+  make install
   }}}
 
 
