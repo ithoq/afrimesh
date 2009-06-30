@@ -16,16 +16,33 @@
   iw reg set ZA
   }}}
 
-== Start B.A.T.M.A.N. ==
+== B.A.T.M.A.N. startup Script ==
 
   * Run
   {{{
-  killall -9 NetworkManager
-  killall -9 nm-system-settings
-  ip link set wlan0 down
-  iwconfig wlan0 mode ad-hoc 
-  iwconfig wlan0 channel 13
-  iwconfig wlan0 essid afrimesh
-  ifconfig wlan0 172.30.1.x/24
-  ./batmand wlan0
+#!/bin/bash                                                                                                                                                                             
+
+# config settings                                                                                                                                                                       
+ADDRESS=172.30.1.x
+INTERFACE=wlan0
+VIS_SERVER=172.30.1.1
+BATMAND=/home/sprinter/batman-svn/batman/batmand
+
+
+# nuke all batmand                                                                                                                                                                      
+killall -9 batmand
+
+# set regulatory domain                                                                                                                                                                 
+iw reg set ZA
+
+# configure interface for ad-hoc                                                                                                                                                        
+ifconfig $INTERFACE down
+iwconfig $INTERFACE mode ad-hoc
+iwconfig $INTERFACE essid afrimesh
+iwconfig $INTERFACE channel 13
+ifconfig $INTERFACE $ADDRESS/24
+
+
+# start batmand and configure vis server                                                                                                                                                
+$BATMAND $INTERFACE -s $VIS_SERVER
   }}}
