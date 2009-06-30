@@ -18,7 +18,7 @@
 
 == B.A.T.M.A.N. startup Script ==
 
-  * Run
+  * Edit: ~/batmand.sh
   {{{
 #!/bin/bash                                                                                                                                                                             
 
