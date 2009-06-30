@@ -44,7 +44,7 @@ Configuring an afrimesh development environment.
   DASHBOARD_CGI
   }}}
 
-= Compile (TODO - deprecate complexity with platform detection in Makefile) =
+= Compile =
 
 In the top-level afrimesh source directory type:
 
