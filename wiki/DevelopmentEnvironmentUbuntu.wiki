@@ -37,6 +37,9 @@ Run as required:
 Also:
   {{{
   sudo  su -
+
+  apt-get remove libuci libjson
+
   apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 382AF1D2
   echo "deb http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu hardy main" >> /etc/apt/sources.list 
   apt-get update
