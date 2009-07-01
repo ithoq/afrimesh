@@ -23,12 +23,21 @@ function BootNetwork(parent) {
   network.mesh.routes  = function() { return this.routes.sync();  };
   network.mesh.routers = function() { return this.routers.sync(); };
 
-  network.mesh.routes.sync  = function() { return afrimesh.villagebus.batman(); }
+  network.mesh.routes.sync  = function() { 
+    var routes  = [];
+    try {
+      routes = afrimesh.villagebus.batman(); 
+    } catch(error) {
+      console.debug("Vis server unreachable due to unknown reason. " + error);
+    }
+     return routes;
+  }
 
   network.mesh.routers.sync = function() {
     var routers  = [];
     var included = {};
-    afrimesh.villagebus.batman().map(function(route) {
+    try {
+      afrimesh.villagebus.batman().map(function(route) {
         if (!included[route.router]) { 
           router = { address : route.router,
                      routes  : [ route ]     };
@@ -38,6 +47,9 @@ function BootNetwork(parent) {
           included[router.address].routes.push(route);
         }
       });
+    } catch(error) {
+      console.debug("Vis server unreachable due to unknown reason. " + error);
+    }
     return routers;
   };
   
