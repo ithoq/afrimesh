@@ -31,7 +31,7 @@
     </div -->
     
     <label for="afrimesh|settings|hosts|batman_vis_server">Visualization Server</label>
-    <input id="afrimesh|settings|hosts|batman_vis_server" type="text" />
+    <input id="afrimesh|settings|hosts|batman_vis_server" style="background:#FFAAAA;" type="text" />
     <div class="tooltip"><h3>visualization server</h3>
         <p class="explain">The Network Map gets the available mesh nodes and their connections from the server at this address.</p>
         <p class="typical">
@@ -150,8 +150,17 @@
         populate_select_interface();
       });
 
+    $("input.[id*=afrimesh|settings|hosts|batman_vis_server]").bind("blur", function(event) { 
+        console.debug("Override Setting for gateway " + this.id + " -> " + this.value);
+        save_element(this.id, this.value);
+        update_vis_server();
+      });
+
     /** query internet gateway for network interfaces --------------------- */
     populate_select_interface();
+
+     /** query batman vis server for availability --------------------- */
+    update_vis_server();
 
     /** create map to set dashboard location ------------------------------ */
     $("#location").replaceWith("<div id='location' />");

@@ -63,6 +63,18 @@ var LocationMap = null;
       $("select.[id*=afrimesh|settings|internet_gateway|snmp|interface]").html(options);
     }
 
+    update_vis_server = function() {
+      $("input.[id*=afrimesh|settings|hosts|batman_vis_server]").css("background", "#FFAAAA");
+      try {
+        var routes = afrimesh.villagebus.batman();
+        console.debug("We got: " + routes);
+        if (routes != undefined && isArray(routes)) {
+          $("input.[id*=afrimesh|settings|hosts|batman_vis_server]").css("background", "#AAFFAA");
+        }
+      } catch (error) {
+        console.debug("Vis server is unreachable. " + error);
+      }
+    }
 
     /** create a map which can be used to set the router location --------- */
     function _LocationMap(id, longitude, latitude, extent, on_position) {

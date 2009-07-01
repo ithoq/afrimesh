@@ -92,7 +92,7 @@ var Map = undefined;
     };
     function add_router(router) {
       var feature = new OpenLayers.Feature.Vector();
-      feature.style = { fillColor: "blue", 
+      feature.style = { fillColor: "blue",
                         fillOpacity: 0.0, 
                         strokeOpacity: 1.0,
                         strokeColor: "black",

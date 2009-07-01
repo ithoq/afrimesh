@@ -30,7 +30,7 @@ function BootNetwork(parent) {
     } catch(error) {
       console.debug("Vis server unreachable due to unknown reason. " + error);
     }
-     return routes;
+    return routes;
   }
 
   network.mesh.routers.sync = function() {
