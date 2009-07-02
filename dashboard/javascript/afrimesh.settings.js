@@ -97,9 +97,13 @@ function BootSettings(parent, address) {
     var config = parent.villagebus.uci.get.sync(address, "afrimesh");
     console.debug("REMOTE CONFIG: " + rpretty_print(config));
     for (var local in map) {
-      var value = Q(config, map[local].remote, "config");
+      var value = Q(config, map[local].remote, "config"); 
+      
       if (value) {
         Qset(parent, local, value);
+      } else {
+        Qset(parent, local, map[local].init);
+        console.debug ("Missing configuration entry '" + local + "'; reverting to default: " + map[local].init);
       }
     }
 
