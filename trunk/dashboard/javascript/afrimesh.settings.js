@@ -53,7 +53,12 @@ function BootSettings(parent, address) {
     "afrimesh|settings|internet_gateway|snmp|community" : {  remote : "afrimesh|gateway|snmp_community", init : "public" },
     "afrimesh|settings|internet_gateway|snmp|interface" : {  remote : "afrimesh|gateway|snmp_interface", init : "4" },
     "afrimesh|settings|internet_gateway|bandwidth|down" : {  remote : "afrimesh|gateway|bandwidth_down", init : "512" },
-    "afrimesh|settings|internet_gateway|bandwidth|up"   : {  remote : "afrimesh|gateway|bandiwdth_up",   init : "256" }
+    "afrimesh|settings|internet_gateway|bandwidth|up"   : {  remote : "afrimesh|gateway|bandwidth_up",   init : "256" },
+    
+    "afrimesh|settings|radius|server"   : {  remote : "afrimesh|radius|server",   init : "server" },
+    "afrimesh|settings|radius|database" : {  remote : "afrimesh|radius|database", init : "database" },
+    "afrimesh|settings|radius|username" : {  remote : "afrimesh|radius|username", init : "name" },
+    "afrimesh|settings|radius|password" : {  remote : "afrimesh|radius|password", init : "password" }
   };
 
 

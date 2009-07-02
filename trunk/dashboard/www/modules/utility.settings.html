@@ -105,6 +105,39 @@
     </div>
 
   </fieldset>
+  
+  
+  <fieldset>
+    <legend>Radius</legend>
+    
+    <label for="afrimesh|settings|radius|server">Server</label>
+    <input id="afrimesh|settings|radius|server" style="background:#FFAAAA;" type="text"></input>
+    <div class="tooltip"><h3>server</h3>
+        <p class="explain">Server.</p>
+        <p class="typical">Server</p>
+    </div>
+    
+    <label for="afrimesh|settings|radius|database">Database</label>
+    <input id="afrimesh|settings|radius|database" type="text" />
+    <div class="tooltip"><h3>database</h3>
+      <p class="explain">Database.</p>
+      <p class="typical">Database</p>
+    </div>
+    
+    <label for="afrimesh|settings|radius|username">Username</label>
+    <input id="afrimesh|settings|radius|username" type="text" />
+    <div class="tooltip"><h3>enter your username</h3>
+      <p class="explain">Enter your username for identification on the network here.</p>
+    </div>
+    
+    <label for="afrimesh|settings|radius|password">Password</label>
+    <input id="afrimesh|settings|radius|password" type="text" />    
+    <div class="tooltip"><h3>enter your password</h3>
+      <p class="explain">Enter your password for authentication on the network here.</p>
+    </div>
+
+  </fieldset>
+  
 
 </form>
 
@@ -140,6 +173,16 @@
         save_element(this.id, this.value); 
         populate_dom(); 
       });
+
+    $("input.[id*=afrimesh|settings]").bind("keypress", function(event) {
+	      if (event.keyCode == 13) {
+	        console.debug("Saving Setting: " + this.id + " -> " + this.value);
+          save_element(this.id, this.value); 
+          populate_dom();
+ 	      } 
+      });
+
+
     $("select.[id*=afrimesh|settings]").bind("blur", function(event) { 
         save_element(this.id, this.value); 
     });
