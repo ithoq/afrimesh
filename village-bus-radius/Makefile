@@ -32,6 +32,9 @@
 JSON_INCLUDES=-I$(DEPROOT)/include
 JSON_LDFLAGS=$(DEPROOT)/lib/libjson.a
 
+UCI_INCLUDES=-I$(DEPROOT)/include
+UCI_LDFLAGS=$(DEPROOT)/lib/libuci.a
+
 MYSQL_ADMIN_USERNAME=root
 MYSQL_ADMIN_PASSWORD=1nvene0
 RADIUS_DATABASE=radius
@@ -41,10 +44,10 @@ MYSQL_ADMIN=--user=$(MYSQL_ADMIN_USERNAME) --password=$(MYSQL_ADMIN_PASSWORD)
 MYSQL_RADIUS=--user=$(RADIUS_DATABASE_USERNAME) --password=$(RADIUS_DATABASE_PASSWORD)
 
 CC=gcc -std=c99 
-INCLUDES=-I. -I../common $(JSON_INCLUDES)
+INCLUDES=-I. -I../common $(JSON_INCLUDES) $(UCI_INCLUDES)
 DEFINES=
 CFLAGS=$(INCLUDES) $(DEFINES) `mysql_config --cflags` -g
-LDFLAGS=`mysql_config --libs` $(JSON_LDFLAGS)
+LDFLAGS=`mysql_config --libs` $(JSON_LDFLAGS) $(UCI_LDFLAGS)
 
 
 village-bus-radius : json_cgi.o radius_delete.o radius_modify.o radius_new.o radius_list.o radius_who.o main.o 

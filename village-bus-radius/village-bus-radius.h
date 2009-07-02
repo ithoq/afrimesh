@@ -37,6 +37,7 @@
 #include <time.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#include <uci.h> 
 
 /* TODO - make configurable */
 /* TODO - also support querying from mysql */
@@ -94,3 +95,5 @@ struct radutmp {
   char caller_id[16];           /* Calling-Station-ID */
   char reserved[12];            /* 3 ints reserved */
 };
+
+struct uci_context* UCI_CONTEXT;
