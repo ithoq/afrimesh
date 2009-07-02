@@ -34,10 +34,63 @@
 
 #include <json_cgi.h>
 #include <village-bus-radius.h>
-
+/**
+ * Return a string type uci_option
+ */
+char* option(struct uci_option* option) 
+{
+  static char* ret = NULL;
+  if (!ret) {
+    ret = malloc(1024);
+  }
+    sprintf(ret, "%s", option->v.string);
+    
+  return ret;
+}
 
 int main(int argv, char** argc)
 {
+#ifdef JUNK
+printf("Init test\n");
+
+  /* Initialize UCI */
+  UCI_CONTEXT = uci_alloc_context();
+  if (UCI_CONTEXT == NULL) {
+    log_message("uci: Out of memory\n");
+    return EXIT_FAILURE;
+  }
+
+  struct uci_ptr radpt;
+
+  if (uci_lookup_ptr(UCI_CONTEXT, &radpt, "afrimesh.radius", true) != UCI_OK) {
+    printf("FAILED TO OBTAIN POINTER TO AFRIMESH.RADIUS");
+  }
+  else {
+    printf("SUCCESS!!!");
+  }
+
+  
+
+
+  /* clean up UCI */
+  if (UCI_CONTEXT) {
+    uci_free_context(UCI_CONTEXT);
+  }
+  
+
+printf("End test\n");
+return EXIT_SUCCESS;
+
+
+#endif
+
+
+
+
+
+
+
+
   //printf("Content-type: text/plain\n\n");
   printf("Content-type: application/json\n\n");
 
