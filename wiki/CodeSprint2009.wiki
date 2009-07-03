@@ -9,11 +9,15 @@
   Antoine: 082 448 5157
   }}}
 
-== Setting Regulatory Domain For Zyxel WiFi adaptor ==
 
-  * Run:
+== Network ==
   {{{
-  iw reg set ZA
+  Gateway -> 1
+  Edwe -> 2
+  Nkosinathi -> 3
+  Jonathan -> 4
+  Cynthia -> 5
+  David -> 6
   }}}
 
 == B.A.T.M.A.N. startup Script ==
@@ -43,4 +47,12 @@ ifconfig $INTERFACE $ADDRESS/24
 
 # start batmand and configure vis server                                                                                                                                                
 $BATMAND $INTERFACE -s $VIS_SERVER
+  }}}
+
+
+== Setting Regulatory Domain For Zyxel WiFi adaptor ==
+
+  * Run:
+  {{{
+  iw reg set ZA
   }}}
