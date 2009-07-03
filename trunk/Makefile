@@ -119,6 +119,7 @@ install-config:
 	cat config/customer-plans >> $(DASHBOARD_ETC)/config/afrimesh
 	#cat config/router         >> $(DASHBOARD_ETC)/config/afrimesh
 	#cat config/batmand        >> $(DASHBOARD_ETC)/config/afrimesh
+	chmod a+rw $(DASHBOARD_ETC)/config/afrimesh
 
 clean : # clean-www
 	cd village-bus-batman ; $(MAKE) clean
