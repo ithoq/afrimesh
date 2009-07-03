@@ -28,8 +28,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VILLAGE_BUS_RADIUS_H
-#define VILLAGE_BUS_RADIUS_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -43,11 +41,11 @@
 
 /* TODO - make configurable */
 /* TODO - also support querying from mysql */
-static char* radutmp_filename = "/var/log/freeradius/radutmp";
-static char* radius_mysql_server   = "localhost";
-static char* radius_mysql_database = "radius";
-static char* radius_mysql_username = "radius";
-static char* radius_mysql_password = "radpass";
+static const char* radutmp_filename = "/var/log/freeradius/radutmp";
+static const char* radius_mysql_server   = "localhost";
+static const char* radius_mysql_database = "radius";
+static const char* radius_mysql_username = "radius";
+static const char* radius_mysql_password = "radpass";
 
 /* radius commands */
 void radius_who();
@@ -55,6 +53,7 @@ void radius_list_mysql();
 void radius_new_mysql(const char* username, const char* type, int seconds);
 void radius_delete_mysql(const char* username);
 void radius_modify_mysql(const char* username, const char* new_username, const char* new_password, const char* new_type);
+
 
 /* wrapper for executing mysql queries */
 #include <mysql.h>
@@ -98,5 +97,3 @@ struct radutmp {
 };
 
 struct uci_context* UCI_CONTEXT;
-#endif /* VILLAGE_BUS_RADIUS_H */
-

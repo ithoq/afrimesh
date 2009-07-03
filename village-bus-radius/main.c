@@ -33,33 +33,63 @@
 #include <json/json.h>
 
 #include <json_cgi.h>
-#include <uci_util.h>
 #include <village-bus-radius.h>
+/**
+ * Return a string type uci_option
+ */
+char* option(struct uci_option* option) 
+{
+  static char* ret = NULL;
+  if (!ret) {
+    ret = malloc(1024);
+  }
+    sprintf(ret, "%s", option->v.string);
+    
+  return ret;
+}
 
 int main(int argv, char** argc)
 {
-  char *test = malloc (1024);
-  if (uci_get(test, "afrimesh", "radius", "radutmp")) {
-    radutmp_filename = malloc(1024);
-    sprintf (radutmp_filename, "%s", test);
+#ifdef JUNK
+printf("Init test\n");
+
+  /* Initialize UCI */
+  UCI_CONTEXT = uci_alloc_context();
+  if (UCI_CONTEXT == NULL) {
+    log_message("uci: Out of memory\n");
+    return EXIT_FAILURE;
   }
-  if (uci_get(test, "afrimesh", "radius", "server")) {
-    radius_mysql_server = malloc(1024);
-    sprintf (radius_mysql_server, test);
+
+  struct uci_ptr radpt;
+
+  if (uci_lookup_ptr(UCI_CONTEXT, &radpt, "afrimesh.radius", true) != UCI_OK) {
+    printf("FAILED TO OBTAIN POINTER TO AFRIMESH.RADIUS");
   }
-  if (uci_get(test, "afrimesh", "radius", "database")) {
-    radius_mysql_database = malloc(1024);
-    sprintf (radius_mysql_database, test);
+  else {
+    printf("SUCCESS!!!");
   }
-  if (uci_get(test, "afrimesh", "radius", "username")) {
-    radius_mysql_username = malloc(1024);
-    sprintf (radius_mysql_username, test);
+
+  
+
+
+  /* clean up UCI */
+  if (UCI_CONTEXT) {
+    uci_free_context(UCI_CONTEXT);
   }
-  if (uci_get(test, "afrimesh", "radius", "password")) {
-    radius_mysql_password = malloc(1024);
-    sprintf (radius_mysql_password, test);
-  }
-  free(test);
+  
+
+printf("End test\n");
+return EXIT_SUCCESS;
+
+
+#endif
+
+
+
+
+
+
+
 
   //printf("Content-type: text/plain\n\n");
   printf("Content-type: application/json\n\n");
@@ -67,18 +97,14 @@ int main(int argv, char** argc)
   /* parse request */
   char* request = json_cgi_request(); 
   if (request == NULL || strcasecmp(request, "") == 0) {  /* TODO - return NULL on json_cgi_request always */
-    log_message("NULL request\n");if (UCI_CONTEXT == NULL) {
-    return NULL;
-  }
+    log_message("NULL request\n");
     printf("[\n\t{ error: \"NULL request\" }\n]\n");
     json_cgi_release();
     return EXIT_FAILURE;
   } 
 
   struct json_object* request_object = json_tokener_parse(request);
-  if (request_object == NULL) {if (UCI_CONTEXT == NULL) {
-    return NULL;
-  }
+  if (request_object == NULL) {
     log_message("Could not parse request: %s\n", request);
     printf("[\n\t{ error: \"Could not parse request: %s\" }\n]\n", request);
     json_cgi_release();
