@@ -67,13 +67,22 @@ var Map = undefined;
       click_selector.onUnselect = on_unselect_router;
       map.addControl(click_selector);
       click_selector.activate();*/
-      var hover_selector = new OpenLayers.Control.SelectFeature(map.routers, 
+      var router_hover_selector = new OpenLayers.Control.SelectFeature(map.routers, 
                                                                 { multiple : false, 
                                                                   hover    : true });
-      hover_selector.onSelect = on_select_router;
-      hover_selector.onUnselect = on_unselect_router;
-      map.addControl(hover_selector);
-      hover_selector.activate();
+      router_hover_selector.onSelect = on_select_router;
+      router_hover_selector.onUnselect = on_unselect_router;
+      map.addControl(router_hover_selector);
+      router_hover_selector.activate();
+      
+      var route_hover_selector = new OpenLayers.Control.SelectFeature(map.routes,
+                                                                { multiple : false,
+                                                                  hover    : true });
+      route_hover_selector.onSelect = on_select_route;
+      route_hover_selector.onUnselect = on_unselect_route;
+      map.addControl(route_hover_selector);
+      route_hover_selector.activate();
+      
       return map;
     };
 
@@ -191,14 +200,22 @@ var Map = undefined;
       the_map.addPopup(popup);
     };
 
-    function on_unselect_router(feature_router) {
+    function on_unselect_router(feature) {
       the_map.selected = null;
-      if (feature_router.popup) {
-        the_map.removePopup(feature_router.popup);
-        feature_router.popup.destroy();
-        feature_router.popup = null;
+      if (feature.popup) {
+        the_map.removePopup(feature.popup);
+        feature.popup.destroy();
+        feature.popup = null;
       }
     };
+    
+    function on_select_route(feature) {
+      console.debug("selected: " + feature);
+    }
+    
+    function on_unselect_route(feature) {
+      console.debug("unselected: " + feature);
+    }
 
     function on_position(feature) {
       // update router location config
