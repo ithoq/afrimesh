@@ -50,11 +50,8 @@ CFLAGS=$(INCLUDES) $(DEFINES) `mysql_config --cflags` -g
 LDFLAGS=`mysql_config --libs` $(JSON_LDFLAGS) $(UCI_LDFLAGS)
 
 
-village-bus-radius : uci_util.o json_cgi.o radius_delete.o radius_modify.o radius_new.o radius_list.o radius_who.o main.o 
-	$(CC) -o village-bus-radius main.o radius_delete.o radius_modify.o radius_new.o radius_who.o radius_list.o json_cgi.o uci_util.o  $(LDFLAGS) 
-
-uci_util.o : ../common/uci_util.h ../common/uci_util.c
-	$(CC) $(CFLAGS) -c ../common/uci_util.c
+village-bus-radius : json_cgi.o radius_delete.o radius_modify.o radius_new.o radius_list.o radius_who.o main.o 
+	$(CC) -o village-bus-radius main.o radius_delete.o radius_modify.o radius_new.o radius_who.o radius_list.o json_cgi.o $(LDFLAGS) 
 
 json_cgi.o : ../common/json_cgi.h ../common/json_cgi.c
 	$(CC) $(CFLAGS) -c ../common/json_cgi.c
