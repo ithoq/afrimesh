@@ -1,5 +1,10 @@
 #summary CodeSprint Notes
 
+== Code Review Documentation ==
+
+[http://code.google.com/p/support/wiki/CodeReviews]
+
+
 == Extensions ==
   {{{
   Dhiren: 4605
