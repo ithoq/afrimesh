@@ -168,18 +168,22 @@
     };
     $("input.[id*=afrimesh|settings]").bind("blur", function(event) { 
         console.debug("Saving Setting: " + this.id + " -> " + this.value);
-        save_element(this.id, this.value); 
+        save_element(this.id, this.value);
         populate_dom(); 
       });
-
+    
     $("input.[id*=afrimesh|settings]").bind("keypress", function(event) {
 	      if (event.keyCode == 13) {
 	        console.debug("Saving Setting: " + this.id + " -> " + this.value);
-          save_element(this.id, this.value); 
+          save_element(this.id, this.value);
+          if (this.id == "afrimesh|settings|internet_gateway|address") {
+            populate_select_interface();
+          } else if (this.id == "afrimesh|settings|hosts|batman_vis_server") {
+              update_vis_server();
+          }
           populate_dom();
  	      } 
       });
-
 
     $("select.[id*=afrimesh|settings]").bind("blur", function(event) { 
         save_element(this.id, this.value); 
