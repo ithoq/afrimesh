@@ -20,7 +20,7 @@
   * Run:
   {{{
   make mysql
-  make mysql-database
+  make mysql-populate
   }}}
 
 == Test ==
