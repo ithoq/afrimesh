@@ -10,6 +10,7 @@
 
   * Run:
   {{{
+  # TODO - this is evil. We should be adding village-bus-radius to the freeradius group rather
   chmod 0777 /var/log/freeradius
   chmod 0666 /var/log/freeradius/radutmp
   }}}
