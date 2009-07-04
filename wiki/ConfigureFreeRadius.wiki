@@ -15,7 +15,7 @@
 
   * Check: /etc/freeradius/clients.conf
   {{{ 
-  client x.x.mesh.network/address {
+  client mesh.network/address {
     secret     = theradiussecret
     shortname  = meshportal
   }
