@@ -5,8 +5,21 @@
 = Setting up FreeRADIUS With MySQL Backend =
 
 == Configure FreeRADIUS ==
-  * chmod -R a+rw /var/log/freeradius
 
+  Copy config from source repository # TODO  -> step-by-step instructions
+
+  * Run:
+  {{{
+  chmod -R a+rw /var/log/freeradius
+  }}}
+
+  * Check: /etc/freeradius/clients.conf
+  {{{ 
+  client x.x.mesh.network/address {
+    secret     = theradiussecret
+    shortname  = meshportal
+  }
+  }}}
 
 == Configure village-bus-radius Makefile ==
 
