@@ -2,9 +2,9 @@
 
 
 
-= Setting up FreeRadius With MySQL Backend =
+= Setting up FreeRADIUS With MySQL Backend =
 
-== Configure FreeRadius ==
+== Configure FreeRADIUS ==
   * chmod -R a+rw /var/log/freeradius
 
 
@@ -49,4 +49,4 @@
 
 
 
-= Setting up FreeRadius With Memcachedb Backend =
+= Setting up FreeRADIUS With Memcachedb Backend =
