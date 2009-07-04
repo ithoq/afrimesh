@@ -34,5 +34,12 @@
   make test-list
   }}}
 
+== Configure coova-chilli on routers ==
+
+  * Check: /etc/chilli/defaults
+  {{{
+  }}}
+
+
 
 = Setting up FreeRadius With Memcachedb Backend =
