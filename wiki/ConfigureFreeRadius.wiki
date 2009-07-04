@@ -10,7 +10,8 @@
 
   * Run:
   {{{
-  chmod -R a+rw /var/log/freeradius
+  chmod 0777 /var/log/freeradius
+  chmod 0666 /var/log/freeradius/radutmp
   }}}
 
   * Check: /etc/freeradius/clients.conf
