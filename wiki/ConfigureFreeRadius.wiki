@@ -1,0 +1,34 @@
+#summary Basic instructions for freeradius setup & configuration
+
+
+
+= Setting up FreeRadius With MySQL Backend =
+
+== Configure Makefile ==
+
+  * Check: village-bus-radius/Makefile
+  {{{
+  MYSQL_ADMIN_USERNAME=root
+  MYSQL_ADMIN_PASSWORD=xxx
+  RADIUS_DATABASE=radius
+  RADIUS_DATABASE_USERNAME=radius
+  RADIUS_DATABASE_PASSWORD=xxx
+  }}}
+
+== Set up MySQL User&Database ==
+
+  * Run:
+  {{{
+  make mysql
+  make mysql-database
+  }}}
+
+== Test ==
+
+  * Run:
+  {{{
+  make test-list
+  }}}
+
+
+= Setting up FreeRadius With Memcachedb Backend =
