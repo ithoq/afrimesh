@@ -4,7 +4,11 @@
 
 = Setting up FreeRadius With MySQL Backend =
 
-== Configure Makefile ==
+== Configure FreeRadius ==
+  * TODO
+
+
+== Configure village-bus-radius Makefile ==
 
   * Check: village-bus-radius/Makefile
   {{{
