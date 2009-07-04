@@ -5,7 +5,7 @@
 = Setting up FreeRadius With MySQL Backend =
 
 == Configure FreeRadius ==
-  * TODO
+  * chmod -R a+rw /var/log/freeradius
 
 
 == Configure village-bus-radius Makefile ==
