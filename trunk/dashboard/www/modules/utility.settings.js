@@ -43,12 +43,14 @@ var LocationMap = null;
                                                      [ ".1.3.6.1.2.1.2.2.1.2" ]);  // IF-MIB::ifDescr
       console.log("GETTING INTERFACES: " + interfaces);
       if (!interfaces || interfaces.error) {
+        $("p.[id*=internet_gateway|error]").html("Internet gateway unreachable.");
         console.debug("SNMP ERROR: " + (interfaces ? interfaces.error : "unknown error"));
         console.debug("dashboard server: " + afrimesh.settings.hosts.dashboard_server);
         console.debug("settings  server: " + afrimesh.settings.address);
         $("select.[id*=afrimesh|settings|internet_gateway|snmp|interface]").html("");
         return;
       }
+      $("p.[id*=internet_gateway|error]").html("");
       $("input.[id*=afrimesh|settings|internet_gateway|address]").css("background", "#AAFFAA");
       var interface_current = afrimesh.settings.internet_gateway.snmp.interface;
       var interface_count = 1;
@@ -67,14 +69,41 @@ var LocationMap = null;
       $("input.[id*=afrimesh|settings|hosts|batman_vis_server]").css("background", "#FFAAAA");
       try {
         var routes = afrimesh.villagebus.batman();
-        console.debug("We got: " + routes);
         if (routes != undefined && isArray(routes)) {
           $("input.[id*=afrimesh|settings|hosts|batman_vis_server]").css("background", "#AAFFAA");
+          $("p.[id*=batman_vis_server|error]").html("");
         }
       } catch (error) {
+        $("p.[id*=batman_vis_server|error]").html("Visualization server unreachable. " + error + ".");
         console.debug("Vis server is unreachable. " + error);
       }
     }
+
+    update_radius_server = function() {
+      $("input.[id*=afrimesh|settings|radius|server]").css("background", "#FFAAAA");
+      try {
+        var status = afrimesh.customers.status();
+        var select = afrimesh.customers.select();
+        //console.debug("status: " + status + " -> " + dump_object(status));
+        //console.debug("list:   " + select + " -> " + dump_object(select));
+        if (status[0].error) {
+          console.debug("RADIUS server is unreachable. " + status[0].error);
+          $("p.[id*=radius|server|error]").html("RADIUS server unreachable. " + status[0].error + ".");
+          return;
+        } else if (select[0].error) {
+          console.debug("mysql database is inaccessible. " + select[0].error);
+          $("p.[id*=radius|server|error]").html("mysql database inaccessible. " + select[0].error + ".");
+          return;
+        } else {
+            $("p.[id*=radius|server|error]").html("");
+            $("input.[id*=afrimesh|settings|radius|server]").css("background", "#AAFFAA");
+        }
+      } catch (error) {
+        console.debug("Unexpected error while contacting RADIUS server: " + error);
+        $("p.[id*=radius|server|error]").html("RADIUS server unreachable. Unknown reason.");
+      }
+    }
+
 
     /** create a map which can be used to set the router location --------- */
     function _LocationMap(id, longitude, latitude, extent, on_position) {
