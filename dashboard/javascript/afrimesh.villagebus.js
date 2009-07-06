@@ -69,7 +69,10 @@ var BootVillageBus = function (afrimesh) {
   /** - villagebus.radius ------------------------------------------------- */
   villagebus.radius        = function() { return villagebus.radius.who(); };
   villagebus.radius.url    = function() {
-    return "http://" + afrimesh.settings.hosts.dashboard_server + "/cgi-bin/village-bus-radius"; 
+    if (afrimesh.settings.radius.server == afrimesh.settings.address) {
+      return "http://" + afrimesh.settings.radius.server + "/cgi-bin/village-bus-radius";
+    }
+    return villagebus.ajax_proxy() + "http://" + afrimesh.settings.radius.server + "/cgi-bin/village-bus-radius";
   };
   villagebus.radius.who    = function() { return villagebus.radius.who.sync(); };
   villagebus.radius.select = function() { return villagebus.radius.select.sync(); };
