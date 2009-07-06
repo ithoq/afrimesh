@@ -72,6 +72,9 @@ var LocationMap = null;
         if (routes != undefined && isArray(routes)) {
           $("input.[id*=afrimesh|settings|hosts|batman_vis_server]").css("background", "#AAFFAA");
           $("p.[id*=batman_vis_server|error]").html("");
+        } else {
+          console.debug("Visualization server unreachable.");
+          $("p.[id*=batman_vis_server|error]").html("Visualization server unreachable.");
         }
       } catch (error) {
         $("p.[id*=batman_vis_server|error]").html("Visualization server unreachable. " + error + ".");
