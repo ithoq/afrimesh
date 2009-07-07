@@ -1,4 +1,4 @@
-FREERADIUS_SOURCES=/Volumes/afrimesh-dev/ext-sources/freeradius-server-2.1.6
+FREERADIUS_SOURCES=/home/sprinter/freeradius-server-2.1.6
 FREERADIUS_VERSION=2.1.6
 FREERADIUS_DESTDIR=/usr/lib/freeradius
 
