@@ -2,6 +2,6 @@
 
 = Read =
 {{{
-  http://trac.mapnik.org/wiki/UbuntuInstallation
-  http://weait.com/content/build-your-own-openstreetmap-server
+  [http://trac.mapnik.org/wiki/UbuntuInstallation]
+  [http://weait.com/content/build-your-own-openstreetmap-server]
 }}}
