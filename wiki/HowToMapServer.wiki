@@ -1,7 +1,7 @@
 #summary How to set up a map server on your local network
 
 = Read =
-{{{
+
   [http://trac.mapnik.org/wiki/UbuntuInstallation]
+
   [http://weait.com/content/build-your-own-openstreetmap-server]
-}}}
