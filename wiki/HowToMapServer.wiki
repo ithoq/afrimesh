@@ -4,4 +4,6 @@
 
   [http://trac.mapnik.org/wiki/UbuntuInstallation]
 
+  [http://trac.mapnik.org/wiki/InstallationTroubleshooting]
+
   [http://weait.com/content/build-your-own-openstreetmap-server]
