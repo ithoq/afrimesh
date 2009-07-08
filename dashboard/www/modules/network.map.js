@@ -69,7 +69,7 @@ var Map = undefined;
       click_selector.activate();*/
       var router_hover_selector = new OpenLayers.Control.SelectFeature(map.routers, 
                                                                 { multiple : false, 
-                                                                  hover    : true });
+                                                                  hover    : false });
       router_hover_selector.onSelect = on_select_router;
       router_hover_selector.onUnselect = on_unselect_router;
       map.addControl(router_hover_selector);
@@ -183,11 +183,29 @@ var Map = undefined;
       var now = new Date();
       var last_seen = now - feature.last_seen;
       if (last_seen <= (update_frequency * 2.0)) { // UDE - this is a bit clumsy
-        html += "<p><span id='health'>node is healthy</span></p>";
+        html += "<p><span id='health'>node is healthy</span></p><br/>";
       } else {
         html += "<p><span id='health' style='color:red;'>node is missing</span></p>";
         html += "<p><span id='message'>last checked in " + Math.floor(last_seen / 1000) + " seconds ago</span></p>";
       }
+      html += "<p><span id='neighbours'>";
+      html+= "Neighbours";
+      html+= "<table>";
+      var tog = 1;
+      feature.router.routes.map(function (route) {
+          if (route.neighbour) { 
+            if (tog == 1) {
+              html += "<tr><td>" + route.neighbour + "</td>";
+              tog = 0;
+            } else {
+              html += "<td>" + route.neighbour + "</td></tr>";
+              tog =1;
+            }
+          }
+        });
+      html += "</table>";
+
+      html+= "</span>";
       html += "</div>";
       var popup = new OpenLayers.Popup.AnchoredBubble("id" + feature.router.address,
                                                       feature.geometry.getBounds().getCenterLonLat(),
@@ -195,7 +213,7 @@ var Map = undefined;
                                                       function(event){on_unselect_router(the_map.selected);} );
       popup.setBackgroundColor("black");
       popup.setOpacity(0.9);
-      popup.autoSize = true;
+      popup.autoSize = false;
       feature.popup = popup;
       the_map.addPopup(popup);
     };
