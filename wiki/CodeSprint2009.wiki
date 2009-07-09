@@ -31,6 +31,16 @@ CodeSprint2009Log
   David -> 172.30.1.6
   }}}
 
+== Compile B.A.T.M.A.N. trunk ==
+
+  {{{
+  mkdir ~/batman-svn
+  cd ~/batman-svn
+  svn co http://downloads.open-mesh.net/svn/batman/trunk/batman/
+  cd batman
+  make
+  }}}
+
 == B.A.T.M.A.N. startup Script ==
 
   * Edit: ~/batmand.sh
