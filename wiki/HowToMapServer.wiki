@@ -7,3 +7,5 @@
   [http://trac.mapnik.org/wiki/InstallationTroubleshooting]
 
   [http://weait.com/content/build-your-own-openstreetmap-server]
+
+  [http://wiki.openstreetmap.org/wiki/Mapnik]
