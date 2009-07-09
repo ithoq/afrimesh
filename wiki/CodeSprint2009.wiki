@@ -53,11 +53,13 @@ iw reg set ZA
 ifconfig $INTERFACE down
 iwconfig $INTERFACE mode ad-hoc
 iwconfig $INTERFACE essid afrimesh
-iwconfig $INTERFACE channel 13
+iwconfig $INTERFACE channel 11
+iwconfig $INTERFACE ap 02:CA:FF:EE:BA:BE
 ifconfig $INTERFACE $ADDRESS/24
 
 # start batmand and configure vis server                                                                                                                                                
 $BATMAND $INTERFACE -s $VIS_SERVER
+$BATMAND -cd1
   }}}
 
 
