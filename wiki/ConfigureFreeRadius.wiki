@@ -23,6 +23,10 @@
   }
   }}}
 
+
+TODO document add counter for  prepaid to sites-enabled/default
+
+
 == Configure village-bus-radius Makefile ==
 
   * Check: village-bus-radius/Makefile
