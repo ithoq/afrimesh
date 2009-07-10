@@ -16,11 +16,10 @@
 function() {
 
   /** includes ------------------------------------------------------------ */
-
+  load("modules/network.map.js");
 
   /** construction -------------------------------------------------------- */
   ready = function() {
-    load("modules/network.map.js");
     console.debug("loaded network.map.html");
     $("div#network-map").html("");
     var network_map = new Map("network-map",  // TODO - consider caching the map :)
@@ -34,6 +33,7 @@ function() {
     console.debug("map.extent -> " + afrimesh.settings.map.extent);
     console.debug("map.zoom -> " + afrimesh.settings.map.zoom);
     update(network_map);
+
     return unload;
   };
 
