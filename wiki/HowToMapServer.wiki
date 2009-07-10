@@ -8,6 +8,8 @@
 
   [http://weait.com/content/build-your-own-openstreetmap-server]
 
+  [http://weait.com/content/make-your-first-map]
+
   [http://wiki.openstreetmap.org/wiki/Mapnik]
 
 
