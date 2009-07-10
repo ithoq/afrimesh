@@ -11,4 +11,4 @@
   [http://wiki.openstreetmap.org/wiki/Mapnik]
 
 
-NOTE: Shuttle Radar Tomography Mission datga have moved to: [http://dds.cr.usgs.gov/srtm/version2/SRTM3/]
+NOTE: Shuttle Radar Tomography Mission data have moved to: [http://dds.cr.usgs.gov/srtm/version2/SRTM3/]
