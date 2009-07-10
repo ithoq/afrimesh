@@ -13,6 +13,8 @@
   [http://wiki.openstreetmap.org/wiki/Mapnik]
 
 
+NOTE: World boundary data also available at: http://beta.letuffe.org/ressources/world_boundaries/compressed/processed_p.zip
+
 NOTE: Shuttle Radar Tomography Mission data have moved to: [http://dds.cr.usgs.gov/srtm/version2/SRTM3/]
 
 TODO: A script to grab the right SRTM data based on bounding box + continent
