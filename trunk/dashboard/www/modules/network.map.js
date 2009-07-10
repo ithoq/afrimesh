@@ -216,6 +216,11 @@ var Map = undefined;
       popup.autoSize = false;
       feature.popup = popup;
       the_map.addPopup(popup);
+  
+      $("#ip").bind("click", function(event) {
+          console.debug("Got: " + event);
+          evil_display_overlay(); // TODO - See: http://flowplayer.org/forum/20/21252
+        });
     };
 
     function on_unselect_router(feature) {

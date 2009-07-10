@@ -14,7 +14,7 @@
     <link rel="stylesheet" type="text/css" href="style/menu.css"> 
     <link rel="stylesheet" type="text/css" href="style/map.css"> 
     <link rel="stylesheet" type="text/css" href="style/modules.css"> 
-
+    <link rel="stylesheet" type="text/css" href="style/overlay-router.css"> 
 
     <!-- includes ---------------------------------------------------------- -->
     <!-- jquery -->
@@ -52,6 +52,12 @@
           $(this).find("ul").corner("bottom 15px");  
         }); */
 
+        /** init overlay window TODO - should be in network.maps See: http://flowplayer.org/forum/20/21252 */
+        var api = $("#overlay-router").overlay({ api:true }); 
+        evil_display_overlay = function() {
+          api.load();
+        }
+
         console.debug("$(document).ready() -------------------- start");
 
         /** global error handler for Ajax requests */
@@ -60,7 +66,6 @@
             console.error("RESPONSE: " + response.status + " " + response.statusText + "\n" + response.responseText);
             console.error("REQUEST:  " + request.data);
           });
-
 
         /** populate DOM references to afrimesh.settings */
         var elements = $("[id*=afrimesh|settings]");
@@ -113,6 +118,16 @@
      //]]></script>
   </head>
   <body>
+
+    <!-- TODO - should be in network.maps See: http://flowplayer.org/forum/20/21252 -->
+    <div class="overlay-router" id="overlay-router">
+      <h2 style="margin:10px 0">Here is my overlay</h2>
+      <p>
+        Class aptent taciti sociosqu ad litora torquent per conubia nostra,
+        per inceptos himenaeos. Donec lorem ligula, elementum vitae,
+        imperdiet a, posuere nec, ante. Quisque mattis massa id metus.
+      </p>
+    </div>
 
     <!-- div id="message-loading" style="text-align:center;">please wait...</div --> <!-- TODO -->
 
