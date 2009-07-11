@@ -12,6 +12,8 @@
 
   [http://wiki.openstreetmap.org/wiki/Mapnik]
 
+  [http://wiki.openstreetmap.org/wiki/Contours]
+
 
 NOTE: an apt-get install imagemagick will be needed
  
