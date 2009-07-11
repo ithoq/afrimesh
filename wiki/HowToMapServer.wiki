@@ -15,7 +15,10 @@
   [http://wiki.openstreetmap.org/wiki/Contours]
 
 
-NOTE: an apt-get install imagemagick will be needed
+Run:
+{{{
+  apt-get install imagemagick gdal-bin 
+}}}
  
 NOTE: World boundary data also available at: http://beta.letuffe.org/ressources/world_boundaries/compressed/processed_p.zip
 
