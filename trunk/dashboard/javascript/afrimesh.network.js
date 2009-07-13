@@ -12,6 +12,41 @@ function BootNetwork(parent) {
 
   var network = function() { return this.network.routes(); };
 
+  network.accounting = function(router) {
+    var temp = 0;
+    try { 
+	afrimesh.villagebus.pmaccto().map(function(host) {		
+	 if (router.address == host.SRC_IP) {
+	   if (typeof router.macaddr == "undefined") {	
+		router.macaddr = host.SRC_MAC;
+		temp = parseInt(host.BYTES);
+	   } else {
+	     if (temp<parseInt(host.BYTES)) {
+	       temp = parseInt(host.BYTES);
+	     }
+	   }
+         }
+     });
+    } catch(error) {
+      console.debug("pmaccto error " + error);
+    }
+		router.tranBytes = temp;
+		temp = 0;
+    try {
+	afrimesh.villagebus.pmaccti().map(function(host){		
+    	if (router.address == host.DST_IP) {
+		if (temp<parseInt(host.BYTES)){
+	  	  temp = parseInt(host.BYTES);
+		  }
+	}
+     });
+    } catch(error) {
+       console.debug("pmaccto error " + error);
+    }
+   router.recBytes = temp; 
+		
+  }
+
   network.routes  = function() { return this.backbone().concat(this.mesh()); };
   network.routers = function() { return this.backbone.routers().concat(this.mesh.routers()); };
 

@@ -176,11 +176,26 @@ var Map = undefined;
     
     /* event handling ----------------------------------------------------- */
     function on_select_router(feature) {
+	afrimesh.network.accounting(feature.router);
       the_map.selected = feature;
       var html = "<div class='popup'>";
+<<<<<<< .mine
+      html += "<p><span id='ip'>" + feature.router.address + "</span>&nbsp;&nbsp;<span id='mac'>"+ feature.router.macaddr+"</span></p><br/>";
+      if (feature.router.tranBytes) {
+	html += "<p><spn id='bytes'> Bytes transmitted: "+feature.router.tranBytes+"</span></p><br/>" ;
+      } else {
+	html += "<p><spn id='bytes'> Bytes transmitted: No Bytes transmitted</span></p><br/>" ;
+      }
+      if (feature.router.recBytes) {
+	html += "<p><spn id='bytes'> Bytes recieved: "+feature.router.recBytes+"</span></p><br/>" ;
+      } else {
+	html += "<p><spn id='bytes'> Bytes recieved: No Bytes recieved</span></p><br/>" ;
+      }
+=======
       html += "<p><span id='ip'>";
       html += "<a href='#'>" + feature.router.address + "</a>";
       html += "</span>&nbsp;&nbsp;<span id='mac'>ma:ca:dd:rr:es:ss</span></p><br/>";
+>>>>>>> .r373
       var now = new Date();
       var last_seen = now - feature.last_seen;
       if (last_seen <= (update_frequency * 2.0)) { // UDE - this is a bit clumsy

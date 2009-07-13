@@ -100,6 +100,9 @@ install-www:
 	@if ! test -d $(DASHBOARD_CGI) ; then mkdir -p $(DASHBOARD_CGI) ; fi
 	$(INSTALL) ./package-scripts/openwrt/afrimesh-portal/files/www/cgi-bin/uam.pl $(DASHBOARD_CGI)
 	$(INSTALL) dashboard/cgi-bin/ajax-proxy.cgi $(DASHBOARD_CGI)
+	$(INSTALL) dashboard/cgi-bin/village-bus-pmaccto.cgi $(DASHBOARD_CGI)
+	$(INSTALL) dashboard/cgi-bin/village-bus-pmaccti.cgi $(DASHBOARD_CGI)
+	$(INSTALL) dashboard/cgi-bin/pmacct $(DASHBOARD_CGI)
 	for i in $(VILLAGERS); do echo "Installing: $$i"; $(INSTALL) ./$$i/$$i $(DASHBOARD_CGI); done
 	find $(DASHBOARD_WWW) -name "*~"   | xargs rm -f
 	find $(DASHBOARD_WWW) -name ".svn" | xargs rm -rf
