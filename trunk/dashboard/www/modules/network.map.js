@@ -175,11 +175,12 @@ var Map = undefined;
     
     
     /* event handling ----------------------------------------------------- */
-
     function on_select_router(feature) {
       the_map.selected = feature;
       var html = "<div class='popup'>";
-      html += "<p><span id='ip'>" + feature.router.address + "</span>&nbsp;&nbsp;<span id='mac'>ma:ca:dd:rr:es:ss</span></p><br/>";
+      html += "<p><span id='ip'>";
+      html += "<a href='#'>" + feature.router.address + "</a>";
+      html += "</span>&nbsp;&nbsp;<span id='mac'>ma:ca:dd:rr:es:ss</span></p><br/>";
       var now = new Date();
       var last_seen = now - feature.last_seen;
       if (last_seen <= (update_frequency * 2.0)) { // UDE - this is a bit clumsy
@@ -216,14 +217,16 @@ var Map = undefined;
       popup.autoSize = false;
       feature.popup = popup;
       the_map.addPopup(popup);
-  
+
       $("#ip").bind("click", function(event) {
-          console.debug("Got: " + event);
-          evil_display_overlay(); // TODO - See: http://flowplayer.org/forum/20/21252
+          //evil_display_overlay("http://10.216.144.1/"); 
+          evil_display_overlay("http://" + feature.router.address +"/");
         });
     };
 
+
     function on_unselect_router(feature) {
+
       the_map.selected = null;
       if (feature.popup) {
         the_map.removePopup(feature.popup);
@@ -231,6 +234,7 @@ var Map = undefined;
         feature.popup = null;
       }
     };
+
     
     function on_select_route(feature) {
       console.debug("selected: " + feature);

@@ -54,8 +54,9 @@
 
         /** init overlay window TODO - should be in network.maps See: http://flowplayer.org/forum/20/21252 */
         var api = $("#overlay-router").overlay({ api:true }); 
-        evil_display_overlay = function() {
-          api.load();
+        evil_display_overlay = function(url) {
+           api.getContent().find("iframe.wrap").attr('src', url);
+           api.load();
         }
 
         console.debug("$(document).ready() -------------------- start");
@@ -121,12 +122,8 @@
 
     <!-- TODO - should be in network.maps See: http://flowplayer.org/forum/20/21252 -->
     <div class="overlay-router" id="overlay-router">
-      <h2 style="margin:10px 0">Here is my overlay</h2>
-      <p>
-        Class aptent taciti sociosqu ad litora torquent per conubia nostra,
-        per inceptos himenaeos. Donec lorem ligula, elementum vitae,
-        imperdiet a, posuere nec, ante. Quisque mattis massa id metus.
-      </p>
+      <iframe class="wrap" style="overflow-x: hidden;" width="780" height="600" scrolling="yes"></iframe>
+      <div id="router-dashboard"></div>
     </div>
 
     <!-- div id="message-loading" style="text-align:center;">please wait...</div --> <!-- TODO -->
