@@ -49,9 +49,12 @@ DEFINES=
 CFLAGS=$(INCLUDES) $(DEFINES) `mysql_config --cflags` -g
 LDFLAGS=`mysql_config --libs` $(JSON_LDFLAGS) $(UCI_LDFLAGS)
 
+OBJECTS=radius_delete_mysql.o radius_modify_mysql.o radius_new_mysql.o radius_list_mysql.o \
+        radius_delete_memcachedb.o radius_modify_memcachedb.o radius_new_memcachedb.o radius_list_memcachedb.o \
+        radius_who.o json_cgi.o uci_util.o main.o 
 
-village-bus-radius : uci_util.o json_cgi.o radius_delete.o radius_modify.o radius_new.o radius_list.o radius_who.o main.o 
-	$(CC) -o village-bus-radius main.o radius_delete.o radius_modify.o radius_new.o radius_who.o radius_list.o json_cgi.o uci_util.o  $(LDFLAGS) 
+village-bus-radius : $(OBJECTS) 
+	$(CC) -o village-bus-radius $(OBJECTS) $(LDFLAGS) 
 
 uci_util.o : ../common/uci_util.h ../common/uci_util.c
 	$(CC) $(CFLAGS) -c ../common/uci_util.c
@@ -60,20 +63,33 @@ json_cgi.o : ../common/json_cgi.h ../common/json_cgi.c
 	$(CC) $(CFLAGS) -c ../common/json_cgi.c
 
 radius_who.o : village-bus-radius.h radius_who.c 
-	$(CC) $(CFLAGS) -c radius_who.c
+	$(CC) $(CFLAGS) -c radius_who.c 
 
-radius_list.o : village-bus-radius.h radius_list.c 
-	$(CC) $(CFLAGS) -c radius_list.c
+# mysql support
+radius_list_mysql.o : village-bus-radius.h mysql/radius_list.c 
+	$(CC) $(CFLAGS) -c mysql/radius_list.c -o radius_list_mysql.o
 
-radius_new.o : village-bus-radius.h radius_new.c 
-	$(CC) $(CFLAGS) -c radius_new.c
+radius_new_mysql.o : village-bus-radius.h mysql/radius_new.c 
+	$(CC) $(CFLAGS) -c mysql/radius_new.c -o radius_new_mysql.o
 
-radius_modify.o : village-bus-radius.h radius_modify.c 
-	$(CC) $(CFLAGS) -c radius_modify.c
+radius_modify_mysql.o : village-bus-radius.h mysql/radius_modify.c 
+	$(CC) $(CFLAGS) -c mysql/radius_modify.c -o radius_modify_mysql.o
 
-radius_delete.o : village-bus-radius.h radius_delete.c 
-	$(CC) $(CFLAGS) -c radius_delete.c
+radius_delete_mysql.o : village-bus-radius.h mysql/radius_delete.c 
+	$(CC) $(CFLAGS) -c mysql/radius_delete.c -o radius_delete_mysql.o
 
+# memcachedb support
+radius_list_memcachedb.o : village-bus-radius.h memcachedb/radius_list.c 
+	$(CC) $(CFLAGS) -c memcachedb/radius_list.c -o radius_list_memcachedb.o
+
+radius_new_memcachedb.o : village-bus-radius.h memcachedb/radius_new.c 
+	$(CC) $(CFLAGS) -c memcachedb/radius_new.c -o radius_new_memcachedb.o
+
+radius_modify_memcachedb.o : village-bus-radius.h memcachedb/radius_modify.c 
+	$(CC) $(CFLAGS) -c memcachedb/radius_modify.c -o radius_modify_memcachedb.o
+
+radius_delete_memcachedb.o : village-bus-radius.h memcachedb/radius_delete.c
+	$(CC) $(CFLAGS) -c memcachedb/radius_delete.c -o radius_delete_memcachedb.o
 
 main.o : village-bus-radius.h main.c 
 	$(CC) $(CFLAGS) -c main.c
