@@ -2,13 +2,13 @@
 
 = Read =
 
-  [http://trac.mapnik.org/wiki/UbuntuInstallation]
-
-  [http://trac.mapnik.org/wiki/InstallationTroubleshooting]
-
   [http://weait.com/content/build-your-own-openstreetmap-server]
 
   [http://weait.com/content/make-your-first-map]
+
+  [http://trac.mapnik.org/wiki/UbuntuInstallation]
+
+  [http://trac.mapnik.org/wiki/InstallationTroubleshooting]
 
   [http://wiki.openstreetmap.org/wiki/Mapnik]
 
