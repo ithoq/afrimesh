@@ -28,7 +28,7 @@ var BootVillageBus = function (afrimesh) {
 
 
   /** - villagebus.batman ------------------------------------------------- */
-  villagebus.batman     = function() { return this.batman.vis(); };
+  villagebus.batman     = function() { return this.batman.vis();};
   villagebus.batman.vis = function() { 
     return this.vis.sync(); 
   }; 
@@ -65,7 +65,78 @@ var BootVillageBus = function (afrimesh) {
         async   : false });
   };
 
+  /** - villagebus.pmaccto out bytes data ------------------------------------------------- */
+  villagebus.pmaccto = function() { 
+    return this.pmaccto.sync(); 
+  }; 
+
+  villagebus.pmaccto.url  = function() { 
+    //if (afrimesh.settings.internet_gateway.address == afrimesh.settings.address) {	
+      return /*afrimesh.settings.address+*/ "http://localhost/cgi-bin/village-bus-pmaccto"; 
+    //}
+    //return villagebus.ajax_proxy() + "http://" + afrimesh.settings.internet_gateway.address + "/cgi-bin/village-bus-pmaccto"; 
+  };
   
+  villagebus.pmaccto.async = function(handler) { 
+    var xml = make_json_request({
+        url     : this.url(),
+        request : {},
+        success : handler,
+        async   : true });
+    return xml;
+  };
+  villagebus.pmaccto.poll = function(f, frequency) {   
+    this.async(f);
+    setTimeout(function() { afrimesh.villagebus.pmaccto.poll(f, frequency); }, 
+               frequency);
+  };
+  villagebus.pmaccto.sync = function() { 
+    var handler  = function(data) { 
+      handler.response = data;  
+    };
+    return make_json_request({
+        url     : this.url(),
+        request : {},
+        success : handler,
+        async   : false });
+  };
+
+  /** - villagebus.pmaccto out bytes data ------------------------------------------------- */
+  villagebus.pmaccti = function() { 
+    return this.pmaccti.sync(); 
+  }; 
+
+  villagebus.pmaccti.url  = function() { 
+    //if (afrimesh.settings.internet_gateway.address == afrimesh.settings.address) {	
+      return /*afrimesh.settings.address+*/ "http://localhost/cgi-bin/village-bus-pmaccti"; 
+    //}
+    //return villagebus.ajax_proxy() + "http://" + afrimesh.settings.internet_gateway.address + "/cgi-bin/village-bus-pmaccti"; 
+  };
+  
+  villagebus.pmaccti.async = function(handler) { 
+    var xml = make_json_request({
+        url     : this.url(),
+        request : {},
+        success : handler,
+        async   : true });
+    return xml;
+  };
+  villagebus.pmaccti.poll = function(f, frequency) {   
+    this.async(f);
+    setTimeout(function() { afrimesh.villagebus.pmaccti.poll(f, frequency); }, 
+               frequency);
+  };
+  villagebus.pmaccti.sync = function() { 
+    var handler  = function(data) { 
+      handler.response = data;  
+    };
+    return make_json_request({
+        url     : this.url(),
+        request : {},
+        success : handler,
+        async   : false });
+  };
+
   /** - villagebus.radius ------------------------------------------------- */
   villagebus.radius        = function() { return villagebus.radius.who(); };
   villagebus.radius.url    = function() {
