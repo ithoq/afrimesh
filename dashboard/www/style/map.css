@@ -4,6 +4,12 @@
 div#network-map .popup { 
   color: white;
 }
+div#network-map a { color: orange; }
+div#network-map a:link { color: orange; }
+div#network-map a:visited { color: orange; }
+div#network-map a:active { color: orange; }
+div#network-map a:hover { color: orange; }
+
 div#network-map .popup #ip { 
   color: orange;
   font-size: 125%;
@@ -33,3 +39,5 @@ div#network-map .popup #neighbours table, tr, td {
   padding-right: 10px;
  
 }
+
+
