@@ -38,12 +38,10 @@ Assuming that all the tools are installed, data downloaded and contour data impo
   source set-mapnik-env
   ~/mapping-scripts/ext-sources/osm2pgsql/osm2pgsql --slim -d gis ~/mapping-scripts/mapdata.osm
   # big map
-  nik2img.py osm.xml image.png --bbox 26 -25.99 29 -25.0 -d 5000 5000 -v 
+  nik2img.py osm.xml image.png --bbox 28.26 -25.75 28.29 -25.72 -d 5000 5000 -v 
   # tiles
   ./my_generate_tiles.py 
 }}}
-
-
 
 
 
