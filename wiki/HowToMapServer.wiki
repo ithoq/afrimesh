@@ -14,10 +14,15 @@
 
   [http://wiki.openstreetmap.org/wiki/Contours]
 
+  [http://code.google.com/p/mapnik-utils/wiki/Nik2Img]
 
 Run:
 {{{
-  apt-get install imagemagick gdal-bin 
+  sudo apt-get install imagemagick gdal-bin 
+  cd ~/mapping-scripts/ext-sources
+  svn co http://mapnik-utils.googlecode.com/svn/trunk/nik2img nik2img-svn
+  cd nik2img-svn
+  sudo python setup.py install
 }}}
  
 NOTE: World boundary data also available at: http://beta.letuffe.org/ressources/world_boundaries/compressed/processed_p.zip
@@ -25,3 +30,20 @@ NOTE: World boundary data also available at: http://beta.letuffe.org/ressources/
 NOTE: Shuttle Radar Tomography Mission data have moved to: [http://dds.cr.usgs.gov/srtm/version2/SRTM3/]
 
 TODO: A script to grab the right SRTM data based on bounding box + continent
+
+
+Assuming that all the tools are installed, data downloaded and contour data imported, the process for making a map boils down to:
+{{{
+  cd ~/mapnik
+  source set-mapnik-env
+  ~/mapping-scripts/ext-sources/osm2pgsql/osm2pgsql --slim -d gis ~/mapping-scripts/mapdata.osm
+  # big map
+  nik2img.py osm.xml image.png --bbox 26 -25.99 29 -25.0 -d 5000 5000 -v 
+  # tiles
+  ./my_generate_tiles.py 
+}}}
+
+
+
+
+
