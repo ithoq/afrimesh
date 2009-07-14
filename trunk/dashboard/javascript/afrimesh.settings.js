@@ -56,6 +56,7 @@ function BootSettings(parent, address) {
     "afrimesh|settings|internet_gateway|bandwidth|up"   : {  remote : "afrimesh|gateway|bandwidth_up",   init : "256" },
     
     "afrimesh|settings|radius|server"   : {  remote : "afrimesh|radius|server",   init : "localhost" },
+    "afrimesh|settings|radius|radtype"  : {  remote : "afrimesh|radius|radtype",     init : "1" },
     "afrimesh|settings|radius|database" : {  remote : "afrimesh|radius|database", init : "radius" },
     "afrimesh|settings|radius|username" : {  remote : "afrimesh|radius|username", init : "radius" },
     "afrimesh|settings|radius|password" : {  remote : "afrimesh|radius|password", init : "radpass" }

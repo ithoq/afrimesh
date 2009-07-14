@@ -21,7 +21,7 @@ var LocationMap = null;
   /** populate DOM with the values in afrimesh.settings ------------------- */
   populate_dom = function() {
     var elements = $("[id*=afrimesh|settings]");
-    elements.each(function(element) { 
+    elements.each(function(element) {
         element = elements[element];
         if (element instanceof HTMLSelectElement) { // TODO - handle select elements
         } else if (element instanceof HTMLInputElement) {
@@ -83,12 +83,20 @@ var LocationMap = null;
     }
 
     update_radius_server = function() {
+      var radtype_current = afrimesh.settings.radius.radtype;
+      if (radtype_current == 1) {
+        $("select.[id*=afrimesh|settings|radius|radtype]").html
+          ("<option value = '1' selected>mysql</option> <option value = '2'>memcachcedb</option>");
+      } else {
+        $("select.[id*=afrimesh|settings|radius|radtype]").html
+          ("<option value = '1'>mysql</option> <option value = '2' selected>memcachcedb</option>");
+      }
+
       $("input.[id*=afrimesh|settings|radius|server]").css("background", "#FFAAAA");
       try {
         var status = afrimesh.customers.status();
         var select = afrimesh.customers.select();
-        //console.debug("status: " + status + " -> " + dump_object(status));
-        //console.debug("list:   " + select + " -> " + dump_object(select));
+
         if (status[0].error) {
           console.debug("RADIUS server is unreachable. " + status[0].error);
           $("p.[id*=radius|server|error]").html("RADIUS server unreachable. " + status[0].error + ".");

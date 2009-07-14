@@ -47,7 +47,7 @@ CC=gcc -std=c99
 INCLUDES=-I. -I../common $(JSON_INCLUDES) $(UCI_INCLUDES)
 DEFINES=
 CFLAGS=$(INCLUDES) $(DEFINES) `mysql_config --cflags` -g
-LDFLAGS=`mysql_config --libs` $(JSON_LDFLAGS) $(UCI_LDFLAGS)
+LDFLAGS=-L/usr/local/lib -lm -lmemcached `mysql_config --libs` $(JSON_LDFLAGS) $(UCI_LDFLAGS)
 
 OBJECTS=radius_delete_mysql.o radius_modify_mysql.o radius_new_mysql.o radius_list_mysql.o \
         radius_delete_memcachedb.o radius_modify_memcachedb.o radius_new_memcachedb.o radius_list_memcachedb.o \

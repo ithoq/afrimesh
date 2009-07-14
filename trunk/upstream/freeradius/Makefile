@@ -1,12 +1,15 @@
-FREERADIUS_SOURCES=/home/sprinter/freeradius-server-2.1.6
+FREERADIUS_SOURCES=/home/sprinter/Documents/freeradius-server-2.1.6
 FREERADIUS_VERSION=2.1.6
-FREERADIUS_DESTDIR=/usr/lib/freeradius
+FREERADIUS_DESTDIR=/usr/local/lib
+
+JSON_INCLUDES=-I/usr/include
+JSON_LDFLAGS=-L/usr/lib -ljson
 
 CC      = gcc
+INCLUDES=-I. -I$(FREERADIUS_SOURCES)/src $(JSON_INCLUDES) -I/usr/include -I/usr/local/include
 INSTALL = install
-CFLAGS  =  -DNDEBUG -Wall -I/usr/include -I/usr/local/include \
-           -I$(FREERADIUS_SOURCES)/src
-LDFLAGS =  
+CFLAGS  =  -DNDEBUG -Wall $(INCLUDES) 
+LDFLAGS =  -L/usr/local/lib -lm -lmemcached $(JSON_LDFLAGS)
 
 all :  rlm_memcachedb/rlm_memcachedb.o rlm_memcachedb/rlm_memcachedb-$(FREERADIUS_VERSION).so
 
@@ -19,7 +22,7 @@ rlm_memcachedb/rlm_memcachedb-$(FREERADIUS_VERSION).so : rlm_memcachedb/rlm_memc
 
 install : all
 	$(INSTALL) rlm_memcachedb/rlm_memcachedb-$(FREERADIUS_VERSION).so $(FREERADIUS_DESTDIR)
-	#ln -fs rlm_memcachedb/rlm_memcachedb-$(FREERADIUS_VERSION).so $(FREERADIUS_DESTDIR)/rlm_memcachedb.so
+	ln -fs $(FREERADIUS_DESTDIR)/rlm_memcachedb-$(FREERADIUS_VERSION).so $(FREERADIUS_DESTDIR)/rlm_memcachedb.so
 
 clean:
-	rm rlm_memcachedb/*~ rlm_memcachedb/rlm_memcachedb*.o rlm_memcachedb/rlm_memcachedb*.so
+	rm -f rlm_memcachedb/*~ rlm_memcachedb/rlm_memcachedb*.o rlm_memcachedb/rlm_memcachedb*.so

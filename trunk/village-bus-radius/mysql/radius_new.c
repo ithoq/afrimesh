@@ -109,6 +109,8 @@ int generate_password(char* ret, size_t n)
     ret[t] = c;
   }
 
+  ret[n-1] = '\0';
+
   return 0;
 }
 

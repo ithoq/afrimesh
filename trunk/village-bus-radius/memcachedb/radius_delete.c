@@ -30,27 +30,18 @@
 
 
 #include "village-bus-radius.h"
-
+#include <libmemcached/memcached.h>
 
 void radius_delete_memcachedb(const char* username)
 {
-#ifdef TODO
-  MYSQL* connection = NULL;
-  unsigned long count;
-
-  /* delete user */
-  if (mysql(&connection, "DELETE FROM radcheck where username='%s'", username) != 0) {
-    return;
-  }
-  count = mysql_affected_rows(connection);
-
-  /* output result */
-  printf("\t{ count : %d }\n", count); 
-
-  /* close connection */
-  if (connection != NULL) {
-    mysql_close(connection);
-  }
-#endif
+  char temp[50];
+  snprintf(temp, 50, "%s%s", "usr_", username);
+  memcached_st *memcache = memcached_create(NULL);
+  memcached_server_st *servers = memcached_servers_parse("localhost");
+  memcached_server_push(memcache, servers);
+  username = temp;
+  memcached_delete(memcache, username, strlen(username), 0);
+  memcached_server_list_free(servers);
+  memcached_free(memcache);
 }
 

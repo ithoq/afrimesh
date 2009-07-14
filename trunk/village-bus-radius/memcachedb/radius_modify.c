@@ -30,81 +30,97 @@
 
 #include <json_cgi.h> /* for log_message */
 #include "village-bus-radius.h"
-
-
-
-/* utility functions */
-// TODO void radius_set_type_memcachedb(MYSQL* connection, const char* username, const char* new_type);
-
-
+#include <libmemcached/memcached.h>
 
 /**
  * Modify radius user
  */
 void radius_modify_memcachedb(const char* username, const char* new_username, const char* new_password, const char* new_type)
-{
-#ifdef TODO
-  MYSQL* connection = NULL;
-  unsigned long count = 0;
+{ 
+  char user_no_prefix [50];
+  snprintf (user_no_prefix, 50, username);
+  char temp[50];
+  snprintf(temp, 50, "%s%s", "usr_", username);
+  username = temp;
+  memcached_st *memcached = memcached_create(NULL);
+  memcached_server_st *servers = memcached_servers_parse("localhost");
+  memcached_return rc = memcached_server_push(memcached, servers);
 
-  /* update user information */
-  if (new_username) {
-    if (mysql(&connection, "UPDATE radcheck SET username='%s' WHERE username='%s'", new_username, username) != 0) {
-      printf("{ error : \"Failed to update username\" }");
-      return;
-    }
-    username = new_username;
-  }
-  if (new_password) {
-    if (mysql(&connection, "UPDATE radcheck SET value='%s' WHERE username='%s' AND attribute='ClearText-Password'", new_password, username) != 0) {
-      printf("{ error : \"Failed to update password\" }");
-      return;
-    }
-  }
-  if (new_type) {
-    radius_set_type(connection, username, new_type);
-  }
+  /* read user attributes */
+  size_t value_length;
+  uint32_t flags;
+  memcached_return ret;
 
-  /* output result */
-  if (connection) {
-    count = mysql_affected_rows(connection);
-  }
-  printf("\t{ count : %d }\n", count); 
-
-  /* close connection */
-  if (connection) {
-    mysql_close(connection);
-  }
-#endif
-}
-
-
-#ifdef TODO
-
-/**
- * Set account type for radius user
- */
-void radius_set_type_memcachedb(MYSQL* connection, const char* username, const char* new_type)
-{
-  char* query = NULL;
-  
-  /* clear all existing rules for username */
-  if (mysql(&connection, "DELETE FROM radcheck WHERE username='%s' AND attribute='Max-Prepaid-Session'", username) != 0) {
+  char* attributes = memcached_get(memcached, username, strlen(username), &value_length, &flags, &ret);
+  if (ret != MEMCACHED_SUCCESS) {
+    printf("{ error : \"Failed to find user in memcachedb\" }");
     return;
   }
 
-  /* create rules for new type */
-  if (strncasecmp("prepaid", new_type, 7) == 0) {
-    if (mysql(&connection, "INSERT INTO radcheck (UserName, Attribute, op, Value) VALUES ('%s', 'Max-Prepaid-Session', ':=', '3600')", username) != 0) {
-      log_message("Could not set new type '%s' for '%s'\n", new_type, username);
+  struct json_object* entries = json_tokener_parse(attributes);
+    int i;
+
+  /* update relevant user information and concatenate everything into a new JSON string */
+  char newval [1024] = "[";
+  char tempstr [1024];
+
+  for (i = 0; i < json_object_array_length(entries); i++) {
+    struct json_object* thisentry = json_object_array_get_idx(entries, i);
+    char* thisattribute = json_object_get_string(json_object_object_get(thisentry, "attribute"));
+   
+    if (strcasecmp(thisattribute, "Username") == 0) {
+      snprintf(tempstr, 1024, newval);
+      if (new_username) {
+        snprintf(newval, 1024, "%s{ \"attribute\" : \"Username\", \"operation\" : \":=\", \"value\" : \"%s%s\" },", 
+          tempstr, "usr_", new_username);
+      } else {
+        snprintf(newval, 1024, "%s{ \"attribute\" : \"Username\", \"operation\" : \":=\", \"value\" : \"%s%s\" },", 
+          tempstr, "usr_", username);
+      }
+    } else if (strcasecmp(thisattribute, "ClearText-Password") == 0) {
+      snprintf(tempstr, 1024, newval);
+      char *cleartext_password = json_object_get_string(json_object_object_get(thisentry, "value"));
+      if (new_password) {
+        snprintf(newval, 1024, "%s{ \"attribute\" : \"ClearText-Password\", \"operation\" : \":=\", \"value\" : \"%s\" },", 
+         tempstr, new_password);
+      } else {
+        snprintf(newval, 1024, "%s{ \"attribute\" : \"ClearText-Password\", \"operation\" : \":=\", \"value\" : \"%s\" },", 
+          tempstr, cleartext_password);
+      }//TODO - check account type attributes (other than prepaid) here and set correct attributes for the new type
+    } else if (strcasecmp(thisattribute, "Max-Prepaid-Session") == 0) {
+      if (!new_type || (strncasecmp("prepaid", new_type, 7) == 0)) {
+        snprintf(tempstr, 1024, newval);
+        char *max_prepaid_session = json_object_get_string(json_object_object_get(thisentry, "value"));
+        snprintf(newval, 1024, "%s{ \"attribute\" : \"Max-Prepaid-Session\", \"operation\" : \":=\", \"value\" : \"%s\" }", 
+            tempstr, max_prepaid_session);
+      }
+    }
+  }
+  snprintf(tempstr, 1024, newval); 
+  if (tempstr[(strlen(tempstr)-1)] == ',') {
+    tempstr[(strlen(tempstr)-1)] = ' ';      /* ensure there is no dangling comma at end of JSON string*/
+  }
+  snprintf(newval, 1024, "%s]", tempstr);
+
+  if (new_username) {
+    if (check_username_memcachedb (new_username) != 0) {
+      printf("{ error : \"Cannot change username - a user with this name already exists\" }");
       return;
     }
-  } else if (strncasecmp("flatrate", new_type, 8) == 0) {
-    // flatrate has no attributes
-  } else if (strncasecmp("disabled", new_type, 8) == 0) { // TODO - implement
-  } else if (strncasecmp("metered", new_type, 7) == 0)  { // TODO - implement
+    radius_delete_memcachedb (user_no_prefix);
+    char tempp[50];
+    snprintf(tempp, 50, "%s%s", "usr_", new_username);
+    username = tempp;
   }
 
+  ret = memcached_set(memcached, username, strlen(username), newval, strlen(newval), 0, 0);
+
+  if (ret != MEMCACHED_SUCCESS) {
+    printf("{ error : \"Failed to change user attribute\" }");
+    return;
+  }
+  memcached_server_list_free(servers);
+  memcached_free(memcached);
 }
 
-#endif 
+
