@@ -1,9 +1,7 @@
-
-Go to the following link to setup nagios and follow the instructions
-http://www.ubuntugeek.com/nagios-network-monitoring-system-setup-in-ubuntu.html
+Go to the following link to setup nagios and follow the instructions http://www.ubuntugeek.com/nagios-network-monitoring-system-setup-in-ubuntu.html
 
 To setup Json for nagios 
 download the nag2-statusjson.tar_.gz from 
 http://www.yannj.fr/sites/default/files/nag2-statusjson.tar_.gz 
-and follow the instructions at from the following link
+and follow the instructions from the following link
 http://www.yannj.fr/nagios2json
