@@ -176,23 +176,23 @@ var Map = undefined;
     
     /* event handling ----------------------------------------------------- */
     function on_select_router(feature) {
-	afrimesh.network.accounting(feature.router);
+      afrimesh.network.accounting(feature.router);
       the_map.selected = feature;
       var html = "<div class='popup'>";
-      html += "<p><span id='ip'>" + feature.router.address + "</span>&nbsp;&nbsp;<span id='mac'>"+ feature.router.macaddr+"</span></p><br/>";
+
+      html += "<p><span id='ip'>" + "<a href='#'>" + feature.router.address + "</a>" + "</span>&nbsp;&nbsp;";
+      html += "<span id='mac'>" + (feature.router.macaddr ? feature.router.macaddr : "unknown mac")  + "</span></p><br/>";
       if (feature.router.tranBytes) {
-	      html += "<p><span id='bytes'> Bytes transmitted: "+feature.router.tranBytes+"</span></p><br/>" ;
+	      html += "<p><span id='bytes'> Bytes transmitted: " + feature.router.tranBytes + "</span></p><br/>" ;
       } else {
-	      html += "<p><span id='bytes'> Bytes transmitted: No Bytes transmitted</span></p><br/>" ;
+	      //html += "<p><span id='bytes'> Bytes transmitted: No Bytes transmitted</span></p><br/>" ;
       }
       if (feature.router.recBytes) {
-	      html += "<p><span id='bytes'> Bytes recieved: "+feature.router.recBytes+"</span></p><br/>" ;
+	      html += "<p><span id='bytes'> Bytes recieved: " + feature.router.recBytes + "</span></p><br/>" ;
       } else {
-	      html += "<p><span id='bytes'> Bytes recieved: No Bytes recieved</span></p><br/>" ;
+	      //html += "<p><span id='bytes'> Bytes recieved: No Bytes recieved</span></p><br/>" ;
       }
-      html += "<p><span id='ip'>";
-      html += "<a href='#'>" + feature.router.address + "</a>";
-      html += "</span>&nbsp;&nbsp;<span id='mac'>ma:ca:dd:rr:es:ss</span></p><br/>";
+
       var now = new Date();
       var last_seen = now - feature.last_seen;
       if (last_seen <= (update_frequency * 2.0)) { // UDE - this is a bit clumsy
@@ -261,9 +261,7 @@ var Map = undefined;
       var location = new OpenLayers.LonLat(feature.geometry.x, feature.geometry.y).transform(epsg_900913, epsg_4326);
       afrimesh.villagebus.uci.set.async(function (response) {
           console.debug("Updated router location for:" + feature.router.address);
-        }, dashboard/www/modules/network.map.js
-
-        feature.router.address, 
+        }, feature.router.address, 
         [ { config: "afrimesh", section: "location", option: "longitude", value: location.lon }, 
           { config: "afrimesh", section: "location", option: "latitude",  value: location.lat } ]);
       
