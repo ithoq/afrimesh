@@ -1,0 +1,37 @@
+#!/bin/bash
+
+function cgi_decodevar()
+{
+    [ $# -ne 1 ] && return
+    local v t h
+    # replace all + with whitespace and append %%
+    t="${1//+/ }%%"
+    while [ ${#t} -gt 0 -a "${t}" != "%" ]; do
+	v="${v}${t%%\%*}" # digest up to the first %
+	t="${t#*%}"       # remove digested part
+	# decode if there is anything to decode and if not at end of string
+	if [ ${#t} -gt 0 -a "${t}" != "%" ]; then
+	    h=${t:0:2} # save first two chars
+	    t="${t:2}" # remove these
+	    v="${v}"`echo -e \\\\x${h}` # convert hex to special char
+	fi
+    done
+    # return decoded string
+    echo "${v}"
+    return
+}
+
+# read & parse query
+QUERY=$QUERY_STRING
+if [ "$REQUEST_METHOD" = "POST" ]; then
+    read POST_QUERY
+fi
+
+DATA=`echo "$POST_QUERY" | grep -oE "(^|[?&])data=[^&]+" | sed "s/%20/ /g" | cut -f 2- -d "="`
+TYPE=`echo "$POST_QUERY" | grep -oE "(^|[?&])type=[^&]+" | sed "s/%20/ /g" | cut -f 2- -d "="`
+
+
+echo Content-type: `cgi_decodevar $TYPE`
+echo
+cgi_decodevar $DATA
+
