@@ -11,6 +11,11 @@
 
 <div id="network-map" style="border:0px red solid; width: 100%; height: 75%;">please wait a moment...</div>
 
+<form class="export-map" action="/~sprinter/cgi-bin/village-bus-echo.kml" method="POST" target="_blank">
+<input id="export-map-data" type="hidden" name="data" />
+<input id="export-map-type" type="hidden" name="type" value="application/vnd.google-earth.kml+xml" />
+<input type="submit" style="color: blue" value="Read and Export router info to KML/KMZ Format" />
+</form>
 
 <script type="text/javascript">( //<![CDATA[    
 function() {
@@ -32,6 +37,13 @@ function() {
     console.debug("location.latitude -> " + afrimesh.settings.location.latitude);
     console.debug("map.extent -> " + afrimesh.settings.map.extent);
     console.debug("map.zoom -> " + afrimesh.settings.map.zoom);
+    
+    $("form.export-map").submit(function() {
+        console.debug("submitting");
+        export_kml(network_map);
+        return true;
+      });
+    
     update(network_map);
     return unload;
   };
@@ -41,6 +53,105 @@ function() {
     console.debug("unloaded network.map.html");
   };
   console.debug("loaded network.map.js");
+
+
+  /** export kml ---------------------------------------------------------- */
+  function export_kml(network_map) {
+  
+    console.debug("The map's routers: " + network_map.routers);
+  
+    var my_kml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"          +
+                      "<kml xmlns=\"http://www.opengis.net/kml/2.2\""       +
+                      "     xmlns:gx=\"http://www.google.com/kml/ext/2.2\"" +
+                      "     xmlns:kml=\"http://www.opengis.net/kml/2.2\""   +
+                      "     xmlns:atom=\"http://www.w3.org/2005/Atom\">";
+                      
+       my_kml_data += "<Document>";
+   	   my_kml_data += "<name>SimpleAfrimesh.kml</name>";
+     	 my_kml_data += "<Folder>";
+		   my_kml_data += "<name>Afrimesh</name>";
+		   my_kml_data += "<open>1</open>";
+	  
+      network_map.routers.features.map(function(router_feature) {
+      
+       var location = new OpenLayers.LonLat(router_feature.geometry.x, router_feature.geometry.y).transform(epsg_900913, epsg_4326);
+
+       console.debug("Longitude: " + location.lon + " Latitude: " + location.lat);
+
+       my_kml_data += "<Style id=\"blueDot\">" +
+                      "<IconStyle>" +
+                      "<color>ffff5500</color>" +
+                      "<scale>1</scale>" +
+                      "<Icon>" +
+                      "<href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href>" +
+                      "</Icon>" +
+                      "</IconStyle>" +
+                      "</Style>";
+
+      my_kml_data +=  "<Placemark>" +
+                      "<name>" + router_feature.id + "</name>" +
+                      "<styleUrl>#blueDot</styleUrl>" +
+                      "<Point>" +
+                      "<coordinates>" + location.lon + "," + location.lat + ",0</coordinates>" +
+                      "</Point>" +
+                      "</Placemark>";
+      });
+
+      network_map.routes.features.map(function(feature) {
+
+       console.debug("Origin: " + feature.route.router + " Destination: " + feature.route.neighbour);
+       
+       var color       = network_map.lq_to_color(feature.route.label);
+       var origin      = network_map.routers.getFeatureById(feature.route.router);
+       var destination = network_map.routers.getFeatureById(feature.route.neighbour);
+       origin      = new OpenLayers.LonLat(origin.geometry.x, origin.geometry.y).transform(epsg_900913, epsg_4326);
+       destination = new OpenLayers.LonLat(destination.geometry.x, destination.geometry.y).transform(epsg_900913, epsg_4326);
+       
+       
+          my_kml_data += "<Style id=\"yellowLine\">" +
+                         "<LineStyle>";
+                         
+      if (color == "red") {
+          my_kml_data += "<color>ff2b00ff</color>";
+      }
+      else if (color == "orange") {
+          my_kml_data += "<color>ff0179ff</color>";
+      }
+      else if (color == "green") {
+          my_kml_data += "<color>7f00ff00</color>";
+      }
+      else {
+          my_kml_data += "<color>ffffb20b</color>";
+      }
+      
+          my_kml_data += "<width>2</width>" +
+                         "</LineStyle>" +
+                         "</Style>";
+                      
+      my_kml_data += "<Placemark>" +
+                     "<name>" + feature.route.router + "->" + feature.route.neighbour + "</name>" +
+                     "<styleUrl>#yellowLine</styleUrl>" +
+                     "<LineString>" +
+                     "<coordinates>" + origin.lon + "," + origin.lat + ",0\n" + 
+                                       destination.lon + "," + destination.lat + ",0\n" +
+                     "</coordinates>" +
+                     "</LineString>" +
+                     "</Placemark>"; 
+      });
+                       
+      my_kml_data += "</Folder>";
+      my_kml_data += "</Document>";
+      my_kml_data += "</kml>";
+      
+      //console.debug(my_kml_data);
+                    
+    $("#export-map-data").val(my_kml_data);
+      
+    //window.location = 'data:application/vnd.google-earth.kml+xml,' + escape(my_kml_data);
+    //$.post("/~sprinter/cgi-bin/village-bus-echo?Content-type=application/vnd.google-earth.kml+xml", my_kml_data);
+  };
+       
+
 
 
   /** update map ---------------------------------------------------------- */
