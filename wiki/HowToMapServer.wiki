@@ -6,6 +6,8 @@
 
   [http://weait.com/content/make-your-first-map]
 
+  [http://wiki.openstreetmap.org/wiki/Getting_Data]
+
   [http://trac.mapnik.org/wiki/UbuntuInstallation]
 
   [http://trac.mapnik.org/wiki/InstallationTroubleshooting]
@@ -31,6 +33,11 @@ NOTE: Shuttle Radar Tomography Mission data have moved to: [http://dds.cr.usgs.g
 
 TODO: A script to grab the right SRTM data based on bounding box + continent
 
+
+Get Data:
+{{{
+  wget "http://api.openstreetmap.org/api/0.6/map?bbox=28.25,-25.78,28.33,-25.72"
+}}}
 
 Assuming that all the tools are installed, data downloaded and contour data imported, the process for making a map boils down to:
 {{{
