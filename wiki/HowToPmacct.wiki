@@ -3,3 +3,5 @@
 Download get the pmacct patched version with json output
 read the install file in the pmacct folder to compile the package
 after compilation copy the file replace /etc/pmacct/pmacct.conf with the given one using sudo and then run go into the src folder in the pmacct folder. run ./pmacctd -f /etc/pmacct/pmacct.conf to start pmacct.
+
+for further info go to wiki.pmacct.net
