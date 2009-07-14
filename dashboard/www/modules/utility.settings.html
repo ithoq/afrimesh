@@ -119,7 +119,13 @@
         <p class="explain">Afrimesh needs the address of your RADIUS server to be able to monitor it.</p>
         <p id="radius|server|error" style="color:#FF0000;"></p>
     </div>
-    
+
+    <label for="afrimesh|settings|radius|radtype">Database Type</label>
+    <select id="afrimesh|settings|radius|radtype">
+      <option value = "1">mysql</option>
+      <option value = "2">memcachcedb</option>
+    </select>
+
     <label for="afrimesh|settings|radius|database">Database</label>
     <input id="afrimesh|settings|radius|database" type="text" />
     <div class="tooltip"><h3>database</h3>
@@ -170,7 +176,7 @@
     function save_element(id, value) {
       return (Q(afrimesh, id) != value) ? afrimesh.settings.save(id, value) : null;
     };
-    $("input.[id*=afrimesh|settings]").bind("blur", function(event) { 
+    $("input.[id*=afrimesh|settings]").bind("blur", function(event) {
         console.debug("Saving Setting: " + this.id + " -> " + this.value);
         save_element(this.id, this.value);
         populate_dom(); 
@@ -189,6 +195,12 @@
           populate_dom();
  	      } 
       });
+
+    $("select.[id*=afrimesh|settings]").bind("change", function(event) { 
+        if ((this.id == "afrimesh|settings|internet_gateway|snmp|interface") || (this.id == "afrimesh|settings|radius|radtype")) {
+          save_element(this.id, this.value); 
+        }
+    });
 
     $("select.[id*=afrimesh|settings]").bind("blur", function(event) { 
         save_element(this.id, this.value); 
