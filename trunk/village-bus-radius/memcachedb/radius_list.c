@@ -60,12 +60,17 @@ void radius_list_memcachedb()
   }
   rc= memcached_rget(memcache, "usr_", 4, "v", 1, 0, 0, 4);
  
+  int counter = 0;
+
   while ((return_value= memcached_fetch(memcache, return_key, &return_key_length, &return_value_length, &flags, &rc))) {
     memcpy(key, return_key, return_key_length);
     key[return_key_length] = '\0';
     memcpy(value, return_value, return_value_length);
     value[return_value_length] = '\0';
-
+    if (counter != 0) {
+      printf(", ");
+    }
+    counter++;
     struct json_object* entries = json_tokener_parse(value);
     int i;
 

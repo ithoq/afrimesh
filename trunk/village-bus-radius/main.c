@@ -38,9 +38,10 @@
 int main(int argv, char** argc)
 {
   /* Test memcachedb functions */
-  /*printf("LIST:\n");
-  radius_list_memcachedb();
-  printf("\n\nADDING USER 'newprepaid' OF TYPE PREPAID WITH 500 SECONDS:\n");
+ //printf("LIST:\n");
+//radius_new_memcachedb("antoine", "prepaid", 3600);
+ // radius_list_memcachedb();
+ /* printf("\n\nADDING USER 'newprepaid' OF TYPE PREPAID WITH 500 SECONDS:\n");
   radius_new_memcachedb("newprepaid","prepaid",500);
   radius_list_memcachedb();
   printf("\n\nRENAMING THIS NEW USER TO 'somebody' WITH PASSWORD 'somepass':\n");
@@ -58,6 +59,11 @@ int main(int argv, char** argc)
   if (uci_get(test, "afrimesh", "radius", "server")) {
     radius_mysql_server = malloc(1024);
     sprintf (radius_mysql_server, test);
+  }
+  if (uci_get(test, "afrimesh", "radius", "radtype")) {
+    radius_database_type = malloc(1024);
+    sprintf (radius_database_type, test);
+    log_message("----------------------------------THE DATABASE TYPE IS %s", test);
   }
   if (uci_get(test, "afrimesh", "radius", "database")) {
     radius_mysql_database = malloc(1024);
@@ -104,24 +110,40 @@ int main(int argv, char** argc)
     radius_who(); 
 
   } else if (strncasecmp("list", command, 4) == 0) {
-    radius_list_mysql();
+      if(strcmp("1", radius_database_type) == 0) {
+        radius_list_mysql();
+      } else {
+        radius_list_memcachedb();
+      }
 
   } else if (strncasecmp("new", command, 3) == 0) {
     char* username = json_object_get_string(json_object_object_get(request_object, "username"));
     char* type     = json_object_get_string(json_object_object_get(request_object, "type"));
     int   seconds  = json_object_get_int   (json_object_object_get(request_object, "seconds"));
-    radius_new_mysql(username, type, seconds);
+    if(strcmp("1", radius_database_type) == 0) {
+      radius_new_mysql(username, type, seconds);
+    } else {
+        radius_new_memcachedb(username, type, seconds);
+    }
 
   } else if (strncasecmp("delete", command, 6) == 0) {
     char* username = json_object_get_string(json_object_object_get(request_object, "username"));    
-    radius_delete_mysql(username);
+    if(strcmp("1", radius_database_type) == 0) {
+      radius_delete_mysql(username);
+    } else {
+        radius_delete_memcachedb(username);
+    }
 
   } else if (strncasecmp("modify", command, 6) == 0) {
     char* username = json_object_get_string(json_object_object_get(request_object, "username"));
     char* new_username = json_object_get_string(json_object_object_get(request_object, "new_username"));
     char* new_password = json_object_get_string(json_object_object_get(request_object, "new_password"));
     char* new_type     = json_object_get_string(json_object_object_get(request_object, "new_type"));
-    radius_modify_mysql(username, new_username, new_password, new_type);
+    if(strcmp("1", radius_database_type) == 0) {
+      radius_modify_mysql(username, new_username, new_password, new_type);
+    } else {
+        radius_modify_memcachedb(username, new_username, new_password, new_type);
+    }
 
   } else {
     printf("{ error: \"unknown command\" }");

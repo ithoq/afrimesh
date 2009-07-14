@@ -77,6 +77,8 @@ int check_username_memcachedb (const char* username)
 
 void radius_new_memcachedb(const char* username, const char* type, int seconds)
 {
+  char user_no_prefix [50];
+  snprintf (user_no_prefix, 50, username);
   char temp[50];
   snprintf(temp, 50, "%s%s", "usr_", username);
   username = temp;
@@ -99,29 +101,38 @@ void radius_new_memcachedb(const char* username, const char* type, int seconds)
   char password[8];
   generate_password(password, 8);
 
+  /* create a JSON string for the user attributes */
+  char *user_attributes = malloc (1024);
+  char *user_attributes1  = "[ { \"attribute\" : \"Username\", \"operation\" : \":=\", \"value\" : \"";
+  char *user_attributes2 = "\" }, { \"attribute\" : \"ClearText-Password\", \"operation\" : \":=\", \"value\" : \"";
+  char *user_attributes3 = malloc(64);
   if (strcmp(type, "prepaid") == 0) {
-    /* create a JSON string for the user attributes */
-    char *user_attributes = malloc (1024);
-    char *user_attributes1  = "[ { \"attribute\" : \"Username\", \"operation\" : \":=\", \"value\" : \"";
-    char *user_attributes2 = "\" }, { \"attribute\" : \"ClearText-Password\", \"operation\" : \":=\", \"value\" : \"";
-    char *user_attributes3 = "\" }, { \"attribute\" : \"Max-Prepaid-Session\", \"operation\" : \":=\", \"value\" : \"";
-    char *user_attributes4 = "\" }]";
-   
-    snprintf(user_attributes, 1024, "%s%s%s%s%s%d%s", user_attributes1, username, user_attributes2, 
+    user_attributes3 = "\" }, { \"attribute\" : \"Max-Prepaid-Session\", \"operation\" : \":=\", \"value\" : \"";
+  }  else {
+    user_attributes3 = " ";
+  }
+  char *user_attributes4 = "\" }]";
+  
+  snprintf(user_attributes, 1024, "%s%s%s%s%s%d%s", user_attributes1, username, user_attributes2, 
               password, user_attributes3, seconds, user_attributes4);
 
-    memcached_st *memcache = memcached_create(NULL);
-    memcached_server_st *servers = memcached_servers_parse("localhost");
-    memcached_return rc = memcached_server_push(memcache, servers);
-    rc = memcached_set(memcache, username, strlen(username), user_attributes, strlen(user_attributes), 0, 0);
+  memcached_st *memcache = memcached_create(NULL);
+  memcached_server_st *servers = memcached_servers_parse("localhost");
+  memcached_return rc = memcached_server_push(memcache, servers);
+  rc = memcached_set(memcache, username, strlen(username), user_attributes, strlen(user_attributes), 0, 0);
 
-    if (rc != MEMCACHED_SUCCESS) {
-      /* log some error message here*/
-    }
-
-    /* release libmemcachedb */
-    if (memcache) {
-      free (memcache); 
-    }
+  if (rc != MEMCACHED_SUCCESS) {
+    printf("\t{\n\t\terror : \"Could not update database\"\n\t}\n");
   }
+
+  /* release libmemcachedb */
+  if (memcache) {
+    free (memcache); 
+  }
+    
+  /* output result */
+  printf("\t{\n");
+  printf("\t\tusername : \"%s\",\n", user_no_prefix);
+  printf("\t\tpassword : \"%s\"\n", password);
+  printf("\t}\n");
 }
