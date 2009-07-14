@@ -36,7 +36,7 @@ TODO: A script to grab the right SRTM data based on bounding box + continent
 
 Get Data:
 {{{
-  wget "http://api.openstreetmap.org/api/0.6/map?bbox=28.25,-25.78,28.33,-25.72"
+  wget "http://api.openstreetmap.org/api/0.6/map?bbox=28.0,-25.9,28.5,-25.6"
 }}}
 
 Assuming that all the tools are installed, data downloaded and contour data imported, the process for making a map boils down to:
@@ -46,7 +46,7 @@ Assuming that all the tools are installed, data downloaded and contour data impo
   # import data, '-c' nukes existing data
   osm2pgsql -S ~/mapping-scripts/osm2pgsql-svn/default.style -c --slim -d gis ./csir.osm
   # big map
-  nik2img.py ~/mapnik/osm.xml image.png --bbox 28.25 -25.78 28.33 -25.72 -d 5000 5000 -v 
+  nik2img.py ~/mapnik/osm.xml image.png --bbox 28.0 -25.9 28.5 -25.6 -d 5000 5000 -v 
   # tiles
   ./my_generate_tiles.py 
 }}}
