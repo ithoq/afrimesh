@@ -71,10 +71,10 @@ var BootVillageBus = function (afrimesh) {
   }; 
 
   villagebus.pmaccto.url  = function() { 
-    //if (afrimesh.settings.internet_gateway.address == afrimesh.settings.address) {	
-      return /*afrimesh.settings.address+*/ "http://localhost/cgi-bin/village-bus-pmaccto"; 
-    //}
-    //return villagebus.ajax_proxy() + "http://" + afrimesh.settings.internet_gateway.address + "/cgi-bin/village-bus-pmaccto"; 
+    if (afrimesh.settings.internet_gateway.address == afrimesh.settings.address) {	
+      return "http://" + afrimesh.settings.address+ "/cgi-bin/village-bus-pmaccto.cgi"; 
+    }
+    return villagebus.ajax_proxy() + "http://" + afrimesh.settings.internet_gateway.address + "/cgi-bin/village-bus-pmaccto.cgi"; 
   };
   
   villagebus.pmaccto.async = function(handler) { 
@@ -107,10 +107,10 @@ var BootVillageBus = function (afrimesh) {
   }; 
 
   villagebus.pmaccti.url  = function() { 
-    //if (afrimesh.settings.internet_gateway.address == afrimesh.settings.address) {	
-      return /*afrimesh.settings.address+*/ "http://localhost/cgi-bin/village-bus-pmaccti"; 
-    //}
-    //return villagebus.ajax_proxy() + "http://" + afrimesh.settings.internet_gateway.address + "/cgi-bin/village-bus-pmaccti"; 
+    if (afrimesh.settings.internet_gateway.address == afrimesh.settings.address) {	
+      return "http://" + afrimesh.settings.address+ "/cgi-bin/village-bus-pmaccti.cgi"; 
+    }
+    return villagebus.ajax_proxy() + "http://" + afrimesh.settings.internet_gateway.address + "/cgi-bin/village-bus-pmaccti.cgi"; 
   };
   
   villagebus.pmaccti.async = function(handler) { 
