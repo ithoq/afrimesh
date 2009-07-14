@@ -31,13 +31,25 @@
 
 #include <stdio.h>
 #include <json/json.h>
-
 #include <json_cgi.h>
 #include <uci_util.h>
 #include <village-bus-radius.h>
 
 int main(int argv, char** argc)
 {
+  /* Test memcachedb functions */
+  /*printf("LIST:\n");
+  radius_list_memcachedb();
+  printf("\n\nADDING USER 'newprepaid' OF TYPE PREPAID WITH 500 SECONDS:\n");
+  radius_new_memcachedb("newprepaid","prepaid",500);
+  radius_list_memcachedb();
+  printf("\n\nRENAMING THIS NEW USER TO 'somebody' WITH PASSWORD 'somepass':\n");
+  radius_modify_memcachedb("newprepaid","somebody","somepass", NULL);
+  radius_list_memcachedb();
+  printf("\n\nDELETING THE NEW USER:\n");
+  radius_delete_memcachedb("somebody");
+  radius_list_memcachedb();*/
+
   char *test = malloc (1024);
   if (uci_get(test, "afrimesh", "radius", "radutmp")) {
     radutmp_filename = malloc(1024);

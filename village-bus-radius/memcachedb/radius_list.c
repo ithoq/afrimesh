@@ -29,53 +29,67 @@
  */
 
 #include <json_cgi.h> /* for log_message */
+#include <libmemcached/memcached.h>
 #include "village-bus-radius.h"
 
 
 void radius_list_memcachedb()
 {
-#ifdef TODO
-  MYSQL* connection = NULL;
-  MYSQL_RES* result  = NULL;
-  MYSQL_ROW  row    = NULL;
-   
-  /* query user attributes */
-  if (mysql(&connection, "SELECT username, attribute, op, value FROM radcheck WHERE username != 'chillispot' ORDER BY username") != 0) {
-    return;
-  }
-  result = mysql_use_result(connection);
+  memcached_st *memcache;
+  memcached_server_st *servers;
+  memcached_return rc;
 
-  char* username    = NULL;
+  char key[MEMCACHED_MAX_KEY];
+  char value[1024];
+  char return_key[MEMCACHED_MAX_KEY];
+  char *return_value;
+  size_t return_key_length;
+  size_t return_value_length;
+  uint32_t flags;
+
+  char* username = NULL;
   char* cleartext_password = NULL;
   char* max_prepaid_session = NULL;
-  while ((row = mysql_fetch_row(result)) != NULL) {
-    if (username && strcasecmp(username, row[0]) != 0) {
-      print_customer(username, cleartext_password, max_prepaid_session);
-      printf(", ");
-      cleartext_password = NULL;
-      max_prepaid_session = NULL;
-    }
-    username = strdup(row[0]);
-    if (strcasecmp("ClearText-Password", row[1]) == 0) {
-      cleartext_password = strdup(row[3]);
-    } else if (strcasecmp("Max-Prepaid-Session", row[1]) == 0) {
-      max_prepaid_session = strdup(row[3]);
-    } else {
-      log_message("Unknown attribute: %s %s %s %s\n", row[0], row[1], row[2], row[3]);
-    }
+
+  memcache = memcached_create(NULL);
+  servers = memcached_servers_parse("localhost");
+  rc = memcached_server_push(memcache, servers);
+  //memcached_delete (memcache,"usr_antoine", 11, 0);
+  if (MEMCACHED_SUCCESS != rc){
+    return;
   }
-  if (username) { /* don't forget the last one */
+  rc= memcached_rget(memcache, "usr_", 4, "v", 1, 0, 0, 4);
+ 
+  while ((return_value= memcached_fetch(memcache, return_key, &return_key_length, &return_value_length, &flags, &rc))) {
+    memcpy(key, return_key, return_key_length);
+    key[return_key_length] = '\0';
+    memcpy(value, return_value, return_value_length);
+    value[return_value_length] = '\0';
+
+    struct json_object* entries = json_tokener_parse(value);
+    int i;
+
+    for (i = 0; i < json_object_array_length(entries); i++) {
+      struct json_object* thisentry = json_object_array_get_idx(entries, i);
+      char* thisattribute = json_object_get_string(json_object_object_get(thisentry, "attribute"));
+     
+      if (strcasecmp(thisattribute, "Username") == 0) {
+        username = json_object_get_string(json_object_object_get(thisentry, "value"));
+        strncpy (username, username + 4, (strlen(username) - 4));
+        username[strlen(username) - 4] = '\0';
+      } else if (strcasecmp(thisattribute, "ClearText-Password") == 0) {
+        cleartext_password = json_object_get_string(json_object_object_get(thisentry, "value"));
+      } else if (strcasecmp(thisattribute, "Max-Prepaid-Session") == 0) {
+        max_prepaid_session = json_object_get_string(json_object_object_get(thisentry, "value"));
+      } else {
+        log_message("Unknown attribute: %s %s %s\n", username, thisattribute, json_object_get_string(json_object_object_get(thisentry, "value")));
+      }
+    }
     print_customer(username, cleartext_password, max_prepaid_session);
+    free(return_value);
   }
 
-
-  /* release memory used to store results and close connection */
-  if (result != NULL) {
-    mysql_free_result(result);
-  }
-  if (connection != NULL) {
-    mysql_close(connection);
-  }
-#endif 
+  memcached_server_list_free(servers);
+  memcached_free(memcache);
 }
 
