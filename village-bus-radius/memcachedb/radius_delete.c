@@ -43,5 +43,6 @@ void radius_delete_memcachedb(const char* username)
   memcached_delete(memcache, username, strlen(username), 0);
   memcached_server_list_free(servers);
   memcached_free(memcache);
+  printf("\t{ count : 4 }\n");   //TODO: Change this response to accurately reflect the count of attributes affected?
 }
 

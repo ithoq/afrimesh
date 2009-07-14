@@ -45,6 +45,7 @@
 /* TODO - also support querying from mysql */
 static char* radutmp_filename = "/var/log/freeradius/radutmp";
 static char* radius_mysql_server   = "localhost";
+static char* radius_database_type   = "1";
 static char* radius_mysql_database = "radius";
 static char* radius_mysql_username = "radius";
 static char* radius_mysql_password = "radpass";
