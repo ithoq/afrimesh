@@ -21,8 +21,6 @@ function cgi_decodevar()
     return
 }
 
-
-
 # read & parse query
 QUERY=$QUERY_STRING
 if [ "$REQUEST_METHOD" = "POST" ]; then
