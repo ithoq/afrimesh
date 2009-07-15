@@ -164,7 +164,7 @@ var Map = undefined;
     /**
      * Take a B.A.T.M.A.N. link quality value and convert it to a HTML color string
      */
-    this.lq_to_color = function(lq) {
+    var lq_to_color = function(lq) {
       if (lq == "HNA") {
         return "black";
       }
@@ -178,11 +178,13 @@ var Map = undefined;
       } 
       return "lightblue";
     }
+    this.lq_to_color = lq_to_color;
     
     
-    /* event handling ----------------------------------------------------- */
+    /* event handling ----------------------------------------------------- */     
+
     function on_select_router(feature) {
-      afrimesh.network.accounting(feature.router);
+      //afrimesh.network.accounting(feature.router);
       the_map.selected = feature;
       var html = "<div class='popup'>";
 
@@ -213,19 +215,28 @@ var Map = undefined;
       var tog = 1;
       feature.router.routes.map(function (route) {
           if (route.neighbour) { 
-            if (tog == 1) {
-              html += "<tr><td>" + route.neighbour + "</td>";
+              var clor = lq_to_color(route.label);
+            if (tog == 1) {  
+              console.debug(clor  + " Here Done");
+              html += "<tr><td><span style='color:" + clor + "'>";
+              html += route.neighbour + "&nbsp;" + "(" + route.label + ")"
+              html += "</span>&nbsp" + "</td>";
               tog = 0;
             } else {
-              html += "<td>" + route.neighbour + "</td></tr>";
+              html += "<td><span style='color:" + clor + "'>"; 
+              html += route.neighbour + "&nbsp;" +"("+ route.label + ")";
+              html += "</span>&nbsp" +"</td></tr>";
               tog =1;
             }
           }
         });
+      
       html += "</table>";
-
       html+= "</span>";
       html += "</div>";
+    //var myObj = new getObj('MyText');
+
+
       var popup = new OpenLayers.Popup.AnchoredBubble("id" + feature.router.address,
                                                       feature.geometry.getBounds().getCenterLonLat(),
                                                       null, html, null, false, 
@@ -237,8 +248,8 @@ var Map = undefined;
       the_map.addPopup(popup);
 
       $("#ip").bind("click", function(event) {
-          //evil_display_overlay("http://10.216.144.1/"); 
-          evil_display_overlay("http://" + feature.router.address +"/");
+          evil_display_overlay("http://10.216.144.1/"); 
+          //evil_display_overlay("http://" + feature.router.address +"/");
         });
     };
 
@@ -253,7 +264,6 @@ var Map = undefined;
       }
     };
 
-    
     function on_select_route(feature) {
       console.debug("selected: " + feature);
     }
