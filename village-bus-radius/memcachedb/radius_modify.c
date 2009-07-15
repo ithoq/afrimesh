@@ -43,7 +43,7 @@ void radius_modify_memcachedb(const char* username, const char* new_username, co
   snprintf(temp, 50, "%s%s", "usr_", username);
   username = temp;
   memcached_st *memcached = memcached_create(NULL);
-  memcached_server_st *servers = memcached_servers_parse("localhost"); //TODO: configure this from UCI
+  memcached_server_st *servers = memcached_servers_parse(radius_mysql_server);
   memcached_return rc = memcached_server_push(memcached, servers);
 
   /* read user attributes */

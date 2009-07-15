@@ -49,7 +49,6 @@ int main(int argv, char** argc)
   if (uci_get(test, "afrimesh", "radius", "radtype")) {
     radius_database_type = malloc(1024);
     sprintf (radius_database_type, test);
-    log_message("----------------------------------THE DATABASE TYPE IS %s", test);
   }
   if (uci_get(test, "afrimesh", "radius", "database")) {
     radius_mysql_database = malloc(1024);

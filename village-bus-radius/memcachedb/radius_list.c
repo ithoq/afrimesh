@@ -53,7 +53,7 @@ void radius_list_memcachedb()
   int is_prepaid = 0;
 
   memcache = memcached_create(NULL);
-  servers = memcached_servers_parse("localhost"); //TODO: configure this from UCI
+  servers = memcached_servers_parse(radius_mysql_server);
   rc = memcached_server_push(memcache, servers);
   if (MEMCACHED_SUCCESS != rc){
     return;
