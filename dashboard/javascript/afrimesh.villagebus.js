@@ -101,7 +101,7 @@ var BootVillageBus = function (afrimesh) {
         async   : false });
   };
 
-  /** - villagebus.pmaccto out bytes data ------------------------------------------------- */
+  /** - villagebus.pmaccti in bytes data ------------------------------------------------- */
   villagebus.pmaccti = function() { 
     return this.pmaccti.sync(); 
   }; 
