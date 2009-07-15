@@ -44,6 +44,7 @@ function BootNetwork(parent) {
        console.debug("pmaccto error " + error);
     }
    router.recBytes = temp; 
+   return router;
 		
   }
 
