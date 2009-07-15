@@ -14,8 +14,9 @@ function BootNetwork(parent) {
 
   network.accounting = function(router) {
     var temp = 0;
+    var direction = "out";
     try { 
-	afrimesh.villagebus.pmaccto().map(function(host) {		
+	afrimesh.villagebus.pmacct(direction).map(function(host) {		
 	 if (router.address == host.SRC_IP) {
 	   if (typeof router.macaddr == "undefined") {	
 		router.macaddr = host.SRC_MAC;
@@ -32,8 +33,9 @@ function BootNetwork(parent) {
     }
 		router.tranBytes = temp;
 		temp = 0;
+		var direction = "in";
     try {
-	afrimesh.villagebus.pmaccti().map(function(host){		
+	afrimesh.villagebus.pmacct(direction).map(function(host){		
     	if (router.address == host.DST_IP) {
 		if (temp<parseInt(host.BYTES)){
 	  	  temp = parseInt(host.BYTES);

@@ -103,8 +103,6 @@ install-www:
 	$(INSTALL) dashboard/cgi-bin/village-bus-echo $(DASHBOARD_CGI)/village-bus-echo.kml
 	chmod 0755 $(DASHBOARD_CGI)/village-bus-echo.kml
 	$(INSTALL) dashboard/cgi-bin/village-bus-pmacct.cgi $(DASHBOARD_CGI)
-	$(INSTALL) dashboard/cgi-bin/village-bus-pmaccto.cgi $(DASHBOARD_CGI)
-	$(INSTALL) dashboard/cgi-bin/village-bus-pmaccti.cgi $(DASHBOARD_CGI)
 	# TODO $(INSTALL) dashboard/cgi-bin/pmacct $(DASHBOARD_CGI)
 	for i in $(VILLAGERS); do echo "Installing: $$i"; $(INSTALL) ./$$i/$$i $(DASHBOARD_CGI); done
 	find $(DASHBOARD_WWW) -name "*~"   | xargs rm -f
