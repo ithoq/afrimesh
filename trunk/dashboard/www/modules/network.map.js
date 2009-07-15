@@ -184,7 +184,7 @@ var Map = undefined;
     /* event handling ----------------------------------------------------- */     
 
     function on_select_router(feature) {
-      //afrimesh.network.accounting(feature.router);
+      afrimesh.network.accounting(feature.router);
       the_map.selected = feature;
       var html = "<div class='popup'>";
 
