@@ -65,73 +65,37 @@ var BootVillageBus = function (afrimesh) {
         async   : false });
   };
 
-  /** - villagebus.pmaccto out bytes data ------------------------------------------------- */
-  villagebus.pmaccto = function() { 
-    return this.pmaccto.sync(); 
+  /** - villagebus.pmacct bytes data ------------------------------------------------- */
+  villagebus.pmacct = function(direction) { 
+    return this.pmacct.sync(direction); 
   }; 
 
-  villagebus.pmaccto.url  = function() { 
+  villagebus.pmacct.url  = function() { 
    if (afrimesh.settings.internet_gateway.address == afrimesh.settings.address) {	
       return "http://" + afrimesh.settings.address+ "/cgi-bin/village-bus-pmacct.cgi"; 
     }
     return villagebus.ajax_proxy() + "http://" + afrimesh.settings.internet_gateway.address + "/cgi-bin/village-bus-pmacct.cgi"; 
   };
   
-  villagebus.pmaccto.async = function(handler) { 
+  villagebus.pmacct.async = function(handler, direction) { 
     var xml = make_json_request({
-        url     : this.url() + "?direction=out",
+        url     : this.url() + "?direction=" + direction,
         request : {},
         success : handler,
         async   : true });
     return xml;
   };
-  villagebus.pmaccto.poll = function(f, frequency) {   
+  villagebus.pmacct.poll = function(f, frequency) {   
     this.async(f);
-    setTimeout(function() { afrimesh.villagebus.pmaccto.poll(f, frequency); }, 
+    setTimeout(function() { afrimesh.villagebus.pmacct.poll(f, frequency); }, 
                frequency);
   };
-  villagebus.pmaccto.sync = function() { 
+  villagebus.pmacct.sync = function(direction) { 
     var handler  = function(data) { 
       handler.response = data;  
     };
     return make_json_request({
-        url     : this.url() + "?direction=out",
-        request : {},
-        success : handler,
-        async   : false });
-  };
-
-  /** - villagebus.pmaccti in bytes data ------------------------------------------------- */
-  villagebus.pmaccti = function() { 
-    return this.pmaccti.sync(); 
-  }; 
-
-  villagebus.pmaccti.url  = function() { 
-    if (afrimesh.settings.internet_gateway.address == afrimesh.settings.address) {	
-      return "http://" + afrimesh.settings.address+ "/cgi-bin/village-bus-pmacct.cgi"; 
-    }
-    return villagebus.ajax_proxy() + "http://" + afrimesh.settings.internet_gateway.address + "/cgi-bin/village-bus-pmacct.cgi"; 
-  };
-  
-  villagebus.pmaccti.async = function(handler) { 
-    var xml = make_json_request({
-        url     : this.url() + "?direction=in",
-        request : {},
-        success : handler,
-        async   : true });
-    return xml;
-  };
-  villagebus.pmaccti.poll = function(f, frequency) {   
-    this.async(f);
-    setTimeout(function() { afrimesh.villagebus.pmaccti.poll(f, frequency); }, 
-               frequency);
-  };
-  villagebus.pmaccti.sync = function() { 
-    var handler  = function(data) { 
-      handler.response = data;  
-    };
-    return make_json_request({
-        url     : this.url() + "?direction=in",
+        url     : this.url() + "?direction=" + direction,
         request : {},
         success : handler,
         async   : false });
