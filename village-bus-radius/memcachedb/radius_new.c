@@ -37,10 +37,8 @@ int generate_username_memcachedb (char** ret, size_t n, const char* base)
   uint32_t offset = 1;
   uint64_t value;
   char *countkey = "cnt_prepaidID";
-  
-
   memcached_st *memcache = memcached_create(NULL);
-  memcached_server_st *servers = memcached_servers_parse("localhost");
+  memcached_server_st *servers = memcached_servers_parse("localhost"); //TODO: configure this from UCI
   memcached_return rc = memcached_server_push(memcache, servers);
   memcached_increment(memcache, countkey, key_length, offset, &value);
 
@@ -63,7 +61,7 @@ int check_username_memcachedb (const char* username)
   size_t value_length;
   uint32_t flags;
   memcached_st *memcache = memcached_create(NULL);
-  memcached_server_st *servers = memcached_servers_parse("localhost");
+  memcached_server_st *servers = memcached_servers_parse("localhost"); //TODO: configure this from UCI
   memcached_return rc = memcached_server_push(memcache, servers);
   if (MEMCACHED_SUCCESS != rc){
     return -1;
@@ -94,6 +92,7 @@ void radius_new_memcachedb(const char* username, const char* type, int seconds)
 
   /* check that username is unique */
   if (check_username_memcachedb (username) != 0) {
+    printf("\t{\n\t\terror : \"The username '%s' already exists\"\n\t}\n", user_no_prefix);
     return;
   }
  
@@ -117,7 +116,7 @@ void radius_new_memcachedb(const char* username, const char* type, int seconds)
               password, user_attributes3, seconds, user_attributes4);
 
   memcached_st *memcache = memcached_create(NULL);
-  memcached_server_st *servers = memcached_servers_parse("localhost");
+  memcached_server_st *servers = memcached_servers_parse("localhost"); //TODO: configure this from UCI
   memcached_return rc = memcached_server_push(memcache, servers);
   rc = memcached_set(memcache, username, strlen(username), user_attributes, strlen(user_attributes), 0, 0);
 
