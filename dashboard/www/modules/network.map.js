@@ -179,7 +179,9 @@ var Map = undefined;
       return "lightblue";
     }
     this.lq_to_color = lq_to_color;
-    
+    <!-- HTML codes by Quackit.com - hope to see you again soon! -->
+<p style="font: 14pt/20pt Garamond, Georgia, serif;color:#ff9900;">This font is 14pt, the line height is 20pt, it's color is orange, and the font family will be 'Garamond'. If the user's computer doesn't have 'Garamond', it will use 'Georgia'. Failing that it will use the default 'serif' font on the user's computer (this is often 'Times' or 'Times Roman' - just leave it as 'serif'). You can also specify <span style="font-weight:bold;">bold text</span> and <span style="font-style:italic">italics</span> if you wish!</p>
+
     
     /* event handling ----------------------------------------------------- */     
 
@@ -187,20 +189,8 @@ var Map = undefined;
       afrimesh.network.accounting(feature.router);
       the_map.selected = feature;
       var html = "<div class='popup'>";
-
       html += "<p><span id='ip'>" + "<a href='#'>" + feature.router.address + "</a>" + "</span>&nbsp;&nbsp;";
       html += "<span id='mac'>" + (feature.router.macaddr ? feature.router.macaddr : "unknown mac")  + "</span></p><br/>";
-      if (feature.router.tranBytes) {
-	      html += "<p><span id='bytes'> Bytes transmitted: " + feature.router.tranBytes + "</span></p><br/>" ;
-      } else {
-	      //html += "<p><span id='bytes'> Bytes transmitted: No Bytes transmitted</span></p><br/>" ;
-      }
-      if (feature.router.recBytes) {
-	      html += "<p><span id='bytes'> Bytes recieved: " + feature.router.recBytes + "</span></p><br/>" ;
-      } else {
-	      //html += "<p><span id='bytes'> Bytes recieved: No Bytes recieved</span></p><br/>" ;
-      }
-
       var now = new Date();
       var last_seen = now - feature.last_seen;
       if (last_seen <= (update_frequency * 2.0)) { // UDE - this is a bit clumsy
@@ -208,6 +198,17 @@ var Map = undefined;
       } else {
         html += "<p><span id='health' style='color:red;'>node is missing</span></p>";
         html += "<p><span id='message'>last checked in " + Math.floor(last_seen / 1000) + " seconds ago</span></p>";
+      }
+      if (feature.router.recBytes) {
+	      html += "<p><span id='bytes'style='font-size:12'><span style='font-weight:bold'> In/Out: </span>&nbsp;&nbsp;";
+		html += "<span id='bytes'style='font-size:12'>" + feature.router.recBytes;
+      } else {
+	      //html += "<p><span id='bytes'> Bytes transmitted: No Bytes transmitted</span></p><br/>" ;
+      }
+      if (feature.router.tranBytes) {
+	      html += "/" + feature.router.tranBytes + "</span></p><br/>" ;
+      } else {
+	      //html += "<p><span id='bytes'> Bytes recieved: No Bytes recieved</span></p><br/>" ;
       }
       html += "<p><span id='neighbours'>";
       html+= "Neighbours";
@@ -217,7 +218,6 @@ var Map = undefined;
           if (route.neighbour) { 
               var clor = lq_to_color(route.label);
             if (tog == 1) {  
-              console.debug(clor  + " Here Done");
               html += "<tr><td><span style='color:" + clor + "'>";
               html += route.neighbour + "&nbsp;" + "(" + route.label + ")"
               html += "</span>&nbsp" + "</td>";
