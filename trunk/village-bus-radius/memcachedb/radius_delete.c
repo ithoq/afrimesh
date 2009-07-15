@@ -37,7 +37,7 @@ void radius_delete_memcachedb(const char* username)
   char temp[50];
   snprintf(temp, 50, "%s%s", "usr_", username);
   memcached_st *memcache = memcached_create(NULL);
-  memcached_server_st *servers = memcached_servers_parse("localhost"); //TODO: configure this from UCI
+  memcached_server_st *servers = memcached_servers_parse(radius_mysql_server);
   memcached_server_push(memcache, servers);
   username = temp;
   memcached_delete(memcache, username, strlen(username), 0);
