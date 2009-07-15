@@ -79,7 +79,8 @@ var populate_control = undefined;
    */
   function on_customer_save() {
     var username = $("#widget-customers-manage input#username").val();
-    var ret = afrimesh.customers.generate(username, "flatrate", 0);
+    var selected_type = $("#user_type option:selected").val();
+    var ret = afrimesh.customers.generate(username, selected_type, 0);
     console.debug("Inserted: " + ret);
     $("ul#menu ul#customers li#manage").click();
   };
