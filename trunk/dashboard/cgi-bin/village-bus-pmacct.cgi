@@ -8,7 +8,6 @@ DIRECTION=`echo "$QUERY_STRING" | grep -oE "(^|[?&])direction=[^&]+" | sed "s/%2
 
 echo "Content-type: application/json"
 echo
-
 if [ $DIRECTION == "out" ]
 then
 pmacct -j -p /tmp/out.pipe

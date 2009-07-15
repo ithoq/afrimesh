@@ -71,15 +71,15 @@ var BootVillageBus = function (afrimesh) {
   }; 
 
   villagebus.pmaccto.url  = function() { 
-    if (afrimesh.settings.internet_gateway.address == afrimesh.settings.address) {	
+   //if (afrimesh.settings.internet_gateway.address == afrimesh.settings.address) {	
       return "http://" + afrimesh.settings.address+ "/cgi-bin/village-bus-pmacct.cgi"; 
-    }
-    return villagebus.ajax_proxy() + "http://" + afrimesh.settings.internet_gateway.address + "/cgi-bin/village-bus-pmacct.cgi"; 
+   // }
+    //return villagebus.ajax_proxy() + "http://" + afrimesh.settings.internet_gateway.address + "/cgi-bin/village-bus-pmacct.cgi"; 
   };
   
   villagebus.pmaccto.async = function(handler) { 
     var xml = make_json_request({
-        url     : this.url() + "/direction=in",
+        url     : this.url() + "?direction=out",
         request : {},
         success : handler,
         async   : true });
@@ -95,7 +95,7 @@ var BootVillageBus = function (afrimesh) {
       handler.response = data;  
     };
     return make_json_request({
-        url     : this.url() + "/direction=in",
+        url     : this.url() + "?direction=out",
         request : {},
         success : handler,
         async   : false });
@@ -107,15 +107,15 @@ var BootVillageBus = function (afrimesh) {
   }; 
 
   villagebus.pmaccti.url  = function() { 
-    if (afrimesh.settings.internet_gateway.address == afrimesh.settings.address) {	
+    //if (afrimesh.settings.internet_gateway.address == afrimesh.settings.address) {	
       return "http://" + afrimesh.settings.address+ "/cgi-bin/village-bus-pmacct.cgi"; 
-    }
-    return villagebus.ajax_proxy() + "http://" + afrimesh.settings.internet_gateway.address + "/cgi-bin/village-bus-pmacct.cgi"; 
+    //}
+    //return villagebus.ajax_proxy() + "http://" + afrimesh.settings.internet_gateway.address + "/cgi-bin/village-bus-pmacct.cgi"; 
   };
   
   villagebus.pmaccti.async = function(handler) { 
     var xml = make_json_request({
-        url     : this.url() + "/direction=out",
+        url     : this.url() + "?direction=in",
         request : {},
         success : handler,
         async   : true });
@@ -131,7 +131,7 @@ var BootVillageBus = function (afrimesh) {
       handler.response = data;  
     };
     return make_json_request({
-        url     : this.url() + "/direction=out",
+        url     : this.url() + "?direction=in",
         request : {},
         success : handler,
         async   : false });
