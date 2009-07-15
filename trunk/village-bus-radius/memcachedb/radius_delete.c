@@ -37,12 +37,12 @@ void radius_delete_memcachedb(const char* username)
   char temp[50];
   snprintf(temp, 50, "%s%s", "usr_", username);
   memcached_st *memcache = memcached_create(NULL);
-  memcached_server_st *servers = memcached_servers_parse("localhost");
+  memcached_server_st *servers = memcached_servers_parse("localhost"); //TODO: configure this from UCI
   memcached_server_push(memcache, servers);
   username = temp;
   memcached_delete(memcache, username, strlen(username), 0);
   memcached_server_list_free(servers);
   memcached_free(memcache);
-  printf("\t{ count : 4 }\n");   //TODO: Change this response to accurately reflect the count of attributes affected?
+  printf("\t{ count : 1 }\n");   //TODO: Change this response to accurately reflect the count of attributes affected?
 }
 

@@ -50,11 +50,11 @@ void radius_list_memcachedb()
   char* username = NULL;
   char* cleartext_password = NULL;
   char* max_prepaid_session = NULL;
+  int is_prepaid = 0;
 
   memcache = memcached_create(NULL);
-  servers = memcached_servers_parse("localhost");
+  servers = memcached_servers_parse("localhost"); //TODO: configure this from UCI
   rc = memcached_server_push(memcache, servers);
-  //memcached_delete (memcache,"usr_antoine", 11, 0);
   if (MEMCACHED_SUCCESS != rc){
     return;
   }
@@ -85,12 +85,18 @@ void radius_list_memcachedb()
       } else if (strcasecmp(thisattribute, "ClearText-Password") == 0) {
         cleartext_password = json_object_get_string(json_object_object_get(thisentry, "value"));
       } else if (strcasecmp(thisattribute, "Max-Prepaid-Session") == 0) {
+        is_prepaid = 1;
         max_prepaid_session = json_object_get_string(json_object_object_get(thisentry, "value"));
       } else {
         log_message("Unknown attribute: %s %s %s\n", username, thisattribute, json_object_get_string(json_object_object_get(thisentry, "value")));
       }
     }
-    print_customer(username, cleartext_password, max_prepaid_session);
+    if (is_prepaid == 1) {
+      is_prepaid = 0;
+      print_customer(username, cleartext_password, max_prepaid_session);
+    } else {
+      print_customer(username, cleartext_password, NULL);
+    }
     free(return_value);
   }
 

@@ -37,14 +37,13 @@
  */
 void radius_modify_memcachedb(const char* username, const char* new_username, const char* new_password, const char* new_type)
 { 
-  unsigned long count = 0;
   char user_no_prefix [50];
   snprintf (user_no_prefix, 50, username);
   char temp[50];
   snprintf(temp, 50, "%s%s", "usr_", username);
   username = temp;
   memcached_st *memcached = memcached_create(NULL);
-  memcached_server_st *servers = memcached_servers_parse("localhost");
+  memcached_server_st *servers = memcached_servers_parse("localhost"); //TODO: configure this from UCI
   memcached_return rc = memcached_server_push(memcached, servers);
 
   /* read user attributes */
@@ -73,7 +72,6 @@ void radius_modify_memcachedb(const char* username, const char* new_username, co
     if (strcasecmp(thisattribute, "Username") == 0) {
       snprintf(tempstr, 1024, newval);
       if (new_username) {
-        count++;
         snprintf(newval, 1024, "%s{ \"attribute\" : \"Username\", \"operation\" : \":=\", \"value\" : \"%s%s\" },", 
           tempstr, "usr_", new_username);
       } else {
@@ -84,7 +82,6 @@ void radius_modify_memcachedb(const char* username, const char* new_username, co
       snprintf(tempstr, 1024, newval);
       char *cleartext_password = json_object_get_string(json_object_object_get(thisentry, "value"));
       if (new_password) {
-        count++;
         snprintf(newval, 1024, "%s{ \"attribute\" : \"ClearText-Password\", \"operation\" : \":=\", \"value\" : \"%s\" },", 
          tempstr, new_password);
       } else {
@@ -93,7 +90,7 @@ void radius_modify_memcachedb(const char* username, const char* new_username, co
       }
     } else if (strcasecmp(thisattribute, "Max-Prepaid-Session") == 0) {
         has_prepaid_attribute = 1;
-        if ((!new_type) || (strcasecmp(new_type, "prepaid") == 0)) {
+        if ((strcasecmp(new_type, "flatrate") != 0) && (strcasecmp(new_type, "disabled") != 0)) {
           snprintf(tempstr, 1024, newval);
           char *max_prepaid_session = json_object_get_string(json_object_object_get(thisentry, "value"));
           snprintf(newval, 1024, "%s{ \"attribute\" : \"Max-Prepaid-Session\", \"operation\" : \":=\", \"value\" : \"%s\" }", 
@@ -102,7 +99,7 @@ void radius_modify_memcachedb(const char* username, const char* new_username, co
     }
   }
 
-  if (new_type && (strcasecmp(new_type, "prepaid") == 0) && !has_prepaid_attribute) {
+  if (new_type && (strcasecmp(new_type, "prepaid") == 0) && (has_prepaid_attribute == 0)) {
     snprintf(tempstr, 1024, newval);
     snprintf(newval, 1024, "%s{ \"attribute\" : \"Max-Prepaid-Session\", \"operation\" : \":=\", \"value\" : \"3600\" }", 
         tempstr);
@@ -126,15 +123,14 @@ void radius_modify_memcachedb(const char* username, const char* new_username, co
   }
 
   ret = memcached_set(memcached, username, strlen(username), newval, strlen(newval), 0, 0);
-char* newattributes = memcached_get(memcached, username, strlen(username), &value_length, &flags, &ret);
 
   if (ret != MEMCACHED_SUCCESS) {
     printf("{ error : \"Failed to change user attribute\" }");
     return;
   }
-  printf("\t{ count : %d }\n", count);
   memcached_server_list_free(servers);
   memcached_free(memcached);
+  printf("\t{ count : 1 }\n");
 }
 
 
