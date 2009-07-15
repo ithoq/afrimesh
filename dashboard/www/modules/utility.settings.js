@@ -131,7 +131,11 @@ var LocationMap = null;
           options.restrictedExtent.extend(LonLat(longitude - extent, latitude - extent));
           options.restrictedExtent.extend(LonLat(longitude + extent, latitude + extent));
           var map = new OpenLayers.Map(id, options);
-          map.addLayers([ new OpenLayers.Layer.OSM.CycleMap("Relief Map") ]);
+          if (afrimesh.settings.map.server == "openstreetmaps.org") { // TODO afrimesh.settings.map.server == afrimesh.settings.map.server.default
+            map.addLayers([ new OpenLayers.Layer.OSM.CycleMap("Relief Map") ]);
+          } else {
+            map.addLayers([ new OpenLayers.Layer.OSM.LocalMap("Relief Map", "http://" + afrimesh.settings.map.server + "/tiles/") ]);
+          }
           map.addControl(new OpenLayers.Control.Attribution());
           map.addControl(new OpenLayers.Control.MousePosition());
           map.addControl(new OpenLayers.Control.ScaleLine());

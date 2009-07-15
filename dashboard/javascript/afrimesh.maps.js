@@ -38,6 +38,29 @@ function Point(longitude, latitude) {
 };
 
 
+/**
+ * Class: OpenLayers.Layer.OSM.LocalMap
+ *
+ * Inherits from:
+ *  - <OpenLayers.Layer.OSM>
+ */
+OpenLayers.Layer.OSM.LocalMap = OpenLayers.Class(OpenLayers.Layer.OSM, {
+    /**
+     * Constructor: OpenLayers.Layer.OSM.LocalMap
+     *
+     * Parameters:
+     * name - {String}
+     * url - {String}
+     * options - {Object} Hashtable of extra options to tag onto the layer
+     */
+    initialize: function(name, url, options) {
+      url = [ url ];
+      options = OpenLayers.Util.extend({ numZoomLevels: 20 }, options);
+      var newArguments = [ name, url, options ];
+      OpenLayers.Layer.OSM.prototype.initialize.apply(this, newArguments);
+    },
+    CLASS_NAME: "OpenLayers.Layer.OSM.LocalMap"
+});
 
 
 console.debug("loaded afrimesh.maps.js");
