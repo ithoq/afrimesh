@@ -21,9 +21,9 @@ sudo make install
   * Ensure that Berkeley DB 4.7 or later
  and libevent 1.3e or later are installed
 
-  * Check out memcachedb source from http://memcachedb.googlecode.com/svn/trunk/memcachedb-read-only
+  * Check out memcachedb source from http://memcachedb.googlecode.com/svn/trunk/
 {{{
-svn checkout http://memcachedb.googlecode.com/svn/trunk/memcachedb-read-only
+svn checkout http://memcachedb.googlecode.com/svn/trunk/ memcachedb-read-only
 }}}
 
   * In the memcachedb-read-only directory, run the configuration
