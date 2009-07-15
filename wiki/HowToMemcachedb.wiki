@@ -2,7 +2,7 @@
 
 *Installing libmemcached*
   * Check out libmemcached source from http://memcachedb.googlecode.com/svn/clients/libmemcached-0.25-patch/
-*It is important to use this patched version of libmemcached, as it is currently the only release to support the "rget" command*
+_It is important to use this patched version of libmemcached, as it is currently the only release to support the "rget" command_
 {{{
 svn checkout http://memcachedb.googlecode.com/svn/clients/libmemcached-0.25-patch/
 }}}
@@ -19,8 +19,8 @@ sudo make install
 
 *Installing memcachedb and setting up a server*
 
-  * Ensure that Berkeley DB 4.7 or later
- and libevent 1.3e or later are installed
+  * Ensure that Berkeley DB 4.7 or later and
+  libevent 1.3e or later are installed
 
   * Check out memcachedb source from http://memcachedb.googlecode.com/svn/trunk/
 {{{
