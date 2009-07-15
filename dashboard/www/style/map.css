@@ -29,11 +29,12 @@ div#network-map .popup #message {
 div#network-map .popup #neighbours { 
   color: yellow;
   font-size: 125%
-  margin-bottom: 100px;
-  margin-top: 100px;
+  margin-bottom: 50px;
+  margin-top: 50px;
 }
 
 div#network-map .popup #neighbours table, tr, td { 
+  font-size: 90%;
   margin: 0px;
   padding: 0px;
   padding-right: 10px;
