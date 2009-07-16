@@ -179,9 +179,6 @@ var Map = undefined;
       return "lightblue";
     }
     this.lq_to_color = lq_to_color;
-    <!-- HTML codes by Quackit.com - hope to see you again soon! -->
-<p style="font: 14pt/20pt Garamond, Georgia, serif;color:#ff9900;">This font is 14pt, the line height is 20pt, it's color is orange, and the font family will be 'Garamond'. If the user's computer doesn't have 'Garamond', it will use 'Georgia'. Failing that it will use the default 'serif' font on the user's computer (this is often 'Times' or 'Times Roman' - just leave it as 'serif'). You can also specify <span style="font-weight:bold;">bold text</span> and <span style="font-style:italic">italics</span> if you wish!</p>
-
     
     /* event handling ----------------------------------------------------- */     
 
