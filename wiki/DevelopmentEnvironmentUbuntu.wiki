@@ -30,6 +30,11 @@ Run as required:
   {{{
   apt-get install wget
   }}}
+  * memcachedb
+  {{{
+  apt-get install libevent1
+  apt-get install memcachedb
+  }}}
 
 
 ----
@@ -41,7 +46,7 @@ Also:
   echo "deb http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu hardy main" >> /etc/apt/sources.list 
   apt-get update
 
-  apt-get install json-c-dev uci-dev
+  apt-get install json-c-dev uci-dev libmemcachedb
   }}}
 
 ----
