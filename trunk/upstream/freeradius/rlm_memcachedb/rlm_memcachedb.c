@@ -110,7 +110,6 @@ static char* db_set(const char* key, const char* value)
              memcached_strerror(memcached, ret), 
              ((memcached->cached_errno) ? strerror(memcached->cached_errno) : ""));
   }
-
   /* release libmemcachedb */
   if (memcached) {
     free (memcached); 
@@ -142,31 +141,6 @@ static char* get_json_value (char* jsonstr, char* attribute)
   }
   return value;
 }
-
-/*
- *  Helper function to parse a json string and set a value for a specified attribute
- */
-/*static void set_json_value (char* jsonstr, char* attribute, char* value)
-{
-  //char *value;
-  int i;
-  struct json_object* entries = json_tokener_parse(jsonstr);
-  
-  if (entries == NULL) {
-    return NULL;
-  }
-
-  for (i = 0; i < json_object_array_length(entries); i++) {
-      struct json_object* thisentry = json_object_array_get_idx(entries, i);
-      char* thisattribute = json_object_get_string(json_object_object_get(thisentry, "attribute"));
-     
-      if (strcmp(thisattribute, attribute) == 0) {
-        value = json_object_get_string(json_object_object_get(thisentry, "value"));
-        break;
-      }
-  }
-  return value;
-}*/
 
 /*
  *	Map config data to variables
@@ -226,14 +200,15 @@ static int memcachedb_authenticate (void *instance, REQUEST *request)
   }
 
   /* check whether user is in the database */
-  char* memcached_user = db_get(request->username->vp_strvalue);
+  char temp[50];
+  snprintf(temp, 50, "%s%s", "usr_", (request->username->vp_strvalue));
+  char* memcached_user = db_get(temp);
 
   if (!memcached_user) {
     RDEBUG ("Rejecting authorization request - username does not exist.");
     free(memcached_user);
     return RLM_MODULE_REJECT;
   }
-
   RDEBUG ("Username \"%s\" matched. Checking password.", request->username->vp_strvalue);
 
   /* parse password from value in memcachedb */
@@ -255,15 +230,18 @@ static int memcachedb_authorize (void *instance, REQUEST *request)
 {
   char auth_msg [1024];
   char *max_prepaid_session;
-  char *username = db_get(request->username->vp_strvalue);
+  char temp[50];
+  snprintf(temp, 50, "%s%s", "usr_", request->username->vp_strvalue);
+  char *username = db_get(temp);
 
   if (username != NULL) {
-    char *max_prepaid_session = get_json_value (db_get(request->username->vp_strvalue), "Max-Prepaid-Session");
-    sprintf (auth_msg, "%s", max_prepaid_session);
-    VALUE_PAIR *vp = pairmake("Max-Prepaid-Session", auth_msg, T_OP_SET);
-    pairadd(&request->config_items, vp);
+    char *max_prepaid_session = get_json_value (db_get(temp), "Max-Prepaid-Session");
+    if (max_prepaid_session) {
+      sprintf (auth_msg, "%s", max_prepaid_session);
+      VALUE_PAIR *vp = pairmake("Max-Prepaid-Session", auth_msg, T_OP_SET);
+      pairadd(&request->config_items, vp);
+    }
   }
-
   rlm_memcachedb_t *inst = instance;
   VALUE_PAIR *valp = radius_paircreate(request, &request->config_items, PW_AUTH_TYPE, PW_TYPE_INTEGER);
   valp->vp_integer = inst->auth_type;
