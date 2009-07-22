@@ -32,8 +32,8 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ------------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=279
-PKG_VERSION:=r$(PKG_REV)-0.2alpha
+PKG_REV:=430
+PKG_VERSION:=r$(PKG_REV)-0.3alpha
 PKG_RELEASE:=1
 
 LOCAL_SOURCES:=../../../
@@ -165,6 +165,21 @@ define Package/afrimesh-webif/install
 	$(INSTALL_DIR)  $(1)/www/cgi-bin
 endef
 
+# - afrimesh-potato -----------------------------------------------------------
+define Package/afrimesh-potato
+	SECTION:=admin
+	CATEGORY:=Administration
+	DEPENDS:=+afrimesh-base
+	TITLE:=Web interface for the Mesh Potato
+endef
+
+define Package/afrimesh-potato/description
+	Web interface for the Mesh Potato
+endef
+
+define Package/afrimesh-potato/install
+	$(INSTALL_DIR)  $(1)/www/cgi-bin
+endef
 
 # - afrimesh-dashboard -------------------------------------------------------
 define Package/afrimesh-dashboard
@@ -213,5 +228,6 @@ $(eval $(call BuildPackage,afrimesh-base))
 $(eval $(call BuildPackage,afrimesh-config))
 $(eval $(call BuildPackage,afrimesh-portal))
 $(eval $(call BuildPackage,afrimesh-webif))
+$(eval $(call BuildPackage,afrimesh-potato))
 $(eval $(call BuildPackage,afrimesh-dashboard))
 
