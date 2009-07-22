@@ -87,7 +87,7 @@
           $("ul#menu ul#" + section + " li#" + item).click(function(event) {
               unloader(); 
               $("div#content").hide();
-              $("div#content").load("modules/" + section + "." + item + ".html", function(page) { 
+              $("div#content").load("modules/" + section + "." + item.split("-").join(".") + ".html", function(page) { 
                   $("div#content").fadeIn("slow"); 
                   unloader = ready(); // UDE fades mess with load completion and require a ready() method :(
                 });
