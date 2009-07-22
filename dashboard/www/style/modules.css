@@ -118,14 +118,18 @@ td.v-brace {
 
 
 /* - customers-recharge module -------------------------------------------- */
-.customers-recharge      { margin: 1em;  }
+.customers-recharge      { margin: 1em; }
 
-.customers-recharge td.spacer { width: 2em; }
+/*.customers-recharge div { border: 1px solid green; }
+.customers-recharge td  { border: 1px solid red;   }*/
+
+.customers-recharge td.spacer { width: 0em; height: 1em; }
 
 .customers-recharge div.button, div.button-submit {
   background: lightgray;
-  /*border: 1px solid gray;*/
-  float: left;
+  margin-left: 10px;
+  /*border: 1px solid green;
+  float: left;*/
   cursor: hand;  /* TODO firefox */
 }
 .customers-recharge div.button-submit {
@@ -144,7 +148,7 @@ td.v-brace {
   background: gray;
 }
 .customers-recharge div.button p, div.button-submit p {
-  padding: 10px;
+  padding: 10px; 
   text-align: center;
 }
 .customers-recharge div.button p b, div.button-submit p b { 
@@ -229,15 +233,20 @@ form.two-column legend {
   padding-bottom: .25em;
 }
 form.two-column label {
-  /*border: 1px solid blue;*/
   color: darkgray; 
   float:left;
   width: 200px;
 }
-form.two-column input, select {
+form.two-column input, select  {
   margin-bottom: .5em;
   display:block;
   width: 200px;
+}
+input[type=checkbox] {  /* aaaaaaaaaargh */
+  margin-bottom: .5em;
+  display: block;
+  margin-left: 197px;
+  margin-top: 8px;
 }
 form.two-column #location {
   /*width: 50%;*/

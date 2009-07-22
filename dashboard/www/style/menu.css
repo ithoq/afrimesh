@@ -42,7 +42,7 @@
   background: #72839d;
   height: 45px;
   padding: 0px;
-  width: 30px; 
+  width: 60px; 
 } 
 #menu ul {                               /* the menu dropdown */ 
   background:#72839d;
@@ -80,13 +80,14 @@
 }
 
 
-/* utility menu */
-#menu #utility {          /* utility menu container */
+/* right-hand help menu */
+#menu #help {          /* right-hand menu container */
   top: -9px;
-  left: -120px;
+  left: -90px;
 }
-#menu #utility li {       /* utility menu item */
+#menu #help li {       /* right-hand menu item */
   text-align: right;
+  margin-right: 20px;
 }
 
 

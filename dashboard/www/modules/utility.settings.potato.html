@@ -1,0 +1,107 @@
+<!--
+ * Afrimesh: easy management for B.A.T.M.A.N. wireless mesh networks
+ * Copyright (C) 2008-2009 Meraka Institute of the CSIR
+ * All rights reserved.
+ *  
+ * This software is licensed as free software under the terms of the
+ * New BSD License. See /LICENSE for more information.
+-->
+
+<!-- h2>Settings</h2 -->
+
+<form class="two-column">
+  <fieldset>
+    <legend>Addressing</legend>
+
+    <label for="afrimesh|settings|network|wireless|address">Mesh IP Address</label>
+    <input  id="afrimesh|settings|network|wireless|address" />
+    <div class="tooltip"><h3>ip address</h3></div>
+
+  </fieldset>
+
+  <fieldset>
+    <legend>Network</legend>
+    
+    <label for="afrimesh|settings|network|wireless|netmask">Netmask</label>
+    <input  id="afrimesh|settings|network|wireless|netmask" />
+    <div class="tooltip"><h3>netmask</h3></div>
+
+    <label for="afrimesh|settings|network|wireless|channel">Channel</label>
+    <input  id="afrimesh|settings|network|wireless|channel" />
+    <div class="tooltip"><h3>channel</h3></div>
+
+    <label for="afrimesh|settings|network|wireless|ssid">SSID</label>
+    <input  id="afrimesh|settings|network|wireless|ssid" />
+    <div class="tooltip"><h3>ssid</h3></div>
+
+    <label for="afrimesh|settings|network|wireless|bssid">BSSID</label>
+    <input  id="afrimesh|settings|network|wireless|bssid" />
+    <div class="tooltip"><h3>bssid</h3></div -->
+
+
+    <label for="autoconfig">Automatic Configuration</label>
+    <input  id="autoconfig" type="checkbox" />
+    <div class="tooltip"><h3>automatic configuration</h3></div>
+
+  </fieldset>
+</form>
+
+
+<script type="text/javascript"> //<![CDATA[    
+(function() {
+
+  /** includes ------------------------------------------------------------ */
+  load("modules/utility.settings.js"); 
+
+
+  /** construction -------------------------------------------------------- */
+  ready = function() { // INJ 'ready' should be the only symbol we're exposing to the global namespace
+    console.debug("loaded utility.settings.html");
+
+    populate_dom();
+
+    /** install tooltips -------------------------------------------------- */
+    $("input.[id*=afrimesh]").tooltip({
+        position : ['bottom', 'right'],   // place tooltip on the right edge 
+        offset   : [-20, 20],             // a little tweaking of the position 
+        effect   : 'toggle',              // use a simple show/hide effect 
+        opacity  : 0.8                    // custom opacity setting 
+      });
+
+    /** install callbacks to save settings -------------------------------- */
+    function save_element(id, value) {
+      return (Q(afrimesh, id) != value) ? afrimesh.settings.save(id, value) : null;
+    };
+    $("input.[id*=afrimesh|settings]").bind("blur", function(event) {
+        console.debug("Saving Setting: " + this.id + " -> " + this.value);
+        save_element(this.id, this.value);
+        populate_dom();
+      });
+    $("input.[id*=afrimesh|settings]").bind("keypress", function(event) {
+	      if (event.keyCode == 13) {
+	        console.debug("Saving Setting: " + this.id + " -> " + this.value);
+          save_element(this.id, this.value);
+          populate_dom();
+ 	      } 
+      });
+    $("select.[id*=afrimesh|settings]").bind("blur", function(event) { 
+        save_element(this.id, this.value); 
+    });
+
+    /** round corners ------------------------------------------------------ */
+    $(".tooltip").corner("tr 8px bl 8px br 8px");
+
+    return unload;
+  };
+
+  function unload() {
+    console.debug("unloaded utility.settings.html");
+  };
+
+  /** done ---------------------------------------------------------------- */
+  console.debug("loaded utility.settings.js");
+ 
+})();
+//]]></script>
+
+
