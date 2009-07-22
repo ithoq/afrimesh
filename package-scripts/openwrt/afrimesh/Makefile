@@ -52,7 +52,6 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_SOURCE_SUBDIR)
 #PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 
 
-
 COMPILE_COMMAND:=	$(TARGET_CC) $(TARGET_CFLAGS) \
                 -DDISABLE_LOG \
                 -D_METAPACK \
@@ -88,7 +87,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/afrimesh-base
 	SECTION:=admin
 	CATEGORY:=Administration
-	DEPENDS:=+busybox +libuci +libjson +batmand
+	DEPENDS:=+busybox +libuci +libjson +batmand	
 	TITLE:=Easy management for B.A.T.M.A.N. wireless mesh networks
 	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
 endef
@@ -169,7 +168,7 @@ endef
 define Package/afrimesh-potato
 	SECTION:=admin
 	CATEGORY:=Administration
-	DEPENDS:=+afrimesh-base
+	DEPENDS:=+afrimesh-base +luci-admin-full
 	TITLE:=Web interface for the Mesh Potato
 endef
 
@@ -179,6 +178,28 @@ endef
 
 define Package/afrimesh-potato/install
 	$(INSTALL_DIR)  $(1)/www/cgi-bin
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/cgi-bin/ajax-proxy.cgi   $(1)/www/cgi-bin
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/cgi-bin/village-bus-echo $(1)/www/cgi-bin/village-bus-echo.kml
+	$(INSTALL_DIR)  $(1)/www/javascript
+	$(INSTALL_DIR)  $(1)/www/javascript/jquery
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/jquery/*      $(1)/www/javascript/jquery
+	$(INSTALL_DIR)  $(1)/www/javascript/openlayers
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/openlayers/*  $(1)/www/javascript/openlayers
+	$(INSTALL_DIR)  $(1)/www/javascript/yahoo
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/yahoo/*       $(1)/www/javascript/yahoo
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/afrimesh*.js  $(1)/www/javascript
+	$(INSTALL_DIR)  $(1)/www/modules
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/*.html       $(1)/www/modules
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/*.js         $(1)/www/modules
+	$(INSTALL_DIR)  $(1)/www/style
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/*.css          $(1)/www/style
+	$(INSTALL_DIR)  $(1)/www/style/images
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/images/*.gif   $(1)/www/style/images
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/images/*.png   $(1)/www/style/images
+	$(INSTALL_DIR)  $(1)/www/images
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/images/*.gif         $(1)/www/images
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/images/*.png         $(1)/www/images
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/index.potato.html    $(1)/www/index.html
 endef
 
 # - afrimesh-dashboard -------------------------------------------------------
