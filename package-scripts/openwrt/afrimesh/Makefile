@@ -101,7 +101,7 @@ define Package/afrimesh-base/install
 	$(INSTALL_DIR)  $(1)/www/cgi-bin
 	$(INSTALL_BIN)  ./files/etc/firewall.afrimesh $(1)/etc
 	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/village-bus-uci/village-bus-uci $(1)/www/cgi-bin/village-bus-uci
-	$(INSTALL_DATA) ./files/etc/config/afrimesh $(1)/etc/config
+ 	$(INSTALL_DATA) ./files/etc/config/afrimesh $(1)/etc/config
 endef
 
 
@@ -201,6 +201,8 @@ define Package/afrimesh-potato/install
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/images/*.gif         $(1)/www/images
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/images/*.png         $(1)/www/images
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/index.potato.html    $(1)/www/index.html
+	$(INSTALL_DIR)  $(1)/etc/config
+ 	$(INSTALL_DATA) ./files/etc/config/afrimesh.potato $(1)/etc/config/afrimesh
 endef
 
 # - afrimesh-dashboard -------------------------------------------------------
