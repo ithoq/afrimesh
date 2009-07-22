@@ -32,7 +32,7 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ------------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=436
+PKG_REV:=439
 PKG_VERSION:=r$(PKG_REV)-0.3alpha
 PKG_RELEASE:=1
 
@@ -181,14 +181,15 @@ define Package/afrimesh-potato/install
 	$(INSTALL_DIR)  $(1)/etc
 	$(INSTALL_DIR)  $(1)/etc/config
 	$(INSTALL_DATA) ./files.potato/etc/config/afrimesh $(1)/etc/config
+	$(INSTALL_DIR)  $(1)/www
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/index.potato.html    $(1)/www/index.html
 	$(INSTALL_DIR)  $(1)/www/cgi-bin
-	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/village-bus-uci/village-bus-uci $(1)/www/cgi-bin/village-bus-uci
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/cgi-bin/ajax-proxy.cgi   $(1)/www/cgi-bin
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/cgi-bin/village-bus-echo $(1)/www/cgi-bin/village-bus-echo.kml
+	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/village-bus-uci/village-bus-uci    $(1)/www/cgi-bin/village-bus-uci
+	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/dashboard/cgi-bin/ajax-proxy.cgi   $(1)/www/cgi-bin
+	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/dashboard/cgi-bin/village-bus-echo $(1)/www/cgi-bin/village-bus-echo.kml
 	$(INSTALL_DIR)  $(1)/www/images
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/images/*.gif         $(1)/www/images
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/images/*.png         $(1)/www/images
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/index.potato.html    $(1)/www/index.html
 	$(INSTALL_DIR)  $(1)/www/javascript
 	$(INSTALL_DIR)  $(1)/www/javascript/jquery
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/jquery/*      $(1)/www/javascript/jquery
