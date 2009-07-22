@@ -38,11 +38,11 @@ function BootSettings(parent, address) {
     "afrimesh|settings|locale"       : { remote : "afrimesh|settings|locale",        init : "en_US.UTF-8"  },
     "afrimesh|settings|ajax_proxy"   : { remote : "afrimesh|settings|ajax_proxy",    init : "/cgi-bin/ajax-proxy.cgi?url=" },
 
-    "afrimesh|settings|network|wireless|address"  : { remote : "network|wifi|ipaddr",      init : "1.1.1.1" },
-    "afrimesh|settings|network|wireless|netmask"  : { remote : "network|wifi|netmask",     init : "255.0.0.0" },
+    "afrimesh|settings|network|wireless|address"  : { remote : "network|wifi0|ipaddr",      init : "1.1.1.1" },
+    "afrimesh|settings|network|wireless|netmask"  : { remote : "network|wifi0|netmask",     init : "255.0.0.0" },
     "afrimesh|settings|network|wireless|channel"  : { remote : "wireless|wifi0|channel",   init : "13" },
-    "afrimesh|settings|network|wireless|ssid"     : { remote : "wireless|cfg0292b5|ssid",  init : "potato" },
-    "afrimesh|settings|network|wireless|bssid"    : { remote : "wireless|cfg0292b5|bssid", init : "02:CA:FF:EE:BA:BE" },
+    "afrimesh|settings|network|wireless|ssid"     : { remote : "wireless|cfg03d398|ssid",  init : "potato" },
+    "afrimesh|settings|network|wireless|bssid"    : { remote : "wireless|cfg03d398|bssid", init : "02:CA:FF:EE:BA:BE" },
 
     "afrimesh|settings|hosts|dashboard_server"  : { remote : "afrimesh|dashboard|dashboard_server",  init : "default.dashboard.server"  },
     "afrimesh|settings|hosts|batman_vis_server" : { remote : "afrimesh|dashboard|visualisation_srv", init : "default.vis.server" },  // TODO - pull this from batmand conf file rather
