@@ -32,7 +32,7 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ------------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=432
+PKG_REV:=434
 PKG_VERSION:=r$(PKG_REV)-0.3alpha
 PKG_RELEASE:=1
 
@@ -97,11 +97,12 @@ define Package/afrimesh-base/description
 endef
 
 define Package/afrimesh-base/install
-	$(INSTALL_DIR)  $(1)/etc/config
-	$(INSTALL_DIR)  $(1)/www/cgi-bin
+	$(INSTALL_DIR)  $(1)/etc
 	$(INSTALL_BIN)  ./files/etc/firewall.afrimesh $(1)/etc
+	$(INSTALL_DIR)  $(1)/etc/config
+	$(INSTALL_DATA) ./files/etc/config/afrimesh $(1)/etc/config
+	$(INSTALL_DIR)  $(1)/www/cgi-bin
 	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/village-bus-uci/village-bus-uci $(1)/www/cgi-bin/village-bus-uci
- 	$(INSTALL_DATA) ./files/etc/config/afrimesh $(1)/etc/config
 endef
 
 
@@ -168,8 +169,7 @@ endef
 define Package/afrimesh-potato
 	SECTION:=admin
 	CATEGORY:=Administration
-	#DEPENDS:=+afrimesh-base +luci-admin-full
-	DEPENDS:=+afrimesh-base 
+	DEPENDS:=+busybox +libuci +libjson +batmand	
 	TITLE:=Web interface for the Mesh Potato
 endef
 
@@ -178,9 +178,17 @@ define Package/afrimesh-potato/description
 endef
 
 define Package/afrimesh-potato/install
+	$(INSTALL_DIR)  $(1)/etc
+	$(INSTALL_DIR)  $(1)/etc/config
+	$(INSTALL_DATA) ./files.potato/etc/config/afrimesh $(1)/etc/config/afrimesh
 	$(INSTALL_DIR)  $(1)/www/cgi-bin
+	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/village-bus-uci/village-bus-uci $(1)/www/cgi-bin/village-bus-uci
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/cgi-bin/ajax-proxy.cgi   $(1)/www/cgi-bin
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/cgi-bin/village-bus-echo $(1)/www/cgi-bin/village-bus-echo.kml
+	$(INSTALL_DIR)  $(1)/www/images
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/images/*.gif         $(1)/www/images
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/images/*.png         $(1)/www/images
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/index.potato.html    $(1)/www/index.html
 	$(INSTALL_DIR)  $(1)/www/javascript
 	$(INSTALL_DIR)  $(1)/www/javascript/jquery
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/jquery/*      $(1)/www/javascript/jquery
@@ -197,12 +205,6 @@ define Package/afrimesh-potato/install
 	$(INSTALL_DIR)  $(1)/www/style/images
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/images/*.gif   $(1)/www/style/images
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/images/*.png   $(1)/www/style/images
-	$(INSTALL_DIR)  $(1)/www/images
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/images/*.gif         $(1)/www/images
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/images/*.png         $(1)/www/images
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/index.potato.html    $(1)/www/index.html
-	$(INSTALL_DIR)  $(1)/etc/config
- 	$(INSTALL_DATA) ./files/etc/config/afrimesh.potato $(1)/etc/config/afrimesh
 endef
 
 # - afrimesh-dashboard -------------------------------------------------------
