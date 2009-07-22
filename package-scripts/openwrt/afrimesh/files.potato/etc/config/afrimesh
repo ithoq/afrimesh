@@ -1,0 +1,48 @@
+
+config 'afrimesh' 'dashboard'
+	option 'dashboard_server' 'afrimesh.7degrees.co.za'
+	option 'mesh_gateway' '192.168.20.200'
+	option 'network_name' 'village-telco'
+	option 'visualisation_srv' '192.168.20.225'
+
+config 'afrimesh' 'router'
+	option 'owner' 'joe smith'
+
+config 'afrimesh' 'settings'
+	option 'locale' 'en_US.UTF-8'
+
+config 'afrimesh' 'location'
+	option 'longitude' '18.339733'
+	option 'latitude' '-34.138061'
+
+config 'afrimesh' 'map'
+	option 'server' 'openstreetmaps.org'
+	option 'extent' '10.025'
+	option 'zoom' '16'
+	option 'aerial' 'false'
+
+config 'afrimesh' 'gateway'
+	option 'snmp_community' 'public'
+	option 'bandwidth_down' '512'
+	option 'bandiwdth_up' '256'
+	option 'snmp_interface' '1'
+	option 'address' '196.211.3.106'
+
+config 'customer-plan'
+	option 'currency' '$'
+	option 'price' '10.00'
+	option 'minutes' '60'
+	option 'name' 'Discount'
+
+config 'customer-plan'
+	option 'currency' 'R'
+	option 'minutes' '180'
+	option 'price' '25.00'
+	option 'name' 'Value'
+
+config 'customer-plan'
+	option 'minutes' '480'
+	option 'currency' 'R'
+	option 'price' '50.00'
+	option 'name' 'Premium'
+
