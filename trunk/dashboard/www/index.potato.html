@@ -106,6 +106,11 @@
         add_menu_item("utility",   "settings-potato");
         add_menu_item("utility",   "logout");
 
+        /** loader for luci webif */
+        $("ul#menu ul#utility li#settings-luci").click(function() {
+            $("div#content").html("<iframe width='100%' height='75%' src='/index.luci.html' scrolling='yes' frameborder='no' />");
+          });
+
         /** set default page */
         $("ul#menu ul#utility li#settings-potato").click();
         //$("ul#menu ul#network li#map").click();
@@ -123,7 +128,7 @@
     <!-- TODO - should be in network.maps See: http://flowplayer.org/forum/20/21252 -->
     <div class="overlay-router" id="overlay-router">
       <iframe class="wrap" style="overflow-x: hidden;" width="780" height="600" scrolling="yes"></iframe>
-      <div id="router-dashboard"></div>
+       <div id="router-dashboard"></div>
     </div>
 
     <!-- div id="message-loading" style="text-align:center;">please wait...</div --> <!-- TODO -->
@@ -142,7 +147,7 @@
               <img class="top_left" alt="" src="style/images/top_left.png"/>
               <li id="settings-potato">Configure</li>
               <img class="top_right" alt="" src="style/images/top_right.png"/>
-              <li id="configuration">LUCI Advanced</li>
+              <li id="settings-luci">LuCI Advanced</li>
               <li class="last">
                 <img class="bottom_left" alt="" src="style/images/bottom_left.png"/>
                 <img class="middle" alt="" src="style/images/dot.png"/>
