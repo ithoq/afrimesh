@@ -11,7 +11,7 @@
 
 <form class="two-column">
   <fieldset>
-    <legend>Addressing</legend>
+    <legend>Address</legend>
 
     <label for="afrimesh|settings|network|wireless|address">Mesh IP Address</label>
     <input  id="afrimesh|settings|network|wireless|address" />
@@ -20,7 +20,10 @@
     <label for="afrimesh|settings|network|wireless|netmask">Netmask</label>
     <input  id="afrimesh|settings|network|wireless|netmask" />
     <div class="tooltip"><h3>netmask</h3></div>
+  </fieldset>
 
+  <fieldset>
+    <legend>Telephone</legend>
     <label for="extension">User Extension</label>
     <input  id="extension" />
     <div class="tooltip"><h3>user extension</h3></div>
@@ -28,35 +31,19 @@
     <label for="did|inbound">Inbound DID</label>
     <input  id="did|inbound" />
     <div class="tooltip"><h3>inbound did</h3></div>
-  </fieldset>
 
-  <fieldset>
-    <legend>Wireless</legend>
-    
-    <label for="afrimesh|settings|network|wireless|channel">Channel</label>
-    <input  id="afrimesh|settings|network|wireless|channel" />
-    <div class="tooltip"><h3>channel</h3></div>
+    <label for="afrimesh|settings|potato|asterisk" class="trunk">Asterisk Server</label>
+    <input  id="afrimesh|settings|potato|asterisk" class="trunk" />
+    <div class="tooltip"><h3>asterisk</h3></div>
 
-    <label for="afrimesh|settings|network|wireless|ssid">SSID</label>
-    <input  id="afrimesh|settings|network|wireless|ssid" />
-    <div class="tooltip"><h3>ssid</h3></div>
+    <label for="afrimesh|settings|potato|trunkcalls">Trunk Calls</label>
+    <input  id="afrimesh|settings|potato|trunkcalls" type="checkbox" />
+    <div class="tooltip"><h3>trunk calls</h3></div>
 
-    <label for="afrimesh|settings|network|wireless|bssid">BSSID</label>
-    <input  id="afrimesh|settings|network|wireless|bssid" />
-    <div class="tooltip"><h3>bssid</h3></div -->
   </fieldset>
 
   <fieldset>
     <legend>Network</legend>
-
-    <label for="asterisk">Asterisk Server</label>
-    <input  id="asterisk" />
-    <div class="tooltip"><h3>asterisk</h3></div>
-
-    <label for="autoconfig">Trunk Calls</label>
-    <input  id="autoconfig" type="checkbox" />
-    <div class="tooltip"><h3>trunk calls</h3></div>
-
     <label for="afrimesh|settings|hosts|batman_vis_server">Visualization Server</label>
     <input id="afrimesh|settings|hosts|batman_vis_server" style="background:#FFAAAA;" type="text" />
     <div class="tooltip"><h3>visualization server</h3>
@@ -89,6 +76,24 @@
     <input id="location" />
 
   </fieldset>
+
+
+  <fieldset>
+    <legend>Wireless</legend>
+    
+    <label for="afrimesh|settings|network|wireless|channel">Channel</label>
+    <input  id="afrimesh|settings|network|wireless|channel" />
+    <div class="tooltip"><h3>channel</h3></div>
+
+    <label for="afrimesh|settings|network|wireless|ssid">SSID</label>
+    <input  id="afrimesh|settings|network|wireless|ssid" />
+    <div class="tooltip"><h3>ssid</h3></div>
+
+    <label for="afrimesh|settings|network|wireless|bssid">BSSID</label>
+    <input  id="afrimesh|settings|network|wireless|bssid" />
+    <div class="tooltip"><h3>bssid</h3></div -->
+  </fieldset>
+
 
 
 </form>
@@ -139,6 +144,17 @@
         save_element(this.id, this.value);
         update_vis_server();
       });
+    $("input.[id=afrimesh|settings|potato|trunkcalls]").bind("click", function(event) { 
+        save_element(this.id, this.checked.toString());
+        update_asterisk_server();
+      });
+    $("input.[id=afrimesh|settings|potato|asterisk]").bind("blur", function(event) { 
+        save_element(this.id, this.value);
+        update_asterisk_server();
+      });
+
+    /** query asterisk server for availability ----------------------- */
+    update_asterisk_server();
 
     /** query batman vis server for availability --------------------- */
     update_vis_server();

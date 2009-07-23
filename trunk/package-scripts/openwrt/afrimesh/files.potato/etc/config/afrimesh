@@ -27,3 +27,6 @@ config 'afrimesh' 'gateway'
 	option 'snmp_interface' '1'
 	option 'address' '127.0.0.1'
 
+config 'afrimesh' 'potato'
+  option 'trunkcalls' 'false'
+  option 'asterisk' ''
