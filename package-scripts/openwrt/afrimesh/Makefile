@@ -32,7 +32,7 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ------------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=443
+PKG_REV:=446
 PKG_VERSION:=r$(PKG_REV)-0.3alpha
 PKG_RELEASE:=1
 
@@ -169,7 +169,7 @@ endef
 define Package/afrimesh-potato
 	SECTION:=admin
 	CATEGORY:=Administration
-	DEPENDS:=+busybox +libuci +libjson +batmand	
+	DEPENDS:=+busybox +libuci +libjson +batmand	+curl +wget +luci-admin-full 
 	TITLE:=Web interface for the Mesh Potato
 endef
 

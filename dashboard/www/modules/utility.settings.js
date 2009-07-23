@@ -25,7 +25,17 @@ var LocationMap = null;
         element = elements[element];
         if (element instanceof HTMLSelectElement) { // TODO - handle select elements
         } else if (element instanceof HTMLInputElement) {
-          $(element).val(Q(afrimesh, element.id) + ""); 
+          if (element.type == "checkbox") {
+            var checked = Q(afrimesh, element.id);
+            if (checked == "on" || checked == "1" || checked == "true") {
+              checked = true;
+            } else {
+              checked = false;
+            }
+            $(element).attr("checked", checked); 
+          } else {
+            $(element).val(Q(afrimesh, element.id) + ""); 
+          }
         } else if (element instanceof HTMLElement) {
           $(element).html(Q(afrimesh, element.id) + ""); 
         } else {
@@ -63,6 +73,18 @@ var LocationMap = null;
         interface_count++;
       }
       $("select.[id*=afrimesh|settings|internet_gateway|snmp|interface]").html(options);
+    }
+
+    update_asterisk_server = function() {
+      var enabled = $("input.[id*=afrimesh|settings|potato|trunkcalls]").attr("checked");
+      if (!enabled) {
+        $(".trunk").hide();
+        return;
+      } 
+      $(".trunk").show();
+      var server = $("input.[id*=afrimesh|settings|potato|asterisk]").val();
+      console.debug("asterisk server: " + server);
+      // TODO - try to ping asterisk server
     }
 
     update_vis_server = function() {

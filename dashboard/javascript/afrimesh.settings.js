@@ -38,6 +38,9 @@ function BootSettings(parent, address) {
     "afrimesh|settings|locale"       : { remote : "afrimesh|settings|locale",        init : "en_US.UTF-8"  },
     "afrimesh|settings|ajax_proxy"   : { remote : "afrimesh|settings|ajax_proxy",    init : "/cgi-bin/ajax-proxy.cgi?url=" },
 
+    "afrimesh|settings|potato|trunkcalls" : { remote : "afrimesh|potato|trunkcalls",  init : "off" },
+    "afrimesh|settings|potato|asterisk"   : { remote : "afrimesh|potato|asterisk",    init : " " },
+
     "afrimesh|settings|network|wireless|address"  : { remote : "network|wifi0|ipaddr",     init : "1.1.1.1" },
     "afrimesh|settings|network|wireless|netmask"  : { remote : "network|wifi0|netmask",    init : "255.0.0.0" },
     "afrimesh|settings|network|wireless|channel"  : { remote : "wireless|wifi0|channel",   init : "13" },
