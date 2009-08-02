@@ -245,8 +245,8 @@ var Map = undefined;
       the_map.addPopup(popup);
 
       $("#ip").bind("click", function(event) {
-          evil_display_overlay("http://10.216.144.1/"); 
-          //evil_display_overlay("http://" + feature.router.address +"/");
+          //evil_display_overlay("http://10.216.144.1/"); 
+          evil_display_overlay("http://" + feature.router.address +"/");
         });
     };
 

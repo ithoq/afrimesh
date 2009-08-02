@@ -242,7 +242,7 @@ form.two-column input, select  {
   display:block;
   width: 200px;
 }
-input[type=checkbox] {  /* aaaaaaaaaargh */
+form.two-column input[type=checkbox] {  /* aaaaaaaaaargh */
   margin-bottom: .5em;
   display: block;
   margin-left: 197px;

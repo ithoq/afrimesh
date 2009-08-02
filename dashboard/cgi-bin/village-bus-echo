@@ -1,5 +1,7 @@
 #!/bin/bash
 
+DECODE=/usr/local/bin/urldecode
+
 # read & parse query
 QUERY=$QUERY_STRING
 if [ "$REQUEST_METHOD" = "POST" ]; then
@@ -9,6 +11,7 @@ fi
 DATA=`echo "$POST_QUERY" | grep -oE "(^|[?&])data=[^&]+" | sed "s/%20/ /g" | cut -f 2- -d "="`
 TYPE=`echo "$POST_QUERY" | grep -oE "(^|[?&])type=[^&]+" | sed "s/%20/ /g" | cut -f 2- -d "="`
 
-echo "Content-type: " $TYPE | sed -e's/%\([0-9A-F][0-9A-F]\)/\\\\\x\1/g' | xargs echo -e
+echo "Content-type: " $TYPE | sed "s/+/ /g" | $DECODE 
 echo
-echo $DATA | sed -e's/%\([0-9A-F][0-9A-F]\)/\\\\\x\1/g' | sed 's/+/ /g' | xargs echo -e
+echo $DATA | sed "s/+/ /g" | $DECODE
+

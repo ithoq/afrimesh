@@ -42,6 +42,12 @@
   background: #72839d;
   height: 45px;
   padding: 0px;
+  width: 30px; 
+} 
+#menu .right-potato {           /* right side of menu */
+  background: #72839d;
+  height: 45px;
+  padding: 0px;
   width: 60px; 
 } 
 #menu ul {                               /* the menu dropdown */ 
@@ -80,12 +86,19 @@
 }
 
 
-/* right-hand help menu */
-#menu #help {          /* right-hand menu container */
+/* right-hand menu */
+#menu #utility {          /* right-hand menu container */
+  top: -9px;
+  left: -120px;
+}
+#menu #utility li {       /* right-hand menu item */
+  text-align: right;
+}
+#menu #help-potato {          /* right-hand menu container */
   top: -9px;
   left: -90px;
 }
-#menu #help li {       /* right-hand menu item */
+#menu #help-potato li {       /* right-hand menu item */
   text-align: right;
   margin-right: 20px;
 }
