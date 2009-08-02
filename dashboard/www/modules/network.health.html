@@ -37,18 +37,41 @@
 <br/>
 
 <h2>Messages</h2>
-<div id="messages"></div>
+<!-- div id="messages"></div -->
 
-<table style="color:gray;" border=0>
+<table class="network-messages" border=0>
+  <thead><th>timestamp</th><th>node</th><th>message</th></thead>
   <tr>
+    <td id="timestamp">Aug 02 10:29:50</td>
+    <td id="node">10.0.0.2</td>
     <td>
-      foo
-    </td>
-    <td>
-      plink
+      OpenWrt daemon.err batmand[581]: Error - got packet from unknown client: 10.0.0.3 (tunnelled sender ip 169.254.0.5) 
     </td>
   </tr>
+  <tr>
+    <td id="timestamp">Aug 02 10:29:50</td>
+    <td id="node">10.0.0.2</td>
+    <td>
+      OpenWrt daemon.err batmand[581]: Either enable NAT on the client or make sure this host has a route back to the sender address.
+    </td>
+  </tr>
+  <tr>
+    <td id="timestamp">Aug 02 10:31:13</td>
+    <td id="node">10.0.0.3</td>
+    <td>
+      OpenWrt user.notice syslog[684]: siproxd.c:229 INFO:siproxd-0.7.1-4804 mips-unknown-linux-gnu starting up
+    </td>
+  </tr>
+  <tr>
+    <td id="timestamp">Aug 02 10:39:42</td>
+    <td id="node">10.0.0.6</td>
+    <td>
+      OpenWrt local6.notice coova-chilli[608]: chilli.c: 2694: New DHCP request from MAC=00-1E-C2-0F-4E-8F
+    </td>
+  </tr>
+
 </table> 
+
 
 
 

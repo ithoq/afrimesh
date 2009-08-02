@@ -167,6 +167,25 @@ td.v-brace {
 }
 
 
+/* - network health module ------------------------------------------------ */
+.network-messages thead {
+  color: black;
+}
+.network-messages tr {
+  vertical-align: top;
+}
+.network-messages td {
+  color: #202020;
+}
+.network-messages td#timestamp {
+  color: gray;
+  width: 100px;
+}
+.network-messages td#node {
+  color: gray;
+  width: 50px;
+}
+
 /* - internet-configure module -------------------------------------------- */
 .ui-sortable, .ui-sortable-brace, .ui-sortable-instructions { width: 310px; padding: 5px; }
 .ui-sortable        { border:1px solid gray; min-height: 230px; margin: 5px; }
