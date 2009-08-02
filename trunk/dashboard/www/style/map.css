@@ -4,6 +4,7 @@
 div#network-map .popup { 
   color: white;
 }
+
 div#network-map a { color: orange; }
 div#network-map a:link { color: orange; }
 div#network-map a:visited { color: orange; }

@@ -19,9 +19,9 @@
 <table border=0>
   <tr>
     <td>Mesh</td>
-    <td><span style="color:gray;">TODO</span></td>
+    <td><span style="color:green;">relaxed</span></td>
     <td><span class="traffic-village"></span></td>
-    <td>?/? nodes congested</td>
+    <td>2/6 nodes congested</td>
   </tr>
   <tr>
     <td>Internet</td>
@@ -39,12 +39,13 @@
 <h2>Messages</h2>
 <div id="messages"></div>
 
-<table style="color:gray;" border=1>
+<table style="color:gray;" border=0>
   <tr>
     <td>
-      TODO
+      foo
     </td>
     <td>
+      plink
     </td>
   </tr>
 </table> 
@@ -59,7 +60,7 @@
 
   /** construction -------------------------------------------------------- */
   ready = function() { // INJ 'ready' should be the only symbol we're exposing to the global namespace
-    $(".traffic-village").sparkline([5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3], { type: 'bar', barColor: 'gray' });  // TODO - lose
+    $(".traffic-village").sparkline([5,0,0,1,0,3], { type: 'bar', barColor: 'gray' });  // TODO - lose
     console.debug("loaded network.health.html");
     update();
     return unload;
