@@ -1,7 +1,3 @@
 #labels Phase-Support
-  * configure a new mesh node
-  * install the dashboard software on a Linux or FreeBSD server
-  * install the dashboard software on an OpenWRT based router
-  * configure the dashboard software for a R.O.B.I.N. mesh
-  * configure the dashboard to run without an internet connection
-  * scale tall buildings in a single bound
+  * [http://code.google.com/p/afrimesh/wiki/InstallationOpenWRT configure a new mesh node]
+  * [http://code.google.com/p/afrimesh/wiki/HowToMapServer configure the dashboard to run without an internet connection]
