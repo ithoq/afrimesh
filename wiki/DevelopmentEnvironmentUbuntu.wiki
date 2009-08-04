@@ -36,10 +36,8 @@ Run as required:
   apt-get install memcachedb
   }}}
 
+...and some custom packages:
 
-----
-
-Also:
   {{{
   sudo  su -
   apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 382AF1D2
@@ -48,4 +46,3 @@ Also:
 
   apt-get install json-c-dev uci-dev libmemcachedb
   }}}
-
