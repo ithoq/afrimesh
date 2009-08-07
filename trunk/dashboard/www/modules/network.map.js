@@ -266,7 +266,6 @@ var Map = undefined;
 
 
     function on_unselect_router(feature) {
-
       the_map.selected = null;
       if (feature.popup) {
         the_map.removePopup(feature.popup);
@@ -275,13 +274,12 @@ var Map = undefined;
       }
     };
 
+
     function on_select_route(feature) {
-      console.debug("selected: " + feature);
     }
-    
     function on_unselect_route(feature) {
-      console.debug("unselected: " + feature);
     }
+
 
     function on_position(feature) {
       // update router location config
