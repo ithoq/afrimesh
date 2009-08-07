@@ -12,6 +12,7 @@
 
 <div id="network-map" style="border:0px red solid; width: 100%; height: 75%;">please wait a moment...</div>
 
+<!-- see: http://bbs.keyhole.com/ubb/ubbthreads.php?ubb=showflat&Number=283026 -->
 <form class="export-map" action="/cgi-bin/village-bus-echo.kml" method="POST" target="_blank">
 <input id="export-map-data" type="hidden" name="data" />
 <input id="export-map-type" type="hidden" name="type" value="application/vnd.google-earth.kml+xml" />
@@ -57,97 +58,66 @@ function() {
 
 
   /** export kml ---------------------------------------------------------- */
-  function export_kml(network_map) {
-  
-    console.debug("The map's routers: " + network_map.routers);
-  
+  function export_kml(network_map) { 
     var my_kml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"          +
                       "<kml xmlns=\"http://www.opengis.net/kml/2.2\""       +
                       "     xmlns:gx=\"http://www.google.com/kml/ext/2.2\"" +
                       "     xmlns:kml=\"http://www.opengis.net/kml/2.2\""   +
                       "     xmlns:atom=\"http://www.w3.org/2005/Atom\">";
-                      
-       my_kml_data += "<Document>";
-   	   my_kml_data += "<name>SimpleAfrimesh.kml</name>";
-     	 my_kml_data += "<Folder>";
-		   my_kml_data += "<name>Afrimesh</name>";
-		   my_kml_data += "<open>1</open>";
-	  
-      network_map.routers.features.map(function(router_feature) {
-      
-       var location = new OpenLayers.LonLat(router_feature.geometry.x, router_feature.geometry.y).transform(epsg_900913, epsg_4326);
+    my_kml_data += "<Document>";
+    my_kml_data += "<name>SimpleAfrimesh.kml</name>";
+    my_kml_data += "<Folder>";
+		my_kml_data += "<name>Afrimesh</name>";
+		my_kml_data += "<open>1</open>";
 
-       console.debug("Longitude: " + location.lon + " Latitude: " + location.lat);
-
-       my_kml_data += "<Style id=\"blueDot\">" +
-                      "<IconStyle>" +
-                      "<color>ffff5500</color>" +
-                      "<scale>1</scale>" +
-                      "<Icon>" +
-                      "<href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href>" +
-                      "</Icon>" +
-                      "</IconStyle>" +
-                      "</Style>";
-
-      my_kml_data +=  "<Placemark>" +
-                      "<name>" + router_feature.id + "</name>" +
-                      "<styleUrl>#blueDot</styleUrl>" +
-                      "<Point>" +
-                      "<coordinates>" + location.lon + "," + location.lat + ",0</coordinates>" +
-                      "</Point>" +
-                      "</Placemark>";
+    network_map.routers.features.map(function(feature) {
+        console.debug("feature: " + feature + " -> " + feature.router);
+        var location = new OpenLayers.LonLat(feature.geometry.x, feature.geometry.y).transform(epsg_900913, epsg_4326);
+        my_kml_data += "<Style id=\"blueDot\">" +
+                       "<IconStyle>" +
+                       "<color>ffff5500</color>" +
+                       "<scale>1</scale>" +
+                       "<Icon>" +
+                       "<href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href>" +
+                       "</Icon>" +
+                       "</IconStyle>" +
+                       "</Style>";
+       my_kml_data +=  "<Placemark>" +
+                       "<name>" + feature.id + "</name>" +
+                       "<styleUrl>#blueDot</styleUrl>" +
+                       "<Point>" +
+                       "<coordinates>" + location.lon + "," + location.lat + ",0</coordinates>" +
+                       "</Point>" +
+                       "</Placemark>";
       });
 
-      network_map.routes.features.map(function(feature) {
-
-       console.debug("Origin: " + feature.route.router + " Destination: " + feature.route.neighbour);
-       
-       var color       = network_map.lq_to_color(feature.route.label);
-       var origin      = network_map.routers.getFeatureById(feature.route.router);
-       var destination = network_map.routers.getFeatureById(feature.route.neighbour);
-       origin      = new OpenLayers.LonLat(origin.geometry.x, origin.geometry.y).transform(epsg_900913, epsg_4326);
-       destination = new OpenLayers.LonLat(destination.geometry.x, destination.geometry.y).transform(epsg_900913, epsg_4326);
-       
-       
-          my_kml_data += "<Style id=\"yellowLine\">" +
-                         "<LineStyle>";
-                         
-      if (color == "red") {
-          my_kml_data += "<color>ff2b00ff</color>";
-      }
-      else if (color == "orange") {
-          my_kml_data += "<color>ff0179ff</color>";
-      }
-      else if (color == "green") {
-          my_kml_data += "<color>7f00ff00</color>";
-      }
-      else {
-          my_kml_data += "<color>ffffb20b</color>";
-      }
-      
-          my_kml_data += "<width>5</width>" +  //adjusts the width (thickness) of the links
-                         "</LineStyle>" +
-                         "</Style>";
-                      
-      my_kml_data += "<Placemark>" +
-                     "<name>" + feature.route.router + "->" + feature.route.neighbour + "</name>" +
-                     "<styleUrl>#yellowLine</styleUrl>" +
-                     "<LineString>" +
-                     "<coordinates>" + origin.lon + "," + origin.lat + ",0\n" + 
-                                       destination.lon + "," + destination.lat + ",0\n" +
-                     "</coordinates>" +
-                     "</LineString>" +
-                     "</Placemark>"; 
+    network_map.routes.features.map(function(feature) {
+        var origin      = network_map.routers.getFeatureById(feature.route.router);
+        var destination = network_map.routers.getFeatureById(feature.route.neighbour);
+        origin      = new OpenLayers.LonLat(origin.geometry.x, origin.geometry.y).transform(epsg_900913, epsg_4326);
+        destination = new OpenLayers.LonLat(destination.geometry.x, destination.geometry.y).transform(epsg_900913, epsg_4326);
+        my_kml_data += "<Style id=\"yellowLine\">" +
+                       "<LineStyle>";
+        my_kml_data += "<color>" + network_map.lq_to_argb(feature.route.label) + "</color>";
+        my_kml_data += "<width>5</width>" +  // adjusts the width (thickness) of the links 
+                       "</LineStyle>" +
+                       "</Style>";
+        my_kml_data += "<Placemark>" +
+                       "<name>" + feature.route.router + "->" + feature.route.neighbour + "</name>" +
+                       "<styleUrl>#yellowLine</styleUrl>" +
+                       "<LineString>" +
+                       "<coordinates>" + origin.lon + "," + origin.lat + ",0\n" + 
+                                         destination.lon + "," + destination.lat + ",0\n" +
+                       "</coordinates>" +
+                       "</LineString>" +
+                       "</Placemark>"; 
       });
-                       
-      my_kml_data += "</Folder>";
-      my_kml_data += "</Document>";
-      my_kml_data += "</kml>";
-      
-      //console.debug(my_kml_data);
-                    
-    $("#export-map-data").val(my_kml_data);
-      
+
+    my_kml_data += "</Folder>";
+    my_kml_data += "</Document>";
+    my_kml_data += "</kml>";
+    console.debug(my_kml_data);
+    $("#export-map-data").val(my_kml_data); 
     //window.location = 'data:application/vnd.google-earth.kml+xml,' + escape(my_kml_data);
     //$.post("/~sprinter/cgi-bin/village-bus-echo?Content-type=application/vnd.google-earth.kml+xml", my_kml_data);
   };
@@ -163,8 +133,8 @@ function() {
 
     // Update LQ display, tag all active network elements with last seen time and add new elements to the map
     afrimesh.network.mesh.routers().map(function(router) { 
-        var router_feature = network_map.router(router);
-        router_feature.last_seen = now;
+        var feature = network_map.router(router);
+        feature.last_seen = now;
         router.routes.map(function(route) {
             var route_feature = network_map.route(route);
             if (route_feature.style) { // TODO - this should be a network_map method
@@ -177,17 +147,17 @@ function() {
 
     
     // go through all features and set transparency relative to when they were last seen
-    network_map.routers.features.map(function(router_feature) {
+    network_map.routers.features.map(function(feature) {
         // TODO - this should also be encapsulated in a network_map method
         var fade_time = 60.0 * 1000.0;
         var min_opacity = 0.1;
         var start_opacity = 0.75;
-        var last_seen = now - router_feature.last_seen;
+        var last_seen = now - feature.last_seen;
         var opacity = Math.max(min_opacity, start_opacity - (last_seen / fade_time));        
         //console.debug("Router last seen: " + last_seen + " opacity: " + opacity);
-        router_feature.style.fillOpacity = opacity;
-        network_map.routers.drawFeature(router_feature);
-        router_feature.router.routes.map(function(route) {
+        feature.style.fillOpacity = opacity;
+        network_map.routers.drawFeature(feature);
+        feature.router.routes.map(function(route) {
             var route_feature = network_map.route(route);
             if (route_feature.last_seen) {
                var last_seen = now - route_feature.last_seen;

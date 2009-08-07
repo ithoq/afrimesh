@@ -164,21 +164,35 @@ var Map = undefined;
     /**
      * Take a B.A.T.M.A.N. link quality value and convert it to a HTML color string
      */
+    var quality = { 
+      good  : 1.02,
+      bad   : 1.04,
+      fault : 1.06
+    };
+    
     var lq_to_color = function(lq) {
-      if (lq == "HNA") {
+      if (lq == "HNA") { // gateway 
         return "black";
       }
-      lq = lq + 0.0;
-      if (lq > 1.06) {
-        return "red";
-      } else if (lq > 1.04) {
-        return "orange";
-      } else if (lq > 1.02) {
-        return "green";
-      } 
+      lq = parseFloat(lq);
+      if (lq > quality.fault)     {  return "red";     } 
+      else if (lq > quality.bad)  {  return "orange";  }
+      else if (lq > quality.good) {  return "green";   } 
       return "lightblue";
     }
     this.lq_to_color = lq_to_color;
+    
+    var lq_to_argb = function(lq) {
+      if (lq == "HNA") { // gateway 
+        return "ff000000";
+      }
+      lq = parseFloat(lq);
+      if (lq > quality.fault)     {  return "ff2b00ff";  } 
+      else if (lq > quality.bad)  {  return "ff0179ff";  }
+      else if (lq > quality.good) {  return "7f00ff00";  } 
+      return "ffffb20b";
+    }
+    this.lq_to_argb = lq_to_argb;
     
     /* event handling ----------------------------------------------------- */     
 
