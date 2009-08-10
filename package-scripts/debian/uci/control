@@ -10,11 +10,11 @@ Section: libdevel
 Architecture: any
 Depends: uci (= ${Source-Version})
 Description: Development package for the Unified Configuration Interface (UCI)
- <insert long description, indented with spaces>
+ 
 
 Package: uci
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Library for the Unified Configuration Interface (UCI)
- <insert long description, indented with spaces>
+ 
