@@ -28,12 +28,11 @@
 #
 
 
-# json
-JSON_INCLUDES=-I$(DEPROOT)/include
-JSON_LDFLAGS=$(DEPROOT)/lib/libjson.a
 
-UCI_INCLUDES=-I$(DEPROOT)/include
+JSON_LDFLAGS=$(DEPROOT)/lib/libjson.a
 UCI_LDFLAGS=$(DEPROOT)/lib/libuci.a
+MEMCACHEDB_LDFLAGS=$(DEPROOT)/lib/libmemcached.a
+
 
 MYSQL_ADMIN_USERNAME=root
 MYSQL_ADMIN_PASSWORD=1nvene0
@@ -44,10 +43,10 @@ MYSQL_ADMIN=--user=$(MYSQL_ADMIN_USERNAME) --password=$(MYSQL_ADMIN_PASSWORD)
 MYSQL_RADIUS=--user=$(RADIUS_DATABASE_USERNAME) --password=$(RADIUS_DATABASE_PASSWORD)
 
 CC=gcc -std=c99 
-INCLUDES=-I. -I../common $(JSON_INCLUDES) $(UCI_INCLUDES)
+INCLUDES=-I. -I../common -I$(DEPROOT)/include
 DEFINES=
 CFLAGS=$(INCLUDES) $(DEFINES) `mysql_config --cflags` -g
-LDFLAGS=-L/usr/local/lib -lm -lmemcached `mysql_config --libs` $(JSON_LDFLAGS) $(UCI_LDFLAGS)
+LDFLAGS=-L$(DEPROOT)/lib -lm `mysql_config --libs` $(JSON_LDFLAGS) $(UCI_LDFLAGS) $(MEMCACHEDB_LDFLAGS)
 
 OBJECTS=radius_delete_mysql.o radius_modify_mysql.o radius_new_mysql.o radius_list_mysql.o \
         radius_delete_memcachedb.o radius_modify_memcachedb.o radius_new_memcachedb.o radius_list_memcachedb.o \
