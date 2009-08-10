@@ -222,48 +222,48 @@ hooks-linux :
 	echo "dpkg -i /tmp/libjson-0.8_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
 	chmod 0755 $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
 
-depends-packages-linuxodd :
-	# json-c
-	wget --no-clobber -c -P $(PKG_BUILD_DIR) http://oss.metaparadigm.com/json-c/json-c-0.8.tar.gz
-	rm -rf $(PKG_BUILD_DIR)/json-c-0.8
-	rm -rf $(PKG_BUILD_DIR)/json-c-0.8.orig
-	cd $(PKG_BUILD_DIR) ; tar xzvf json-c-0.8.tar.gz 
-	@cd $(PKG_BUILD_DIR)/json-c-0.8 ; dh_make --library -c BSD -e antoine@7degrees.co.za --packagename json-c --createorig 
-	rm -rf  $(PKG_BUILD_DIR)/json-c-0.8/debian/*.ex
-	rm -rf  $(PKG_BUILD_DIR)/json-c-0.8/debian/*.EX
-	rm -rf  $(PKG_BUILD_DIR)/json-c-0.8/debian/*.install
-	cp package-scripts/debian/json-c/* $(PKG_BUILD_DIR)/json-c-0.8/debian
-	#@cd $(PKG_BUILD_DIR)/json-c-0.8 ; fakeroot dpkg-buildpackage -b -uc
+depends-packages-linux-json-c :
+	wget --no-clobber -c -P $(PKG_BUILD_DIR) http://oss.metaparadigm.com/json-c/json-c-0.9.tar.gz
+	rm -rf $(PKG_BUILD_DIR)/json-c-0.9
+	rm -rf $(PKG_BUILD_DIR)/json-c-0.9.orig
+	cd $(PKG_BUILD_DIR) ; tar xzvf json-c-0.9.tar.gz 
+	@cd $(PKG_BUILD_DIR)/json-c-0.9 ; dh_make --library -c BSD -e antoine@7degrees.co.za --packagename json-c --createorig 
+	rm -rf  $(PKG_BUILD_DIR)/json-c-0.9/debian/*.ex
+	rm -rf  $(PKG_BUILD_DIR)/json-c-0.9/debian/*.EX
+	rm -rf  $(PKG_BUILD_DIR)/json-c-0.9/debian/*.install
+	cp package-scripts/debian/json-c/* $(PKG_BUILD_DIR)/json-c-0.9/debian
+	#@cd $(PKG_BUILD_DIR)/json-c-0.9 ; fakeroot dpkg-buildpackage -b -uc
 	# Ugly workaround for launchpad lameness
-	#rm -rf $(PKG_BUILD_DIR)/json-c-0.8.orig.tar.gz
-	wget --no-clobber -P $(PKG_BUILD_DIR) http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu/pool/main/j/json-c/json-c_0.8.orig.tar.gz
-	@cd $(PKG_BUILD_DIR)/json-c-0.8 ; debuild -S
+	#rm -rf $(PKG_BUILD_DIR)/json-c-0.9.orig.tar.gz
+	#wget --no-clobber -P $(PKG_BUILD_DIR) http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu/pool/main/j/json-c/json-c_0.9.orig.tar.gz
+	@cd $(PKG_BUILD_DIR)/json-c-0.9 ; debuild -S
 
-	# uci
-	wget --no-clobber -P $(PKG_BUILD_DIR) http://downloads.openwrt.org/sources/uci-0.7.3.tar.gz
-	rm -rf $(PKG_BUILD_DIR)/uci-0.7.3
-	rm -rf $(PKG_BUILD_DIR)/uci-0.7.3.orig
-	cd $(PKG_BUILD_DIR) ; tar xzvf uci-0.7.3.tar.gz 
-	@cd $(PKG_BUILD_DIR)/uci-0.7.3 ; dh_make --library -c LGPL -e antoine@7degrees.co.za --packagename uci --createorig 
-	rm -rf  $(PKG_BUILD_DIR)/uci-0.7.3/debian/*.ex
-	rm -rf  $(PKG_BUILD_DIR)/uci-0.7.3/debian/*.EX
-	rm -rf  $(PKG_BUILD_DIR)/uci-0.7.3/debian/*.install
-	cp package-scripts/debian/uci/changelog    $(PKG_BUILD_DIR)/uci-0.7.3/debian
-	cp package-scripts/debian/uci/control      $(PKG_BUILD_DIR)/uci-0.7.3/debian
-	cp package-scripts/debian/uci/copyright    $(PKG_BUILD_DIR)/uci-0.7.3/debian
-	cp package-scripts/debian/uci/rules        $(PKG_BUILD_DIR)/uci-0.7.3/debian
-	cp package-scripts/debian/uci/*.install    $(PKG_BUILD_DIR)/uci-0.7.3/debian
-	cp package-scripts/debian/uci/Makefile     $(PKG_BUILD_DIR)/uci-0.7.3
-	cp package-scripts/debian/uci/Makefile.inc $(PKG_BUILD_DIR)/uci-0.7.3
+depends-packages-linux-uci :
+	#wget --no-clobber -P $(PKG_BUILD_DIR) http://downloads.openwrt.org/sources/uci-0.7.5.tar.gz
+	wget --no-clobber -P $(PKG_BUILD_DIR) http://mirror2.openwrt.org/sources/uci-0.7.5.tar.gz
+	rm -rf $(PKG_BUILD_DIR)/uci-0.7.5
+	rm -rf $(PKG_BUILD_DIR)/uci-0.7.5.orig
+	cd $(PKG_BUILD_DIR) ; tar xzvf uci-0.7.5.tar.gz 
+	@cd $(PKG_BUILD_DIR)/uci-0.7.5 ; dh_make --library -c LGPL -e antoine@7degrees.co.za --packagename uci --createorig 
+	rm -rf  $(PKG_BUILD_DIR)/uci-0.7.5/debian/*.ex
+	rm -rf  $(PKG_BUILD_DIR)/uci-0.7.5/debian/*.EX
+	rm -rf  $(PKG_BUILD_DIR)/uci-0.7.5/debian/*.install
+	cp package-scripts/debian/uci/changelog    $(PKG_BUILD_DIR)/uci-0.7.5/debian
+	cp package-scripts/debian/uci/control      $(PKG_BUILD_DIR)/uci-0.7.5/debian
+	cp package-scripts/debian/uci/copyright    $(PKG_BUILD_DIR)/uci-0.7.5/debian
+	cp package-scripts/debian/uci/rules        $(PKG_BUILD_DIR)/uci-0.7.5/debian
+	cp package-scripts/debian/uci/*.install    $(PKG_BUILD_DIR)/uci-0.7.5/debian
+	cp package-scripts/debian/uci/Makefile     $(PKG_BUILD_DIR)/uci-0.7.5
+	cp package-scripts/debian/uci/Makefile.inc $(PKG_BUILD_DIR)/uci-0.7.5
 	# Ugly workaround for launchpad lameness
-	#rm -rf $(PKG_BUILD_DIR)/uci-0.7.3.orig.tar.gz
-	wget --no-clobber -P $(PKG_BUILD_DIR) http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu/pool/main/u/uci/uci_0.7.3.orig.tar.gz
-	@cd $(PKG_BUILD_DIR)/uci-0.7.3 ; debuild -S
+	#rm -rf $(PKG_BUILD_DIR)/uci-0.7.5.orig.tar.gz
+	#wget --no-clobber -P $(PKG_BUILD_DIR) http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu/pool/main/u/uci/uci_0.7.5.orig.tar.gz
+	@cd $(PKG_BUILD_DIR)/uci-0.7.5 ; debuild -S
   # to build binaries:
-	#@cd $(PKG_BUILD_DIR)/uci-0.7.3 ; pdebuild
-	#@cd $(PKG_BUILD_DIR)/uci-0.7.3 ; fakeroot dpkg-buildpackage -b -uc
+	#@cd $(PKG_BUILD_DIR)/uci-0.7.5 ; pdebuild
+	#@cd $(PKG_BUILD_DIR)/uci-0.7.5 ; fakeroot dpkg-buildpackage -b -uc
 
-depends-packages-linux :
+depends-packages-linux-libmemcached :
 	# libmemcachedb
 	#wget --no-clobber -P $(PKG_BUILD_DIR) 	
 	svn checkout http://memcachedb.googlecode.com/svn/clients/libmemcached-0.25-patch $(PKG_BUILD_DIR)/libmemcachedb-0.25
@@ -281,13 +281,13 @@ depends-packages-linux :
 	#@cd $(PKG_BUILD_DIR)/libmemcachedb-0.25 ; pdebuild                                                                                                 
 	#@cd $(PKG_BUILD_DIR)/libmemcachedb-0.25 ; fakeroot dpkg-buildpackage -b -uc 
 
-depends-launchpad-linux :
+depends-launchpad-linux : #depends-packages-linux-json-c depends-packages-linux-uci depends-packages-linux-libmemcached
 	@echo "Uploading/Refreshing packages to launchpad.net ppa"
 	# TODO run lintian & linda
 	# TODO read package release # from changelogs
-	dput -c package-scripts/debian/dput.cf antoine-7degrees-ppa $(PKG_BUILD_DIR)/json-c_0.8-2_source.changes
-	dput -c package-scripts/debian/dput.cf antoine-7degrees-ppa $(PKG_BUILD_DIR)/uci_0.7.3-3_source.changes
-	dput -c package-scripts/debian/dput.cf antoine-7degrees-ppa $(PKG_BUILD_DIR)/libmemcachedb_0.25-1_source.changes
+	#dput -c package-scripts/debian/dput.cf antoine-7degrees-ppa $(PKG_BUILD_DIR)/json-c_0.9-1_source.changes
+	dput -c package-scripts/debian/dput.cf antoine-7degrees-ppa $(PKG_BUILD_DIR)/uci_0.7.5-1_source.changes
+	#dput -c package-scripts/debian/dput.cf antoine-7degrees-ppa $(PKG_BUILD_DIR)/libmemcachedb_0.25-1_source.changes
 
 
 # - freebsd ------------------------------------------------------------------

@@ -6,7 +6,7 @@
 #
 
 PORTNAME=       uci
-PORTVERSION=    0.6.2
+PORTVERSION=    0.7.5
 CATEGORIES=     misc
 MASTER_SITES=   http://downloads.openwrt.org/sources/
 
@@ -22,7 +22,7 @@ do-install:
 	${INSTALL} ${WRKSRC}/uci_config.h ${PREFIX}/include
 	${INSTALL} ${WRKSRC}/libuci.a ${PREFIX}/lib
 	${INSTALL} ${WRKSRC}/libuci.so ${PREFIX}/lib
-	${INSTALL} ${WRKSRC}/libuci.so.0.6 ${PREFIX}/lib
+	${INSTALL} ${WRKSRC}/libuci.so.0.7 ${PREFIX}/lib
 	${MKDIR}   ${PREFIX}/etc/config
 
 .include <bsd.port.mk>

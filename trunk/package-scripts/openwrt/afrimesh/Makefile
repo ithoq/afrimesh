@@ -212,7 +212,7 @@ endef
 define Package/afrimesh-dashboard
 	SECTION:=admin
 	CATEGORY:=Administration
-	DEPENDS:=+afrimesh-webif
+	DEPENDS:=+afrimesh-base +curl +wget 
 	TITLE:=Mesh management dashboard
 endef
 
@@ -221,7 +221,33 @@ define Package/afrimesh-dashboard/description
 endef
 
 define Package/afrimesh-dashboard/install
+	$(INSTALL_DIR)  $(1)/etc
+	$(INSTALL_DIR)  $(1)/etc/config
+	$(INSTALL_DATA) ./files/etc/config/afrimesh $(1)/etc/config
+	$(INSTALL_DIR)  $(1)/www
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/index.html    $(1)/www/index.html
 	$(INSTALL_DIR)  $(1)/www/cgi-bin
+	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/dashboard/cgi-bin/ajax-proxy.cgi   $(1)/www/cgi-bin
+	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/dashboard/cgi-bin/village-bus-echo $(1)/www/cgi-bin/village-bus-echo.kml
+	$(INSTALL_DIR)  $(1)/www/images
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/images/*.gif         $(1)/www/images
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/images/*.png         $(1)/www/images
+	$(INSTALL_DIR)  $(1)/www/javascript
+	$(INSTALL_DIR)  $(1)/www/javascript/jquery
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/jquery/*      $(1)/www/javascript/jquery
+	$(INSTALL_DIR)  $(1)/www/javascript/openlayers
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/openlayers/*  $(1)/www/javascript/openlayers
+	$(INSTALL_DIR)  $(1)/www/javascript/yahoo
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/yahoo/*       $(1)/www/javascript/yahoo
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/afrimesh*.js  $(1)/www/javascript
+	$(INSTALL_DIR)  $(1)/www/modules
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/*.html       $(1)/www/modules
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/*.js         $(1)/www/modules
+	$(INSTALL_DIR)  $(1)/www/style
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/*.css          $(1)/www/style
+	$(INSTALL_DIR)  $(1)/www/style/images
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/images/*.gif   $(1)/www/style/images
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/images/*.png   $(1)/www/style/images
 endef
 
 
