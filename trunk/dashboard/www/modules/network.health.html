@@ -25,16 +25,16 @@
     <td>2/6 nodes congested</td>
   </tr -->
   <tr>
-    <td style="font-size:2em;"><b>Internet Traffic</b>&nbsp;&nbsp;</td>
+    <td style="font-size:2.5em;"><b>Internet Traffic</b>&nbsp;&nbsp;</td>
     <td>
-      <span id="traffic-internet" style="font-size:2em;"></span>
+      <span id="traffic-internet" style="font-size:3em;"></span>
       <br style="height:10px;" />
       <span id="traffic-internet-in" style="color:orange;" />
       <span id="traffic-internet-out" style="color:blue;" />
     </td>
     <td>
       &nbsp;&nbsp;
-      <span id="traffic-internet-busy" style="font-size:2em;">
+      <span id="traffic-internet-busy" style="font-size:2.0em;">
         <img src="images/indicator.gif"/>
       </span>
     </td>
@@ -156,8 +156,19 @@
       //traffic.up.splice(2, traffic.up.length - traffic.length); // leave 0 for scaling
       traffic.up.splice(0, traffic.up.length - traffic.length);
     }
+/*
     $("#traffic-internet").sparkline(traffic.down,  { composite: false, width: 200, lineColor: "blue",   spotColor: false, minSpotColor: false, maxSpotColor: false, fillColor: false });
     $("#traffic-internet").sparkline(traffic.up,    { composite: true,  width: 200, lineColor: "orange", spotColor: false, minSpotColor: false, maxSpotColor: false, fillColor: false });
+*/
+
+    $("#traffic-internet").sparkline(traffic.up,    { composite: false,  width: 200, lineColor: "blue",
+                                                      normalRangeMin:traffic.max_up - 10, normalRangeMax:traffic.max_up, normalRangeColor: "#fff", 
+                                                      spotColor: false, minSpotColor: false, maxSpotColor: false, fillColor: false });
+    $("#traffic-internet").sparkline(traffic.down,  { composite: true, width: 200, lineColor: "orange", 
+                                                      normalRangeMin:traffic.max_down - 10, normalRangeMax:traffic.max_down, normalRangeColor: "#eee", 
+                                                      spotColor: false, minSpotColor: false, maxSpotColor: false, fillColor: false });
+
+
     $("#traffic-internet-in").html ("" + Math.floor(traffic_down) + "/" + traffic.max_down + "Kbps in, ");
     $("#traffic-internet-out").html("" + Math.floor(traffic_up)   + "/" + traffic.max_up   + "Kbps out");
     var n = Math.max(traffic_down / traffic.max_down, traffic_up / traffic.max_up);
