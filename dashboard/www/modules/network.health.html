@@ -156,19 +156,12 @@
       //traffic.up.splice(2, traffic.up.length - traffic.length); // leave 0 for scaling
       traffic.up.splice(0, traffic.up.length - traffic.length);
     }
-/*
-    $("#traffic-internet").sparkline(traffic.down,  { composite: false, width: 200, lineColor: "blue",   spotColor: false, minSpotColor: false, maxSpotColor: false, fillColor: false });
-    $("#traffic-internet").sparkline(traffic.up,    { composite: true,  width: 200, lineColor: "orange", spotColor: false, minSpotColor: false, maxSpotColor: false, fillColor: false });
-*/
-
     $("#traffic-internet").sparkline(traffic.up,    { composite: false,  width: 200, lineColor: "blue",
                                                       normalRangeMin:traffic.max_up - 10, normalRangeMax:traffic.max_up, normalRangeColor: "#fff", 
                                                       spotColor: false, minSpotColor: false, maxSpotColor: false, fillColor: false });
     $("#traffic-internet").sparkline(traffic.down,  { composite: true, width: 200, lineColor: "orange", 
                                                       normalRangeMin:traffic.max_down - 10, normalRangeMax:traffic.max_down, normalRangeColor: "#eee", 
                                                       spotColor: false, minSpotColor: false, maxSpotColor: false, fillColor: false });
-
-
     $("#traffic-internet-in").html ("" + Math.floor(traffic_down) + "/" + traffic.max_down + "Kbps in, ");
     $("#traffic-internet-out").html("" + Math.floor(traffic_up)   + "/" + traffic.max_up   + "Kbps out");
     var n = Math.max(traffic_down / traffic.max_down, traffic_up / traffic.max_up);
