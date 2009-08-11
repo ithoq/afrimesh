@@ -15,7 +15,8 @@
 </table>
 <br/ -->
 
-<h2>Traffic</h2>
+<!-- h2>Traffic</h2 -->
+<div style="height: 2em;" />
 <table border=0>
   <!-- tr>
     <td>Mesh</td>
@@ -24,12 +25,17 @@
     <td>2/6 nodes congested</td>
   </tr -->
   <tr>
-    <td>Internet</td>
-    <td><span id="traffic-internet-busy"></span></td>
-    <td><span id="traffic-internet">querying...</span></td>
-    <td><span id="traffic-internet-in">?</span>/<span id="traffic-internet-in-max">?</span>Kbps in, 
-      <span style="color:gray;">
-        <span id="traffic-internet-out">?</span>/<span id="traffic-internet-out-max">?</span>Kbps out
+    <td style="font-size:2em;"><b>Internet Traffic</b>&nbsp;&nbsp;</td>
+    <td>
+      <span id="traffic-internet" style="font-size:2em;"></span>
+      <br style="height:10px;" />
+      <span id="traffic-internet-in" style="color:orange;" />
+      <span id="traffic-internet-out" style="color:blue;" />
+    </td>
+    <td>
+      &nbsp;&nbsp;
+      <span id="traffic-internet-busy" style="font-size:2em;">
+        <img src="images/indicator.gif"/>
       </span>
     </td>
   </tr>
@@ -114,8 +120,8 @@
     length    : 30,
     max_down  : afrimesh.settings.internet_gateway.bandwidth.down,
     max_up    : afrimesh.settings.internet_gateway.bandwidth.up,
-    down      : [ afrimesh.settings.internet_gateway.bandwidth.down ],
-    up        : [ afrimesh.settings.internet_gateway.bandwidth.up   ],
+    down      : [], // [ afrimesh.settings.internet_gateway.bandwidth.down ],
+    up        : [], // [ afrimesh.settings.internet_gateway.bandwidth.up   ],
     last      : new Date(),
     last_down : 0,
     last_up   : 0
@@ -143,17 +149,17 @@
     traffic.last_up   = snmp[1];
     traffic.last = now;
     if (traffic.down.length > traffic.length) {
-      traffic.down.splice(2, traffic.down.length - traffic.length); // leave 0 for scaling
+      //traffic.down.splice(2, traffic.down.length - traffic.length); // leave 0 for scaling
+      traffic.down.splice(0, traffic.down.length - traffic.length); 
     }
     if (traffic.up.length > traffic.length) {
-      traffic.up.splice(2, traffic.up.length - traffic.length); // leave 0 for scaling
+      //traffic.up.splice(2, traffic.up.length - traffic.length); // leave 0 for scaling
+      traffic.up.splice(0, traffic.up.length - traffic.length);
     }
-    $("#traffic-internet").sparkline(traffic.down,  { composite: false, lineColor: "black", spotColor: false, minSpotColor: false, maxSpotColor: false, fillColor: false });
-    $("#traffic-internet").sparkline(traffic.up,    { composite: true,  lineColor: "gray",  spotColor: false, minSpotColor: false, maxSpotColor: false, fillColor: false });
-    $("#traffic-internet-in").html("" + Math.floor(traffic_down));
-    $("#traffic-internet-out").html("" + Math.floor(traffic_up));
-    $("#traffic-internet-in-max").html(traffic.max_down);
-    $("#traffic-internet-out-max").html(traffic.max_up);
+    $("#traffic-internet").sparkline(traffic.down,  { composite: false, width: 200, lineColor: "blue",   spotColor: false, minSpotColor: false, maxSpotColor: false, fillColor: false });
+    $("#traffic-internet").sparkline(traffic.up,    { composite: true,  width: 200, lineColor: "orange", spotColor: false, minSpotColor: false, maxSpotColor: false, fillColor: false });
+    $("#traffic-internet-in").html ("" + Math.floor(traffic_down) + "/" + traffic.max_down + "Kbps in, ");
+    $("#traffic-internet-out").html("" + Math.floor(traffic_up)   + "/" + traffic.max_up   + "Kbps out");
     var n = Math.max(traffic_down / traffic.max_down, traffic_up / traffic.max_up);
     var busy = ""; 
     if (n < 0.2) {
