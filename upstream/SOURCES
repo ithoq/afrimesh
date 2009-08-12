@@ -19,7 +19,64 @@ mv olsrd olsrd.hg
 
 # pmacct
 wget http://www.pmacct.net/pmacct-0.11.6.tar.gz
-cvs -d :pserver:anonymous@cvs.pmacct.net:/home/repo-0.12 login  # pass: pmacct
-cvs -d :pserver:anonymous@cvs.pmacct.net:/home/repo-0.12 co pmacct
-mv pmacct pmacct.cvs
+tar xzvf pmacct-0.11.6.tar.gz
+cd pmacct-0.11.6
+patch -p1 < 
+# cvs -d :pserver:anonymous@cvs.pmacct.net:/home/repo-0.12 login  # pass: pmacct
+# cvs -d :pserver:anonymous@cvs.pmacct.net:/home/repo-0.12 co pmacct
+# mv pmacct pmacct.cvs
+
+
+
+
+Creating patches:
+-----------------
+
+* Create patches against subversioned sources with:
+  
+  svn diff > ../project.patches/description.patch
+
+* Create patches against git sources with:
+
+  git format-patch origin/master
+
+* Create patches against hg sources with:
+
+  hg diff -p -U 8 path/
+
+* Create patches against cvs sources with:
+
+  cvs diff -u8p path/
+
+* Create patches against unversioned sources with:
+
+  diff -Nuwarp project.orig/ project.patched/ > project.patches/description.patch  # for directories
+
+  diff -wup    oldfile newfile > ../project.patches/description.patch   # for files
+
+
+Applying patches:
+-----------------
+
+* Apply patches with:
+
+  patch -p1 < patch
+
+
+Also see: 
+---------
+
+  http://stephenjungels.com/jungels.net/articles/diff-patch-ten-minutes.html
+  http://www.gimp.org/bugs/howtos/submit-patch.html
+  https://developer.mozilla.org/en/Creating_a_patch
+
+
+For example:
+------------
+
+  diff -Nuwarp pmacct-0.11.6 pmacct-0.11.6.patched > pmacct.patches/01-add-switch-to-output-json.patch
+
+  patch -p1 < ../pmacct.patches/01-add-switch-to-output-json.patch
+
+
 
