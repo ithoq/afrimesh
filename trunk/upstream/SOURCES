@@ -1,0 +1,25 @@
+
+# batman
+svn co http://downloads.open-mesh.net/svn/batman/trunk batman.svn
+
+# freeradius
+wget ftp://ftp.freeradius.org:/pub/freeradius/freeradius-server-2.1.6.tar.gz
+tar xzvf freeradius-server-2.1.6.tar.gz
+cd freeradius-server-2.1.6 ; ./configure ; make
+# edit freeradius.rlm/Makefile and set location of configured&compiled freeradius sources
+cd freeradius; make 
+
+# memcachedb & libmemcachedb
+svn co http://memcachedb.googlecode.com/svn/trunk/ memcachedb.svn
+svn co http://memcachedb.googlecode.com/svn/clients/libmemcached-0.25-patch libmemcached-0.25-patch.svn
+
+# olsr
+hg clone http://gredler.at/hg/olsrd/
+mv olsrd olsrd.hg
+
+# pmacct
+wget http://www.pmacct.net/pmacct-0.11.6.tar.gz
+cvs -d :pserver:anonymous@cvs.pmacct.net:/home/repo-0.12 login  # pass: pmacct
+cvs -d :pserver:anonymous@cvs.pmacct.net:/home/repo-0.12 co pmacct
+mv pmacct pmacct.cvs
+
