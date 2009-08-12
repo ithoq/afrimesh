@@ -16,6 +16,7 @@ svn co http://memcachedb.googlecode.com/svn/clients/libmemcached-0.25-patch libm
 # olsr
 hg clone http://gredler.at/hg/olsrd/
 mv olsrd olsrd.hg
+./olsrd -n -f ../olsrd.support/olsrd.conf --dlPath lib/json_draw/
 
 # pmacct
 wget http://www.pmacct.net/pmacct-0.11.6.tar.gz
