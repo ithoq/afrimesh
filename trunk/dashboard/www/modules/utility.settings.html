@@ -17,27 +17,27 @@
 
   <!-- fieldset>
     <legend>Network</legend -->
-    <!-- label for="autoconfig">Automatic Configuration</label>
+    <!-- div class="label">Automatic Configuration</div>
     <input  id="autoconfig" type="checkbox" />
     <div class="tooltip"><h3>automatic configuration</h3></div>
 
-    <label for="interface">Wireless Interface</label>
+    <div class="label">Wireless Interface</div>
     <input id="interface" />
     <div class="tooltip"><h3>wireless interface</h3></div>
 
-    <label for="ssid">SSID</label>
+    <div class="label">SSID</div>
     <input id="ssid" />
     <div class="tooltip"><h3>ssid</h3></div>
 
-    <label for="bssid">BSSID</label>
+    <div class="label">BSSID</div>
     <input id="bassid" />
     <div class="tooltip"><h3>bssid</h3></div -->
 
-    <!-- label for="afrimesh|settings|address">IP Address</label>
+    <!-- div class="label">IP Address</div>
     <input id="afrimesh|settings|address" />
     <div class="tooltip"><h3>ip address</h3></div -->
 
-    <!-- label for="netmask">Netmask</label>
+    <!-- div class="label">Netmask</div>
     <input id="netmask" />
     <div class="tooltip"><h3>netmask</h3></div -->
   <!-- /fieldset -->
@@ -45,7 +45,7 @@
   <fieldset>
     <legend>Dashboard</legend>
 
-    <label for="afrimesh|settings|network_name">Network Name</label>
+    <div class="label">Network Name</div>
     <input id="afrimesh|settings|network_name" type="text" />
     <div class="tooltip"><h3>network name</h3>
       <p class="explain">
@@ -55,13 +55,13 @@
       </p>
     </div>
 
-    <!-- label for="afrimesh|settings|locale">Locale</label>
+    <!-- div class="label">Locale</div>
     <input id="afrimesh|settings|locale" type="text" />
     <div class="tooltip">
       <p class="explain">This sets the language and country for the dashboard interface.</p>
     </div -->
     
-    <label for="afrimesh|settings|hosts|batman_vis_server">Visualization Server</label>
+    <div class="label">Visualization Server</div>
     <input id="afrimesh|settings|hosts|batman_vis_server" style="background:#FFAAAA;" type="text" />
     <div class="tooltip"><h3>visualization server</h3>
         <p class="explain">The Network Map gets the available mesh nodes and their connections from the server at this address.</p>
@@ -75,7 +75,7 @@
         <p id="batman_vis_server|error" style="color:#FF0000;"></p>
     </div>
 
-    <label for="afrimesh|settings|map|server">Map Server</label>
+    <div class="label">Map Server</div>
     <input id="afrimesh|settings|map|server"  type="text" />
     <div class="tooltip"><h3>map server</h3>
       <p class="explain">The Network Map gets the terrain data from the server at this address.</p>
@@ -89,24 +89,23 @@
       </p>
     </div>
     
-    <label for="location">Location</label>
+    <div class="label">Location</div>
     <input id="location" />
 
-    <!-- label for="afrimesh|settings|map|extent">Map Extents</label>
+    <!-- div class="label">Map Extents</div>
     <input id="afrimesh|settings|map|extent"  type="text" />
     
-    <label for="afrimesh|settings|map|zoom">Map Zoom</label>
+    <div class="label">Map Zoom</div>
     <input id="afrimesh|settings|map|zoom"  type="text" / -->
-
   </fieldset>
 
 
   <!-- fieldset>
     <legend>Sharing</legend>
-    <label for="afrimesh|settings|internet_gateway|share">Internet</label>
+    <div class="label">Internet</div>
     <input  id="afrimesh|settings|internet_gateway|share" type="checkbox" />
     <div class="tooltip"><h3>share internet</h3></div>
-    <label for="afrimesh|settings|internet_gateway|share">Voice</label>
+    <div class="label">Voice</div>
     <input  id="afrimesh|settings|internet_gateway|share" type="checkbox" />
     <div class="tooltip"><h3>share voice</h3></div>
   </fieldset -->
@@ -115,7 +114,7 @@
   <fieldset>
     <legend>Internet Gateway</legend>
     
-    <label for="afrimesh|settings|internet_gateway|address">IP Address</label>
+    <div class="label">IP Address</div>
     <input id="afrimesh|settings|internet_gateway|address" style="background:#FFAAAA;" type="text"></input>
     <div class="tooltip"><h3>internet gateway address</h3>
         <p class="explain">Afrimesh needs the address of your internet gateway to be able to monitor it.</p>
@@ -125,69 +124,64 @@
         <p id="internet_gateway|error" style="color:#FF0000;"></p>
     </div>
     
-    <label for="afrimesh|settings|internet_gateway|snmp|community">Community String</label>
+    <div class="label">Community String</div>
     <input id="afrimesh|settings|internet_gateway|snmp|community" type="text" />
     <div class="tooltip"><h3>snmp community string</h3>
       <p class="explain">Afrimesh uses the SNMP protocol to communicate with the Internet gateway.</p>
       <p class="typical">The default setting is usually 'public'</p>
     </div>
     
-    <label for="afrimesh|settings|internet_gateway|snmp|interface">Interface</label>
+    <div class="label">Interface</div>
     <select id="afrimesh|settings|internet_gateway|snmp|interface" />
 
-    <label for="afrimesh|settings|internet_gateway|bandwidth|down">Download Bandwith</label>
+    <div class="label">Download Bandwidth</div>
     <input id="afrimesh|settings|internet_gateway|bandwidth|down" type="text" />
     <div class="tooltip"><h3>download bandwidth</h3>
       <p class="explain">Enter the download speed of your Internet connection here.</p>
     </div>
     
-    <label for="afrimesh|settings|internet_gateway|bandwidth|up">Upload Bandwith</label>
+    <div class="label">Upload Bandwidth</div>
     <input id="afrimesh|settings|internet_gateway|bandwidth|up" type="text" />    
     <div class="tooltip"><h3>upload bandwidth</h3>
       <p class="explain">Enter the upload speed of your Internet connection here.</p>
       <p class="typical">On ADSL connections this is usually half of the download speed</p>
     </div>
-
   </fieldset>
-  
   
   <fieldset>
     <legend>Radius</legend>
     
-    <label for="afrimesh|settings|radius|server">Server</label>
+    <div class="label">Server</div>
     <input id="afrimesh|settings|radius|server" style="background:#FFAAAA;" type="text"></input>
     <div class="tooltip"><h3>server</h3>
         <p class="explain">Afrimesh needs the address of your RADIUS server to be able to monitor it.</p>
         <p id="radius|server|error" style="color:#FF0000;"></p>
     </div>
 
-    <label for="afrimesh|settings|radius|radtype">Database Type</label>
+    <div class="label">Database Type</div>
     <select id="afrimesh|settings|radius|radtype">
       <option value = "1">mysql</option>
       <option value = "2">memcachcedb</option>
     </select>
 
-    <label for="afrimesh|settings|radius|database">Database</label>
+    <div class="label">Database</div>
     <input id="afrimesh|settings|radius|database" type="text" />
     <div class="tooltip"><h3>database</h3>
       <p class="explain">Enter the RADIUS authentication database here.</p>
     </div>
     
-    <label for="afrimesh|settings|radius|username">Username</label>
+    <div class="label">Username</div>
     <input id="afrimesh|settings|radius|username" type="text" />
     <div class="tooltip"><h3>username</h3>
       <p class="explain">Enter your username for identification on the RADIUS database here.</p>
     </div>
     
-    <label for="afrimesh|settings|radius|password">Password</label>
+    <div class="label">Password</div>
     <input id="afrimesh|settings|radius|password" type="text" />    
     <div class="tooltip"><h3>password</h3>
       <p class="explain">Enter your password for authentication on the RADIUS database here.</p>
     </div>
-
   </fieldset>
-  
-
 </form>
 
 

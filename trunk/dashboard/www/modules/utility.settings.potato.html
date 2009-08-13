@@ -13,36 +13,42 @@
   <fieldset>
     <legend>Address</legend>
 
-    <label for="afrimesh|settings|network|wireless|address">Mesh IP Address</label>
+    <div class="label">Mesh IP Address</div>
     <input  id="afrimesh|settings|network|wireless|address" />
     <div class="tooltip"><h3>ip address</h3></div>
 
-    <label for="afrimesh|settings|network|wireless|netmask">Netmask</label>
+    <div class="label">Netmask</div>
     <input  id="afrimesh|settings|network|wireless|netmask" />
     <div class="tooltip"><h3>netmask</h3></div>
   </fieldset>
 
   <fieldset>
     <legend>Telephone</legend>
-    <label for="extension">User Extension</label>
+
+    <div class="label">User Extension</div>
     <input  id="extension" />
     <div class="tooltip"><h3>user extension</h3></div>
 
-    <label for="did|inbound">Inbound DID</label>
+    <div class="label">Inbound DID</div>
     <input  id="did|inbound" />
     <div class="tooltip"><h3>inbound did</h3></div>
 
-    <label for="afrimesh|settings|potato|asterisk" class="trunk">Asterisk Server</label>
-    <input  id="afrimesh|settings|potato|asterisk" class="trunk" />
-    <div class="tooltip"><h3>asterisk</h3></div>
-    <label for="afrimesh|settings|potato|trunkcalls">Trunk Calls</label>
-    <input  id="afrimesh|settings|potato|trunkcalls" type="checkbox" />
+    <div class="label">Trunk Calls</div>
+    <input id="afrimesh|settings|potato|trunkcalls" type="checkbox"  />
+    
+    <div class="trunk">
+      <div class="label">Asterisk Server</div>
+      <input  id="afrimesh|settings|potato|asterisk" />
+      <div class="tooltip"><h3>asterisk</h3></div>
+    </div>
+
 
   </fieldset>
 
   <fieldset>
     <legend>Network</legend>
-    <label for="afrimesh|settings|hosts|batman_vis_server">Visualization Server</label>
+
+    <div class="label">Visualization Server</div>
     <input id="afrimesh|settings|hosts|batman_vis_server" style="background:#FFAAAA;" type="text" />
     <div class="tooltip"><h3>visualization server</h3>
         <p class="explain">The Network Map gets the available mesh nodes and their connections from the server at this address.</p>
@@ -56,7 +62,7 @@
         <p id="batman_vis_server|error" style="color:#FF0000;"></p>
     </div>
 
-    <label for="afrimesh|settings|map|server">Map Server</label>
+    <div class="label">Map Server</div>
     <input id="afrimesh|settings|map|server"  type="text" />
     <div class="tooltip"><h3>map server</h3>
       <p class="explain">The Network Map gets the terrain data from the server at this address.</p>
@@ -69,31 +75,26 @@
         <a href="http://code.google.com/p/afrimesh/wiki/HowTo">HowToMapServer</a>
       </p>
     </div>
-    
-    <label for="location">Location</label>
+
+    <div class="label">Location</div>
     <input id="location" />
-
   </fieldset>
-
 
   <fieldset>
     <legend>Wireless</legend>
     
-    <label for="afrimesh|settings|network|wireless|channel">Channel</label>
+    <div class="label">Channel</div>
     <input  id="afrimesh|settings|network|wireless|channel" />
     <div class="tooltip"><h3>channel</h3></div>
 
-    <label for="afrimesh|settings|network|wireless|ssid">SSID</label>
+    <div class="label">SSID</div>
     <input  id="afrimesh|settings|network|wireless|ssid" />
     <div class="tooltip"><h3>ssid</h3></div>
 
-    <label for="afrimesh|settings|network|wireless|bssid">BSSID</label>
+    <div class="label">BSSID</div>
     <input  id="afrimesh|settings|network|wireless|bssid" />
-    <div class="tooltip"><h3>bssid</h3></div -->
+    <div class="tooltip"><h3>bssid</h3></div>
   </fieldset>
-
-
-
 </form>
 
 
@@ -117,6 +118,12 @@
         effect   : 'toggle',              // use a simple show/hide effect 
         opacity  : 0.8                    // custom opacity setting 
       });
+
+    /** round corners ------------------------------------------------------ */
+    $(".tooltip").corner("tr 8px bl 8px br 8px");
+
+    /** style controls ----------------------------------------------------- */
+    $('form.two-column :checkbox').slider();
 
     /** install callbacks to save settings -------------------------------- */
     function save_element(id, value) {
@@ -142,7 +149,7 @@
         save_element(this.id, this.value);
         update_vis_server();
       });
-    $("input.[id=afrimesh|settings|potato|trunkcalls]").bind("click", function(event) { 
+    $("input.[id=afrimesh|settings|potato|trunkcalls]").bind("change", function(event) { 
         save_element(this.id, this.checked.toString());
         update_asterisk_server();
       });
@@ -179,9 +186,6 @@
           { config: "afrimesh", section: "location", option: "latitude",  value: location.lat } ]);
     };
   
-    /** round corners ------------------------------------------------------ */
-    $(".tooltip").corner("tr 8px bl 8px br 8px");
-
     return unload;
   };
 

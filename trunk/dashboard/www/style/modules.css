@@ -234,41 +234,36 @@ dl.sort dd { background-color:red;  }
 
 /* - setting module ------------------------------------------------------- */
 form.two-column {
-  /*border: 1px solid darkgrey;*/
   margin: 0px;  
   padding: 0px; 
 }
 form.two-column fieldset {
-  /*border: 1px solid red;*/
   padding-bottom: 1.0em;
+  width: 450px;
 }
 form.two-column fieldset:last-child {
   padding-bottom: 0px;
 }
-
 form.two-column legend {
-  /*border: 1px solid green;*/
-  font-size: 1.25em;
+  font-size: 1.5em;
   padding-bottom: .25em;
 }
-form.two-column label {
+form.two-column .label {
   color: darkgray; 
-  float:left;
-  width: 200px;
+  font-size: 1.25em;
+  width: 220px;
+  float: left;
+}
+form.two-column .trunk {
+  margin-top: .5em;
 }
 form.two-column input, select  {
+  font-size: 1.25em;
   margin-bottom: .5em;
-  display:block;
-  width: 200px;
 }
 form.two-column input[type=checkbox] {  /* aaaaaaaaaargh */
-  margin-bottom: .5em;
-  display: block;
-  margin-left: 197px;
-  margin-top: 8px;
 }
 form.two-column #location {
-  /*width: 50%;*/
   width:  600px;
   height: 300px;
 }

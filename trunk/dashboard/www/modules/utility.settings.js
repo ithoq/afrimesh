@@ -76,6 +76,7 @@ var LocationMap = null;
     }
 
     update_asterisk_server = function() {
+      console.debug("checked: " + $("input.[id*=afrimesh|settings|potato|trunkcalls]").is(":checked"));
       var enabled = $("input.[id*=afrimesh|settings|potato|trunkcalls]").attr("checked");
       if (!enabled) {
         $(".trunk").hide();
