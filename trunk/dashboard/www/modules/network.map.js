@@ -37,7 +37,7 @@ var Map = undefined;
       var mapnik = new OpenLayers.Layer.OSM.Mapnik("Street Map");
       var relief = undefined;
       console.debug("map server: " + afrimesh.settings.map.server);
-      if (afrimesh.settings.map.server == "openstreetmaps.org") {
+      if (afrimesh.settings.map.server == "openstreetmap.org") {
         relief = new OpenLayers.Layer.OSM.CycleMap("Relief Map");
       } else {
         relief = new OpenLayers.Layer.OSM.LocalMap("Relief Map", "http://" + afrimesh.settings.map.server + "/tiles/");

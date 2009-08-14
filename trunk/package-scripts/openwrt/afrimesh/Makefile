@@ -87,7 +87,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/afrimesh-base
 	SECTION:=admin
 	CATEGORY:=Administration
-	DEPENDS:=+busybox +libuci +libjson +batmand	
+	DEPENDS:=+busybox +libuci +libjson +batmand +mini-httpd
 	TITLE:=Easy management for B.A.T.M.A.N. wireless mesh networks
 	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
 endef

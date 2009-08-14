@@ -89,18 +89,27 @@ var LocationMap = null;
     }
 
     update_vis_server = function() {
-      $("input.[id*=afrimesh|settings|hosts|batman_vis_server]").css("background", "#FFAAAA");
+      var meshtype_current = afrimesh.settings.network.mesh.meshtype;
+      if (meshtype_current == 1) {
+        $("select.[id*=afrimesh|settings|network|mesh|meshtype]").html
+          ("<option value = '1' selected>OLSR</option> <option value = '2'>BATMAN</option>");
+      } else {
+        $("select.[id*=afrimesh|settings|network|mesh|meshtype]").html
+          ("<option value = '1'>OLSR</option> <option value = '2' selected>BATMAN</option>");
+      }
+
+      $("input.[id*=afrimesh|settings|network|mesh|vis_server]").css("background", "#FFAAAA");
       try {
-        var routes = afrimesh.villagebus.batman();
+        var routes = afrimesh.villagebus.mesh();
         if (routes != undefined && isArray(routes)) {
-          $("input.[id*=afrimesh|settings|hosts|batman_vis_server]").css("background", "#AAFFAA");
-          $("p.[id*=batman_vis_server|error]").html("");
+          $("input.[id*=afrimesh|settings|network|mesh|vis_server]").css("background", "#AAFFAA");
+          $("p.[id*=vis_server|error]").html("");
         } else {
-          console.debug("Visualization server unreachable.");
-          $("p.[id*=batman_vis_server|error]").html("Visualization server unreachable.");
+          console.debug("utility.settings.js->update_vis_server: Visualization server unreachable.");
+          $("p.[id*=vis_server|error]").html("Visualization server unreachable.");
         }
       } catch (error) {
-        $("p.[id*=batman_vis_server|error]").html("Visualization server unreachable. " + error + ".");
+        $("p.[id*=vis_server|error]").html("Visualization server unreachable. " + error + ".");
         console.debug("Vis server is unreachable. " + error);
       }
     }
@@ -154,7 +163,7 @@ var LocationMap = null;
           options.restrictedExtent.extend(LonLat(longitude - extent, latitude - extent));
           options.restrictedExtent.extend(LonLat(longitude + extent, latitude + extent));
           var map = new OpenLayers.Map(id, options);
-          if (afrimesh.settings.map.server == "openstreetmaps.org") { // TODO afrimesh.settings.map.server == afrimesh.settings.map.server.default
+          if (afrimesh.settings.map.server == "openstreetmap.org") { // TODO afrimesh.settings.map.server == afrimesh.settings.map.server.default
             map.addLayers([ new OpenLayers.Layer.OSM.CycleMap("Relief Map") ]);
           } else {
             map.addLayers([ new OpenLayers.Layer.OSM.LocalMap("Relief Map", "http://" + afrimesh.settings.map.server + "/tiles/") ]);

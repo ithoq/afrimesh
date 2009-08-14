@@ -125,6 +125,7 @@ install-config:
 	cat config/gateway        >> $(DASHBOARD_ETC)/config/afrimesh
 	cat config/radius         >> $(DASHBOARD_ETC)/config/afrimesh
 	cat config/customer-plans >> $(DASHBOARD_ETC)/config/afrimesh
+	cat config/mesh		  >> $(DASHBOARD_ETC)/config/afrimesh
 	#cat config/router         >> $(DASHBOARD_ETC)/config/afrimesh
 	#cat config/batmand        >> $(DASHBOARD_ETC)/config/afrimesh
 	chmod a+rw $(DASHBOARD_ETC)/config/afrimesh
