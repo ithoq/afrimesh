@@ -44,6 +44,9 @@ KAMIKAZE=/Volumes/afrimesh-dev/ext/kamikaze
 PPA=antoine-7degrees-ppa
 # PPA=afrimesh-ppa
 
+# Some non-standard dependencies are hosted here
+DEPS_URL="https://launchpad.net/~antoine-7degrees/+archive/ppa/+files/"
+#OTHERMIRROR=deb http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu hardy main|deb-src http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu hardy main
 
 # - binaries -----------------------------------------------------------------
 VILLAGERS=village-bus-batman village-bus-radius village-bus-snmp village-bus-uci
@@ -68,7 +71,6 @@ ifeq ($(UNAME),Linux)
 WWW_ROOT=$(DESTDIR)/var/www
 DASHBOARD_WWW=$(WWW_ROOT)/afrimesh
 DASHBOARD_CGI=$(DESTDIR)/usr/lib/cgi-bin
-DEPS_URL="https://launchpad.net/~antoine-7degrees/+archive/ppa/+files/"
 endif
 ifeq ($(UNAME),FreeBSD)
 WWW_ROOT=$(DESTDIR)/usr/local/www/apache22/data
@@ -164,7 +166,6 @@ sources : clean
 # - linux --------------------------------------------------------------------
 # read: https://wiki.ubuntu.com/PackagingGuide/Complete
 PKG_BUILD_DIR=/tmp/build
-OTHERMIRROR=deb http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu hardy main|deb-src http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu hardy main
 DEPS_HOOK="A70deps"
 linux : all
 install-linux : install
@@ -174,7 +175,7 @@ clean-linux : clean
 launchpad-linux : source-packages-linux
 	@echo "Pushing packages to launchpad.net ppa"
 	# TODO run lintian & linda
-	dput -c package-scripts/debian/dput.cf antoine-7degrees-ppa $(PKG_BUILD_DIR)/afrimesh-dashboard_$(VERSION)-$(RELEASE)_source.changes
+	dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/afrimesh-dashboard_$(VERSION)-$(RELEASE)_source.changes
 
 packages-linux : source-packages-linux binary-packages-linux
 
@@ -187,7 +188,7 @@ binary-packages-linux : prep-linux
 	rm -f ~/.pbuilderrc
 	echo "HOOKDIR=$(PKG_BUILD_DIR)/hook.d" >> ~/.pbuilderrc
 	mkdir -p $(PKG_BUILD_DIR)/hook.d
-	cp package-scripts/debian/pbuilder-update-ppa-keys.sh $(PKG_BUILD_DIR)/hook.d/D70update-ppa-keys
+	cp package-scripts/debian/pbuilder-update-$(PPA)-keys.sh $(PKG_BUILD_DIR)/hook.d/D70update-ppa-keys
 	cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; pdebuild 
 	@echo "Built: "
 	ls -al /var/cache/pbuilder/result
@@ -299,9 +300,9 @@ depends-launchpad-linux : #depends-packages-linux-json-c depends-packages-linux-
 	@echo "Uploading/Refreshing packages to launchpad.net ppa"
 	# TODO run lintian & linda
 	# TODO read package release # from changelogs
-	dput -c package-scripts/debian/dput.cf antoine-7degrees-ppa $(PKG_BUILD_DIR)/json-c_0.9-1_source.changes
-	dput -c package-scripts/debian/dput.cf antoine-7degrees-ppa $(PKG_BUILD_DIR)/uci_0.7.5-1_source.changes
-	dput -c package-scripts/debian/dput.cf antoine-7degrees-ppa $(PKG_BUILD_DIR)/libmemcachedb_0.25-1_source.changes
+	dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/json-c_0.9-1_source.changes
+	dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/uci_0.7.5-1_source.changes
+	dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/libmemcachedb_0.25-1_source.changes
 
 
 # - freebsd ------------------------------------------------------------------
