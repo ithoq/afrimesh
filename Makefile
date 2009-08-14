@@ -152,7 +152,10 @@ distclean : clean
 sources : clean
 	rm -rf /tmp/afrimesh-$(VERSION).tar.gz
 	cp -r ../trunk /tmp/afrimesh-$(VERSION)
+	rm -rf /tmp/afrimesh-$(VERSION)/upstream
+	rm -rf /tmp/afrimesh-$(VERSION)/package-scripts
 	find /tmp/afrimesh-$(VERSION) -name "*~"   | xargs rm -f
+	find /tmp/afrimesh-$(VERSION) -name "#*#"   | xargs rm -f
 	find /tmp/afrimesh-$(VERSION) -name ".svn" | xargs rm -rf
 	cd /tmp ; tar cf - afrimesh-$(VERSION) > afrimesh-$(VERSION).tar
 	cd /tmp ; gzip afrimesh-$(VERSION).tar
@@ -211,7 +214,6 @@ prep-linux : clean-linux sources #hooks-linux
 	cd $(PKG_BUILD_DIR) ; mv afrimesh-$(VERSION) afrimesh-dashboard-$(VERSION)
 	cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; dh_make -c BSD -e antoine@7degrees.co.za -s --createorig
 	rm -rf $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION)/debian/*
-	rm -f package-scripts/debian/afrimesh-dashboard/*~
 	cp -a package-scripts/debian/afrimesh-dashboard/* $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION)/debian
 
 #hooks-linux :
