@@ -30,7 +30,7 @@
 
 
 # - configuration ------------------------------------------------------------
-VERSION=r475-0.3alpha
+VERSION=r484-0.3alpha
 RELEASE=1
 
 # If you want to build packages for OpenWRT you need to set this to the
@@ -41,12 +41,11 @@ KAMIKAZE=/Volumes/afrimesh-dev/ext/kamikaze
 #   _DO_ set this to your personal ppa if you want to build test packages
 #   _DON'T_ set this to afrimesh-ppa unless you are planning on doing a
 #   release !!!                                   
-PPA=antoine-7degrees-ppa
-# PPA=afrimesh-ppa
+#PPA=antoine-7degrees-ppa
+PPA=afrimesh-ppa
 
 # Some non-standard dependencies are hosted here
-DEPS_URL="https://launchpad.net/~antoine-7degrees/+archive/ppa/+files/"
-#OTHERMIRROR=deb http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu hardy main|deb-src http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu hardy main
+#DEPS_URL="https://launchpad.net/~antoine-7degrees/+archive/ppa/+files/"
 
 # - binaries -----------------------------------------------------------------
 VILLAGERS=village-bus-batman village-bus-radius village-bus-snmp village-bus-uci
@@ -127,7 +126,6 @@ install-config:
 	cat config/gateway        >> $(DASHBOARD_ETC)/config/afrimesh
 	cat config/radius         >> $(DASHBOARD_ETC)/config/afrimesh
 	cat config/customer-plans >> $(DASHBOARD_ETC)/config/afrimesh
-	cat config/mesh		  >> $(DASHBOARD_ETC)/config/afrimesh
 	#cat config/router         >> $(DASHBOARD_ETC)/config/afrimesh
 	#cat config/batmand        >> $(DASHBOARD_ETC)/config/afrimesh
 	chmod a+rw $(DASHBOARD_ETC)/config/afrimesh
@@ -214,27 +212,28 @@ prep-linux : clean-linux sources #hooks-linux
 	rm -f package-scripts/debian/afrimesh-dashboard/*~
 	cp -a package-scripts/debian/afrimesh-dashboard/* $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION)/debian
 
-hooks-linux :
-	@echo "Installing hooks to install unofficial packages needed to build Afrimesh"
-	mkdir -p $(PKG_BUILD_DIR)
-	rm -f ~/.pbuilderrc
-	echo "HOOKDIR=$(PKG_BUILD_DIR)/hook.d" >> ~/.pbuilderrc
-	mkdir -p $(PKG_BUILD_DIR)/hook.d
-	echo "#!/bin/sh" > $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-	echo "echo \"Installing unofficial dependencies for Afrimesh\"" >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-	echo "cd /tmp ; wget $(DEPS_URL)/uci_0.7.5-1_i386.deb" >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-	echo "cd /tmp ; wget $(DEPS_URL)/uci-dev_0.7.5-1_i386.deb" >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-	echo "cd /tmp ; wget $(DEPS_URL)/json-c_0.9-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK
-	echo "cd /tmp ; wget $(DEPS_URL)/json-c-dev_0.9-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-	echo "cd /tmp ; wget $(DEPS_URL)/libmemcachedb_0.25-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-	echo "cd /tmp ; wget $(DEPS_URL)/libmemcachedb-dev_0.25-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-	echo "dpkg -i /tmp/uci_0.7.5-1_i386.deb" >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-	echo "dpkg -i /tmp/uci-dev_0.7.5-1_i386.deb" >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-	echo "dpkg -i /tmp/json-c_0.9-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-	echo "dpkg -i /tmp/json-c-dev_0.9-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-	echo "dpkg -i /tmp/libmemcachedb_0.25-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-	echo "dpkg -i /tmp/libmemcachedb-dev_0.25-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-	chmod 0755 $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
+#hooks-linux :
+#	@echo "Installing hooks to install unofficial packages needed to build Afrimesh"
+#	mkdir -p $(PKG_BUILD_DIR)
+#	rm -f ~/.pbuilderrc
+#	echo "HOOKDIR=$(PKG_BUILD_DIR)/hook.d" >> ~/.pbuilderrc
+#	mkdir -p $(PKG_BUILD_DIR)/hook.d
+#	echo "#!/bin/sh" > $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
+#	echo "echo \"Installing unofficial dependencies for Afrimesh\"" >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
+#	echo "cd /tmp ; wget $(DEPS_URL)/uci_0.7.5-1_i386.deb" >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
+#	echo "cd /tmp ; wget $(DEPS_URL)/uci-dev_0.7.5-1_i386.deb" >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
+#	echo "cd /tmp ; wget $(DEPS_URL)/json-c_0.9-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK
+#	echo "cd /tmp ; wget $(DEPS_URL)/json-c-dev_0.9-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
+#	echo "cd /tmp ; wget $(DEPS_URL)/libmemcachedb_0.25-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
+#	echo "cd /tmp ; wget $(DEPS_URL)/libmemcachedb-dev_0.25-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
+#	echo "dpkg -i /tmp/uci_0.7.5-1_i386.deb" >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
+#	echo "dpkg -i /tmp/uci-dev_0.7.5-1_i386.deb" >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
+#	echo "dpkg -i /tmp/json-c_0.9-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
+#	echo "dpkg -i /tmp/json-c-dev_0.9-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
+#	echo "dpkg -i /tmp/libmemcachedb_0.25-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
+#	echo "dpkg -i /tmp/libmemcachedb-dev_0.25-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
+#	chmod 0755 $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
+
 
 depends-packages-linux-json-c :
 	wget --no-clobber -c -P $(PKG_BUILD_DIR) http://oss.metaparadigm.com/json-c/json-c-0.9.tar.gz
@@ -301,8 +300,8 @@ depends-launchpad-linux : #depends-packages-linux-json-c depends-packages-linux-
 	# TODO run lintian & linda
 	# TODO read package release # from changelogs
 	dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/json-c_0.9-1_source.changes
-	dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/uci_0.7.5-1_source.changes
-	dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/libmemcachedb_0.25-1_source.changes
+	#dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/uci_0.7.5-1_source.changes
+	#dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/libmemcachedb_0.25-1_source.changes
 
 
 # - freebsd ------------------------------------------------------------------
