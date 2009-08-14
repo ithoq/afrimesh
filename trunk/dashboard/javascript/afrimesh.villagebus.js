@@ -28,7 +28,7 @@ var BootVillageBus = function (afrimesh) {
 
 
   /** - villagebus.mesh_topology ------------------------------------------------- */
-  villagebus.mesh_topology     = function() { return this.batman.vis();};
+  villagebus.mesh_topology     = function() { return this.mesh_topology.vis();};
   villagebus.mesh_topology.vis = function() { 
     return this.vis.sync(); 
   }; 
@@ -38,7 +38,7 @@ var BootVillageBus = function (afrimesh) {
       return "http://" + afrimesh.settings.address + ":2005"; 
     }
     return villagebus.ajax_proxy() + "http://" + afrimesh.settings.network.mesh.vis_server + ":2005"; 
-    //return "http://" + afrimesh.settings.hosts.batman_vis_server + ":2005?callback=foo"; 
+    //return "http://" + afrimesh.settings.network.mesh.vis_server + ":2005?callback=foo"; 
   };
   
   villagebus.mesh_topology.vis.async = function(handler) { 
