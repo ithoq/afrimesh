@@ -153,7 +153,6 @@ sources : clean
 	rm -rf /tmp/afrimesh-$(VERSION).tar.gz
 	cp -r ../trunk /tmp/afrimesh-$(VERSION)
 	rm -rf /tmp/afrimesh-$(VERSION)/upstream
-	rm -rf /tmp/afrimesh-$(VERSION)/package-scripts
 	find /tmp/afrimesh-$(VERSION) -name "*~"   | xargs rm -f
 	find /tmp/afrimesh-$(VERSION) -name "#*#"   | xargs rm -f
 	find /tmp/afrimesh-$(VERSION) -name ".svn" | xargs rm -rf
