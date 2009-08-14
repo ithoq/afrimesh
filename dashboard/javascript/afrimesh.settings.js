@@ -46,14 +46,15 @@ function BootSettings(parent, address) {
     "afrimesh|settings|network|wireless|channel"  : { remote : "wireless|wifi0|channel",   init : "13" },
     "afrimesh|settings|network|wireless|ssid"     : { remote : "wireless|cfg03d398|ssid",  init : "potato" },
     "afrimesh|settings|network|wireless|bssid"    : { remote : "wireless|cfg03d398|bssid", init : "02:CA:FF:EE:BA:BE" },
+    "afrimesh|settings|network|mesh|meshtype"     : { remote : "afrimesh|mesh|mesh_protocol",   init : "OLSR" },
+    "afrimesh|settings|network|mesh|vis_server"   : { remote : "afrimesh|mesh|mesh_vis_server", init : "localhost" },  
 
     "afrimesh|settings|hosts|dashboard_server"  : { remote : "afrimesh|dashboard|dashboard_server", init : "default.dashboard.server"  },
-    "afrimesh|settings|hosts|batman_vis_server" : { remote : "batmand|general|visualisation_srv",   init : "default.vis.server" },  // TODO - pull this from batmand conf file rather
 
     "afrimesh|settings|location|longitude" : {  remote : "afrimesh|location|longitude", init : "18.339733" },
     "afrimesh|settings|location|latitude"  : {  remote : "afrimesh|location|latitude",  init : "-34.138061" },
 
-    "afrimesh|settings|map|server" : {  remote : "afrimesh|map|server", init : "openstreetmaps.org" },
+    "afrimesh|settings|map|server" : {  remote : "afrimesh|map|server", init : "openstreetmap.org" },
     "afrimesh|settings|map|extent" : {  remote : "afrimesh|map|extent", init : "0.025" },
     "afrimesh|settings|map|zoom"   : {  remote : "afrimesh|map|zoom",   init : "16" },
     "afrimesh|settings|map|aerial" : {  remote : "afrimesh|map|aerial", init : "false" },

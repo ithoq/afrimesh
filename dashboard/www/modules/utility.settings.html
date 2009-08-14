@@ -36,7 +36,6 @@
     <!-- div class="label">IP Address</div>
     <input id="afrimesh|settings|address" />
     <div class="tooltip"><h3>ip address</h3></div -->
-
     <!-- div class="label">Netmask</div>
     <input id="netmask" />
     <div class="tooltip"><h3>netmask</h3></div -->
@@ -60,9 +59,16 @@
     <div class="tooltip">
       <p class="explain">This sets the language and country for the dashboard interface.</p>
     </div -->
-    
+
+    <br>
+    <div class="label">Mesh Type</div>
+    <select id="afrimesh|settings|mesh|meshtype">
+      <option value = "1">OLSR</option>
+      <option value = "2">BATMAN</option>
+    </select><br>
+
     <div class="label">Visualization Server</div>
-    <input id="afrimesh|settings|hosts|batman_vis_server" style="background:#FFAAAA;" type="text" />
+    <input id="afrimesh|settings|network|mesh|vis_server" style="background:#FFAAAA;" type="text" />
     <div class="tooltip"><h3>visualization server</h3>
         <p class="explain">The Network Map gets the available mesh nodes and their connections from the server at this address.</p>
         <p class="typical">
@@ -72,7 +78,7 @@
           You can learn how to configure a different vis server by reading the
           <a href="http://code.google.com/p/afrimesh/wiki/HowTo">HowtoVisServer</a>
         </p>
-        <p id="batman_vis_server|error" style="color:#FF0000;"></p>
+        <p id="vis_server|error" style="color:#FF0000;"></p>
     </div>
 
     <div class="label">Map Server</div>

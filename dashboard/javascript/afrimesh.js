@@ -31,7 +31,7 @@ var afrimesh = undefined;
         latitude  : -34.138061
       },
       map : {
-        server    : "openstreetmaps.org",
+        server    : "openstreetmap.org",
         extent    : 0.025, // in degrees 
         zoom      : 16,
         aerial    : false

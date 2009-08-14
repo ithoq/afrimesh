@@ -27,6 +27,13 @@ var BootVillageBus = function (afrimesh) {
   };
 
 
+  /** - villagebus.mesh                                                                                                 ------------------------------------------------- */
+  villagebus.mesh     = function() { 
+	if (afrimesh.settings.network.mesh.meshtype.toLowerCase() == "olsr") 
+		return this.olsr.vis();
+	return this.batman.vis();
+  };
+
   /** - villagebus.batman ------------------------------------------------- */
   villagebus.batman     = function() { return this.batman.vis();};
   villagebus.batman.vis = function() { 
@@ -34,10 +41,10 @@ var BootVillageBus = function (afrimesh) {
   }; 
 
   villagebus.batman.vis.url  = function() { 
-    if (afrimesh.settings.hosts.batman_vis_server == afrimesh.settings.address) {
-      return "http://" + afrimesh.settings.hosts.batman_vis_server + ":2005"; 
+    if (afrimesh.settings.network.mesh.vis_server == afrimesh.settings.address) {
+      return "http://" + afrimesh.settings.address + ":2005"; 
     }
-    return villagebus.ajax_proxy() + "http://" + afrimesh.settings.hosts.batman_vis_server + ":2005"; 
+    return villagebus.ajax_proxy() + "http://" + afrimesh.settings.network.mesh.vis_server + ":2005"; 
     //return "http://" + afrimesh.settings.hosts.batman_vis_server + ":2005?callback=foo"; 
   };
   
@@ -62,6 +69,47 @@ var BootVillageBus = function (afrimesh) {
         url     : this.url(),
         request : {},
         success : handler,
+        async   : false });
+  };
+
+  /** - villagebus.olsr ------------------------------------------------- */
+  villagebus.olsr     = function() { return this.olsr.vis();};
+  villagebus.olsr.vis = function() { 
+    return this.vis.sync(); 
+  }; 
+
+  villagebus.olsr.vis.url  = function() { 
+    if (afrimesh.settings.network.mesh.vis_server == afrimesh.settings.address) {
+	return "http://" + afrimesh.settings.address + ":2005";
+	//return villagebus.ajax_proxy() + "http://" + afrimesh.settings.address + "/cgi-bin/village-bus-olsr"; 
+    }
+    return villagebus.ajax_proxy() + "http://" + afrimesh.settings.network.mesh.vis_server + ":2005"; 
+  };
+  
+  villagebus.olsr.vis.async = function(handler) {
+    console.debug("in olsr.vis.async"); 
+    var xml = make_json_request({
+        url     : this.url(),
+        request : {},
+        success : null,
+        async   : true });
+    return xml;
+  };
+  villagebus.olsr.vis.poll = function(f, frequency) {   
+    this.async(f);
+    setTimeout(function() { afrimesh.villagebus.olsr.vis.poll(f, frequency); }, 
+               frequency);
+  };
+  villagebus.olsr.vis.sync = function() {
+    console.debug("in olsr.vis.sync"); 
+    var handler  = function(data) { 
+      handler.response = data;  
+    };
+    return make_json_request({
+        url     : this.url(),
+        request : {},
+        success : handler,
+  	error   : handler,
         async   : false });
   };
 
