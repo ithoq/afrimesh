@@ -30,7 +30,7 @@
 
 
 # - configuration ------------------------------------------------------------
-VERSION=r484-0.3alpha
+VERSION=r490-0.3alpha
 RELEASE=1
 
 # If you want to build packages for OpenWRT you need to set this to the
