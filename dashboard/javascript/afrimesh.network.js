@@ -64,10 +64,7 @@ function BootNetwork(parent) {
   network.mesh.routes.sync  = function() { 
     var routes  = [];
     try {
-	if (afrimesh.settings.network.mesh_protocol.toLowerCase() == "olsr")
-		routes = afrimesh.villagebus.olsr();
-	else
-		routes = afrimesh.villagebus.batman();
+	routes = afrimesh.villagebus.mesh_topology();
     } catch(error) {
       console.debug("Vis server unreachable due to unknown reason. " + error);
     }
@@ -78,7 +75,7 @@ function BootNetwork(parent) {
     var routers  = [];
     var included = {};
     try {
-      afrimesh.villagebus.batman().map(function(route) {
+      afrimesh.villagebus.mesh_topology().map(function(route) {
         if (!included[route.router]) { 
           router = { address : route.router,
                      routes  : [ route ]     };
