@@ -59,17 +59,20 @@ MAKE=make
 
 # - platform detection -------------------------------------------------------
 DEPROOT=/usr
-DASHBOARD_WWW=$(DESTDIR)/www
+WWW_ROOT=$(DESTDIR)/www
+DASHBOARD_WWW=$(WWW_ROOT)/afrimesh
 DASHBOARD_CGI=$(DESTDIR)/www/cgi-bin
 DASHBOARD_ETC=$(DESTDIR)/etc
 UNAME = $(shell uname)
 ifeq ($(UNAME),Linux)
-DASHBOARD_WWW=$(DESTDIR)/var/www
+WWW_ROOT=$(DEST_DIR)/var/www
+DASHBOARD_WWW=$(WWW_ROOT)/afrimesh
 DASHBOARD_CGI=$(DESTDIR)/usr/lib/cgi-bin
 DEPS_URL="https://launchpad.net/~antoine-7degrees/+archive/ppa/+files/"
 endif
 ifeq ($(UNAME),FreeBSD)
-DASHBOARD_WWW=$(DESTDIR)/usr/local/www/apache22/data
+WWW_ROOT=$(DESTDIR)/usr/local/www/apache22/data
+DASHBOARD_WWW=$(WWW_ROOT)/afrimesh
 DASHBOARD_CGI=$(DESTDIR)/usr/local/www/apache22/cgi-bin
 DEPROOT=/usr/local
 MAKE=gmake
@@ -96,6 +99,7 @@ install-www:
 	$(INSTALL) dashboard/www/style      $(DASHBOARD_WWW)
 	$(INSTALL) dashboard/www/modules    $(DASHBOARD_WWW)
 	$(INSTALL) dashboard/javascript     $(DASHBOARD_WWW) # TODO - crunch all javascript into a single file ?
+	@if ! test -f $(WWW_ROOT)/index.html ; then $(INSTALL) dashboard/www/index.redirect.html $(WWW_ROOT)/index.html ; fi # redirect
 	@echo "Installing dashboard cgi scripts in: $(DASHBOARD_CGI)"
 	@if ! test -d $(DASHBOARD_CGI) ; then mkdir -p $(DASHBOARD_CGI) ; fi
 	$(INSTALL) ./package-scripts/openwrt/afrimesh-portal/files/www/cgi-bin/uam.pl $(DASHBOARD_CGI)
