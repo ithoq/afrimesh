@@ -30,7 +30,7 @@
 
 
 # - configuration ------------------------------------------------------------
-VERSION=r461-0.3alpha
+VERSION=r475-0.3alpha
 RELEASE=1
 
 # If you want to build packages for OpenWRT you need to set this to the
@@ -65,7 +65,7 @@ DASHBOARD_CGI=$(DESTDIR)/www/cgi-bin
 DASHBOARD_ETC=$(DESTDIR)/etc
 UNAME = $(shell uname)
 ifeq ($(UNAME),Linux)
-WWW_ROOT=$(DEST_DIR)/var/www
+WWW_ROOT=$(DESTDIR)/var/www
 DASHBOARD_WWW=$(WWW_ROOT)/afrimesh
 DASHBOARD_CGI=$(DESTDIR)/usr/lib/cgi-bin
 DEPS_URL="https://launchpad.net/~antoine-7degrees/+archive/ppa/+files/"
