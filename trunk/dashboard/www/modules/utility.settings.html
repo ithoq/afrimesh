@@ -61,7 +61,7 @@
     </div -->
 
     <div class="label">Visualization Server</div>
-    <input id="afrimesh|settings|hosts|vis_server" style="background:#FFAAAA;" type="text" />
+    <input id="afrimesh|settings|network|mesh|vis_server" style="background:#FFAAAA;" type="text" />
     <div class="tooltip"><h3>visualization server</h3>
         <p class="explain">The Network Map gets the available mesh nodes and their connections from the server at this address.</p>
         <p class="typical">
@@ -221,7 +221,7 @@
           save_element(this.id, this.value);
           if (this.id == "afrimesh|settings|internet_gateway|address") {
             populate_select_interface();
-          } else if (this.id == "afrimesh|settings|hosts|vis_server") {
+          } else if (this.id == "afrimesh|settings|network|mesh|vis_server") {
               update_vis_server();
           } else if (this.id == "afrimesh|settings|radius|server") {
               update_radius_server();
@@ -246,7 +246,7 @@
         populate_select_interface();
       });
 
-    $("input.[id*=afrimesh|settings|hosts|vis_server]").bind("blur", function(event) { 
+    $("input.[id*=afrimesh|settings|network|mesh|vis_server]").bind("blur", function(event) { 
         console.debug("Override Setting for vis server " + this.id + " -> " + this.value);
         save_element(this.id, this.value);
         update_vis_server();
