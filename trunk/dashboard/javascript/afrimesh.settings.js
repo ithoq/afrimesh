@@ -48,7 +48,7 @@ function BootSettings(parent, address) {
     "afrimesh|settings|network|wireless|bssid"    : { remote : "wireless|cfg03d398|bssid", init : "02:CA:FF:EE:BA:BE" },
 
     "afrimesh|settings|hosts|dashboard_server"  : { remote : "afrimesh|dashboard|dashboard_server", init : "default.dashboard.server"  },
-    "afrimesh|settings|hosts|vis_server"        : { remote : "afrimesh|dashboard|visualisation_srv", init : "localhost" },  
+    "afrimesh|settings|network|mesh|vis_server"        : { remote : "afrimesh|dashboard|visualisation_srv", init : "localhost" },  
 
     "afrimesh|settings|location|longitude" : {  remote : "afrimesh|location|longitude", init : "18.339733" },
     "afrimesh|settings|location|latitude"  : {  remote : "afrimesh|location|latitude",  init : "-34.138061" },
