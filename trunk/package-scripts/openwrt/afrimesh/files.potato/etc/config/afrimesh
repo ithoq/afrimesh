@@ -15,7 +15,7 @@ config 'afrimesh' 'location'
 	option 'latitude' '-33.825499'
 
 config 'afrimesh' 'map'
-	option 'server' 'openstreetmaps.org'
+	option 'server' 'openstreetmap.org'
 	option 'extent' '10.025'
 	option 'zoom' '16'
 	option 'aerial' 'false'

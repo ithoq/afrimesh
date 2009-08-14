@@ -1,5 +1,5 @@
 config 'afrimesh' 'map'
-       option 'server' 'openstreetmaps.org'
+       option 'server' 'openstreetmap.org'
        option 'extent' '0.025'
        option 'zoom' '16'
        option 'aerial' 'false'
