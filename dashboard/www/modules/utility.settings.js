@@ -100,7 +100,7 @@ var LocationMap = null;
 
       $("input.[id*=afrimesh|settings|network|mesh|vis_server]").css("background", "#FFAAAA");
       try {
-        var routes = afrimesh.villagebus.mesh();
+        var routes = afrimesh.villagebus.mesh_topology();
         if (routes != undefined && isArray(routes)) {
           $("input.[id*=afrimesh|settings|network|mesh|vis_server]").css("background", "#AAFFAA");
           $("p.[id*=vis_server|error]").html("");
