@@ -89,15 +89,6 @@ var LocationMap = null;
     }
 
     update_vis_server = function() {
-      var meshtype_current = afrimesh.settings.network.mesh.meshtype;
-      if (meshtype_current == 1) {
-        $("select.[id*=afrimesh|settings|network|mesh|meshtype]").html
-          ("<option value = '1' selected>OLSR</option> <option value = '2'>BATMAN</option>");
-      } else {
-        $("select.[id*=afrimesh|settings|network|mesh|meshtype]").html
-          ("<option value = '1'>OLSR</option> <option value = '2' selected>BATMAN</option>");
-      }
-
       $("input.[id*=afrimesh|settings|network|mesh|vis_server]").css("background", "#FFAAAA");
       try {
         var routes = afrimesh.villagebus.mesh_topology();
