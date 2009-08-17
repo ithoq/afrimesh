@@ -23,9 +23,9 @@
 
 = Configure Afrimesh =
 
-  * Edit: <afrimesh-source-dir>/Makefile
+  * Edit: afrimesh-source-dir/Makefile
   {{{
-  KAMIKAZE=<openwrt-source-dir>
+  KAMIKAZE=openwrt-source-dir
   }}}
   * Run:
   {{{
@@ -37,7 +37,7 @@
 
   * Configure OpenWRT:
   {{{
-  cd <openwrt-source-dir>
+  cd openwrt-source-dir
   make menuconfig
   # select afrimesh under the Administration heading
   }}}
