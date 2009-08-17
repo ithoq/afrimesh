@@ -1,4 +1,3 @@
-
 = OpenWRT =
 
   * Sources
@@ -11,25 +10,39 @@
   ./scripts/feeds update -a
   }}}
 
-
 = Dependencies =
 
-  * libjson  
+  * Run:
   {{{
   ./scripts/feeds install libjson
+  ./scripts/feeds install batmand
+  ./scripts/feeds install libnetsnmp
+  ./scripts/feeds install curl
   }}}
 
 
-= Build = 
+= Configure Afrimesh =
 
-  * Configure:
+  * Edit: <afrimesh-source-dir>/Makefile
   {{{
+  KAMIKAZE=<openwrt-source-dir>
+  }}}
+  * Run:
+  {{{
+    make prep-openwrt
+  }}}
+
+
+= Build Packages = 
+
+  * Configure OpenWRT:
+  {{{
+  cd <openwrt-source-dir>
   make menuconfig
-  # Global build settings -> Select all packages by default 
+  # select afrimesh under the Administration heading
   }}}
   
   * Build
   {{{
   make world
   }}}
-
