@@ -105,6 +105,7 @@ install-www:
 	@if ! test -d $(DASHBOARD_CGI) ; then mkdir -p $(DASHBOARD_CGI) ; fi
 	$(INSTALL) ./package-scripts/openwrt/afrimesh-portal/files/www/cgi-bin/uam.pl $(DASHBOARD_CGI)
 	$(INSTALL) dashboard/cgi-bin/ajax-proxy.cgi $(DASHBOARD_CGI)
+	$(INSTALL) dashboard/cgi-bin/village-bus-meshtop.cgi $(DASHBOARD_CGI)
 	$(INSTALL) dashboard/cgi-bin/village-bus-echo $(DASHBOARD_CGI)/village-bus-echo.kml
 	chmod 0755 $(DASHBOARD_CGI)/village-bus-echo.kml
 	$(INSTALL) dashboard/cgi-bin/village-bus-pmacct.cgi $(DASHBOARD_CGI)

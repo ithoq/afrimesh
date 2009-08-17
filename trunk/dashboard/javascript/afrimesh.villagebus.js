@@ -35,10 +35,11 @@ var BootVillageBus = function (afrimesh) {
 
   villagebus.mesh_topology.vis.url  = function() { 
     if (afrimesh.settings.network.mesh.vis_server == afrimesh.settings.address) {
-      return "http://" + afrimesh.settings.address + ":2005"; 
+      //return "http://" + afrimesh.settings.address + ":2005"; 
+      return "http://" + afrimesh.settings.address + "/cgi-bin/village-bus-meshtop.cgi";
     }
-    return villagebus.ajax_proxy() + "http://" + afrimesh.settings.network.mesh.vis_server + ":2005"; 
-    //return "http://" + afrimesh.settings.network.mesh.vis_server + ":2005?callback=foo"; 
+    //return villagebus.ajax_proxy() + "http://" + afrimesh.settings.network.mesh.vis_server + ":2005"; 
+    return villagebus.ajax_proxy() + "http://" + afrimesh.settings.network.mesh.vis_server + "/cgi-bin/village-bus-meshtop.cgi";
   };
   
   villagebus.mesh_topology.vis.async = function(handler) { 
