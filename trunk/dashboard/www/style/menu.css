@@ -138,9 +138,12 @@
   height:0px;
 }
 #menu .bottom_left { position:absolute; left:0px; top:0px;}
-#menu .bottom_right { position:absolute; left:135px; top:0px;}
+#menu .bottom_right { position:absolute; left:120px; top:0px;}
 #menu .middle { 
   position:absolute; 
+  background: #72839d;
+  padding: 0px;
+  margin: 0px;
   left:15px; 
   height: 15px; 
   width: 120px; 
