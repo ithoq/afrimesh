@@ -50,7 +50,7 @@
 
         /** round menu item corners */
         $("#menu .left").corner("bl 13px");
-        $("#menu .right").corner("br 13px");
+        //$("#menu .right").corner("br 13px");
         /*$("#menu li").mouseover(function() {  // UDE - we have to manually round invisible elements
           $(this).find("ul").corner("bottom 15px");  
         }); */
@@ -152,7 +152,7 @@
           </li> 
           <li>&nbsp;</li>
           <li> Network
-            <ul id="network" class="dropdown"> 
+            <ul id="network">
               <img class="top_left" alt="" src="style/images/top_left.png"/>
               <li id="map">Map</li>
               <img class="top_right" alt="" src="style/images/top_right.png"/>
@@ -164,31 +164,11 @@
               </li>
             </ul> 
           </li> 
-          <li>&nbsp;</li>
-          <li> Potato
-            <ul id="utility">
+          <li>Help
+            <ul id="help"> 
               <img class="top_left" alt="" src="style/images/top_left.png"/>
-              <li id="settings-potato">Configure</li>
-              <img class="top_right" alt="" src="style/images/top_right.png"/>
-              <li id="settings-luci">LuCI Advanced</li>
-              <li class="last">
-                <img class="bottom_left" alt="" src="style/images/bottom_left.png"/>
-                <span class="middle"/> 
-                <img class="bottom_right" alt="" src="style/images/bottom_right.png"/>
-              </li>
-            </ul>
-          </li>
-          <li>&nbsp;</li>
-          <!-- li class="searchContainer"> 
-            <div> 
-              <input type="text" size=16 id="searchField" /> 
-              <img src="style/images/magnifier.png" alt="Search" onclick="alert('You clicked on search button')" /></div> 
-          </li --> 
-          <li class="right-potato">&nbsp;Help
-            <ul id="help-potato"> 
-              <img class="top_left" style="top: 8px;" alt="" src="style/images/top_left.png"/>
-              <li style="margin-top: 10px" id="howto">How to</li>
-              <li id="group">Support</li>
+              <li id="howto">How to...</li>
+              <li id="group">Support group</li>
               <li id="chat">Live chat</li>
               <li class="last">
                 <img class="bottom_left" alt="" src="style/images/bottom_left.png"/>
@@ -196,6 +176,25 @@
                 <img class="bottom_right" alt="" src="style/images/bottom_right.png"/>
               </li>
             </ul> 
+          </li>
+          <li>&nbsp;</li>
+          <li class="searchContainer"> 
+            <div> 
+              <input type="text" size=16 id="searchField" /> 
+              <img src="style/images/magnifier.png" alt="Search" onclick="alert('You clicked on search button')" /></div> 
+          </li>
+          <li class="right"><img src="images/gear.png" />
+            <ul id="utility">
+              <img class="top_left" alt="" src="style/images/top_left.png"/>
+              <li id="settings-potato">Settings</li>
+              <li id="settings-luci">LuCI Advanced</li>
+              <li id="logout">Logout</li>
+              <li class="last">
+                <img class="bottom_left" alt="" src="style/images/bottom_left.png"/>
+                <span class="middle" />
+                <!-- img class="bottom_right" alt="" src="style/images/bottom_right.png"/ -->
+              </li>
+            </ul>
           </li>
         </ul> 
       </div> <!-- /header -->
