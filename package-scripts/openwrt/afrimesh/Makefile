@@ -82,12 +82,13 @@ MAKE_UCI_ARGS += \
 
 
 # - afrimesh-base ------------------------------------------------------------
+#+mini-httpd
 include $(INCLUDE_DIR)/package.mk
 
 define Package/afrimesh-base
 	SECTION:=admin
 	CATEGORY:=Administration
-	DEPENDS:=+busybox +libuci +libjson +batmand +mini-httpd
+	DEPENDS:=+busybox +libuci +libjson +batmand 
 	TITLE:=Easy management for B.A.T.M.A.N. wireless mesh networks
 	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
 endef
@@ -162,51 +163,11 @@ define Package/afrimesh-webif/description
 endef
 
 define Package/afrimesh-webif/install
-	$(INSTALL_DIR)  $(1)/www/cgi-bin
-endef
-
-# - afrimesh-potato -----------------------------------------------------------
-define Package/afrimesh-potato
-	SECTION:=admin
-	CATEGORY:=Administration
-	DEPENDS:=+busybox +libuci +libjson +batmand	+curl +wget +luci-admin-full 
-	TITLE:=Web interface for the Mesh Potato
-endef
-
-define Package/afrimesh-potato/description
-	Web interface for the Mesh Potato
-endef
-
-define Package/afrimesh-potato/install
 	$(INSTALL_DIR)  $(1)/etc
-	$(INSTALL_DIR)  $(1)/etc/config
-	$(INSTALL_DATA) ./files.potato/etc/config/afrimesh $(1)/etc/config
-	$(INSTALL_DIR)  $(1)/www
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/index.potato.html    $(1)/www/index.html
-	$(INSTALL_DIR)  $(1)/www/cgi-bin
-	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/village-bus-uci/village-bus-uci    $(1)/www/cgi-bin/village-bus-uci
-	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/dashboard/cgi-bin/ajax-proxy.cgi   $(1)/www/cgi-bin
-	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/dashboard/cgi-bin/village-bus-echo $(1)/www/cgi-bin/village-bus-echo.kml
-	$(INSTALL_DIR)  $(1)/www/images
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/images/*.gif         $(1)/www/images
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/images/*.png         $(1)/www/images
-	$(INSTALL_DIR)  $(1)/www/javascript
-	$(INSTALL_DIR)  $(1)/www/javascript/jquery
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/jquery/*      $(1)/www/javascript/jquery
-	$(INSTALL_DIR)  $(1)/www/javascript/openlayers
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/openlayers/*  $(1)/www/javascript/openlayers
-	$(INSTALL_DIR)  $(1)/www/javascript/yahoo
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/yahoo/*       $(1)/www/javascript/yahoo
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/afrimesh*.js  $(1)/www/javascript
-	$(INSTALL_DIR)  $(1)/www/modules
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/*.html       $(1)/www/modules
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/*.js         $(1)/www/modules
-	$(INSTALL_DIR)  $(1)/www/style
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/*.css          $(1)/www/style
-	$(INSTALL_DIR)  $(1)/www/style/images
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/images/*.gif   $(1)/www/style/images
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/images/*.png   $(1)/www/style/images
+	$(INSTALL_DIR)  $(1)/www/afrimesh
+	#$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/index.router.html    $(1)/www/afrimesh/index.html
 endef
+
 
 # - afrimesh-dashboard -------------------------------------------------------
 define Package/afrimesh-dashboard
@@ -224,30 +185,75 @@ define Package/afrimesh-dashboard/install
 	$(INSTALL_DIR)  $(1)/etc
 	$(INSTALL_DIR)  $(1)/etc/config
 	$(INSTALL_DATA) ./files/etc/config/afrimesh $(1)/etc/config
-	$(INSTALL_DIR)  $(1)/www
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/index.html    $(1)/www/index.html
+	$(INSTALL_DIR)  $(1)/www/afrimesh
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/index.html           $(1)/www/afrimesh/index.html
 	$(INSTALL_DIR)  $(1)/www/cgi-bin
 	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/dashboard/cgi-bin/ajax-proxy.cgi   $(1)/www/cgi-bin
 	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/dashboard/cgi-bin/village-bus-echo $(1)/www/cgi-bin/village-bus-echo.kml
-	$(INSTALL_DIR)  $(1)/www/images
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/images/*.gif         $(1)/www/images
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/images/*.png         $(1)/www/images
-	$(INSTALL_DIR)  $(1)/www/javascript
-	$(INSTALL_DIR)  $(1)/www/javascript/jquery
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/jquery/*      $(1)/www/javascript/jquery
-	$(INSTALL_DIR)  $(1)/www/javascript/openlayers
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/openlayers/*  $(1)/www/javascript/openlayers
-	$(INSTALL_DIR)  $(1)/www/javascript/yahoo
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/yahoo/*       $(1)/www/javascript/yahoo
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/afrimesh*.js  $(1)/www/javascript
-	$(INSTALL_DIR)  $(1)/www/modules
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/*.html       $(1)/www/modules
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/*.js         $(1)/www/modules
-	$(INSTALL_DIR)  $(1)/www/style
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/*.css          $(1)/www/style
-	$(INSTALL_DIR)  $(1)/www/style/images
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/images/*.gif   $(1)/www/style/images
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/images/*.png   $(1)/www/style/images
+	$(INSTALL_DIR)  $(1)/www/afrimesh/images
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/images/*.gif         $(1)/www/afrimesh/images
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/images/*.png         $(1)/www/afrimesh/images
+	$(INSTALL_DIR)  $(1)/www/afrimesh/javascript
+	$(INSTALL_DIR)  $(1)/www/afrimesh/javascript/jquery
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/jquery/*      $(1)/www/afrimesh/javascript/jquery
+	$(INSTALL_DIR)  $(1)/www/afrimesh/javascript/openlayers
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/openlayers/*  $(1)/www/afrimesh/javascript/openlayers
+	$(INSTALL_DIR)  $(1)/www/afrimesh/javascript/yahoo
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/yahoo/*       $(1)/www/afrimesh/javascript/yahoo
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/afrimesh*.js  $(1)/www/afrimesh/javascript
+	$(INSTALL_DIR)  $(1)/www/afrimesh/modules
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/*.html       $(1)/www/afrimesh/modules
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/*.js         $(1)/www/afrimesh/modules
+	$(INSTALL_DIR)  $(1)/www/afrimesh/style
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/*.css          $(1)/www/afrimesh/style
+	$(INSTALL_DIR)  $(1)/www/afrimesh/style/images
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/images/*.gif   $(1)/www/afrimesh/style/images
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/images/*.png   $(1)/www/afrimesh/style/images
+endef
+
+
+# - afrimesh-potato -----------------------------------------------------------
+#+luci-admin-full
+define Package/afrimesh-potato
+	SECTION:=admin
+	CATEGORY:=Administration
+	DEPENDS:=+busybox +libuci +libjson +batmand	+curl +wget #+luci-admin-mini
+	TITLE:=Web interface for the Mesh Potato
+endef
+
+define Package/afrimesh-potato/description
+	Web interface for the Mesh Potato
+endef
+
+define Package/afrimesh-potato/install
+	$(INSTALL_DIR)  $(1)/etc
+	$(INSTALL_DIR)  $(1)/etc/config
+	$(INSTALL_DATA) ./files.potato/etc/config/afrimesh $(1)/etc/config
+	$(INSTALL_DIR)  $(1)/www/afrimesh
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/index.potato.html    $(1)/www/afrimesh/index.html
+	$(INSTALL_DIR)  $(1)/www/cgi-bin
+	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/village-bus-uci/village-bus-uci    $(1)/www/cgi-bin/village-bus-uci
+	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/dashboard/cgi-bin/ajax-proxy.cgi   $(1)/www/cgi-bin
+	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/dashboard/cgi-bin/village-bus-echo $(1)/www/cgi-bin/village-bus-echo.kml
+	$(INSTALL_DIR)  $(1)/www/afrimesh/images
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/images/*.gif         $(1)/www/afrimesh/images
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/images/*.png         $(1)/www/afrimesh/images
+	$(INSTALL_DIR)  $(1)/www/afrimesh/javascript
+	$(INSTALL_DIR)  $(1)/www/afrimesh/javascript/jquery
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/jquery/*      $(1)/www/afrimesh/javascript/jquery
+	$(INSTALL_DIR)  $(1)/www/afrimesh/javascript/openlayers
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/openlayers/*  $(1)/www/afrimesh/javascript/openlayers
+	$(INSTALL_DIR)  $(1)/www/afrimesh/javascript/yahoo
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/yahoo/*       $(1)/www/afrimesh/javascript/yahoo
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/afrimesh*.js  $(1)/www/afrimesh/javascript
+	$(INSTALL_DIR)  $(1)/www/afrimesh/modules
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/*.html       $(1)/www/afrimesh/modules
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/*.js         $(1)/www/afrimesh/modules
+	$(INSTALL_DIR)  $(1)/www/afrimesh/style
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/*.css          $(1)/www/afrimesh/style
+	$(INSTALL_DIR)  $(1)/www/afrimesh/style/images
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/images/*.gif   $(1)/www/afrimesh/style/images
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/images/*.png   $(1)/www/afrimesh/style/images
 endef
 
 
