@@ -1,4 +1,0 @@
-config 'afrimesh' 'location'
-	option 'latitude'  '-34.138061'
-	option 'longitude'  '18.339733'
-
