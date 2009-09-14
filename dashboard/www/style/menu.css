@@ -10,10 +10,7 @@
 
 
 #menu {   
-  /*border: 1px solid red;*/
   color: white;  
-  /*display: inline-block; */
-  /*float: right;*/
   line-height: 45px; 
   list-style: none; 
   margin: 0px; 
@@ -35,34 +32,38 @@
   cursor: pointer;
   font-size: 15px; 
   float: left; 
-  padding: 0px 10px;
+  padding-left: 20px;
+  /*padding: 0px 10px;*/
   position: relative; 
 } 
 #menu .right {           /* right side of menu */
   background: #72839d;
   height: 45px;
   padding: 0px;
-  width: 30px; 
+  padding-left: 40px;
+  padding-right: 20px;
+  /*text-align: right;*/
 } 
-#menu .right-potato {           /* right side of menu */
-  background: #72839d;
-  height: 45px;
-  padding: 0px;
-  width: 60px; 
-} 
+#menu .right > img {
+  margin-top: 9px;
+}
+#menu .right ul {
+  left: -55px;
+  text-align: right;
+}
 #menu ul {                               /* the menu dropdown */ 
   background:#72839d;
   color: white; /* for IE */ 
   display: none; 
   font-size: .85em;
-  left: -10px; 
+  left: 0px; 
   line-height: 16px; 
   margin: 0px; 
   margin-top: 45px; 
   padding: 0px; 
   position: absolute; 
   top: 0px; 
-  width: 150px; 
+  width: 140px; 
 } 
 #menu li:hover ul {                     /* activates & makes visible the menu dropdown */
   display: block;
@@ -79,39 +80,11 @@
   padding-top: 5px;
   padding-bottom: 5px;
   color:white;
-  /*border: 1px solid red;*/
 } 
 #menu li:hover {                        /* hover on individual menu item container */
   color: black;
 }
 
-
-/* right-hand menu */
-#menu #utility {          /* right-hand menu container */
-  top: -9px;
-  left: -120px;
-}
-#menu #utility li {       /* right-hand menu item */
-  text-align: right;
-}
-#menu #help-potato {          /* right-hand menu container */
-  top: -9px;
-  left: -90px;
-}
-#menu #help-potato li {       /* right-hand menu item */
-  text-align: right;
-  margin-right: 20px;
-}
-
-
-/*#menu #main { 
-  left: 0px; 
-  top: -20px; 
-  padding-top: 20px; 
-  background: #7cb7e3; 
-  color: #fff; 
-  z-index: 999;
-} */
 .searchContainer div { 
   background: #fff; 
   display: inline; 
@@ -124,12 +97,9 @@
 } 
 .searchContainer img { 
   vertical-align: middle;
-}
-
-
 
 #menu .top_left { position:absolute; top:-1px; left:-14px;}
-#menu .top_right { position:absolute; top:-1px; left:149px;}
+#menu .top_right { position:absolute; top:-1px; left:139px;}
 #menu .last { 
   margin:0px; 
   padding:0px; 
@@ -138,7 +108,7 @@
   height:0px;
 }
 #menu .bottom_left { position:absolute; left:0px; top:0px;}
-#menu .bottom_right { position:absolute; left:120px; top:0px;}
+#menu .bottom_right { position:absolute; left:110px; top:0px;}
 #menu .middle { 
   position:absolute; 
   background: #72839d;
@@ -146,8 +116,9 @@
   margin: 0px;
   left:15px; 
   height: 15px; 
-  width: 120px; 
+  width: 110px; 
   top:0px;
 }
-
-
+#menu .right .middle   { 
+ width: 125px;
+}
