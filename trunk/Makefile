@@ -103,7 +103,7 @@ install-www:
 	@if ! test -f $(WWW_ROOT)/index.html ; then $(INSTALL) dashboard/www/index.redirect.html $(WWW_ROOT)/index.html ; fi # redirect
 	@echo "Installing dashboard cgi scripts in: $(DASHBOARD_CGI)"
 	@if ! test -d $(DASHBOARD_CGI) ; then mkdir -p $(DASHBOARD_CGI) ; fi
-	$(INSTALL) ./package-scripts/openwrt/afrimesh-portal/files/www/cgi-bin/uam.pl $(DASHBOARD_CGI)
+	$(INSTALL) ./package-scripts/openwrt/afrimesh/files/www/cgi-bin/uam.pl $(DASHBOARD_CGI)
 	$(INSTALL) dashboard/cgi-bin/ajax-proxy.cgi $(DASHBOARD_CGI)
 	$(INSTALL) dashboard/cgi-bin/village-bus-echo $(DASHBOARD_CGI)/village-bus-echo.kml
 	chmod 0755 $(DASHBOARD_CGI)/village-bus-echo.kml
