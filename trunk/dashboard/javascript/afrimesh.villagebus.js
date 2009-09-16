@@ -73,7 +73,7 @@ var BootVillageBus = function (afrimesh) {
 
   villagebus.pmacct.url  = function() { 
    if (afrimesh.settings.internet_gateway.address == afrimesh.settings.address) {	
-      return "http://" + afrimesh.settings.address+ "/cgi-bin/village-bus-pmacct.cgi"; 
+      return "http://" + afrimesh.settings.address + "/cgi-bin/village-bus-pmacct.cgi"; 
     }
     return villagebus.ajax_proxy() + "http://" + afrimesh.settings.internet_gateway.address + "/cgi-bin/village-bus-pmacct.cgi"; 
   };
