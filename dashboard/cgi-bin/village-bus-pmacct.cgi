@@ -1,19 +1,34 @@
 #!/usr/bin/env bash
 
-if [ "$REQUEST_METHOD" = "POST" ]; then
-    read RAW_QUERY
+PMACCT=pmacct
+if [ -f /usr/bin/pmacct ] ; then
+    PMACCT=/usr/bin/pmacct
 fi
+if [ -f /opt/local/bin/pmacct ] ; then
+    PMACCT=/opt/local/bin/pmacct
+fi
+if [ -f /usr/local/bin/pmacct ] ; then
+    PMACCT=/usr/local/bin/pmacct
+fi
+
+#if [ "$REQUEST_METHOD" = "POST" ]; then
+#    read RAW_QUERY
+#fi
+#if [ -n $RAW_QUERY ]; then
+#    QUERY_STRING=$RAW_QUERY
+#fi
+
 DIRECTION=`echo "$QUERY_STRING" | grep -oE "(^|[?&])direction=[^&]+" | sed "s/%20/ /g" | cut -f 2- -d "="`
 
 
 echo "Content-type: application/json"
 echo
-if [ $DIRECTION == "out" ]
+if [ $DIRECTION = "out" ]
 then
-pmacct -j -p /tmp/out.pipe
+$PMACCT -j -p /tmp/out.pipe
 fi
 
-if [ $DIRECTION == "in" ]
+if [ $DIRECTION = "in" ]
 then
-pmacct -j -p /tmp/in.pipe
+$PMACCT -j -p /tmp/in.pipe
 fi
