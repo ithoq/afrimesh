@@ -32,7 +32,7 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ------------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=461
+PKG_REV:=498
 PKG_VERSION:=r$(PKG_REV)-0.3alpha
 PKG_RELEASE:=1
 
@@ -214,10 +214,12 @@ endef
 
 # - afrimesh-potato -----------------------------------------------------------
 #+luci-admin-full
+#+luci-admin-mini
+#+wget
 define Package/afrimesh-potato
 	SECTION:=admin
 	CATEGORY:=Administration
-	DEPENDS:=+busybox +libuci +libjson +batmand	+curl +wget #+luci-admin-mini
+	DEPENDS:=+busybox +libuci +libjson +batmand	+curl 
 	TITLE:=Web interface for the Mesh Potato
 endef
 
@@ -230,6 +232,7 @@ define Package/afrimesh-potato/install
 	$(INSTALL_DIR)  $(1)/etc/config
 	$(INSTALL_DATA) ./files.potato/etc/config/afrimesh $(1)/etc/config
 	$(INSTALL_DIR)  $(1)/www/afrimesh
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/index.redirect.html  $(1)/www/index.html
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/index.potato.html    $(1)/www/afrimesh/index.html
 	$(INSTALL_DIR)  $(1)/www/cgi-bin
 	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/village-bus-uci/village-bus-uci    $(1)/www/cgi-bin/village-bus-uci
