@@ -314,7 +314,10 @@ install-freebsd : freebsd install-www
 
 # - openwrt ------------------------------------------------------------------
 prep-openwrt :
+	rm -f $(KAMIKAZE)/package/afrimesh
 	ln -s $(shell pwd)/package-scripts/openwrt/afrimesh $(KAMIKAZE)/package/afrimesh
+	rm -f $(KAMIKAZE)/target/linux/atheros-mp
+	ln -s $(shell pwd)/upstream/openwrt.meshpotato/target $(KAMIKAZE)/target/linux/atheros-mp
 
 packages-openwrt :
 	cd $(KAMIKAZE) ; \
