@@ -32,7 +32,7 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ------------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=513
+PKG_REV:=514
 PKG_VERSION:=r$(PKG_REV)-0.3alpha
 PKG_RELEASE:=1
 
@@ -42,7 +42,7 @@ PKG_RELEASE:=1
 ##PKG_SOURCE_MIRROR=0
 
 # - to use local sources, disable PKG_SOURCE_URL & set LOCAL_SOURCES ---------
-#PKG_SOURCE_URL:=http://afrimesh.googlecode.com/svn/trunk
+PKG_SOURCE_URL:=http://afrimesh.googlecode.com/svn/trunk
 LOCAL_SOURCES:=~/afrimesh/trunk
 # ----------------------------------------------------------------------------
 
@@ -262,7 +262,7 @@ endef
 
 # - build rules --------------------------------------------------------------
 define Build/Prepare
-	$(call Build/Prepare/Default)
+	-$(call Build/Prepare/Default)
 	if [ -z "$(PKG_SOURCE_URL)" ]; then \
 		echo "Building from local sources" ; \
 		rm -rf $(PKG_BUILD_DIR)	; \
