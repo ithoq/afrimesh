@@ -32,25 +32,25 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ------------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=511
+PKG_REV:=513
 PKG_VERSION:=r$(PKG_REV)-0.3alpha
 PKG_RELEASE:=1
-
-LOCAL_SOURCES:=../../../
 
 # See: http://downloads.openwrt.org/people/florian/fosdem/openwrt_cfp_fosdem2008.pdf
 #      https://dev.openwrt.org/ticket/3815
 #      http://forum.openwrt.org/viewtopic.php?id=18090
 ##PKG_SOURCE_MIRROR=0
+
+# - to use local sources, disable PKG_SOURCE_URL & set LOCAL_SOURCES ---------
+PKG_SOURCE_URL:=http://afrimesh.googlecode.com/svn/trunk
+LOCAL_SOURCES:=~/afrimesh/trunk
+# ----------------------------------------------------------------------------
+
 PKG_SOURCE_PROTO:=svn
 PKG_SOURCE_VERSION:=$(PKG_REV)
 PKG_SOURCE_SUBDIR:=$(if $(PKG_BRANCH),$(PKG_BRANCH),$(PKG_NAME))-$(PKG_VERSION)
-PKG_SOURCE_URL:=http://afrimesh.googlecode.com/svn/trunk
 PKG_SOURCE:=$(PKG_SOURCE_SUBDIR).tar.gz
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_SOURCE_SUBDIR)
-
-#PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
-
 
 COMPILE_COMMAND:=	$(TARGET_CC) $(TARGET_CFLAGS) \
                 -DDISABLE_LOG \
@@ -262,7 +262,12 @@ endef
 
 # - build rules --------------------------------------------------------------
 define Build/Prepare
-	$(call Build/Prepare/Default)
+	if [ -z "$(PKG_SOURCE_URL)" ]; then \
+		echo "Building from local sources" ; \
+		rm -rf $(PKG_BUILD_DIR)	; \
+		mkdir $(PKG_BUILD_DIR) ; \
+		$(CP) $(LOCAL_SOURCES)/*  $(PKG_BUILD_DIR) ; \
+	fi
 endef
 
 define Build/Configure
@@ -270,19 +275,6 @@ endef
 
 define Build/Compile
 	cd $(PKG_BUILD_DIR)/village-bus-uci ; make $(MAKE_UCI_ARGS)
-endef
-
-
-define Build/Prepare-local
-	$(call Build/Prepare/Default)
-	$(CP) $(LOCAL_SOURCES)/common/*          $(PKG_BUILD_DIR)
-	$(CP) $(LOCAL_SOURCES)/village-bus-uci/* $(PKG_BUILD_DIR)
-endef
-
-define Build/Compile-local
-	cd $(PKG_BUILD_DIR) ; \
-	$(COMPILE_COMMAND) -o $(PKG_BUILD_DIR)/village-bus-uci json_cgi.c village-bus-uci.c main.c -ljson -luci
-	$(STRIP) $(PKG_BUILD_DIR)/village-bus-uci
 endef
 
 
