@@ -14,42 +14,11 @@ var afrimesh = undefined;
   function Afrimesh() {
     console.log("Location: " + window.location.hostname);
     this.settings = { 
-      address      : window.location.hostname ? window.location.hostname : "196.211.3.106",
+      //address      : window.location.hostname ? window.location.hostname : "196.211.3.106",
+      address      : window.location.hostname ? window.location.hostname : "192.168.1.20",
       ajax_proxy   : "/cgi-bin/ajax-proxy.cgi?url="
     };
-    /*this.settings = { 
-      address      : "dashboard.7degrees.co.za", // dynamic settings bootstraps off this 
-      network_name : "development testbed",
-      locale       : "en_US.UTF-8",
-      ajax_proxy   : "/cgi-bin/ajax-proxy.cgi?url=",
-      hosts        : {
-        dashboard_server  : "afrimesh.7degrees.co.za",   // dynamic settings bootstraps off this 
-        vis_server : "dashboard.7degrees.co.za"
-      },
-      location : {
-        longitude : 18.339733,
-        latitude  : -34.138061
-      },
-      map : {
-        server    : "openstreetmap.org",
-        extent    : 0.025, // in degrees 
-        zoom      : 16,
-        aerial    : false
-      },
-      internet_gateway : {
-        address   : "192.168.20.1",
-        snmp      : {
-          community : "public",
-          interface : 1,
-          down      : ".1.3.6.1.2.1.2.2.1.10.4",  // interfaces.ifTable.ifEntry.ifInOctets.4  ->  eth0.1 == .4
-          up        : ".1.3.6.1.2.1.2.2.1.16.4"   // interfaces.ifTable.ifEntry.ifOutOctets.4 ->  eth0.1 == .4
-        },
-        bandwidth : { 
-          down : 512,    // with protocol overhead the max observed is 430
-          up   : 256     // with protocol overhead the max observed is 228
-        }
-      }
-    };*/
+
     this.storage    = BootStorage(this);
     this.network    = BootNetwork(this);
     this.customers  = BootCustomers(this);

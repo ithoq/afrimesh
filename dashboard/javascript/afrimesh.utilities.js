@@ -20,7 +20,6 @@
   //Array.prototype.init  = Array.prototype.rdc;
   //Array.prototype.last  = Array.prototype.rac;
 
-
   
   /** - Make Javascript a better Javascript ------------------------------- */
   // See: http://thinkweb2.com/projects/prototype/instanceof-considered-harmful-or-how-to-write-a-robust-isarray/
@@ -63,16 +62,40 @@
   };
   
   /** - Query object graphs using simple selectors ------------------------ */
-  // TODO - rewrite w/ phlo object model
-  function Qsplit(selector) {
-    return selector.split(/ |\.|-|\|/);
+  var regex_nested_selector = new RegExp(/\([\w_\|\@\-\[\]]+\)|[\|\w\@\-\[\]]+/g);  // a|(nested|selector)|pattern -> (nested|selector)
+  var regex_parse_nested    = new RegExp(/[\w\|\@\-\[\]]+/g);                       // (nested|selector)           -> nested|selector
+  var regex_array_selector  = new RegExp(/^\@[\w\-]+\[\d+\]/g);                     // foo|@some-name[0]|bar       -> @some-name
+  var regex_parse_selector  = new RegExp(/[\w\-\_]+/g);                             // @some-name[0]               -> some-name,0
+
+
+function Qsplit(this_object, selector, root) {
+    // Evaluate nested selectors e.g.  network|(wireless|@wifi-iface[0]|device)|ipaddr 
+    var selectors = selector.match(regex_nested_selector);
+    selector = "";
+    for (var i = 0; i < selectors.length; i++) { 
+      var sub = selectors[i];
+      if (sub.indexOf("(") == 0 && sub.indexOf(")") == sub.length-1) {
+        var parsed = sub.match(regex_parse_nested);
+        if (parsed.length == 1 && parsed[0] != undefined) {
+          var result = Q(this_object, parsed[0], root);
+          console.error("Got: " + result);
+          sub = result;
+        } else {
+          console.warn("Invalid sub selector: " + sub);
+        }
+      }
+      selector += sub;
+    }
+    return selector.split(/\|/);
   };
+
   function Qsugar(selector, root) {     // SUGAR drop the first selector element if it is the same as the object name:
     if (selector.car().toLowerCase() == (root ? root : "afrimesh")) { // TODO UDE we don't have an automagic way to get root object names
       selector = selector.cdr();
     };
     return selector;
   };
+
   function Q(this_object, selector, root) {
     //console.debug("Q(" + this_object + ", " + selector + ", " + root + ")");
     if (!this_object) {
@@ -81,30 +104,56 @@
       console.warn("Q(" + this_object.valueOf() + "): Invalid type for selector - " + selector.valueOf());
       return undefined;
     }
-    selector = Qsplit(selector);
+    selector = Qsplit(this_object, selector, root);
     selector = Qsugar(selector, root);
     return __q(this_object, selector);
-  };
+  };  
+
   function __q(this_object, selector) {
     if (!isArray(selector)) {
       console.warn("__q(" + this_object.valueOf() + "): Invalid type for selector - " + selector.valueOf());
       return undefined;
     } else if (selector.length == 0) {
       return this_object;
-    } else if (this_object[selector.car()] == undefined) {
+    } 
+    var head = selector.car();
+    if (regex_array_selector.test(head)) {               // test for @some-name[0]
+      head = resolve_array_selector(this_object, head); 
+    } 
+    if (this_object[head] == undefined) {
       console.warn("__q(" + this_object.valueOf() + "): Invalid selector - " + selector.join("|"));
       return undefined;
     } 
-    return __q(this_object[selector.car()], selector.cdr());
+    return __q(this_object[head], selector.cdr());
   };
 
+  function resolve_array_selector(this_object, selector) {
+    var pair = selector.match(regex_parse_selector);
+    if (pair.length != 2) {
+      console.warn("Invalid array selector: " + selector);
+      return undefined;
+    }
+    var type   = pair[0];
+    var index  = parseInt(pair[1]);
+    var count = 0;
+    for (var entry in this_object) {
+      candidate = this_object[entry];
+      if (candidate.type == type && index == count) {
+        return entry;
+      } else if (candidate.type == type) {
+        count++;
+      }
+    }
+    console.warn("Unknown array selector: " + selector);
+    return undefined;
+  };
 
   function Qset(this_object, selector, value, root) {
     if (!selector.split) {
       console.warn("Qset(" + this_object.valueOf() + "): Invalid type for selector - " + selector.valueOf());
       return undefined;
     }
-    selector = Qsplit(selector);
+    selector = Qsplit(this_object, selector, root);
     selector = Qsugar(selector, root); // TODO - fix this, really, just fix it.
     var last = selector.pop();
     for (var i = 0; i < selector.length; i++) { // node in selector) {
