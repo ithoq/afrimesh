@@ -78,7 +78,6 @@ function Qsplit(this_object, selector, root) {
         var parsed = sub.match(regex_parse_nested);
         if (parsed.length == 1 && parsed[0] != undefined) {
           var result = Q(this_object, parsed[0], root);
-          console.error("Got: " + result);
           sub = result;
         } else {
           console.warn("Invalid sub selector: " + sub);

@@ -90,7 +90,9 @@ function BootSettings(parent, address) {
   };
 
   settings.save = function(selector, value) {
-    var remote = Qsplit(afrimesh2uci[selector].remote);
+    console.debug("Saving: " + selector + " = " + value);
+    var remote = Qsplit(parent.settings.uci_config, afrimesh2uci[selector].remote);
+    console.debug("Remote: " + afrimesh2uci[selector].remote + " = " + remote);
     if (remote.length != 3) { 
       console.error("afrimesh.settings: '" + selector + "' has invalid remote selector '" + afrimesh2uci[selector].remote + "'");
       return;
@@ -107,11 +109,11 @@ function BootSettings(parent, address) {
   };
 
 
-
   /** - apply persistent settings ------------------------------------------ */
   var load_remote = function() {
     var config = parent.villagebus.uci.get.sync(address, "");
-    console.debug("REMOTE CONFIG: " + rpretty_print(config));
+    parent.settings.uci_config = config;
+    console.debug("REMOTE CONFIG: \n" + rpretty_print(config));
     for (var local in afrimesh2uci) {
       var value = Q(config, afrimesh2uci[local].remote, "config"); 
       
