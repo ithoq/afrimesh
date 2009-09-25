@@ -112,7 +112,6 @@
         /** loader for luci webif */
         $("ul#menu ul#utility li#settings-luci").click(function() {
             var luci_url = "/index.luci.html";
-            //var luci_url = "http://10.130.1.254/index.luci.html";
             $("div#content").html("<iframe id='luci' src='" + luci_url + "' scrolling='no' frameborder='no' ALLOWTRANSPARENCY='true' width='100%' height='0' />");
             $("#luci").load(function() {
                 this.style.height = this.contentWindow.document.body.offsetHeight + 'px';
@@ -159,7 +158,7 @@
               <!-- li id="health">Health</li --> 
               <li class="last">
                 <img class="bottom_left" alt="" src="style/images/bottom_left.png"/>
-                <div class="middle" /> 
+                <div class="middle"> </div>
                 <img class="bottom_right" alt="" src="style/images/bottom_right.png"/>
               </li>
             </ul> 
@@ -173,7 +172,7 @@
               <li id="chat">Live chat</li>
               <li class="last">
                 <img class="bottom_left" alt="" src="style/images/bottom_left.png"/>
-                <span class="middle" />
+                <span class="middle"></span>
                 <img class="bottom_right" alt="" src="style/images/bottom_right.png"/>
               </li>
             </ul> 
@@ -192,7 +191,7 @@
               <li id="logout">Logout</li>
               <li class="last">
                 <img class="bottom_left" alt="" src="style/images/bottom_left.png"/>
-                <span class="middle" />
+                <span class="middle"></span>
                 <!-- img class="bottom_right" alt="" src="style/images/bottom_right.png"/ -->
               </li>
             </ul>

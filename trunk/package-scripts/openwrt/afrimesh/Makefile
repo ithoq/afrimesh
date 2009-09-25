@@ -42,7 +42,7 @@ PKG_RELEASE:=1
 ##PKG_SOURCE_MIRROR=0
 
 # - to use local sources, disable PKG_SOURCE_URL & set LOCAL_SOURCES ---------
-PKG_SOURCE_URL:=http://afrimesh.googlecode.com/svn/trunk
+#PKG_SOURCE_URL:=http://afrimesh.googlecode.com/svn/trunk
 LOCAL_SOURCES:=~/afrimesh/trunk
 # ----------------------------------------------------------------------------
 
@@ -257,6 +257,8 @@ define Package/afrimesh-potato/install
 	$(INSTALL_DIR)  $(1)/www/afrimesh/style/images
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/images/*.gif   $(1)/www/afrimesh/style/images
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/images/*.png   $(1)/www/afrimesh/style/images
+	$(INSTALL_DIR)  $(1)/www/afrimesh/style/images/controls
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/images/controls/*.png   $(1)/www/afrimesh/style/images/controls
 endef
 
 
