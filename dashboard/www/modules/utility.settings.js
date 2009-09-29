@@ -140,7 +140,7 @@ var LocationMap = null;
 
 
     /** create a map which can be used to set the router location --------- */
-    function _LocationMap(id, longitude, latitude, extent, on_position) {
+    function _LocationMap(id, longitude, latitude, extent, zoom, on_position) {
 
       var the_map = (function() { 
           var options = {
@@ -162,7 +162,7 @@ var LocationMap = null;
           map.addControl(new OpenLayers.Control.Attribution());
           map.addControl(new OpenLayers.Control.MousePosition());
           map.addControl(new OpenLayers.Control.ScaleLine());
-          //map.setCenter(LonLat(longitude, latitude), zoom);
+          map.setCenter(LonLat(longitude, latitude), zoom);
           if (!map.getCenter()) { map.zoomToMaxExtent(); }
           map.addLayer(new OpenLayers.Layer.Vector("Mesh Routers"));
           map.routers  = map.getLayersByName("Mesh Routers")[0];
