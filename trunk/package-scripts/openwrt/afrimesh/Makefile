@@ -32,7 +32,7 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ------------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=520
+PKG_REV:=521
 PKG_VERSION:=r$(PKG_REV)-0.3alpha
 PKG_RELEASE:=1
 
@@ -42,7 +42,7 @@ PKG_RELEASE:=1
 ##PKG_SOURCE_MIRROR=0
 
 # - to use local sources, disable PKG_SOURCE_URL & set LOCAL_SOURCES ---------
-PKG_SOURCE_URL:=http://afrimesh.googlecode.com/svn/trunk
+#PKG_SOURCE_URL:=http://afrimesh.googlecode.com/svn/trunk
 LOCAL_SOURCES:=~/afrimesh/trunk
 # ----------------------------------------------------------------------------
 
@@ -111,7 +111,7 @@ endef
 define Package/afrimesh-webif
 	SECTION:=admin
 	CATEGORY:=Administration
-	DEPENDS:=+afrimesh-base
+	DEPENDS:=+afrimesh-base +curl
 	TITLE:=Web interface for mesh nodes
 endef
 
