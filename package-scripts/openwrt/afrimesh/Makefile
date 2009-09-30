@@ -32,7 +32,7 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ------------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=517
+PKG_REV:=520
 PKG_VERSION:=r$(PKG_REV)-0.3alpha
 PKG_RELEASE:=1
 
@@ -107,20 +107,49 @@ define Package/afrimesh-base/install
 endef
 
 
-# - afrimesh-config ----------------------------------------------------------
-define Package/afrimesh-config
+# - afrimesh-webif -----------------------------------------------------------
+define Package/afrimesh-webif
 	SECTION:=admin
 	CATEGORY:=Administration
 	DEPENDS:=+afrimesh-base
-	TITLE:=Easy management for B.A.T.M.A.N. wireless mesh networks
+	TITLE:=Web interface for mesh nodes
 endef
 
-define Package/afrimesh-config/description
-	Manual configuration for Mesh nodes
+define Package/afrimesh-webif/description
+	Web interface for mesh nodes
 endef
 
-define Package/afrimesh-config/install
-	$(INSTALL_DIR)  $(1)/etc/config
+define Package/afrimesh-webif/install
+	#$(INSTALL_DIR)  $(1)/etc
+	#$(INSTALL_DIR)  $(1)/etc/config
+	#$(INSTALL_DATA) ./files.router/etc/config/afrimesh $(1)/etc/config
+	$(INSTALL_DIR)  $(1)/www/afrimesh
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/index.redirect.html  $(1)/www/index.html
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/index.router.html    $(1)/www/afrimesh/index.html
+	$(INSTALL_DIR)  $(1)/www/cgi-bin
+	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/dashboard/cgi-bin/ajax-proxy.cgi   $(1)/www/cgi-bin
+	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/dashboard/cgi-bin/village-bus-echo $(1)/www/cgi-bin/village-bus-echo.kml
+	$(INSTALL_DIR)  $(1)/www/afrimesh/images
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/images/*.gif         $(1)/www/afrimesh/images
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/images/*.png         $(1)/www/afrimesh/images
+	$(INSTALL_DIR)  $(1)/www/afrimesh/javascript
+	$(INSTALL_DIR)  $(1)/www/afrimesh/javascript/jquery
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/jquery/*      $(1)/www/afrimesh/javascript/jquery
+	$(INSTALL_DIR)  $(1)/www/afrimesh/javascript/openlayers
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/openlayers/*  $(1)/www/afrimesh/javascript/openlayers
+	$(INSTALL_DIR)  $(1)/www/afrimesh/javascript/yahoo
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/yahoo/*       $(1)/www/afrimesh/javascript/yahoo
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/afrimesh*.js  $(1)/www/afrimesh/javascript
+	$(INSTALL_DIR)  $(1)/www/afrimesh/modules
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/*.html       $(1)/www/afrimesh/modules
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/*.js         $(1)/www/afrimesh/modules
+	$(INSTALL_DIR)  $(1)/www/afrimesh/style
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/*.css          $(1)/www/afrimesh/style
+	$(INSTALL_DIR)  $(1)/www/afrimesh/style/images
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/images/*.gif   $(1)/www/afrimesh/style/images
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/images/*.png   $(1)/www/afrimesh/style/images
+	$(INSTALL_DIR)  $(1)/www/afrimesh/style/images/controls
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/images/controls/*.png   $(1)/www/afrimesh/style/images/controls
 endef
 
 
@@ -147,25 +176,6 @@ define Package/afrimesh-portal/install
 	$(INSTALL_BIN)  ./files/www/cgi-bin/hotspotlogin.cgi $(1)/www/cgi-bin
 	$(INSTALL_BIN)  ./files/www/cgi-bin/portal-auth.cgi $(1)/www/cgi-bin
 	$(INSTALL_BIN)  ./files/www/cgi-bin/uam.pl $(1)/www/cgi-bin
-endef
-
-
-# - afrimesh-webif -----------------------------------------------------------
-define Package/afrimesh-webif
-	SECTION:=admin
-	CATEGORY:=Administration
-	DEPENDS:=+afrimesh-base
-	TITLE:=Web interface for mesh nodes
-endef
-
-define Package/afrimesh-webif/description
-	Web interface for mesh nodes
-endef
-
-define Package/afrimesh-webif/install
-	$(INSTALL_DIR)  $(1)/etc
-	$(INSTALL_DIR)  $(1)/www/afrimesh
-	#$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/index.router.html    $(1)/www/afrimesh/index.html
 endef
 
 
@@ -282,7 +292,6 @@ endef
 
 
 $(eval $(call BuildPackage,afrimesh-base))
-$(eval $(call BuildPackage,afrimesh-config))
 $(eval $(call BuildPackage,afrimesh-portal))
 $(eval $(call BuildPackage,afrimesh-webif))
 $(eval $(call BuildPackage,afrimesh-potato))
