@@ -3,17 +3,17 @@
 # TODO - hasn't anyone written a nice, portable, secure ajax-proxy ?
 
 # track down wget and curl
-WGET=wget
+#WGET=wget
 CURL=curl
-if [ -f /usr/bin/wget ]; then
-    WGET=/usr/bin/wget
-fi
+#if [ -f /usr/bin/wget ]; then
+#    WGET=/usr/bin/wget
+#fi
 if [ -f /usr/bin/curl ]; then
     CURL=/usr/bin/curl
 fi
-if [ -f /usr/local/bin/wget ]; then
-    WGET=/usr/local/bin/wget
-fi
+#if [ -f /usr/local/bin/wget ]; then
+#    WGET=/usr/local/bin/wget
+#fi
 if [ -f /usr/local/bin/curl ]; then
     CURL=/usr/local/bin/curl
 fi
@@ -29,7 +29,8 @@ fi
 URL=`echo "$QUERY_STRING" | grep -oE "(^|[?&])url=[^&]+" | sed "s/%20/ /g" | cut -f 2- -d "="`
 
 
-REQUEST="$WGET --user-agent=\"Afrimesh/1.0 XHR Proxy\" -q -O - $URL"
+#REQUEST="$WGET --user-agent=\"Afrimesh/1.0 XHR Proxy\" -q -O - $URL"
+REQUEST="$CURL -s --user-agent \"Afrimesh/1.0 XHR Proxy\" $URL"
 if [ "$REQUEST_METHOD" = "POST" ]; then
     #REQUEST="wget --post-data="$QUERY" -q -O - $URL"
     REQUEST="$CURL -s --user-agent \"Afrimesh/1.0 XHR Proxy\" -d \"$QUERY\" $URL"
