@@ -52,6 +52,17 @@
   </fieldset>
 
 
+  <!-- fieldset>
+    <legend>Sharing</legend>
+    <div class="label">Internet</div>
+    <input  id="afrimesh|settings|internet_gateway|share" type="checkbox" />
+    <div class="tooltip"><h3>share internet</h3></div>
+    <div class="label">Voice</div>
+    <input  id="afrimesh|settings|internet_gateway|share" type="checkbox" />
+    <div class="tooltip"><h3>share voice</h3></div>
+  </fieldset -->
+
+
 </form>
 
 
@@ -131,13 +142,13 @@
       });
 
     /** query internet gateway for network interfaces --------------------- */
-    populate_select_interface();
+    //populate_select_interface();
 
      /** query vis server for availability --------------------- */
     update_vis_server();
 
      /** query RADIUS server and mysql database for availability --------------------- */
-    update_radius_server();
+    //update_radius_server();
 
     /** create map to set dashboard location ------------------------------ */
     $("#location").replaceWith("<div id='location' />");
