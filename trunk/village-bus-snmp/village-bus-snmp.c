@@ -33,6 +33,39 @@
 
 
 /**
+ * Initialize snmp session
+ */
+struct snmp_session* snmp_start(const char* address, const char* community)
+{
+  struct snmp_session session, *sessionp;
+  init_snmp("village-bus-snmp");
+  snmp_enable_syslog(); 
+  snmp_sess_init(&session);            
+  session.peername = (char*)address;
+  session.version = SNMP_VERSION_1;
+  session.community = (unsigned char*)community;
+  session.community_len = strlen(community);
+  sessionp = snmp_open(&session); 
+  if (!sessionp) {
+    return NULL;
+  } 
+  SOCK_STARTUP;
+  return sessionp;
+}
+
+
+/** 
+ * Clean up snmp session
+ */
+void snmp_stop(struct snmp_session* session)
+{
+  snmp_close(session);
+  SOCK_CLEANUP;
+}
+
+
+
+/**
  * Convert a SNMP oid to something more json friendly
  *
  * TODO: Decide on whether to deprecate and force 
@@ -70,6 +103,21 @@ void print_snmp_variable(struct variable_list* variable)
   }
 }
 
+
+char snmp_to_json_buffer[1024];
+void json_object_snmp_add(struct json_object* object, struct variable_list* variable)
+{
+  if (variable->type == ASN_OCTET_STR) {
+    snprintf(snmp_to_json_buffer, 1024, "%s", variable->val.string);
+  } else if (variable->type == ASN_COUNTER) { /* ASN_COUNTER */
+    snprintf(snmp_to_json_buffer, 1024, "%lu", *variable->val.integer);
+  } else {
+    snprintf(snmp_to_json_buffer, 1024, "unknown type: 0x%x", variable->type);
+  }
+  struct json_object* value = json_object_new_string(snmp_to_json_buffer);
+  snprint_objid(snmp_to_json_buffer, 1024, variable->name, variable->name_length);
+  json_object_object_add(object, escape_oid(snmp_to_json_buffer), value);
+}
 
 
 /**
@@ -124,6 +172,61 @@ void snmpget(struct snmp_session* session, struct json_object* oids)
     snmp_free_pdu(response);
   }
 }
+
+
+/** 
+ * NEW VERSION
+ */
+struct json_object* snmp_get(struct snmp_session* session, struct json_object* oids)
+{
+  struct snmp_pdu *pdu, *response;
+  struct variable_list *variable;
+  int status, count;
+  char buf[1024];
+  oid name[MAX_OID_LEN];
+  count = json_object_array_length(oids);
+  size_t name_length[count];
+
+  /* build query */
+  pdu = snmp_pdu_create(SNMP_MSG_GET);
+  for (count = 0; count < json_object_array_length(oids); count++) {
+    name_length[count] = MAX_OID_LEN;
+    read_objid(json_object_get_string(json_object_array_get_idx(oids, count)), 
+               name, 
+               &(name_length[count]));   // TODO - check use get_node ?
+    snmp_add_null_var(pdu, name, name_length[count]);
+  }
+
+  /* perform query */
+  status = snmp_synch_response(session, pdu, &response); // TODO - better error logging
+  if (status != STAT_SUCCESS)  {
+    if (response && response->errstat != SNMP_ERR_NOERROR) {
+      log_message("Error in packet\nReason: %s\n", snmp_errstring(response->errstat));
+      snmp_free_pdu(response);
+    }
+    int liberr, syserr;
+    char* errstr;
+    snmp_error(session, &liberr, &syserr, &errstr);
+    printf(" \"error\" : \"%s\"", errstr);
+    return;
+  }
+
+  /* print query results */
+  count = 0;
+  for (variable = response->variables; variable; variable = variable->next_variable) {
+    snprint_objid(buf, 1024, variable->name, variable->name_length);
+    printf("%s\n\t\"%s\" : ", (variable == response->variables ? "" : ","), escape_oid(buf));
+    print_snmp_variable(variable);
+    printf(",\n\t%d : ", count);
+    print_snmp_variable(variable);
+    count++;
+  }
+  
+  if (response) {
+    snmp_free_pdu(response);
+  }
+}
+
 
 
 /**
@@ -202,3 +305,82 @@ void snmpwalk(struct snmp_session* session, const char* name_oid)
     }
   } /* while running */
 }
+
+
+/**
+ * NEW VERSION
+ */
+struct json_object* snmp_walk(struct snmp_session* session, const char* name_oid)
+{
+  struct snmp_pdu *pdu, *response;
+  struct variable_list* variable;
+  int status, running, count;
+  char buf[1024];
+  oid name[MAX_OID_LEN], root[MAX_OID_LEN];
+  size_t name_length, root_length;
+  struct json_object* result;
+
+  /* initialize our result object */
+  result = json_object_new_object();
+  
+  /* set the root oid from which we'll start our meander */
+  root_length = MAX_OID_LEN;
+  read_objid(name_oid, root, &root_length);
+  memmove(name, root, root_length * sizeof(oid));
+  name_length = root_length;
+  
+  /* take a stroll down the mib */
+  running = 1;
+  count = 0;
+  while (running) {
+    pdu = snmp_pdu_create(SNMP_MSG_GETNEXT);
+    snmp_add_null_var(pdu, name, name_length);
+    status = snmp_synch_response(session, pdu, &response); // TODO - better error logging
+    if (status != STAT_SUCCESS)  {
+      if (response && response->errstat != SNMP_ERR_NOERROR) {
+        log_message("Error in packet\nReason: %s\n", snmp_errstring(response->errstat));
+        snmp_free_pdu(response);
+      }
+      return NULL;
+    }
+
+    /* check if we've reached the end of the trail */
+    for (variable = response->variables; variable; variable = variable->next_variable) {
+      if ((variable->name_length < root_length) || 
+          (memcmp(root, variable->name, root_length * sizeof(oid)) != 0)) { /* fin */
+        running = 0; 
+        continue;
+      }
+        
+      /* add current node to result */
+      json_object_snmp_add(result, variable);
+      count++;
+
+      if ((variable->type != SNMP_ENDOFMIBVIEW) && 
+          (variable->type != SNMP_NOSUCHOBJECT) && 
+          (variable->type != SNMP_NOSUCHINSTANCE)) {
+        if (snmp_oid_compare(name, name_length, variable->name, variable->name_length) >= 0) {
+          log_message("Error: OID not increasing: "); 
+          snprint_objid(buf, 1024, name, name_length);
+          log_message("%s >= ", buf);
+          snprint_objid(buf, 1024, variable->name, variable->name_length);
+          log_message("%s\n", buf);
+          running = 0;
+        }
+        memmove((char*)name, (char*)variable->name, variable->name_length * sizeof(oid));
+        name_length = variable->name_length;
+      } else {
+        log_message("Unknown exception\n");
+        running = 0;
+      }
+    }
+
+    if (response) {
+      snmp_free_pdu(response);
+    }
+  } /* while running */
+
+  return result;
+}
+
+ 

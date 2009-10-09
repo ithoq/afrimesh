@@ -44,6 +44,12 @@ void print_snmp_variable(struct variable_list* variable);
 void snmpget(struct snmp_session* session, struct json_object* oids);
 void snmpwalk(struct snmp_session* session, const char* name_oid);
 
+// new methods
+struct snmp_session* snmp_start(const char* address, const char* community);
+void snmp_stop(struct snmp_session* session);
+struct json_object* snmp_get (struct snmp_session* session, struct json_object* oids);
+struct json_object* snmp_walk(struct snmp_session* session, const char* oid);
+
 
 #endif /* VILLAGE_BUS_SNMP_H */
 
