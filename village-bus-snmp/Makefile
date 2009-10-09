@@ -36,21 +36,21 @@ CC=gcc
 #-std=c99 breaks linux build
 INCLUDES=-I. -I../common -I/usr/local/include $(JSON_INCLUDES)
 DEFINES=
-CFLAGS=$(INCLUDES) $(DEFINES) -g
-LDFLAGS=$(JSON_LDFLAGS) -L/usr/local/lib
+CFLAGS+=$(DEFINES) -g
+LDFLAGS+=$(JSON_LDFLAGS) -L/usr/local/lib
 
 
 village-bus-snmp : json_cgi.o village-bus-snmp.o main.o
-	$(CC) -o village-bus-snmp *.o $(LDFLAGS) -lnetsnmp
+	$(CC) $(CFLAGS) $(INCLUDES) -o village-bus-snmp *.o $(LDFLAGS) -lnetsnmp
 
 json_cgi.o : ../common/json_cgi.h ../common/json_cgi.c
-	$(CC) $(CFLAGS) -c ../common/json_cgi.c
+	$(CC) $(CFLAGS) $(INCLUDES) -c ../common/json_cgi.c
 
 village-bus-snmp.o : village-bus-snmp.c village-bus-snmp.h
-	$(CC) -c village-bus-snmp.c $(INCLUDES)
+	$(CC) $(CFLAGS) $(INCLUDES) -c village-bus-snmp.c $(INCLUDES)
 
 main.o : main.c
-	$(CC) -c main.c $(INCLUDES)
+	$(CC) $(CFLAGS) $(INCLUDES) -c main.c 
 
 clean : 
 	rm -f *.o *~ village-bus-snmp
