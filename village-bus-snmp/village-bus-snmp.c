@@ -28,11 +28,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <strings.h>
-#include <net-snmp/net-snmp-config.h>
-#include <net-snmp/net-snmp-includes.h>
-#include <json/json.h>
-#include <json_cgi.h>
+
+#include "village-bus-snmp.h"
 
 
 /**
@@ -72,6 +69,7 @@ void print_snmp_variable(struct variable_list* variable)
     printf("\"unknown type: 0x%x\"", variable->type);
   }
 }
+
 
 
 /**
@@ -126,7 +124,6 @@ void snmpget(struct snmp_session* session, struct json_object* oids)
     snmp_free_pdu(response);
   }
 }
-
 
 
 /**
@@ -205,87 +202,3 @@ void snmpwalk(struct snmp_session* session, const char* name_oid)
     }
   } /* while running */
 }
-
-
-/**
- * village-bus-snmp provides a json interface to SNMP
- */
-int main(int argc, char** argv)
-{
-  char *request, *command, *address, *community;
-  struct json_object* request_object;
-  struct json_object* oids;
-  struct snmp_session session, *sessionp;
-  int i;
-
-  printf("Content-type: application/json\n\n");
-  /*printf("Content-type: text/plain\n\n");*/
-
-  /* parse request */
-  request = json_cgi_request();
-  if (request == NULL || strcasecmp(request, "") == 0) {  /* TODO - return NULL on json_cgi_request always */
-    log_message("NULL request\n");
-    printf("[\n\t{ error: \"NULL request\" }\n]\n");
-    json_cgi_release();
-    return EXIT_FAILURE;
-  }
-  request_object = json_tokener_parse(request);
-  if (request_object == NULL) {
-    log_message("Could not parse request: %s\n", request);
-    printf("[\n\t{ error: \"Could not parse request: %s\" }\n]\n", request);
-    json_cgi_release();
-    return EXIT_FAILURE;
-  }
-  command   = json_object_get_string(json_object_object_get(request_object, "command"));
-  address   = json_object_get_string(json_object_object_get(request_object, "address"));
-  community = json_object_get_string(json_object_object_get(request_object, "community"));
-  oids = json_object_object_get(request_object, "oids");
-  log_message("Querying: %s with community: %s\n", address, community);
-
-  /* initialize snmp */
-  init_snmp("village-bus-snmp");
-  snmp_enable_syslog(); 
-  snmp_sess_init(&session);            
-  session.peername = (char*)address;
-  session.version = SNMP_VERSION_1;
-  session.community = (unsigned char*)community;
-  session.community_len = strlen(community);
-  sessionp = snmp_open(&session); 
-  if (!sessionp) {
-    /*snmp_perror("ack");
-      snmp_log(LOG_ERR, "something horrible happened!!!\n");*/
-    log_message("Failed to initialize net-snmp\n");
-
-    int liberr, syserr;
-    char* errstr;
-    snmp_error(&session, &liberr, &syserr, &errstr);
-
-    printf("[ { \n\t\"error\" : \"%s\" \n } ]\n", errstr);
-    return;
-  } 
-  SOCK_STARTUP;
-
-  /* perform snmp query and return results */
-  printf("[ {");
-  if (strncasecmp("get", command, 3) == 0) {
-    snmpget(sessionp, oids);  
-  } else if (strncasecmp("walk", command, 4) == 0) {
-    for (i = 0; i < json_object_array_length(oids); i++) {
-      printf("%s", (i ? "," : ""));
-      snmpwalk(sessionp, json_object_get_string(json_object_array_get_idx(oids, i)));  
-    }
-  } else {
-    printf("{ error: \"unknown command\" }");
-  }
-  printf("\n} ]\n");
-
-  /* clean up and release resources */
-  snmp_close(sessionp);
-  SOCK_CLEANUP;
-  json_object_put(request_object);
-  json_cgi_release();
-
-  return EXIT_SUCCESS;
-}
-
-

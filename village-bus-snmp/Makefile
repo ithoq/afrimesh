@@ -40,15 +40,17 @@ CFLAGS=$(INCLUDES) $(DEFINES) -g
 LDFLAGS=$(JSON_LDFLAGS) -L/usr/local/lib
 
 
-village-bus-snmp : json_cgi.o village-bus-snmp.o
+village-bus-snmp : json_cgi.o village-bus-snmp.o main.o
 	$(CC) -o village-bus-snmp *.o $(LDFLAGS) -lnetsnmp
 
 json_cgi.o : ../common/json_cgi.h ../common/json_cgi.c
 	$(CC) $(CFLAGS) -c ../common/json_cgi.c
 
-village-bus-snmp.o : village-bus-snmp.c
+village-bus-snmp.o : village-bus-snmp.c village-bus-snmp.h
 	$(CC) -c village-bus-snmp.c $(INCLUDES)
 
+main.o : main.c
+	$(CC) -c main.c $(INCLUDES)
 
 clean : 
 	rm -f *.o *~ village-bus-snmp
