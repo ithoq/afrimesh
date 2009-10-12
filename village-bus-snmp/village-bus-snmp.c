@@ -110,6 +110,8 @@ void print_snmp_variable(struct variable_list* variable)
 }
 
 
+/* TODO - there's an annoying bug when performing a snmp query in snmp_get that expects
+          an ASN_OCTET_STR back but actually gets an ASN_NULL :-P */
 char snmp_to_json_buffer[1024];
 void json_object_snmp_add(struct json_object* object, struct variable_list* variable, int index)
 {
@@ -206,7 +208,8 @@ struct json_object* snmp_get(struct snmp_session* session, struct json_object* o
   char buf[1024];
   oid name[MAX_OID_LEN];
   count = json_object_array_length(oids);
-  size_t name_length[count];
+  //size_t name_length[count];
+  size_t name_len;
 
   /* initialize our result object */
   result = json_object_new_object();
@@ -214,11 +217,15 @@ struct json_object* snmp_get(struct snmp_session* session, struct json_object* o
   /* build query */
   pdu = snmp_pdu_create(SNMP_MSG_GET);
   for (count = 0; count < json_object_array_length(oids); count++) {
-    name_length[count] = MAX_OID_LEN;
+    //name_length[count] = MAX_OID_LEN;
+    name_len = MAX_OID_LEN;
     read_objid(json_object_get_string(json_object_array_get_idx(oids, count)), 
                name, 
-               &(name_length[count]));   // TODO - check use get_node ?
-    snmp_add_null_var(pdu, name, name_length[count]);
+               &name_len);
+               //&(name_length[count]));   
+    //snmp_add_null_var(pdu, name, name_length[count]);
+    //log_message("FOOK: %s - %s (%d)\n", json_object_get_string(json_object_array_get_idx(oids, count)), name, name_len);
+    snmp_add_null_var(pdu, name, name_len);
   }
 
   /* perform query */

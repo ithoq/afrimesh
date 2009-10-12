@@ -65,6 +65,15 @@ test-sysinfo :
 	                             \"oids\"      : [ \".1.3.6.1.2.1.1\" ] }" ;       \
         ./village-bus-snmp
 
+test-sysdescr : 
+	export REQUEST_METHOD="GET" ; \
+        export QUERY_STRING="{ \"package\"   : \"snmp\",                             \
+                               \"command\"   : \"get\",                              \
+                               \"address\"   : \"192.168.20.1\",                     \
+                               \"community\" : \"public\",                           \
+	                             \"oids\"      : [ \"1.3.6.1.2.1.1.1\" ] }" ;       \
+        ./village-bus-snmp
+
 test-interfaces : village-bus-snmp
 	export REQUEST_METHOD="GET" ; \
         export QUERY_STRING="{ \"package\"   : \"snmp\",                             \
