@@ -56,7 +56,7 @@ clean :
 	rm -f *.o *~ village-bus-snmp
 
 
-test-sysinfo : village-bus-snmp
+test-sysinfo : 
 	export REQUEST_METHOD="GET" ; \
         export QUERY_STRING="{ \"package\"   : \"snmp\",                             \
                                \"command\"   : \"walk\",                              \

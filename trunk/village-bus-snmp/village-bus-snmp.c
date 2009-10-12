@@ -94,10 +94,16 @@ void print_snmp_variable(struct variable_list* variable)
     /*char* buf = (char*)malloc(1 + variable->val_len);  // TODO - check on all platforms
     memcpy(buf, variable->val.string, variable->val_len);
     buf[variable->val_len] = '\0';*/
-    printf("\"%s\"", variable->val.string);
+    /*printf("\"%s\"", variable->val.string);*/
     /*free(buf);*/
+    char buf[variable->val_len + 1];
+    snprintf(buf, variable->val_len, variable->val.string);
+    buf[variable->val_len] = '\0';
+    printf("\"%s\"", buf);
   } else if (variable->type == ASN_COUNTER) { /* ASN_COUNTER */
     printf("%lu", *variable->val.integer);
+  } else if (variable->type == ASN_NULL) {    /* ASN_NULL */
+    printf("null");
   } else {
     printf("\"unknown type: 0x%x\"", variable->type);
   }
@@ -105,18 +111,32 @@ void print_snmp_variable(struct variable_list* variable)
 
 
 char snmp_to_json_buffer[1024];
-void json_object_snmp_add(struct json_object* object, struct variable_list* variable)
+void json_object_snmp_add(struct json_object* object, struct variable_list* variable, int index)
 {
+  struct json_object* value;
   if (variable->type == ASN_OCTET_STR) {
     snprintf(snmp_to_json_buffer, 1024, "%s", variable->val.string);
-  } else if (variable->type == ASN_COUNTER) { /* ASN_COUNTER */
+    value = json_object_new_string(snmp_to_json_buffer);
+  } else if (variable->type == ASN_COUNTER) { 
     snprintf(snmp_to_json_buffer, 1024, "%lu", *variable->val.integer);
+    value = json_object_new_string(snmp_to_json_buffer);
+    //value = json_object_new_int(*variable->val.integer); // TODO ASN_COUNTER overflows json integer 
+  } else if (variable->type == ASN_NULL) {   
+    value = NULL;
   } else {
     snprintf(snmp_to_json_buffer, 1024, "unknown type: 0x%x", variable->type);
+    value = json_object_new_string(snmp_to_json_buffer);
   }
-  struct json_object* value = json_object_new_string(snmp_to_json_buffer);
+
+  // by name
   snprint_objid(snmp_to_json_buffer, 1024, variable->name, variable->name_length);
   json_object_object_add(object, escape_oid(snmp_to_json_buffer), value);
+  
+  // by numeric index
+  if (index != -1) {
+    snprintf(snmp_to_json_buffer, 1024, "%d", index);
+    json_object_object_add(object, snmp_to_json_buffer, value);
+  }
 }
 
 
@@ -181,11 +201,15 @@ struct json_object* snmp_get(struct snmp_session* session, struct json_object* o
 {
   struct snmp_pdu *pdu, *response;
   struct variable_list *variable;
+  struct json_object* result;
   int status, count;
   char buf[1024];
   oid name[MAX_OID_LEN];
   count = json_object_array_length(oids);
   size_t name_length[count];
+
+  /* initialize our result object */
+  result = json_object_new_object();
 
   /* build query */
   pdu = snmp_pdu_create(SNMP_MSG_GET);
@@ -204,27 +228,26 @@ struct json_object* snmp_get(struct snmp_session* session, struct json_object* o
       log_message("Error in packet\nReason: %s\n", snmp_errstring(response->errstat));
       snmp_free_pdu(response);
     }
-    int liberr, syserr;
-    char* errstr;
-    snmp_error(session, &liberr, &syserr, &errstr);
-    printf(" \"error\" : \"%s\"", errstr);
-    return;
+    return NULL;
   }
 
   /* print query results */
   count = 0;
   for (variable = response->variables; variable; variable = variable->next_variable) {
-    snprint_objid(buf, 1024, variable->name, variable->name_length);
+    /*snprint_objid(buf, 1024, variable->name, variable->name_length);
     printf("%s\n\t\"%s\" : ", (variable == response->variables ? "" : ","), escape_oid(buf));
     print_snmp_variable(variable);
     printf(",\n\t%d : ", count);
-    print_snmp_variable(variable);
+    print_snmp_variable(variable);*/
+    json_object_snmp_add(result, variable, count);
     count++;
   }
   
   if (response) {
     snmp_free_pdu(response);
   }
+
+  return result;
 }
 
 
@@ -314,11 +337,11 @@ struct json_object* snmp_walk(struct snmp_session* session, const char* name_oid
 {
   struct snmp_pdu *pdu, *response;
   struct variable_list* variable;
+  struct json_object* result;
   int status, running, count;
   char buf[1024];
   oid name[MAX_OID_LEN], root[MAX_OID_LEN];
   size_t name_length, root_length;
-  struct json_object* result;
 
   /* initialize our result object */
   result = json_object_new_object();
@@ -353,7 +376,7 @@ struct json_object* snmp_walk(struct snmp_session* session, const char* name_oid
       }
         
       /* add current node to result */
-      json_object_snmp_add(result, variable);
+      json_object_snmp_add(result, variable, -1);
       count++;
 
       if ((variable->type != SNMP_ENDOFMIBVIEW) && 
