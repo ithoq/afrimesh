@@ -75,7 +75,8 @@ void vlog_message(const char* message, va_list ap)
 void json_cgi_release()
 {
   if (json_cgi_log_file != NULL && json_cgi_log_file != stdout) {
-    fprintf(json_cgi_log_file, "Finished logging.\n\n");
+    fprintf(json_cgi_log_file, "Finished logging.\n");
+    fprintf(json_cgi_log_file, "============================================================\n\n");
   }
   if (json_cgi_log_file != NULL) {
     fclose(json_cgi_log_file);
@@ -92,8 +93,38 @@ void json_cgi_release()
 }
 
 
+const char* cgi_decode(const char* request, size_t length)
+{
+  char c;
+  size_t index = 0;
+  size_t buffer_size = length * 2 * sizeof(char);
+  int code = 0;
+  if (json_cgi_parse_buffer != NULL) {
+    free(json_cgi_parse_buffer);
+    json_cgi_parse_buffer = NULL;
+  }
+  json_cgi_parse_buffer = malloc(buffer_size);
+  memset(json_cgi_parse_buffer, buffer_size, 0);
+  char* buffer = json_cgi_parse_buffer;
+  for (index = 0; request[index] != '\0' && index < length; index++) {
+    c = request[index];
+    switch (c) {
+    case '%':
+      if(sscanf((request + index + 1), "%2x", &code) != 1) code = '?';
+      index += 2;
+      buffer += snprintf(buffer, buffer_size, "%c", code);
+      break;
+    default:
+      buffer += snprintf(buffer, buffer_size, "%c", c);
+      break;
+    }
+  }
+  //log_message("DECODED REQUEST: %s\n\n", json_cgi_parse_buffer);
+  return json_cgi_parse_buffer;
+}
 
-char* request_to_json(const char* request, size_t length) 
+
+const char* request_to_json(const char* request, size_t length) 
 {
   char c;
   size_t index = 0;
@@ -139,31 +170,48 @@ char* request_to_json(const char* request, size_t length)
 
   buffer += snprintf(buffer, buffer_size, "' }");
 
-  log_message("CONVERTED REQUEST TO: %s\n\n", json_cgi_parse_buffer);
+  //log_message("CONVERTED REQUEST TO: %s\n\n", json_cgi_parse_buffer);
   return json_cgi_parse_buffer;
 }
 
 
-char* _json_cgi_request(int argc, char** argv)
+/**
+ * Transparently return the CGI request whether it was sent via GET, POST or the command line
+ */
+const char* cgi_request(int argc, char** argv)
 {
   char* request_method;
   char* content_type;
   char* content_length;
   char* query_string;
+  char* request_uri;
+  char* script_name;   
+  char* script_filename;
+  char* path_info;      
+  char* path_translated;
+  char* request;
 
-  request_method = getenv("REQUEST_METHOD");
-  query_string   = getenv("QUERY_STRING");
-  content_type   = getenv("CONTENT_TYPE");
-  content_length = getenv("CONTENT_LENGTH");
-
-  if (request_method) log_message("REQUEST_METHOD: %s\n", request_method);
-  if (content_type)   log_message("CONTENT_TYPE: %s\n", content_type);
-  if (content_length) log_message("CONTENT_LENGTH: %s\n", content_length);
-  if (query_string)   log_message("QUERY_STRING: %s\n", query_string);
+  request_method  = getenv("REQUEST_METHOD");
+  query_string    = getenv("QUERY_STRING");
+  content_type    = getenv("CONTENT_TYPE");
+  content_length  = getenv("CONTENT_LENGTH");
+  request_uri     = getenv("REQUEST_URI");
+  script_name     = getenv("SCRIPT_NAME");
+  script_filename = getenv("SCRIPT_FILENAME");
+  path_info       = getenv("PATH_INFO");
+  path_translated = getenv("PATH_TRANSLATED");
+  /*if (request_uri)     log_message("    REQUEST_URI: %s\n", request_uri);
+  if (script_name)     log_message("    SCRIPT_NAME: %s\n", script_name);
+  if (script_filename) log_message("SCRIPT_FILENAME: %s\n", script_filename);
+  if (path_info)       log_message("      PATH_INFO: %s\n", path_info);
+  if (path_translated) log_message("PATH_TRANSLATED: %s\n", path_translated);
+  if (request_method)  log_message(" REQUEST_METHOD: %s\n", request_method);
+  if (content_type)    log_message("   CONTENT_TYPE: %s\n", content_type);
+  if (content_length)  log_message(" CONTENT_LENGTH: %s\n", content_length);
+  if (query_string)    log_message("   QUERY_STRING: %s\n", query_string); */
 
   if (query_string && request_method && strncmp(request_method, "GET", 3) == 0) {
-    //return query_string;
-    return request_to_json(query_string, strlen(query_string));
+    request = query_string;
 
   } else if (request_method && strncmp(request_method, "POST", 4) == 0) {
     if (json_cgi_post_buffer != NULL) {
@@ -173,29 +221,34 @@ char* _json_cgi_request(int argc, char** argv)
     size_t read_actual = 0;
     size_t read_expected = atoi(content_length);
     json_cgi_post_buffer = malloc(read_expected + 1 * sizeof(char));
-    log_message("POST_CONTENT: ");
+    //log_message("POST_CONTENT: ");
     while (read_actual < read_expected) {
       read_actual += fread(json_cgi_post_buffer, 1, read_expected, stdin);
       json_cgi_post_buffer[read_actual] = 0;
-      log_message("%s", json_cgi_post_buffer);
+      //log_message("%s", json_cgi_post_buffer);
     }
-    log_message("\n");
-    return json_cgi_post_buffer;
+    //log_message("\n");
+    request = json_cgi_post_buffer;
 
   } else if (argc == 2 && argv && argv[1]) {
-    return argv[1];
+    request = argv[1];
 
+  } else if (argc == 3 && argv && argv[2]) {  /* request path is argv[1] */
+    request = argv[2];
+
+  } else {
+    log_message("Unknown request: %s\n", request_method);
+    request = NULL;
   }
 
-  log_message("Unknown request: %s\n", request_method);
-  return NULL;
+  return request;
 }
 
 
 /**
  *
  */
-char* json_cgi_request()
+const char* json_cgi_request()
 {
   char* request_method;
   char* content_type;
@@ -216,6 +269,7 @@ char* json_cgi_request()
     return query_string;
 
   } else if (request_method && strncmp(request_method, "POST", 4) == 0) {
+    /* TODO - w/ JSONP & POST the 'jsonp=callbackname' parameter gets passed in the query string */
     if (json_cgi_post_buffer != NULL) {
       free(json_cgi_post_buffer);
       json_cgi_post_buffer = NULL;
