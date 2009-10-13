@@ -46,8 +46,8 @@ void vlog_message(const char* message, va_list ap);
 void json_cgi_release();
 const char* json_cgi_request();
 const char* cgi_request(int argc, char** argv);
-const char* cgi_decode(const char* request, size_t length);
-const char* request_to_json(const char* request, size_t length);
+char* cgi_decode(const char* request, size_t length);
+char* request_to_json(const char* request, size_t length);
 
 
 #endif /* JSON_CGI */

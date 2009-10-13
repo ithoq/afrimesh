@@ -37,7 +37,7 @@ CC=gcc
 INCLUDES=-I. -I../common -I../village-bus-snmp $(JSON_INCLUDES) 
 DEFINES=
 CFLAGS+=$(DEFINES) -g
-LDFLAGS=$(JSON_LDFLAGS) -lnetsnmp
+LDFLAGS=-L$(DEPROOT)/lib $(JSON_LDFLAGS) -lnetsnmp
 
 
 # targets
@@ -88,11 +88,12 @@ HOST="192.168.20.1", "public"
 
 test-jsonrpc-snmp-walk : village-bus
 	#snmpwalk -v 2c -c public 192.168.20.1 1.3.6.1.2.1.1.1
-	./village-bus /snmp '{ $(RPC), "method" : "walk", "params" : [ $(HOST), ["1.3.6.1.2.1.1.1"] ] }'
-	./village-bus /snmp '{ $(RPC), "method" : "walk", "params" : [ $(HOST), ["1.3.6.1.2.1.1.1", "1.3.6.1.2.1.2.2.1.10", "1.3.6.1.2.1.2.2.1.16"] ] }'	
+	#./village-bus /snmp '{ $(RPC), "method" : "walk", "params" : [ $(HOST), "1.3.6.1.2.1.1.1" ] }'
+	./village-bus /snmp '{ $(RPC), "method" : "walk", "params" : [ $(HOST), ".1.3.6.1.2.1.2.2.1.2" ] }'
 
 test-jsonrpc-snmp-get : village-bus
 	#./village-bus /snmp '{ $(RPC), "method" : "get", "params" : [ $(HOST), ["SNMPv2-MIB::sysDescr"] ] }'		
 	#./village-bus /snmp '{ $(RPC), "method" : "get", "params" : [ $(HOST), [".1.3.6.1.2.1.1.1"] ] }'	
 	./village-bus /snmp '{ $(RPC), "method" : "get", "params" : [ $(HOST), [".1.3.6.1.2.1.2.2.1.10.1",".1.3.6.1.2.1.2.2.1.16.1"] ] }'				
+
 

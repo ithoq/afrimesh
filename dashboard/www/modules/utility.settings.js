@@ -50,7 +50,7 @@ var LocationMap = null;
       $("input.[id*=afrimesh|settings|internet_gateway|address]").css("background", "#FFAAAA");
       var interfaces = afrimesh.villagebus.snmp.walk(afrimesh.settings.internet_gateway.address, 
                                                      afrimesh.settings.internet_gateway.snmp.community, 
-                                                     [ ".1.3.6.1.2.1.2.2.1.2" ]);  // IF-MIB::ifDescr
+                                                     ".1.3.6.1.2.1.2.2.1.2");  // IF-MIB::ifDescr
       console.log("GETTING INTERFACES: " + interfaces);
       if (!interfaces || interfaces.error) {
         $("p.[id*=internet_gateway|error]").html("Internet gateway unreachable.");

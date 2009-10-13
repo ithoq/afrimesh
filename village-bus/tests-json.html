@@ -87,9 +87,9 @@
         };
         request.data = JSON.stringify(call);
         request.success = function(response, result) {
-          console.debug("GOT: " + JSON.stringify(response));
+          //console.debug("GOT: " + JSON.stringify(response));
           if (response.error) {
-            console.error("JSON/RPC ERROR: " + dump(response.error));
+            console.error("JSON/RPC ERROR: " + response.error);
           } else if (response.result) {
             request.result = response.result;
           }
@@ -150,9 +150,11 @@
         //var hostname = rpc("hostname", []);
         //console.debug("hostname: " + JSON.stringify(hostname));
 
-        rpc.path = "/cgi-bin/afrimesh/uci?auth=" + token;
-        var config = rpc("show", [ "afrimesh" ]);
-        console.debug("config: " + JSON.stringify(config));
+        rpc.path = "/cgi-bin/afrimesh/snmp?auth=" + token;
+        var snmpwalk = rpc("walk", [ "192.168.20.1", "public", "1.3.6.1.2.1.1"  ]);
+        console.debug("snmpwalk: " + JSON.stringify(snmpwalk));
+        //var snmpget = rpc("get", [ "192.168.20.1", "public", [ "1.3.6.1.2.1.2.2.1.10.1", "1.3.6.1.2.1.2.2.1.16.1" ] ]);
+        //console.debug("snmpget: " + JSON.stringify(snmpget));
 
         // test 5 - jsonp-rpc 
 

@@ -178,12 +178,13 @@ var BootVillageBus = function (afrimesh) {
     return villagebus.snmp.sync("get", address, community, oids);
   };
 
-  villagebus.snmp.walk = function(address, community, oids) {
-    return villagebus.snmp.sync("walk", address, community, oids);
+  villagebus.snmp.walk = function(address, community, oid) {
+    return villagebus.snmp.sync("walk", address, community, oid);
   };
 
   villagebus.snmp.url = function() {
-    return "http://" + afrimesh.settings.hosts.dashboard_server + "/cgi-bin/village-bus-snmp";
+    //return "http://" + afrimesh.settings.hosts.dashboard_server + "/cgi-bin/village-bus-snmp";
+    return "http://" + afrimesh.settings.hosts.dashboard_server + "/cgi-bin/village-bus/snmp";
   };
 
   villagebus.snmp.async = function(f, address, community, oids) {
@@ -195,7 +196,7 @@ var BootVillageBus = function (afrimesh) {
   };
 
   villagebus.snmp.sync = function(command, address, community, oids) {
-    return make_json_request({
+    /*return make_json_request({
         url     : this.url(),
         request : { package   : "snmp",
                     command   : command,
@@ -203,8 +204,38 @@ var BootVillageBus = function (afrimesh) {
                     community : community, 
                     oids      : oids        },
         success : make_sync_response_handler(address, "villagebus.snmp"),
-        async   : false });
+        async   : false });*/
+    return rpc(this.url(), command, [address, community, oids]);
   };
+
+  var rpc = function(url, method, parameters) {
+    // TODO - check host & path
+    var request = {
+      url         : url, //"http://" + rpc.host + rpc.path, 
+      type        : "POST",
+      contentType : "application/json",
+      dataType    : "json",
+      async       : false
+    };
+    var call = { 
+      id      : 1234,
+      version : "2.0",
+      method  : method,
+      params  : parameters
+    };
+    request.data = JSON.stringify(call);
+    request.success = function(response, result) {
+      //console.debug("GOT: " + JSON.stringify(response));
+      if (response.error) {
+        console.error("JSON/RPC ERROR: " + response.error);
+      } else if (response.result) {
+        request.result = response.result;
+      }
+    };
+    var xml = $.ajax(request);
+    return request.result;
+  }; 
+
 
 
 

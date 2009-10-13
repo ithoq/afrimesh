@@ -68,8 +68,8 @@ int exit_failure()
 int main(int argc, char** argv)
 {
   /** - output HTTP header ------------------------------------------------ */
-  //httpd_out("Content-type: application/json\n\n");
-  httpd_out("Content-type: text/plain\n\n");
+  httpd_out("Content-type: application/json\n\n");
+  //httpd_out("Content-type: text/plain\n\n");
 
   /** - read request ------------------------------------------------------ */
   const char* request = cgi_request(argc, argv);
@@ -105,14 +105,14 @@ int main(int argc, char** argv)
 
   /** - handle jsonp ----------------------------------------------------- */
   struct json_object* jsonp = json_object_object_get(request_object, "jsonp");
-  const char* jsonp_name = (jsonp ? json_object_get_string(jsonp) : "callback");
-  const char* jsonp_callback = json_object_get_string(json_object_object_get(request_object, jsonp_name));
+  char* jsonp_name = (jsonp ? json_object_get_string(jsonp) : "callback");
+  char* jsonp_callback = json_object_get_string(json_object_object_get(request_object, jsonp_name));
   //httpd_error("No jsonp key named '%s' found. You can specify alternate callback keys by adding '&jsonp=altkey' to your URL", jsonp_name, request);
 
   /** - read request payload --------------------------------------------- */
   struct json_object* payload_object = NULL;
   if (jsonp_callback != NULL) { /** - request is JSONP ------------------- */
-    const char* json_payload = json_object_get_string(json_object_object_get(request_object, "payload"));
+    char* json_payload = json_object_get_string(json_object_object_get(request_object, "payload"));
     if (json_payload == NULL) {
       httpd_error("JSONP request missing payload key.");
       return exit_failure();
@@ -133,9 +133,9 @@ int main(int argc, char** argv)
 
   /** - handle response ------------------------------------------------- */
   /* TODO - support JSONP/RPC ? */
-  unsigned int        jsonrpc_id      = json_object_get_int(json_object_object_get(payload_object, "id"));
-  const char*         jsonrpc_version = json_object_get_string(json_object_object_get(payload_object, "version"));
-  const char*         jsonrpc_method  = json_object_get_string(json_object_object_get(payload_object, "method"));
+  int jsonrpc_id = json_object_get_int(json_object_object_get(payload_object, "id"));
+  char* jsonrpc_version = json_object_get_string(json_object_object_get(payload_object, "version"));
+  char* jsonrpc_method  = json_object_get_string(json_object_object_get(payload_object, "method"));
   struct json_object* jsonrpc_params  = json_object_object_get(payload_object, "params");
   if (jsonrpc_version && jsonrpc_method && jsonrpc_params) { /** - request is JSON/RPC --- */
     log_message("-> JSON/RPC\n");
