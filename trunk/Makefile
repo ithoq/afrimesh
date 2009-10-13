@@ -48,7 +48,7 @@ PPA=afrimesh-ppa
 #DEPS_URL="https://launchpad.net/~antoine-7degrees/+archive/ppa/+files/"
 
 # - binaries -----------------------------------------------------------------
-VILLAGERS=village-bus-batman village-bus-radius village-bus-snmp village-bus-uci
+VILLAGERS=village-bus village-bus-batman village-bus-radius village-bus-snmp village-bus-uci
 
 
 
@@ -87,6 +87,7 @@ all:
 	export DEPROOT=$(DEPROOT); cd village-bus-radius ; $(MAKE)
 	export DEPROOT=$(DEPROOT); cd village-bus-snmp   ; $(MAKE)
 	export DEPROOT=$(DEPROOT); cd village-bus-uci    ; $(MAKE)
+	export DEPROOT=$(DEPROOT); cd village-bus        ; $(MAKE)
 
 install: install-www 
 	@if ! test -f $(DASHBOARD_ETC)/config/afrimesh ; then $(MAKE) install-config ; fi
@@ -135,6 +136,7 @@ clean : # clean-www
 	cd village-bus-radius ; $(MAKE) clean
 	cd village-bus-snmp   ; $(MAKE) clean
 	cd village-bus-uci    ; $(MAKE) clean
+	cd village-bus        ; $(MAKE) clean
 
 clean-www: 
 	@echo "Cleaning"

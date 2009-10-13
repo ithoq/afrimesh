@@ -97,7 +97,7 @@ void print_snmp_variable(struct variable_list* variable)
     /*printf("\"%s\"", variable->val.string);*/
     /*free(buf);*/
     char buf[variable->val_len + 1];
-    snprintf(buf, variable->val_len, variable->val.string);
+    snprintf(buf, variable->val_len, "%s", variable->val.string);
     buf[variable->val_len] = '\0';
     printf("\"%s\"", buf);
   } else if (variable->type == ASN_COUNTER) { /* ASN_COUNTER */
@@ -112,32 +112,32 @@ void print_snmp_variable(struct variable_list* variable)
 
 /* TODO - there's an annoying bug when performing a snmp query in snmp_get that expects
           an ASN_OCTET_STR back but actually gets an ASN_NULL :-P */
-char snmp_to_json_buffer[1024];
 void json_object_snmp_add(struct json_object* object, struct variable_list* variable, int index)
 {
   struct json_object* value;
+  char buf[1024];
   if (variable->type == ASN_OCTET_STR) {
-    snprintf(snmp_to_json_buffer, 1024, "%s", variable->val.string);
-    value = json_object_new_string(snmp_to_json_buffer);
+    snprintf(buf, variable->val_len + 1, "%s", variable->val.string);
+    value = json_object_new_string(buf);
   } else if (variable->type == ASN_COUNTER) { 
-    snprintf(snmp_to_json_buffer, 1024, "%lu", *variable->val.integer);
-    value = json_object_new_string(snmp_to_json_buffer);
+    sprintf(buf, "%lu", *variable->val.integer);
+    value = json_object_new_string(buf);
     //value = json_object_new_int(*variable->val.integer); // TODO ASN_COUNTER overflows json integer 
   } else if (variable->type == ASN_NULL) {   
     value = NULL;
   } else {
-    snprintf(snmp_to_json_buffer, 1024, "unknown type: 0x%x", variable->type);
-    value = json_object_new_string(snmp_to_json_buffer);
+    sprintf(buf, "unknown type: 0x%x", variable->type);
+    value = json_object_new_string(buf);
   }
 
   // by name
-  snprint_objid(snmp_to_json_buffer, 1024, variable->name, variable->name_length);
-  json_object_object_add(object, escape_oid(snmp_to_json_buffer), value);
+  snprint_objid(buf, 1024, variable->name, variable->name_length);
+  json_object_object_add(object, escape_oid(buf), value);
   
   // by numeric index
   if (index != -1) {
-    snprintf(snmp_to_json_buffer, 1024, "%d", index);
-    json_object_object_add(object, snmp_to_json_buffer, value);
+    snprintf(buf, 1024, "%d", index);
+    json_object_object_add(object, buf, value);
   }
 }
 

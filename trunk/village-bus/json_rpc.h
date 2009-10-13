@@ -50,9 +50,11 @@ struct json_object* jsonrpc_dispatch(const char* module, const char* name, struc
 struct json_object* jsonrpc_dispatch_uci (const char* name, struct json_object* arguments);
 struct json_object* jsonrpc_dispatch_snmp(const char* name, struct json_object* arguments);
 
-struct Module {
-  char*  module;
-  int    length;
+struct MethodDispatch {
+  const char* module;
+  const char* method;
+  enum json_type signature[8];
+  int numargs;
   struct json_object* (*dispatchp) (const char*, struct json_object*);
 };
 

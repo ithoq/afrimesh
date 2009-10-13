@@ -93,7 +93,7 @@ void json_cgi_release()
 }
 
 
-const char* cgi_decode(const char* request, size_t length)
+char* cgi_decode(const char* request, size_t length)
 {
   char c;
   size_t index = 0;
@@ -124,7 +124,7 @@ const char* cgi_decode(const char* request, size_t length)
 }
 
 
-const char* request_to_json(const char* request, size_t length) 
+char* request_to_json(const char* request, size_t length) 
 {
   char c;
   size_t index = 0;
