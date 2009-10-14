@@ -31,25 +31,17 @@
 #ifndef JSON_RPC
 #define JSON_RPC
 
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <string.h>
 
 #include <json/json.h>
-#include <json_cgi.h>
 
-#include <village-bus-snmp.h>
-#include <net-snmp/net-snmp-config.h>
-#include <net-snmp/net-snmp-includes.h>
 
-// TODO
-//jsonrpc_register(const char* module, const char* name, const char** arguments, void* function);
+/* TODO */
+/* jsonrpc_register(const char* module, const char* name, const char** arguments, void* function); */
 
-// module dispatch
-struct json_object* jsonrpc_dispatch(const char* module, const char* name, struct json_object* arguments);
-struct json_object* jsonrpc_dispatch_uci (const char* name, struct json_object* arguments);
-struct json_object* jsonrpc_dispatch_snmp(const char* name, struct json_object* arguments);
-
+/* method dispatch */
 struct MethodDispatch {
   const char* module;
   const char* method;
@@ -57,12 +49,20 @@ struct MethodDispatch {
   int numargs;
   struct json_object* (*dispatchp) (const char*, struct json_object*);
 };
-
-// utilities
+struct json_object* jsonrpc_dispatch(struct MethodDispatch* dispatch, 
+                                     const char* module, 
+                                     const char* method, 
+                                     struct json_object* params);
 struct json_object* jsonrpc_error(const char* message, ...);
 
+/* simple type checker */
 int json_typecheck(struct json_object* object, enum json_type type);
 int json_typecheck_array(struct json_object* array, enum json_type type);
+
+/* utilities */
+const char* json_type_tostring(enum json_type type);
+const char* signature_tostring(enum json_type* signature);
+const char* params_tostring(struct json_object* params);
 
 
 #endif /* JSON_RPC */

@@ -32,31 +32,21 @@
 #include "village-bus.h"
 
 
-void httpd_out(const char* message, ...)
-{
-  log_message("<- ");
-  va_list args;
-  va_start(args, message);
-  vprintf(message, args);
-  vlog_message(message, args);
-  va_end(args);
-}
+/**
+ * JSON/RPC method registration and interface specification
+ */
+struct MethodDispatch dispatch_table[] = {
+  { "/uci",  "show", {json_type_string}, 1, jsonrpc_dispatch_uci_show },
+  { "/uci",  "set",  {json_type_array }, 1, jsonrpc_dispatch_uci_set  },
+  { "/snmp", "get",  {json_type_string, json_type_string, json_type_array }, 3, jsonrpc_dispatch_snmp },
+  { "/snmp", "walk", {json_type_string, json_type_string, json_type_string}, 3, jsonrpc_dispatch_snmp },
+  { 0, 0, 0, 0 }
+};
 
 
-void httpd_error(const char* message, ...)
-{
-  va_list args;
-  printf("json_error_handler([ { \"error\" : \"");
-  log_message("ERROR: error([ { \"error\" : \"");
-  va_start(args, message);
-  vprintf(message, args);
-  vlog_message(message, args);
-  va_end(args);  
-  printf("\" } ])\n");
-  log_message("\" } ])\n");
-}
-
-
+/**
+ * 
+ */
 int exit_failure() 
 {
   json_cgi_release();
@@ -64,7 +54,9 @@ int exit_failure()
 }
 
 
-
+/**
+ *
+ */
 int main(int argc, char** argv)
 {
   /** - output HTTP header ------------------------------------------------ */
@@ -91,7 +83,6 @@ int main(int argc, char** argv)
   log_message("-> %s\n", request);
   if (request_path) log_message("-> path: %s\n", request_path);
 
-
   /** - parse request ----------------------------------------------------- */
   struct json_object* request_object = json_tokener_parse(cgi_decode(request, strlen(request)));
   if (request_object == NULL || is_error(request_object)) {
@@ -107,7 +98,7 @@ int main(int argc, char** argv)
   struct json_object* jsonp = json_object_object_get(request_object, "jsonp");
   char* jsonp_name = (jsonp ? json_object_get_string(jsonp) : "callback");
   char* jsonp_callback = json_object_get_string(json_object_object_get(request_object, jsonp_name));
-  //httpd_error("No jsonp key named '%s' found. You can specify alternate callback keys by adding '&jsonp=altkey' to your URL", jsonp_name, request);
+  /* httpd_error("No jsonp key named '%s' found. You can specify alternate callback keys by adding '&jsonp=altkey' to your URL", jsonp_name, request); */
 
   /** - read request payload --------------------------------------------- */
   struct json_object* payload_object = NULL;
@@ -125,14 +116,13 @@ int main(int argc, char** argv)
   } else {                      /** - request is JSON --------------------- */
     payload_object = request_object;
   }
-  //log_message("GOT PAYLOAD: %s\n", json_object_get_string(payload_object));
+  /* log_message("GOT PAYLOAD: %s\n", json_object_get_string(payload_object)); */
   if (payload_object == NULL) {
     httpd_error("Could not determine payload in request: %s", request);
     return exit_failure();
   }
 
   /** - handle response ------------------------------------------------- */
-  /* TODO - support JSONP/RPC ? */
   int jsonrpc_id = json_object_get_int(json_object_object_get(payload_object, "id"));
   char* jsonrpc_version = json_object_get_string(json_object_object_get(payload_object, "version"));
   char* jsonrpc_method  = json_object_get_string(json_object_object_get(payload_object, "method"));
@@ -145,10 +135,10 @@ int main(int argc, char** argv)
     log_message("\tmethod: %s\n",  jsonrpc_method);
     log_message("\tparams: %s\n",  json_object_get_string(jsonrpc_params));
 
-    // dispatch request
-    struct json_object* jsonrpc_response = jsonrpc_dispatch(request_path, jsonrpc_method, jsonrpc_params);
+    /* dispatch request */
+    struct json_object* jsonrpc_response = jsonrpc_dispatch(dispatch_table, request_path, jsonrpc_method, jsonrpc_params);
 
-    // return request response
+    /* return request response */
     json_object_object_add(jsonrpc_response, "id",     json_object_new_int(jsonrpc_id));
     httpd_out("%s\n", json_object_get_string(jsonrpc_response));
 
@@ -161,7 +151,6 @@ int main(int argc, char** argv)
     httpd_out("%s\n", json_object_get_string(payload_object));  
 
   }
-
 
   /** - release resources -------------------------------------------------- */
   json_object_put(payload_object);

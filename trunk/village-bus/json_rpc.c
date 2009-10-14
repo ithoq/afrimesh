@@ -33,14 +33,77 @@
 
 
 /**
- * JSON/RPC method registration and interface specification
+ * Given a dispatch table and a request... dispatch!
+ *
+ * JSON/RPC response format: { "id" : 1234, "result" : "091f1a6a7e49861850f98680659510d2", "error" : null }
  */
-struct MethodDispatch dispatch_table[] = {
-  { "/uci",   "",    {0}, 0, jsonrpc_dispatch_uci },
-  { "/snmp", "get",  {json_type_string, json_type_string, json_type_array }, 3, jsonrpc_dispatch_snmp },
-  { "/snmp", "walk", {json_type_string, json_type_string, json_type_string}, 3, jsonrpc_dispatch_snmp },
-  { 0, 0, 0, 0 }
-};
+struct json_object* jsonrpc_dispatch(struct MethodDispatch* dispatch, 
+                                     const char* module, 
+                                     const char* method, 
+                                     struct json_object* params)
+{
+  /* no module specified */
+  if (module == NULL) {
+    return jsonrpc_error("No module specified");
+  }
+
+  /* typecheck method parameters */
+  if (json_object_get_type(params) != json_type_array) { /* TODO - full version 2.0 support w/ named args */
+    return jsonrpc_error("JSON/RPC expects parameters to be an array: %s.%s (%s) ", 
+                         module, method, json_object_get_string(params)); 
+  }
+
+  /* resolve method, typecheck params and dispatch method to module handler */
+  size_t i;
+  for (i = 0; dispatch[i].module != 0; i++) {
+    const char* jsonrpc_module = dispatch[i].module;
+    const char* jsonrpc_method = dispatch[i].method;
+    const enum json_type* jsonrpc_signature = dispatch[i].signature;
+    if (strncmp(module, jsonrpc_module, strlen(jsonrpc_module)) == 0 &&
+        strncmp(method, jsonrpc_method, strlen(jsonrpc_method)) == 0) {              /* resolve method   */
+      if (json_object_array_length(params) != dispatch[i].numargs) {           /* typecheck params */
+        return jsonrpc_error("Type error: %s.%s (%s) expected %d arguments: %s",
+                             module, method,
+                             params_tostring(params),
+                             dispatch[i].numargs,
+                             signature_tostring(jsonrpc_signature));
+      }
+      size_t p;
+      for (p = 0; p < json_object_array_length(params) && dispatch[i].signature[p]; p++) {
+        struct json_object* param = json_object_array_get_idx(params, p); 
+        enum json_type param_type = jsonrpc_signature[p];
+        if (json_object_get_type(param) != param_type) {
+          return jsonrpc_error("Type error: %s.%s (%s) expected: %s", 
+                               module, method, 
+                               params_tostring(params), 
+                               signature_tostring(jsonrpc_signature));
+        }
+      }
+      /* dispatch method */
+      return dispatch[i].dispatchp(method, params);
+    }
+  }
+
+  /* no module handler for request */
+  return jsonrpc_error("Unknown module or method name: '%s.%s'", module, method);
+}
+
+
+/**
+ * Construct a jsonrpc error
+ */
+struct json_object* jsonrpc_error(const char* message, ...)
+{
+  static char jsonrpc_error_message[512];
+  va_list args;
+  va_start(args, message);
+  vsnprintf(jsonrpc_error_message, 512, message, args);
+  va_end(args);
+  struct json_object* error = json_object_new_object();
+  json_object_object_add(error, "error",  json_object_new_string(jsonrpc_error_message));
+  json_object_object_add(error, "result", NULL);
+  return error;
+}
 
 
 /**
@@ -71,11 +134,12 @@ const char* signature_tostring(enum json_type* signature)
   size_t t;
   for (t = 0; signature[t] != 0; t++) {
     enum json_type type = signature[t];
-    strcat(buf, (t == 0 ? "" : " -> "));
+    strcat(buf, (t == 0 ? "" : ", "));
     strcat(buf, json_type_tostring(type));
   }
   return buf;
 }
+
 
 const char* params_tostring(struct json_object* params)
 {
@@ -83,7 +147,7 @@ const char* params_tostring(struct json_object* params)
   size_t t;
   for (t = 0; t < json_object_array_length(params); t++) {
     enum json_type type = json_object_get_type(json_object_array_get_idx(params, t));
-    strcat(buf, (t == 0 ? "" : " -> "));
+    strcat(buf, (t == 0 ? "" : ", "));
     strcat(buf, json_type_tostring(type));
   }
   return buf;
@@ -97,6 +161,7 @@ int json_typecheck(struct json_object* object, enum json_type type)
 {
   return json_object_get_type(object) == type;
 }
+
 
 /**
  * Given json object 'array' check that it is an array and that all
@@ -114,148 +179,6 @@ int json_typecheck_array(struct json_object* array, enum json_type type)
     }
   }
   return TRUE;
-}
-
-
-/**
- * Handle request dispatch for uci module
- */
-struct json_object* jsonrpc_dispatch_uci(const char* name, struct json_object* arguments)
-{
-  log_message("dispatching uci request: %s(%s)\n", name, json_object_get_string(arguments));
-  return NULL;
-}
-
-
-/**
- * Handle request dispatch for snmp module
- */
-struct json_object* jsonrpc_dispatch_snmp(const char* name, struct json_object* arguments)
-{
-  size_t i;
-  struct snmp_session* session;
-
-  // typecheck request arguments
-  struct json_object* address   = json_object_array_get_idx(arguments, 0);
-  struct json_object* community = json_object_array_get_idx(arguments, 1);
-  struct json_object* oid       = json_object_array_get_idx(arguments, 2);
-
-  if (strncmp(name, "get", 3) == 0 &&
-      !json_typecheck_array(oid, json_type_string)) {
-    return jsonrpc_error("/snmp.get (%s) expected (String -> String -> [String])", 
-                         params_tostring(arguments));
-  }
-
-  // initialize snmp
-  session = snmp_start(json_object_get_string(address), json_object_get_string(community));
-  if (!session) {
-    int liberr, syserr;
-    char* errstr;
-    snmp_error(session, &liberr, &syserr, &errstr);
-    log_message("Failed to initialize net-snmp: %s\n", errstr);
-    return jsonrpc_error("Failed to initialize net-snmp: %s", errstr);
-  }
-
-  // dispatch request
-  struct json_object* response = json_object_new_object();
-  if (strncmp(name, "get", 3) == 0) {
-    struct json_object* get = snmp_get(session, oid);
-    if (!get) {
-      int liberr, syserr;
-      char* errstr;
-      snmp_error(session, &liberr, &syserr, &errstr);
-      return jsonrpc_error("net-snmp error: %s", errstr);      
-    }
-    json_object_object_add(response, "result", get);
-
-  } else if (strncmp(name, "walk", 4) == 0) {
-    struct json_object* walk = snmp_walk(session, json_object_get_string(oid));
-    if (!walk) {
-      int liberr, syserr;
-      char* errstr;
-      snmp_error(session, &liberr, &syserr, &errstr);
-      return jsonrpc_error("net-snmp error: %s", errstr);
-    }
-    json_object_object_add(response, "result", walk);
-
-  } else {
-    return jsonrpc_error("Could not find name '%s' in module '/snmp'", name);
-  }
-
-  json_object_object_add(response, "error",  NULL);
-
-  // cleanup
-  snmp_stop(session);
-
-  return response;
-}
-
-
-/**
- * Dispatch request to module handler
- *
- * JSON/RPC response format: { "id" : 1234, "result" : "091f1a6a7e49861850f98680659510d2", "error" : null }
- */
-struct json_object* jsonrpc_dispatch(const char* module, const char* method, struct json_object* params)
-{
-  /* no module specified */
-  if (module == NULL) {
-    return jsonrpc_error("No module specified");
-  }
-
-  /* typecheck method parameters */
-  if (json_object_get_type(params) != json_type_array) { // TODO - full version 2.0 support w/ named args
-    return jsonrpc_error("JSON/RPC expects parameters to be an array: %s.%s (%s) ", 
-                         module, method, json_object_get_string(params)); 
-  }
-
-  /* resolve method, typecheck params and dispatch method to module handler */
-  size_t i;
-  for (i = 0; dispatch_table[i].module != 0; i++) {
-    const char* jsonrpc_module = dispatch_table[i].module;
-    const char* jsonrpc_method = dispatch_table[i].method;
-    const enum json_type* jsonrpc_signature = dispatch_table[i].signature;
-    if (strncmp(module, jsonrpc_module, strlen(jsonrpc_module)) == 0 &&
-        strncmp(method, jsonrpc_method, strlen(jsonrpc_method)) == 0) {              /* resolve method   */
-      if (json_object_array_length(params) != dispatch_table[i].numargs) {           /* typecheck params */
-        return jsonrpc_error("Type error: %s.%s (%s) expected %d arguments: %s",
-                             module, method,
-                             params_tostring(params),
-                             dispatch_table[i].numargs,
-                             signature_tostring(jsonrpc_signature));
-      }
-      size_t p;
-      for (p = 0; p < json_object_array_length(params) && dispatch_table[i].signature[p]; p++) {
-        struct json_object* param = json_object_array_get_idx(params, p); 
-        enum json_type param_type = jsonrpc_signature[p];
-        if (json_object_get_type(param) != param_type) {
-          return jsonrpc_error("Type error: %s.%s (%s) expected: %s", 
-                               module, method, 
-                               params_tostring(params), 
-                               signature_tostring(jsonrpc_signature));
-        }
-      }
-      /* dispatch method */
-      return dispatch_table[i].dispatchp(method, params);
-    }
-  }
-
-  /* no module handler for request */
-  return jsonrpc_error("Unknown module or method name: '%s.%s'", module, method);
-}
-
-
-char jsonrpc_error_message[512];
-struct json_object* jsonrpc_error(const char* message, ...)
-{
-  va_list args;
-  va_start(args, message);
-  vsnprintf(jsonrpc_error_message, 512, message, args);
-  va_end(args);
-  struct json_object* error = json_object_new_object();
-  json_object_object_add(error, "error",  json_object_new_string(jsonrpc_error_message));
-  json_object_object_add(error, "result", NULL);
-  return error;
 }
 
 

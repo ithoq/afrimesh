@@ -208,6 +208,7 @@ var BootVillageBus = function (afrimesh) {
     return rpc(this.url(), command, [address, community, oids]);
   };
 
+  // TODO - don't require parameters to be in an array - rather use varargs!
   var rpc = function(url, method, parameters) {
     // TODO - check host & path
     var request = {
@@ -217,26 +218,59 @@ var BootVillageBus = function (afrimesh) {
       dataType    : "json",
       async       : false
     };
-    var call = { 
-      id      : 1234,
-      version : "2.0",
-      method  : method,
-      params  : parameters
-    };
-    request.data = JSON.stringify(call);
+    request.data = JSON.stringify({ 
+        id      : 1234,
+        version : "2.0",
+        method  : method,
+        params  : parameters
+      });
     request.success = function(response, result) {
-      //console.debug("GOT: " + JSON.stringify(response));
-      if (response.error) {
-        console.error("JSON/RPC ERROR: " + response.error);
+      if (!response) {
+        console.error("JSON/RPC ERROR: " + JSON.stringify(request.data) + " - empty response");
+      } else if (response.error) {
+        console.error("JSON/RPC ERROR: " + JSON.stringify(request.data) + " - " + response.error);
       } else if (response.result) {
         request.result = response.result;
+      } else {
+        console.error("JSON/RPC ERROR: " + JSON.stringify(request.data) + " - unknown");
       }
     };
     var xml = $.ajax(request);
     return request.result;
   }; 
 
+  function rpc_async(url, method, parameters, continuation) {
+    var request = {
+      url          :  url, //"http://" + rpc.host + rpc.path, 
+      type         : "POST",
+      contentType  : "application/json",
+      dataType     : "json",
+      async        : true,
+      continuation : continuation,
+    };
+    request.data = JSON.stringify({ 
+        id      : 1234,
+        version : "2.0",
+        method  : method,
+        params  : parameters
+      });
+    request.success = rpc_async_success(request);
+    return $.ajax(request);
+  };
 
+  function rpc_async_success(request) {
+    return function(response, result) {
+      if (!response) {
+        console.error("JSON/RPC ERROR: " + JSON.stringify(request.data) + " - empty response");
+      } else if (response.error) {
+        console.error("JSON/RPC ERROR: " + JSON.stringify(request.data) + " - " + response.error);
+      } else if (response.result) {
+        request.continuation(response.result);
+      } else {
+        console.error("JSON/RPC ERROR: " + JSON.stringify(request.data) + " - unknown");
+      }
+    };
+  };
 
 
   /** - villagebus.uci ---------------------------------------------------- */
@@ -255,9 +289,9 @@ var BootVillageBus = function (afrimesh) {
   //              afrimesh.settings.ajax_proxy      + "http://" + address + "/cgi-bin/village-bus-uci";
   villagebus.uci.url = function(address) { 
     if (address == afrimesh.settings.address) {
-      return "http://" + address + "/cgi-bin/village-bus-uci";
+      return "http://" + address + "/cgi-bin/village-bus/uci";
     }
-    return afrimesh.villagebus.ajax_proxy() + "http://" + address + "/cgi-bin/village-bus-uci";
+    return afrimesh.villagebus.ajax_proxy() + "http://" + address + "/cgi-bin/village-bus/uci";
   };
 
   villagebus.uci.get = function(address, selector) {
@@ -268,35 +302,39 @@ var BootVillageBus = function (afrimesh) {
   };
 
   villagebus.uci.get.sync = function(address, selector) {
-    return make_json_request({ 
+    /*return make_json_request({ 
         url     : villagebus.uci.url(address), 
         request : { package: "uci", command: "show"  }, 
         success : make_sync_response_handler(address, "villagebus.uci"), 
-        async   : false });
+        async   : false });*/
+    return rpc(villagebus.uci.url(address), "show", [selector]);
   };
 
   villagebus.uci.get.async = function(f, address, selector) {
-    return make_json_request({ 
+    /*return make_json_request({ 
         url     : villagebus.uci.url(address), 
         request : { package: "uci", command: "show"  }, 
         success : make_async_response_handler(f, address, "villagebus.uci"),
-        async   : true });
+        async   : true });*/
+    return rpc_async(villagebus.uci.url(address), "show", [selector], f);
   };
 
   villagebus.uci.set.sync = function(address, entries) {
-    return make_json_request({ 
+    /*return make_json_request({ 
         url     : villagebus.uci.url(address), 
         request : { package: "uci", command: "set", arguments: entries }, 
         success : make_sync_response_handler(address, "villagebus.uci"),
-        async   : false });
+        async   : false });*/
+    return rpc(villagebus.uci.url(address), "set", [entries]);
   };
 
   villagebus.uci.set.async = function(f, address, entries) {
-    return make_json_request({ 
+    /*return make_json_request({ 
         url     : villagebus.uci.url(address), 
         request : { package: "uci", command: "set", arguments: entries }, 
         success : make_async_response_handler(f, address, "villagebus.uci"),
-        async   : true });
+        async   : true });*/
+    return rpc_async(villagebus.uci.url(address), "set", [entries], f);
   };
 
 
