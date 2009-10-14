@@ -143,18 +143,19 @@
         console.debug("hostname: " + hostname);*/
 
 
-        // test 4 - json-rpc 
-        rpc.host = "127.0.0.1";
-        //rpc.path = "/cgi-bin/afrimesh?jsonp=fook&auth=" + token;
-        //rpc.path = "/cgi-bin/afrimesh?auth=" + token;
-        //var hostname = rpc("hostname", []);
-        //console.debug("hostname: " + JSON.stringify(hostname));
+        // test 4 - json-rpc
+        //rpc.host = "127.0.0.1";
+        rpc.host = "196.211.3.106";
 
-        rpc.path = "/cgi-bin/afrimesh/snmp?auth=" + token;
-        var snmpwalk = rpc("walk", [ "192.168.20.1", "public", "1.3.6.1.2.1.1"  ]);
-        console.debug("snmpwalk: " + JSON.stringify(snmpwalk));
-        //var snmpget = rpc("get", [ "192.168.20.1", "public", [ "1.3.6.1.2.1.2.2.1.10.1", "1.3.6.1.2.1.2.2.1.16.1" ] ]);
-        //console.debug("snmpget: " + JSON.stringify(snmpget));
+        /*rpc.path = "/cgi-bin/afrimesh/snmp?auth=" + token;
+        var snmp_walk = rpc("walk", [ "192.168.20.1", "public", "1.3.6.1.2.1.1"  ]);
+        console.debug("snmp walk: " + JSON.stringify(snmp_walk));
+        var snmp_get = rpc("get", [ "192.168.20.1", "public", [ "1.3.6.1.2.1.2.2.1.10.1", "1.3.6.1.2.1.2.2.1.16.1" ] ]);
+        console.debug("snmp get: " + JSON.stringify(snmp_get));*/
+
+        rpc.path = "/cgi-bin/afrimesh/uci?auth=" + token;
+        var uci_show = rpc("show", [ "afrimesh" ]);
+        console.debug("uci show: " + JSON.stringify(uci_show));
 
         // test 5 - jsonp-rpc 
 

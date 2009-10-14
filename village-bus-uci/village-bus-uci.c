@@ -46,6 +46,53 @@ static struct uci_type_list* type_list = NULL;
 /**
  *
  */
+bool _uci_show_package(const char* package, struct json_object* result)
+{
+  int num_sections = 0;
+  struct uci_ptr ptr;
+  if (uci_lookup_ptr(UCI_CONTEXT, &ptr, package, true) != UCI_OK) {
+    log_message("uci_show: could not lookup package\n");
+    uci_perror(UCI_CONTEXT, "village-bus-uci");
+  }
+
+  struct json_object* json_package = json_object_new_object();
+
+  /* (PACKAGE) -> SECTION -> OPTION -> VALUE */
+  struct uci_element* element_section;
+  uci_reset_typelist();
+  uci_foreach_element(&ptr.p->sections, element_section) { /* for each section */
+    num_sections++;
+    struct uci_section* section;
+    section = uci_to_section(element_section);
+    //cur_section_ref = uci_lookup_section_ref(section);  // TODO - better handling for lists
+    struct uci_element* element_option;
+    struct json_object* json_section = json_object_new_object();
+    json_object_object_add(json_section, "type", json_object_new_string(section->type));
+    uci_foreach_element(&section->options, element_option) { /* for each option */
+      struct uci_option* option;
+      option = uci_to_option(element_option);
+      json_object_object_add(json_section, 
+                             option->e.name, 
+                             json_object_new_string(option_to_string(option)));
+
+    } /* end for each option */
+    json_object_object_add(json_package, 
+                           (cur_section_ref ? cur_section_ref : section->e.name), 
+                           json_section);
+
+  } /* end for each section */
+  json_object_object_add(result, package, json_package);
+
+  uci_reset_typelist();
+  uci_unload(UCI_CONTEXT, ptr.p);
+
+  return num_sections;
+}
+
+
+/**
+ *
+ */
 bool uci_show_package(const char* package)
 {
   int num_sections = 0;
@@ -93,16 +140,6 @@ bool uci_show_package(const char* package)
 
 
 /**
- *
- */
-bool uci_show_section(const char* section)
-{
-  return false;
-}
-
-
-
-/**
  * Set a uci configuration value
  */
 bool uci_set_config(const char* config, const char* section, const char* option, const char* value)
@@ -133,7 +170,7 @@ bool uci_set_config(const char* config, const char* section, const char* option,
     return false;
   }
 
-  log_message("{ message: \"set: %s.%s.%s=%s\" }\n", config, section, option, value, ptr);
+  //log_message("{ message: \"set: %s.%s.%s=%s\" }\n", config, section, option, value, ptr);
   return true;
 }
 

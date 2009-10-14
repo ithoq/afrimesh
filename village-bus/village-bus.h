@@ -33,9 +33,27 @@
 #define VILLAGE_BUS_H
 
 #include <stdio.h>
+
+#include <uci.h>
+struct uci_context* UCI_CONTEXT; 
 #include <json/json.h>
+
 #include <json_cgi.h>
 #include <json_rpc.h>
+
+#include <net-snmp/net-snmp-config.h>
+#include <net-snmp/net-snmp-includes.h>
+
+#include <village-bus-snmp.h>
+#include <village-bus-uci.h>
+
+
+/**
+ * JSON/RPC Dispatch Helpers
+ */
+struct json_object* jsonrpc_dispatch_snmp(const char* name, struct json_object* arguments);
+struct json_object* jsonrpc_dispatch_uci_show (const char* name, struct json_object* arguments);
+struct json_object* jsonrpc_dispatch_uci_set (const char* name, struct json_object* arguments);
 
 #endif /* VILLAGE_BUS_H */
 

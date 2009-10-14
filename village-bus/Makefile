@@ -28,22 +28,30 @@
 #
 
 
+
 # json
-JSON_INCLUDES=-I$(DEPROOT)/include
+JSON_CFLAGS=
 JSON_LDFLAGS=$(DEPROOT)/lib/libjson.a
+
+# uci
+UCI_CFLAGS=
+UCI_LDFLAGS=$(DEPROOT)/lib/libuci.a
+
+# net-snmp
+SNMP_CFLAGS=
+SNMP_LDFLAGS=-lnetsnmp
 
 #-std=c99 
 CC=gcc 
-INCLUDES=-I. -I../common -I../village-bus-snmp $(JSON_INCLUDES) 
-DEFINES=
-CFLAGS+=$(DEFINES) -g
-LDFLAGS=-L$(DEPROOT)/lib $(JSON_LDFLAGS) -lnetsnmp
+INCLUDES+=-I. -I../common -I../village-bus-snmp -I../village-bus-uci -I$(DEPROOT)/include 
+DEFINES+=
+CFLAGS+=-g $(DEFINES) $(JSON_CFLAGS) $(UCI_CFLAGS) $(SNMP_CFLAGS)
+LDFLAGS+=-L$(DEPROOT)/lib $(JSON_LDFLAGS) $(UCI_LDFLAGS) $(SNMP_LDFLAGS)
 
 
 # targets
-village-bus : json_cgi.o json_rpc.o village-bus-snmp.o main.o 
+village-bus : json_cgi.o json_rpc.o village-bus-snmp.o village-bus-uci.o village-bus.o main.o 
 	$(CC) $(CFLAGS) -o village-bus *.o $(LDFLAGS) 
-
 
 # objects
 json_cgi.o : ../common/json_cgi.h ../common/json_cgi.c
@@ -52,11 +60,14 @@ json_cgi.o : ../common/json_cgi.h ../common/json_cgi.c
 json_rpc.o : json_rpc.h json_rpc.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c json_rpc.c
 
-#village-bus.o : village-bus.c village-bus.h
-#	$(CC) $(CFLAGS) -c village-bus.c
+village-bus.o : village-bus.c village-bus.h
+	$(CC) $(INCLUDES) $(CFLAGS) -c village-bus.c
 
 village-bus-snmp.o : ../village-bus-snmp/village-bus-snmp.h ../village-bus-snmp/village-bus-snmp.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c ../village-bus-snmp/village-bus-snmp.c
+
+village-bus-uci.o : ../village-bus-uci/village-bus-uci.h ../village-bus-uci/village-bus-uci.c
+	$(CC) $(INCLUDES) $(CFLAGS) -c ../village-bus-uci/village-bus-uci.c
 
 main.o : village-bus.h main.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c main.c 
@@ -80,12 +91,17 @@ test-json :
 
 test-jsonp :
 
-test-jsonrpc-uci :
-	./village-bus uci '{ "id" : 123, "version" : "2.0", "method" : "show", "params" : []  }'
-
 RPC="id" : 123, "version" : "2.0"
-HOST="192.168.20.1", "public"
+SET1={"config":"afrimesh","section":"potato","option":"asterisk","value":"127.0.0.2"}
+SET2={"config":"afrimesh","section":"potato","option":"trunkcalls","value":"true"}
 
+test-jsonrpc-uci :
+	#./village-bus /uci '{ $(RPC), "method" : "show", "params" : [ "" ] }'	
+	./village-bus /uci '{ $(RPC), "method" : "show", "params" : [ "afrimesh.location" ] }'
+	#./village-bus /uci '{ $(RPC), "method" : "set", "params" : [ [ $(SET1), $(SET2) ] ] }'	
+
+
+HOST="192.168.20.1", "public"
 test-jsonrpc-snmp-walk : village-bus
 	#snmpwalk -v 2c -c public 192.168.20.1 1.3.6.1.2.1.1.1
 	#./village-bus /snmp '{ $(RPC), "method" : "walk", "params" : [ $(HOST), "1.3.6.1.2.1.1.1" ] }'
