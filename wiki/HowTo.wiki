@@ -1,3 +1,4 @@
 #labels Phase-Support
   * [http://code.google.com/p/afrimesh/wiki/InstallationOpenWRT configure a new mesh node]
   * [http://code.google.com/p/afrimesh/wiki/HowToMapServer configure the dashboard to run without an internet connection]
+  * [HowToMemcachedb configure Radius to use a MemcacheDB backend]
