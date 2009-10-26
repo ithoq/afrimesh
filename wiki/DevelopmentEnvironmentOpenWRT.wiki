@@ -1,14 +1,19 @@
 = OpenWRT =
 
-  * Sources
+  * Checkout Sources
   {{{
   svn co svn://svn.openwrt.org/openwrt/branches/8.09 kamikaze
   }}}
-  * Packages
+  * Edit & add to top of openwrt-source-dir/feeds.conf.default:
+  {{{
+    src-cpy afrimesh afrimesh-source-dir/package-scripts/openwrt
+  }}}
+  * Update Packages
   {{{
   cd kamikaze
   ./scripts/feeds update -a
   }}}
+
 
 = Dependencies =
 
@@ -27,11 +32,6 @@
   {{{
   KAMIKAZE=openwrt-source-dir
   }}}
-  * Run:
-  {{{
-    make prep-openwrt
-  }}}
-
 
 = Build Packages = 
 
