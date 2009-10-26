@@ -6,7 +6,7 @@
   }}}
   * Edit & add to top of openwrt-source-dir/feeds.conf.default:
   {{{
-    src-cpy afrimesh afrimesh-source-dir/package-scripts/openwrt
+  src-cpy afrimesh afrimesh-source-dir/package-scripts/openwrt
   }}}
   * Update Packages
   {{{
