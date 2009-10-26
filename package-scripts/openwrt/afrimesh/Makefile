@@ -32,7 +32,7 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ------------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=530
+PKG_REV:=537
 PKG_VERSION:=r$(PKG_REV)-0.4alpha
 PKG_RELEASE:=1
 
@@ -74,10 +74,10 @@ PKG_EXTRA_CFLAGS= \
 	-include endian.h             \
 
 
-MAKE_UCI_ARGS += \
+MAKE_VILLAGEBUS_ARGS += \
 	CC='$(TARGET_CC) $(PKG_EXTRA_CFLAGS) $(TARGET_CFLAGS_EXTRA) ' \
 	CFLAGS='$(TARGET_CFLAGS) ' \
-	LDFLAGS='$(TARGET_LDFLAGS) -ljson -luci'
+	LDFLAGS='$(TARGET_LDFLAGS) -ljson -luci -lnetsnmp'
 
 
 
@@ -88,7 +88,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/afrimesh-base
 	SECTION:=admin
 	CATEGORY:=Administration
-	DEPENDS:=+busybox +libuci +libjson +batmand 
+	DEPENDS:=+busybox +libuci +libjson +batmand +libnetsnmp
 	TITLE:=Easy management for B.A.T.M.A.N. wireless mesh networks
 	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
 endef
@@ -286,7 +286,7 @@ define Build/Configure
 endef
 
 define Build/Compile
-	cd $(PKG_BUILD_DIR)/village-bus ; make $(MAKE_UCI_ARGS)
+	cd $(PKG_BUILD_DIR)/village-bus ; make $(MAKE_VILLAGEBUS_ARGS)
 endef
 
 
