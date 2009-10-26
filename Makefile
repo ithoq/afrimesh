@@ -33,9 +33,10 @@
 VERSION=r517-0.3alpha
 RELEASE=1
 
+# DEPRECATED
 # If you want to build packages for OpenWRT you need to set this to the
 # location of a copy of the kamikaze sources or SDK
-KAMIKAZE=/Volumes/afrimesh-dev/ext/kamikaze
+# KAMIKAZE=/Volumes/afrimesh-dev/ext/kamikaze
 
 # Ubuntu Launchpad Personal Package Archive 
 #   _DO_ set this to your personal ppa if you want to build test packages
@@ -315,24 +316,24 @@ install-freebsd : freebsd install-www
 
 
 # - openwrt ------------------------------------------------------------------
-prep-openwrt :
-	rm -f $(KAMIKAZE)/package/afrimesh
-	ln -s $(shell pwd)/package-scripts/openwrt/afrimesh $(KAMIKAZE)/package/afrimesh
-	rm -f $(KAMIKAZE)/target/linux/atheros-mp
-	ln -s $(shell pwd)/upstream/openwrt.meshpotato/target $(KAMIKAZE)/target/linux/atheros-mp
+#prep-openwrt :
+#	rm -f $(KAMIKAZE)/package/afrimesh
+#	ln -s $(shell pwd)/package-scripts/openwrt/afrimesh $(KAMIKAZE)/package/afrimesh
+#	rm -f $(KAMIKAZE)/target/linux/atheros-mp
+#	ln -s $(shell pwd)/upstream/openwrt.meshpotato/target $(KAMIKAZE)/target/linux/atheros-mp
 
-packages-openwrt :
-	cd $(KAMIKAZE) ; \
-	make package/afrimesh-compile V=99
-	cd $(KAMIKAZE) ; \
-	make package/index
+#packages-openwrt :
+#	cd $(KAMIKAZE) ; \
+#	make package/afrimesh-compile V=99
+#	cd $(KAMIKAZE) ; \
+#	make package/index
 
-clean-openwrt :
-	cd $(KAMIKAZE) ; \
-	make package/afrimesh-clean V=99
+#clean-openwrt :
+#	cd $(KAMIKAZE) ; \
+#	make package/afrimesh-clean V=99
 
-distclean-openwrt : clean-openwrt
-	rm -f $(KAMIKAZE)/package/afrimesh
+#distclean-openwrt : clean-openwrt
+#	rm -f $(KAMIKAZE)/package/afrimesh
 
 
 

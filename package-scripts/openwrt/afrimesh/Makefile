@@ -32,8 +32,8 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ------------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=521
-PKG_VERSION:=r$(PKG_REV)-0.3alpha
+PKG_REV:=530
+PKG_VERSION:=r$(PKG_REV)-0.4alpha
 PKG_RELEASE:=1
 
 # See: http://downloads.openwrt.org/people/florian/fosdem/openwrt_cfp_fosdem2008.pdf
@@ -103,7 +103,7 @@ define Package/afrimesh-base/install
 	$(INSTALL_DIR)  $(1)/etc/config
 	$(INSTALL_DATA) ./files/etc/config/afrimesh $(1)/etc/config
 	$(INSTALL_DIR)  $(1)/www/cgi-bin
-	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/village-bus-uci/village-bus-uci $(1)/www/cgi-bin/village-bus-uci
+	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/village-bus/village-bus $(1)/www/cgi-bin/village-bus
 endef
 
 
@@ -183,7 +183,7 @@ endef
 define Package/afrimesh-dashboard
 	SECTION:=admin
 	CATEGORY:=Administration
-	DEPENDS:=+afrimesh-base +curl +wget 
+	DEPENDS:=+afrimesh-base +curl 
 	TITLE:=Mesh management dashboard
 endef
 
@@ -225,7 +225,6 @@ endef
 # - afrimesh-potato -----------------------------------------------------------
 #+luci-admin-full
 #+luci-admin-mini
-#+wget
 define Package/afrimesh-potato
 	SECTION:=admin
 	CATEGORY:=Administration
@@ -287,7 +286,7 @@ define Build/Configure
 endef
 
 define Build/Compile
-	cd $(PKG_BUILD_DIR)/village-bus-uci ; make $(MAKE_UCI_ARGS)
+	cd $(PKG_BUILD_DIR)/village-bus ; make $(MAKE_UCI_ARGS)
 endef
 
 
