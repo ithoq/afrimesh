@@ -15,14 +15,13 @@
   }}}
 
 
-= Dependencies =
+= Activate Packages =
 
   * Run:
   {{{
-  ./scripts/feeds install libjson
-  ./scripts/feeds install batmand
-  ./scripts/feeds install libnetsnmp
-  ./scripts/feeds install curl
+  ./scripts/feeds install batmand 
+  ./scripts/feeds install libjson 
+  ./scripts/feeds install afrimesh-dashboard
   }}}
 
 
