@@ -1,47 +1,45 @@
-= OpenWRT =
+= Checkout OpenWRT =
 
-  * Checkout Sources
+  * Run:
   {{{
   svn co svn://svn.openwrt.org/openwrt/branches/8.09 kamikaze
+  cd kamikaze
   }}}
-  * Edit & add to top of openwrt-source-dir/feeds.conf.default:
+
+
+= Setup OpenWRT =
+
+  * Edit feeds.conf.default:
   {{{
   src-cpy afrimesh afrimesh-source-dir/package-scripts/openwrt
   }}}
-  * Update Packages
+
+  * Run:
   {{{
-  cd kamikaze
   ./scripts/feeds update -a
   }}}
 
 
 = Activate Packages =
 
-  * Run:
+ * Run:
   {{{
   ./scripts/feeds install batmand 
   ./scripts/feeds install libjson 
   ./scripts/feeds install afrimesh-dashboard
   }}}
 
-
-= Configure Afrimesh =
-
-  * Edit: afrimesh-source-dir/Makefile
-  {{{
-  KAMIKAZE=openwrt-source-dir
-  }}}
-
-= Build Packages = 
-
-  * Configure OpenWRT:
+  * Run:
   {{{
   cd openwrt-source-dir
   make menuconfig
   # select afrimesh under the Administration heading
   }}}
+
   
-  * Build
+= Build Packages = 
+
+  * Run
   {{{
   make world
   }}}
