@@ -99,7 +99,7 @@ endef
 
 define Package/afrimesh-base/install
 	$(INSTALL_DIR)  $(1)/etc
-	$(INSTALL_BIN)  ./files/etc/firewall.afrimesh $(1)/etc
+	#$(INSTALL_BIN)  ./files/etc/firewall.afrimesh $(1)/etc
 	$(INSTALL_DIR)  $(1)/etc/config
 	$(INSTALL_DATA) ./files/etc/config/afrimesh $(1)/etc/config
 	$(INSTALL_DIR)  $(1)/www/cgi-bin
