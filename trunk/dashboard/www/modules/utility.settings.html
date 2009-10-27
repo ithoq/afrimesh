@@ -269,22 +269,9 @@
                                        parseFloat(afrimesh.settings.location.longitude),
                                        parseFloat(afrimesh.settings.location.latitude),
                                        parseFloat(afrimesh.settings.map.extent),
-                                       parseInt(afrimesh.settings.map.zoom),
-                                       on_position);
-
+                                       parseInt(afrimesh.settings.map.zoom));
     var router = { address : afrimesh.settings.address };
     location_map.router(router);
-
-    /** callback to update dashboard position ----------------------------- */
-    function on_position(feature) {
-      var location = new OpenLayers.LonLat(feature.geometry.x, feature.geometry.y).transform(epsg_900913, epsg_4326);
-      afrimesh.villagebus.uci.set.async(function (response) {
-          console.debug("Updated router location for:" + feature.router.address);
-        }, 
-        feature.router.address, 
-        [ { config: "afrimesh", section: "location", option: "longitude", value: location.lon }, 
-          { config: "afrimesh", section: "location", option: "latitude",  value: location.lat } ]);
-    };
     
     /** round corners ------------------------------------------------------ */
     $(".tooltip").corner("tr 8px bl 8px br 8px");
