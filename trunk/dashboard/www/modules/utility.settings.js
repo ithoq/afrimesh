@@ -10,7 +10,6 @@
 var populate_dom = null;
 var populate_select_interface = null;
 var LocationMap = null;
-
 (function() {
 
   /** mapping Includes ---------------------------------------------------- */
@@ -170,10 +169,9 @@ var LocationMap = null;
           var dragger = new OpenLayers.Control.DragFeature(map.routers);
           if (on_position) {
             dragger.onComplete = on_position;
-          } else {
-            dragger.onComplete = function (feature) {     /* TODO - ultimately we want this to be just "feature.router.settings.location=" */
+          } else { 
+            dragger.onComplete = function(feature) {     // TODO - ultimately we want this to be just "feature.router.settings.location=" 
               var location = new OpenLayers.LonLat(feature.geometry.x, feature.geometry.y).transform(epsg_900913, epsg_4326);
-              var on_response = ;
               afrimesh.villagebus.uci.set.async(function (response) {
                   console.debug("Updated router location for:" + feature.router.address);
                 }, feature.router.address,     
