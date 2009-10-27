@@ -168,7 +168,19 @@ var LocationMap = null;
           map.routers  = map.getLayersByName("Mesh Routers")[0];
           
           var dragger = new OpenLayers.Control.DragFeature(map.routers);
-          dragger.onComplete = on_position;
+          if (on_position) {
+            dragger.onComplete = on_position;
+          } else {
+            dragger.onComplete = function (feature) {     /* TODO - ultimately we want this to be just "feature.router.settings.location=" */
+              var location = new OpenLayers.LonLat(feature.geometry.x, feature.geometry.y).transform(epsg_900913, epsg_4326);
+              var on_response = ;
+              afrimesh.villagebus.uci.set.async(function (response) {
+                  console.debug("Updated router location for:" + feature.router.address);
+                }, feature.router.address,     
+                [ { config: "afrimesh", section: "location", option: "longitude", value: location.lon.toString() },
+                  { config: "afrimesh", section: "location", option: "latitude",  value: location.lat.toString() } ]);
+            };
+          }
           map.addControl(dragger);
           dragger.activate();
           return map;
@@ -208,5 +220,7 @@ var LocationMap = null;
     
     };
     LocationMap = _LocationMap;
+
+
 
 })();

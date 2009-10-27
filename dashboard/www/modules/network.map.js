@@ -287,8 +287,8 @@ var Map = undefined;
       afrimesh.villagebus.uci.set.async(function (response) {
           console.debug("Updated router location for:" + feature.router.address);
         }, feature.router.address, 
-        [ { config: "afrimesh", section: "location", option: "longitude", value: location.lon }, 
-          { config: "afrimesh", section: "location", option: "latitude",  value: location.lat } ]);
+        [ { config: "afrimesh", section: "location", option: "longitude", value: location.lon.toString() }, 
+          { config: "afrimesh", section: "location", option: "latitude",  value: location.lat.toString() } ]);
       
       // update route geometry
       feature.router.routes.map(function(route) {

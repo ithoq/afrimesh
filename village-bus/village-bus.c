@@ -96,7 +96,7 @@ struct json_object* jsonrpc_dispatch_uci_set(const char* name, struct json_objec
         !json_typecheck(section, json_type_string)  ||
         !json_typecheck(option,  json_type_string)  ||
         !json_typecheck(value,   json_type_string)) {
-      return jsonrpc_error("/uci.set (%s) expected ([{config:String, section:String, option:String, value:String}])", 
+      return jsonrpc_error("/uci.set (%s) expected ([{config:String, section:String, option:String, value:String}, {..}])", 
                            params_tostring(arguments));
     }
 
