@@ -175,9 +175,9 @@ var Map = undefined;
         return "black";
       }
       lq = parseFloat(lq);
-      if (lq > quality.fault)     {  return "red";     } 
-      else if (lq > quality.bad)  {  return "orange";  }
-      else if (lq > quality.good) {  return "lightgreen";   } 
+      if (lq > quality.fault)     {  return "red";         } 
+      else if (lq > quality.bad)  {  return "orange";      }
+      else if (lq > quality.good) {  return "lightgreen";  } 
       return "green";
     }
     this.lq_to_color = lq_to_color;
@@ -194,70 +194,59 @@ var Map = undefined;
     }
     this.lq_to_argb = lq_to_argb;
     
+
     /* event handling ----------------------------------------------------- */     
 
     function on_select_router(feature) {
       afrimesh.network.accounting(feature.router);
       the_map.selected = feature;
       var html = "<div class='popup'>";
-      html += "<p><span id='ip'>" + "<a href='#'>" + feature.router.address + "</a>" + "</span>&nbsp;&nbsp;";
-      html += "<span id='mac'>" + (feature.router.macaddr ? feature.router.macaddr : "unknown mac")  + "</span></p><br/>";
-      var now = new Date();
-      var last_seen = now - feature.last_seen;
+      html += "<div id='address'>";
+      html += "<span id='ip'>" + "<a href='#'>" + feature.router.address + "</a>" + "</span>&nbsp;&nbsp;";
+      html += "<span id='mac'>" + (feature.router.macaddr ? feature.router.macaddr : "unknown mac")  + "</span></div>";
+      var last_seen = (new Date()) - feature.last_seen;
+      html += "<div id='health'>";
       if (last_seen <= (update_frequency * 2.0)) { // UDE - this is a bit clumsy
-        html += "<p><span id='health'>node is healthy</span></p><br/>";
+        html += "node is healthy";
       } else {
-        html += "<p><span id='health' style='color:red;'>node is missing</span></p>";
-        html += "<p><span id='message'>last checked in " + Math.floor(last_seen / 1000) + " seconds ago</span></p>";
+        html += "<span style='color:red;'>node last checked in " + Math.floor(last_seen / 1000) + " seconds ago</span>";
       }
-      if (feature.router.recBytes) {
-	      html += "<p><span id='bytes'style='font-size:12'><span style='font-weight:bold'> In/Out: </span>&nbsp;&nbsp;";
-		html += "<span id='bytes'style='font-size:12'>" + feature.router.recBytes;
-      } else {
-	      //html += "<p><span id='bytes'> Bytes transmitted: No Bytes transmitted</span></p><br/>" ;
-      }
-      if (feature.router.tranBytes) {
-	      html += "/" + feature.router.tranBytes + "</span></p><br/>" ;
-      } else {
-	      //html += "<p><span id='bytes'> Bytes recieved: No Bytes recieved</span></p><br/>" ;
-      }
-      html += "<p><span id='neighbours'>";
+      html += "</div>";
+      if (feature.router.recBytes && feature.router.tranBytes) {
+        html += "<div id='traffic'>Bytes in/out: ";
+        html += "<span id='bytes'>" + feature.router.recBytes + "/" + feature.router.tranBytes + "</span></div>" ;
+      } 
+      html += "<div id='neighbours'>";
       html+= "Neighbours";
-      html+= "<table>";
-      var tog = 1;
+      html+= "<table border=0>";
+      var tog = true;
       feature.router.routes.map(function (route) {
           if (route.neighbour) { 
-              var clor = lq_to_color(route.label);
-            if (tog == 1) {  
-              html += "<tr><td><span style='color:" + clor + "'>";
-              html += route.neighbour + "&nbsp;" + "(" + route.label + ")"
-              html += "</span>&nbsp" + "</td>";
-              tog = 0;
-            } else {
-              html += "<td><span style='color:" + clor + "'>"; 
-              html += route.neighbour + "&nbsp;" +"("+ route.label + ")";
-              html += "</span>&nbsp" +"</td></tr>";
-              tog =1;
+            if (tog) {  
+              html += "<tr>";
             }
+            html += "<td><span style='color:" + lq_to_color(route.label) + "'>";
+            html += route.neighbour + "&nbsp;" + "(" + route.label + ")";
+            html += "</span>&nbsp;&nbsp;</td>";
+            if (!tog) {
+              html += "</tr>";
+            }
+            tog = !tog;
           }
         });
-      
-      html += "</table>";
-      html+= "</span>";
-      html += "</div>";
-    //var myObj = new getObj('MyText');
+      html += (tog ? "</tr>" : "") + "</table>";
+      html+= "</div>";
 
-
+      html += "</div><p></p><br/>";
       var popup = new OpenLayers.Popup.AnchoredBubble("id" + feature.router.address,
                                                       feature.geometry.getBounds().getCenterLonLat(),
-                                                      null, html, null, false, 
+                                                      new OpenLayers.Size(175, 130), html, null, true, 
                                                       function(event){on_unselect_router(the_map.selected);} );
       popup.setBackgroundColor("black");
-      popup.setOpacity(1.0);
+      popup.setOpacity(0.95);
       popup.autoSize = false;
       feature.popup = popup;
       the_map.addPopup(popup);
-
       $("#ip").bind("click", function(event) {
           //evil_display_overlay("http://10.216.144.1/"); 
           evil_display_overlay("http://" + feature.router.address +"/");
