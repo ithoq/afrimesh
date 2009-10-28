@@ -1,35 +1,15 @@
 .olControlAttribution   { top:  2px!important } 
 .olControlMousePosition { left: 8px!important } 
 
-div#network-map .popup { 
-  color: white;
-}
-
-
-div#network-map-legend {
-  position       : absolute; 
-  bottom         : 5px; 
-  right          : 5px;
-  background     : #d0d0d0; 
-  color          : white;
-  padding        : 10px; margin: 0px;
-  z-index        : 10000;
-  opacity        : 0.7;
-  filter         : alpha(opacity=60);
-  -moz-opacity   : 0.7;
-  -khtml-opacity : 0.7;
-  border-radius  : 10px;
-  -webkit-border-radius : 10px;
-  -moz-border-radius    : 10px;
-  -opera-border-radius  : 10px;
-}
-
 div#network-map a { color: orange; }
 div#network-map a:link { color: orange; }
 div#network-map a:visited { color: orange; }
 div#network-map a:active { color: orange; }
 div#network-map a:hover { color: orange; }
 
+div#network-map .popup { 
+  color: white;
+}
 div#network-map .popup #ip { 
   color: orange;
   font-size: 125%;
@@ -52,13 +32,27 @@ div#network-map .popup #neighbours {
   margin-bottom: 50px;
   margin-top: 50px;
 }
-
 div#network-map .popup #neighbours table, tr, td { 
   font-size: 90%;
   margin: 0px;
   padding: 0px;
   padding-right: 10px;
- 
 }
 
-
+div#network-map-legend {
+  position       : absolute; 
+  bottom         : 5px; 
+  right          : 5px;
+  background     : #d0d0d0; 
+  color          : white;
+  padding        : 10px; margin: 0px;
+  z-index        : 10000;
+  opacity        : 0.7;
+  filter         : alpha(opacity=60);
+  -moz-opacity   : 0.7;
+  -khtml-opacity : 0.7;
+  border-radius  : 10px;
+  -webkit-border-radius : 10px;
+  -moz-border-radius    : 10px;
+  -opera-border-radius  : 10px;
+}

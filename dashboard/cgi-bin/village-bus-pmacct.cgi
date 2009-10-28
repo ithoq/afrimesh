@@ -23,12 +23,12 @@ DIRECTION=`echo "$QUERY_STRING" | grep -oE "(^|[?&])direction=[^&]+" | sed "s/%2
 
 echo "Content-type: application/json"
 echo
-if [ $DIRECTION = "out" ]
+if [ "$DIRECTION" == "out" ]
 then
 $PMACCT -j -p /tmp/out.pipe
 fi
 
-if [ $DIRECTION = "in" ]
+if [ "$DIRECTION" == "in" ]
 then
 $PMACCT -j -p /tmp/in.pipe
 fi
