@@ -107,12 +107,12 @@ var Map = undefined;
     };
     function add_router(router) {
       var feature = new OpenLayers.Feature.Vector();
-      feature.style = { fillColor: "blue",
-                        fillOpacity: 1.0, 
+      feature.style = { fillOpacity: 1.0, 
                         strokeOpacity: 1.0,
                         strokeColor: "black",
                         strokeWidth: 1.0,
                         pointRadius: 10.0 };
+      feature.style.fillColor = router.routes.some(function(route) { return route.label == "HNA"; }) ? "red" : "blue";
       feature.id = router.address;
       feature.router = router;
       the_map.routers.addFeatures([feature]);
