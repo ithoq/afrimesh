@@ -1,6 +1,17 @@
 
+
+Notes:
+------
+
+# openlayers
+svn co http://svn.openlayers.org/trunk/openlayers/ openlayers.svn
+cd openlayers.svn/build
+./build.py ../../openlayers.support/afrimesh.cfg
+
+
 # batman
 svn co http://downloads.open-mesh.net/svn/batman/trunk batman.svn
+
 
 # freeradius
 wget ftp://ftp.freeradius.org:/pub/freeradius/freeradius-server-2.1.6.tar.gz
@@ -9,9 +20,11 @@ cd freeradius-server-2.1.6 ; ./configure ; make
 # edit freeradius.rlm/Makefile and set location of configured&compiled freeradius sources
 cd freeradius; make 
 
+
 # memcachedb & libmemcachedb
 svn co http://memcachedb.googlecode.com/svn/trunk/ memcachedb.svn
 svn co http://memcachedb.googlecode.com/svn/clients/libmemcached-0.25-patch libmemcached-0.25-patch.svn
+
 
 # olsr
 # DEPRECATED: hg clone http://gredler.at/hg/olsrd/
@@ -19,8 +32,6 @@ hg clone http://gredler.at/hg/olsrd-0.5.6/
 mv olsrd olsrd.hg
 # DEPRECATED ./olsrd -n -f ../olsrd.support/olsrd.conf --dlPath lib/json_draw/
 ./olsrd -f ../olsrd.support/olsrd.conf -i en1 -nofork
-
-
 
 
 # pmacct

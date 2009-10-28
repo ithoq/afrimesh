@@ -53,7 +53,7 @@ var Map = undefined;
       }
       map.addControl(new OpenLayers.Control.Attribution());
       map.addControl(new OpenLayers.Control.MousePosition());
-      map.addControl(new OpenLayers.Control.LayerSwitcher());
+      map.addControl(new OpenLayers.Control.LayerSwitcher({activeColor:"black"}));
       map.addControl(new OpenLayers.Control.ScaleLine());
       map.setCenter(LonLat(longitude, latitude), zoom);
       if (!map.getCenter()) { map.zoomToMaxExtent(); }
