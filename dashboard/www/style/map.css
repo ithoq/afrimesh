@@ -9,34 +9,43 @@ div#network-map a:hover { color: orange; }
 
 div#network-map .popup { 
   color: white;
+  margin:0px;
+  padding:0px;
+}
+div#network-map .popup #address { 
+ margin-bottom: 5px;
 }
 div#network-map .popup #ip { 
   color: orange;
-  font-size: 125%;
+  font-size: 1.2em;
   font-weight: bold;
 }
 div#network-map .popup #mac { 
   color: darkgray;
-  font-size: 75%;
+  font-size: 0.75em;
   font-style: italic;
 }
 div#network-map .popup #health { 
   color: green;
+  margin-bottom: 5px;   
 }
-div#network-map .popup #message { 
-  color: white;
+div#network-map .popup #traffic { 
+  margin-bottom: 5px;   
+}
+div#network-map .popup #bytes { 
+  color: darkgray;
+  font-size: 0.75em;
 }
 div#network-map .popup #neighbours { 
   color: yellow;
-  font-size: 125%
-  margin-bottom: 50px;
-  margin-top: 50px;
+  font-size: 1.1em;
 }
 div#network-map .popup #neighbours table, tr, td { 
-  font-size: 90%;
+  font-size: 0.9em;
   margin: 0px;
   padding: 0px;
-  padding-right: 10px;
+  padding: 0px;
+  padding-top: 2px;
 }
 
 div#network-map-legend {
