@@ -1,8 +1,27 @@
-.olControlAttribution   { bottom:  2px!important } 
+.olControlAttribution   { top:  2px!important } 
 .olControlMousePosition { left: 8px!important } 
 
 div#network-map .popup { 
   color: white;
+}
+
+
+div#network-map-legend {
+  position       : absolute; 
+  bottom         : 5px; 
+  right          : 5px;
+  background     : #d0d0d0; 
+  color          : white;
+  padding        : 10px; margin: 0px;
+  z-index        : 10000;
+  opacity        : 0.7;
+  filter         : alpha(opacity=60);
+  -moz-opacity   : 0.7;
+  -khtml-opacity : 0.7;
+  border-radius  : 10px;
+  -webkit-border-radius : 10px;
+  -moz-border-radius    : 10px;
+  -opera-border-radius  : 10px;
 }
 
 div#network-map a { color: orange; }
