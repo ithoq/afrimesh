@@ -67,7 +67,7 @@
 } 
 #menu li:hover ul {                     /* activates & makes visible the menu dropdown */
   display: block;
-  z-index: 1000;
+  z-index: 10000;
 }
 #menu .dropdown {                        
   /*background:red;*/
