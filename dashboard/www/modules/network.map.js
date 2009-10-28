@@ -108,7 +108,7 @@ var Map = undefined;
     function add_router(router) {
       var feature = new OpenLayers.Feature.Vector();
       feature.style = { fillColor: "blue",
-                        fillOpacity: 0.0, 
+                        fillOpacity: 1.0, 
                         strokeOpacity: 1.0,
                         strokeColor: "black",
                         strokeWidth: 1.0,
@@ -146,7 +146,7 @@ var Map = undefined;
         return {};
       }
       var feature = new OpenLayers.Feature.Vector();
-      feature.style = { strokeOpacity: 0.0,
+      feature.style = { strokeOpacity: 1.0,
                         strokeColor: "black",
                         strokeWidth: 10,
                         strokeDashstyle: "solid",
@@ -177,8 +177,8 @@ var Map = undefined;
       lq = parseFloat(lq);
       if (lq > quality.fault)     {  return "red";     } 
       else if (lq > quality.bad)  {  return "orange";  }
-      else if (lq > quality.good) {  return "green";   } 
-      return "lightblue";
+      else if (lq > quality.good) {  return "lightgreen";   } 
+      return "green";
     }
     this.lq_to_color = lq_to_color;
     
@@ -253,7 +253,7 @@ var Map = undefined;
                                                       null, html, null, false, 
                                                       function(event){on_unselect_router(the_map.selected);} );
       popup.setBackgroundColor("black");
-      popup.setOpacity(0.9);
+      popup.setOpacity(1.0);
       popup.autoSize = false;
       feature.popup = popup;
       the_map.addPopup(popup);
