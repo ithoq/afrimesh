@@ -149,32 +149,39 @@ function() {
         router.routes.map(function(route) {
             var route_feature = network_map.route(route);
             if (route_feature.style) { // TODO - this should be a network_map method
-              route_feature.style.strokeColor = network_map.lq_to_color(route.label);
+              var color = network_map.lq_to_color(route.label);
+              route_feature.style.strokeOpacity   = color.a;
+              route_feature.style.strokeColor     = color.rgb;
               network_map.routes.drawFeature(route_feature);
             }
             route_feature.last_seen = now; 
           });
       });
 
-    
+        
     // go through all features and set transparency relative to when they were last seen
-    network_map.routers.features.map(function(feature) {
+    network_map.routers.features.map(function(router_feature) {
         // TODO - this should also be encapsulated in a network_map method
-        var fade_time = 60.0 * 1000.0;
+        var fade_time = 240.0 * 1000.0;
         var min_opacity = 0.1;
         var start_opacity = 1.0;
-        var last_seen = now - feature.last_seen;
-        var opacity = Math.max(min_opacity, start_opacity - (last_seen / fade_time));        
-        //console.debug("Router last seen: " + last_seen + " opacity: " + opacity);
-        feature.style.fillOpacity = opacity;
-        network_map.routers.drawFeature(feature);
-        feature.router.routes.map(function(route) {
+        var age = now - router_feature.last_seen;
+        var opacity = Math.max(min_opacity, start_opacity - (age / fade_time));        
+        //console.debug("Router last seen: " + age + " opacity: " + opacity);
+        router_feature.style.fillOpacity = opacity;
+        network_map.routers.drawFeature(router_feature);
+        router_feature.router.routes.map(function(route) {
             var route_feature = network_map.route(route);
             if (route_feature.last_seen) {
-               var last_seen = now - route_feature.last_seen;
-               var opacity = Math.max(min_opacity, start_opacity - (last_seen / fade_time));        
-               //console.debug("Route last seen: " + last_seen + " opacity: " + opacity);
-               route_feature.style.strokeOpacity = opacity;
+               var age = now - route_feature.last_seen;
+               var opacity = Math.max(min_opacity, start_opacity - (age / fade_time));        
+               //console.debug("Route last seen: " + age + " opacity: " + opacity + " update freq: " + network_map.update_frequency);
+               if (age == 0) { 
+                 route_feature.style.strokeDashstyle = "solid";
+               } else {
+                 route_feature.style.strokeOpacity = opacity;
+                 route_feature.style.strokeDashstyle = "dot";
+               }
                network_map.routes.drawFeature(route_feature);
             }
           });
