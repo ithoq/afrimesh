@@ -146,10 +146,7 @@ var Map = undefined;
         return {};
       }
       var feature = new OpenLayers.Feature.Vector();
-      feature.style = { strokeOpacity: 1.0,
-                        strokeColor: "black",
-                        strokeWidth: 10,
-                        strokeDashstyle: "solid",
+      feature.style = { strokeWidth: 10,
                         strokeLinecap: "round",
                         pointRadius: 0 };
       feature.id = route.router + "->" + route.neighbour;
@@ -175,10 +172,10 @@ var Map = undefined;
         return "black";
       }
       lq = parseFloat(lq);
-      if (lq > quality.fault)     {  return "red";         } 
-      else if (lq > quality.bad)  {  return "orange";      }
-      else if (lq > quality.good) {  return "lightgreen";  } 
-      return "green";
+      if (lq > quality.fault)     {  return { rgb : "silver",     a : 0.1 };  } /* 246-xF6 020-x14 006-x06 - red */
+      else if (lq > quality.bad)  {  return { rgb : "orange",     a : 1.0 };  } /* 249-xF9 165-xA5 000-x00 */
+      else if (lq > quality.good) {  return { rgb : "lightgreen", a : 1.0 };  } /* 144-x90 238-xEE 144-x90 */
+      return { rgb : "green", a : 1.0 };                                        /* 034-x22 128-x80 000-x00 */
     }
     this.lq_to_color = lq_to_color;
     
@@ -187,10 +184,10 @@ var Map = undefined;
         return "ff000000";
       }
       lq = parseFloat(lq);
-      if (lq > quality.fault)     {  return "ff2b00ff";  } 
-      else if (lq > quality.bad)  {  return "ff0179ff";  }
-      else if (lq > quality.good) {  return "7f00ff00";  } 
-      return "ffffb20b";
+      if (lq > quality.fault)     {  return "f61406ff";  } 
+      else if (lq > quality.bad)  {  return "f9a500ff";  }
+      else if (lq > quality.good) {  return "90ee90ff";  } 
+      return "228000ff";
     }
     this.lq_to_argb = lq_to_argb;
     
@@ -240,7 +237,7 @@ var Map = undefined;
       html += "</div><p></p><br/>";
       var popup = new OpenLayers.Popup.AnchoredBubble("id" + feature.router.address,
                                                       feature.geometry.getBounds().getCenterLonLat(),
-                                                      new OpenLayers.Size(175, 130), html, null, true, 
+                                                      new OpenLayers.Size(200, 130), html, null, true, 
                                                       function(event){on_unselect_router(the_map.selected);} );
       popup.setBackgroundColor("black");
       popup.setOpacity(0.95);
