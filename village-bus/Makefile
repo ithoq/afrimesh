@@ -117,4 +117,6 @@ test-jsonrpc-snmp-get : village-bus
 
 
 test-jsonrpc-syslog :
-	./village-bus /syslog '{ $(RPC), "method" : "read", "params" : [ 20 ] }'
+	./village-bus /syslog '{ $(RPC), "method" : "read", "params" : [ 3 ] }'
+
+# run /syslog '{ "id" : 123, "version" : "2.0", "method" : "read", "params" : [ 3 ] }'

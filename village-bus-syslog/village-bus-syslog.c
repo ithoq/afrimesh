@@ -51,49 +51,48 @@ typedef struct {
   char* message;
 } LogEntry;
 
-// Jan  3 05:27:58 <user.notice> 192.168.20.2 root: Hello englishman again 
-char* parse_timestamp(const char* input, size_t length)
+char* parse_field(const char* input, size_t length, char* tokens, char** pfield)
 {
-  // space space : : space
-  char* cursor = input;
-  for (cursor = input; cursor != NULL && cursor != (input + length); cursor++) {
-    
+  char* field;
+  char* cursor;
+  int n = 0;
+  for (cursor = input; tokens[n] != -1   &&
+                       *cursor   != '\0' &&
+                       cursor    != NULL && 
+                       cursor    != (input + length); cursor++) {
+    char c = *cursor;
+    if (tokens[n] == c) {
+      n++;
+    }
+    if (tokens[n] == -1) {
+      size_t fieldlen = cursor - input;
+      field = malloc(sizeof(char) * fieldlen+1);
+      strncpy(field, input, fieldlen);
+      field[fieldlen] = '\0';
+      *pfield = field;
+    }
   }
-  return input;
+
+  if (tokens[n] != -1) {
+    *pfield = "<unknown.unknown>";
+    cursor = input;
+  }
+
+  return cursor;
 }
 
-char* parse_level(const char* input)
-{
-  // < . > space
-  return input;
-}
-
-char* parse_node(const char* input)
-{
-  // space
-  return input;
-}
-
-char* parse_process(const char* input)
-{
-  // colon space
-  return input;
-}
-
-char* parse_message(const char* input)
-{
-  // eol
-  return input;
-}
-
+/**
+ * Jan  2 18:12:08 <daemon.err> 192.168.20.2 batmand[567]: Error - got packet from unknown client: 10.0.0.3 (tunnelled sender ip 169.254.0.3)  
+ */
 LogEntry parse_entry(const char* input, size_t length)
 {
   LogEntry entry;
-
-  entry.timestamp = parse_timestamp(input, length);
-
-  //  printf("\ttimestamp: %s\n", entry.timestamp);
-
+  char* cursor = input;
+  cursor = parse_field(cursor, length, (char[]){' ',':',':',' ',-1}, &entry.timestamp);
+  cursor = parse_field(cursor, length, (char[]){'<','.','>',' ',-1}, &entry.level);
+  cursor = parse_field(cursor, length, (char[]){' ',-1},             &entry.address);
+  cursor = parse_field(cursor, length, (char[]){':',' ',-1},         &entry.process);
+  entry.message = cursor;
   return entry;
 }
 
@@ -105,8 +104,8 @@ struct json_object* readlog(int n)
   struct json_object* entries = json_object_new_array();
 
   /* TODO - find logfile */
-  const char* name = "/var/log/system.log";
-  //const char* name = "/var/log/messages";
+  //const char* name = "/var/log/system.log";
+  const char* name = "/var/log/messages";
 
   /* open logfile */
   FILE* logfile = fopen(name, "r");
@@ -150,9 +149,14 @@ struct json_object* readlog(int n)
     start[line_length] = 0;
     /* TODO - parse line */
     //printf("-> %d : |%s|\n", lines, start + 1);
-    LogEntry entry = parse_entry(start + 1, strlen(start + 1));
-    json_object_array_add(entries, json_object_new_string(start + 1));
-    
+    LogEntry logentry = parse_entry(start + 1, strlen(start + 1));
+    struct json_object* entry = json_object_new_object();
+    json_object_object_add(entry, "timestamp", json_object_new_string(logentry.timestamp));
+    json_object_object_add(entry, "level",     json_object_new_string(logentry.level));
+    json_object_object_add(entry, "address",   json_object_new_string(logentry.address));
+    json_object_object_add(entry, "process",   json_object_new_string(logentry.process));
+    json_object_object_add(entry, "message",   json_object_new_string(logentry.message));
+    json_object_array_add(entries, entry);
     
     /* move last known eol backward */
     eol = eol - line_length;

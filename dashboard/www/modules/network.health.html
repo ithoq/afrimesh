@@ -189,16 +189,18 @@
 
   function update_network_messages(log) {
     var html = "<table class='network-messages' border=0>"
-    html += "<thead><th>timestamp</th><th>node</th><th>process</th><th>message</th></thead>";
+    html += "<thead><th>timestamp</th><th>level</th><th>node</th><th>process</th><th>message</th></thead>";
     html += "<tbody></tbody></table>";
     $("div#network-messages").html(html);
     var table = $("#network-messages table > tbody:last"); 
     log.map(function(entry) {
+        console.debug(dump_object(entry));
         var row = "<tr>";
         row += "<td id='timestamp'>timestamp</td>";
+        row += "<td id='level'>level</td>";
         row += "<td id='node'>node</td>";
         row += "<td id='process'>process</td>";
-        row += "<td>" + entry + "</td>";
+        row += "<td>" + entry.message + "</td>";
         row += "</tr>";
         table.append(row);
       });    
