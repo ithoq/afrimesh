@@ -74,7 +74,7 @@ char* parse_field(const char* input, size_t length, char* tokens, char** pfield)
   }
 
   if (tokens[n] != -1) {
-    *pfield = "<unknown.unknown>";
+    *pfield = "<unknown.err>";
     cursor = input;
   }
 
