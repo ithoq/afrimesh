@@ -178,17 +178,16 @@ var BootVillageBus = function (afrimesh) {
     return villagebus.snmp.sync("get", address, community, oids);
   };
 
+  villagebus.snmp.get.async = function(f, address, community, oids) {
+    return villagebus.snmp.async(f, "get", address, community, oids);
+  };
+
   villagebus.snmp.walk = function(address, community, oid) {
     return villagebus.snmp.sync("walk", address, community, oid);
   };
 
   villagebus.snmp.url = function() {
-    //return "http://" + afrimesh.settings.hosts.dashboard_server + "/cgi-bin/village-bus-snmp";
     return "http://" + afrimesh.settings.hosts.dashboard_server + "/cgi-bin/village-bus/snmp";
-  };
-
-  villagebus.snmp.async = function(f, address, community, oids) {
-    // TODO
   };
 
   villagebus.snmp.poll = function(f, frequency, address, community, oids) {
@@ -196,18 +195,12 @@ var BootVillageBus = function (afrimesh) {
   };
 
   villagebus.snmp.sync = function(command, address, community, oids) {
-    /*return make_json_request({
-        url     : this.url(),
-        request : { package   : "snmp",
-                    command   : command,
-                    address   : address,
-                    community : community, 
-                    oids      : oids        },
-        success : make_sync_response_handler(address, "villagebus.snmp"),
-        async   : false });*/
     return rpc(this.url(), command, [address, community, oids]);
   };
 
+  villagebus.snmp.async = function(f, command, address, community, oids) {
+    return rpc_async(this.url(), command, [address, community, oids], f); 
+  };
 
 
   /** - villagebus.uci ---------------------------------------------------- */
