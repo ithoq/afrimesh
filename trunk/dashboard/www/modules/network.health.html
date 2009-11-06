@@ -195,12 +195,14 @@
     var table = $("#network-messages table > tbody:last"); 
     log.map(function(entry) {
         console.debug(dump_object(entry));
+        entry.level = entry.level.replace("<", "");
+        entry.level = entry.level.replace(">", "");
         var row = "<tr>";
-        row += "<td id='timestamp'>timestamp</td>";
-        row += "<td id='level'>level</td>";
-        row += "<td id='node'>node</td>";
-        row += "<td id='process'>process</td>";
-        row += "<td>" + entry.message + "</td>";
+        row += "<td id='timestamp'>" + entry.timestamp + "</td>";
+        row += "<td id='level'>"     + entry.level     + "</td>";
+        row += "<td id='node'>"      + entry.address   + "</td>";
+        row += "<td id='process'>"   + entry.process   + "</td>";
+        row += "<td>"                + entry.message   + "</td>";
         row += "</tr>";
         table.append(row);
       });    

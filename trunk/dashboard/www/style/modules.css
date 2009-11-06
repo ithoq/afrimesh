@@ -177,8 +177,12 @@ td.v-brace {
 .network-messages td {
   font-size: 1.0em;
   color: #202020;
+  padding-right: 10px;
 }
 .network-messages td#timestamp {
+  color: gray;
+}
+.network-messages td#level {
   color: gray;
 }
 .network-messages td#node {
