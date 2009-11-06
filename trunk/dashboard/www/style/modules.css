@@ -175,15 +175,17 @@ td.v-brace {
   vertical-align: top;
 }
 .network-messages td {
+  font-size: 1.0em;
   color: #202020;
 }
 .network-messages td#timestamp {
   color: gray;
-  width: 100px;
 }
 .network-messages td#node {
   color: gray;
-  width: 50px;
+}
+.network-messages td#process {
+  color: gray;
 }
 
 /* - internet-configure module -------------------------------------------- */
