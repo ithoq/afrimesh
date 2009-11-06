@@ -194,7 +194,6 @@
     $("div#network-messages").html(html);
     var table = $("#network-messages table > tbody:last"); 
     log.map(function(entry) {
-        console.debug(dump_object(entry));
         entry.level = entry.level.replace("<", "");
         entry.level = entry.level.replace(">", "");
         var row = "<tr>";
