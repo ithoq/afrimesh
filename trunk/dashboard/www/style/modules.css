@@ -176,10 +176,10 @@ td.v-brace {
 }
 .network-messages td {
   font-size: 1.0em;
-  color: #202020;
   padding-right: 10px;
 }
 .network-messages td#timestamp {
+  width: 8.0em;
   color: gray;
 }
 .network-messages td#level {
@@ -191,6 +191,19 @@ td.v-brace {
 .network-messages td#process {
   color: gray;
 }
+.network-messages tr.notice td {
+  color: blue;
+}
+.network-messages tr.warn td {
+  color: orange;
+}
+.network-messages tr.err td {
+  color: red;
+}
+.network-messages tr.unknown td {
+  color: #202020;
+}
+        
 
 /* - internet-configure module -------------------------------------------- */
 .ui-sortable, .ui-sortable-brace, .ui-sortable-instructions { width: 310px; padding: 5px; }

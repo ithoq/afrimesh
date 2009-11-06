@@ -7,16 +7,6 @@
  * New BSD License. See /LICENSE for more information.
 -->
 
-<!-- h2>Health</h2>
-
-<table border=0>
-  <tr><td>Mesh</td><td><span style="color:green;">feeling good</span></td></tr>
-  <tr><td>Internet Connection</td><td><span style="color:green;">feeling good</span></td></tr>
-</table>
-<br/ -->
-
-<!-- h2>Traffic</h2 -->
-<div style="height: 2em;" />
 <table border=0>
   <!-- tr>
     <td>Mesh</td>
@@ -24,7 +14,7 @@
     <td><span class="traffic-village"></span></td>
     <td>2/6 nodes congested</td>
   </tr -->
-  <tr>
+  <tr style="height:60px;">
     <td style="font-size:2.5em;"><b>Internet Traffic</b>&nbsp;&nbsp;</td>
     <td>
       <span id="traffic-internet" style="font-size:3em;"></span>
@@ -42,45 +32,10 @@
 </table>
 <br/>
 
-<p/><br/><p/><br/><p/><br/>
+<p/><br/>
 
-<h2>Messages</h2>
+<table><tr><td style="font-size:2.5em;"><b>Messages</b></td></tr></table>
 <div id="network-messages"></div>
-
-<!-- table class="network-messages" border=0>
-  <thead><th>timestamp</th><th>node</th><th>message</th></thead>
-  <tr>
-    <td id="timestamp">Aug 02 10:29:50</td>
-    <td id="node">10.0.0.2</td>
-    <td>
-      OpenWrt daemon.err batmand[581]: Error - got packet from unknown client: 10.0.0.3 (tunnelled sender ip 169.254.0.5) 
-    </td>
-  </tr>
-  <tr>
-    <td id="timestamp">Aug 02 10:29:50</td>
-    <td id="node">10.0.0.2</td>
-    <td>
-      OpenWrt daemon.err batmand[581]: Either enable NAT on the client or make sure this host has a route back to the sender address.
-    </td>
-  </tr>
-  <tr>
-    <td id="timestamp">Aug 02 10:31:13</td>
-    <td id="node">10.0.0.3</td>
-    <td>
-      OpenWrt user.notice syslog[684]: siproxd.c:229 INFO:siproxd-0.7.1-4804 mips-unknown-linux-gnu starting up
-    </td>
-  </tr>
-  <tr>
-    <td id="timestamp">Aug 02 10:39:42</td>
-    <td id="node">10.0.0.6</td>
-    <td>
-      OpenWrt local6.notice coova-chilli[608]: chilli.c: 2694: New DHCP request from MAC=00-1E-C2-0F-4E-8F
-    </td>
-  </tr>
-
-</table --> 
-
-
 
 
 <script type="text/javascript"> //<![CDATA[    
@@ -196,12 +151,22 @@
     log.map(function(entry) {
         entry.level = entry.level.replace("<", "");
         entry.level = entry.level.replace(">", "");
-        var row = "<tr>";
+        var row = "";
+        if (entry.level.indexOf(".notice") != -1) {
+          row += "<tr class='notice'>";
+        } else if (entry.level.indexOf(".warn") != -1) {
+          row += "<tr class='warn'>";
+        } else if (entry.level.indexOf(".err") != -1) {
+          row += "<tr class='err'>";
+        } else {
+          row += "<tr class='unknown'>";
+        }
+
         row += "<td id='timestamp'>" + entry.timestamp + "</td>";
         row += "<td id='level'>"     + entry.level     + "</td>";
         row += "<td id='node'>"      + entry.address   + "</td>";
         row += "<td id='process'>"   + entry.process   + "</td>";
-        row += "<td>"                + entry.message   + "</td>";
+        row += "<td id='message'>"   + entry.message   + "</td>";
         row += "</tr>";
         table.append(row);
       });    
