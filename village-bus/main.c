@@ -36,10 +36,11 @@
  * JSON/RPC method registration and interface specification
  */
 struct MethodDispatch dispatch_table[] = {
-  { "/uci",  "show", {json_type_string}, 1, jsonrpc_dispatch_uci_show },
-  { "/uci",  "set",  {json_type_array }, 1, jsonrpc_dispatch_uci_set  },
-  { "/snmp", "get",  {json_type_string, json_type_string, json_type_array }, 3, jsonrpc_dispatch_snmp },
-  { "/snmp", "walk", {json_type_string, json_type_string, json_type_string}, 3, jsonrpc_dispatch_snmp },
+  { "/uci",    "show", {json_type_string}, 1, jsonrpc_dispatch_uci_show },
+  { "/uci",    "set",  {json_type_array }, 1, jsonrpc_dispatch_uci_set  },
+  { "/snmp",   "get",  {json_type_string, json_type_string, json_type_array }, 3, jsonrpc_dispatch_snmp   },
+  { "/snmp",   "walk", {json_type_string, json_type_string, json_type_string}, 3, jsonrpc_dispatch_snmp   },
+  { "/syslog", "read", {json_type_int},   1, jsonrpc_dispatch_syslog_read },
   { 0, 0, 0, 0 }
 };
 
