@@ -42,8 +42,8 @@
 </table>
 <br/>
 
-<!-- h2>Messages</h2 -->
-<!-- div id="messages"></div -->
+<h2>Messages</h2>
+<div id="network-messages"></div>
 
 <!-- table class="network-messages" border=0>
   <thead><th>timestamp</th><th>node</th><th>message</th></thead>
@@ -112,6 +112,14 @@
                                           // interfaces.ifTable.ifEntry.ifOutOctets.interface
                                           ".1.3.6.1.2.1.2.2.1.16." + afrimesh.settings.internet_gateway.snmp.interface ]); 
     update_internet_traffic(data);
+
+    var log = afrimesh.villagebus.syslog();
+    $(".network-messages").html("<table border=1><tbody></tbody></table>");
+    log.map(function(entry) {
+        //$("table.network-messages > tbody:last").append("<tr><td>" + entry + "</td></tr>");
+        console.debug(entry);
+      });
+
     timer = setTimeout(update, 5000);
   };
 
