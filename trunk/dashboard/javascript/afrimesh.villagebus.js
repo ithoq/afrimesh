@@ -92,6 +92,7 @@ var BootVillageBus = function (afrimesh) {
                frequency);
   };
   villagebus.pmacct.sync = function(direction) { 
+    console.debug("PMACCT USES: " + this.url());
     var handler  = function(data) { 
       handler.response = data;  
     };

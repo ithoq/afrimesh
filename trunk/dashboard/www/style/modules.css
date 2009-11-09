@@ -204,6 +204,20 @@ td.v-brace {
   color: #202020;
 }
         
+/* - network devices module ------------------------------------------------ */
+.network-devices thead {
+  color: black;
+}
+.network-devices tr {
+  vertical-align: top;
+  padding: 0px;
+}
+.network-devices th,td {
+  font-size: 1.0em;
+  padding-left: 0px;
+  padding-right: 20px;
+}
+
 
 /* - internet-configure module -------------------------------------------- */
 .ui-sortable, .ui-sortable-brace, .ui-sortable-instructions { width: 310px; padding: 5px; }

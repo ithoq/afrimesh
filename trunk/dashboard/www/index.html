@@ -100,6 +100,7 @@
         add_menu_item("customers", "status");
         add_menu_item("network",   "map");
         add_menu_item("network",   "health");
+        add_menu_item("network",   "devices");
         add_menu_item("help",      "howto");
         add_menu_item("help",      "group");
         add_menu_item("help",      "chat");
@@ -108,7 +109,7 @@
 
         /** set default page */
         //$("ul#menu ul#utility li#settings").click();
-        $("ul#menu ul#network li#health").click();
+        $("ul#menu ul#network li#devices").click();
 
         /** loading complete, we can now remove our message */
         $("#message-loading").html("");
@@ -162,6 +163,7 @@
               <li id="map">Map</li>
               <img class="top_right" alt="" src="style/images/top_right.png"/>
               <li id="health">Health</li> 
+              <li id="devices">Devices</li> 
               <li class="last">
                 <img class="bottom_left" alt="" src="style/images/bottom_left.png"/>
                 <span class="middle"></span>
@@ -184,10 +186,10 @@
             </ul> 
           </li> 
           <li>&nbsp;</li>
-          <li class="searchContainer"> 
+          <!-- li class="searchContainer"> 
             <div> 
               <input type="text" size=16 id="searchField" /> 
-              <img src="style/images/magnifier.png" alt="Search" onclick="alert('You clicked on search button')" /></div> 
+              <img src="style/images/magnifier.png" alt="Search" onclick="alert('You clicked on search button')" /></div --> 
             <!-- ul id="search"> 
               <li><input id="cbxAll" type="checkbox" />All</li> 
               <li><input id="Articles" type="checkbox" />Articles</li> 
@@ -195,7 +197,7 @@
               <li><input id="Reviews" type="checkbox" />Reviews</li> 
               <li><input id="Resources" type="checkbox" />Resources</li> 
             </ul --> 
-          </li> 
+          <!-- /li --> 
           <li class="right"><img src="images/gear.png" />
             <ul id="utility">
               <img class="top_left" alt="" src="style/images/top_left.png"/>

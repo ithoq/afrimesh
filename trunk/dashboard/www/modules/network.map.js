@@ -209,9 +209,9 @@ var Map = undefined;
         html += "<span style='color:red;'>node last checked in " + Math.floor(last_seen / 1000) + " seconds ago</span>";
       }
       html += "</div>";
-      if (feature.router.recBytes && feature.router.tranBytes) {
-        html += "<div id='traffic'>Bytes in/out: ";
-        html += "<span id='bytes'>" + feature.router.recBytes + "/" + feature.router.tranBytes + "</span></div>" ;
+      if (feature.router.downloaded && feature.router.uploaded) {
+        html += "<div id='traffic'>Bytes down/up: ";
+        html += "<span id='bytes'>" + feature.router.downloaded + "/" + feature.router.uploaded + "</span></div>" ;
       } 
       html += "<div id='neighbours'>";
       html+= "Neighbours";

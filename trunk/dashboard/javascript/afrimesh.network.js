@@ -12,43 +12,76 @@ function BootNetwork(parent) {
 
   var network = function() { return this.network.routes(); };
 
-  network.accounting = function(router) {
+  /** 
+   * decorates a router with network accounting information 
+   */
+  network.accounting = function(router) { /* TODO - afrimesh.villagebus.pmacct a) should be a map keyed w/ IP b) cached */
     var temp = 0;
-    var direction = "out";
     try { 
-	afrimesh.villagebus.pmacct(direction).map(function(host) {		
-	 if (router.address == host.SRC_IP) {
-	   if (typeof router.macaddr == "undefined") {	
-		router.macaddr = host.SRC_MAC;
-		temp = parseInt(host.BYTES);
-	   } else {
-	     if (temp<parseInt(host.BYTES)) {
-	       temp = parseInt(host.BYTES);
-	     }
-	   }
-         }
-     });
-    } catch(error) {
-      console.debug("pmaccto error " + error);
+      afrimesh.villagebus.pmacct("out").map(function(entry) {		
+          if (router.address == entry.SRC_IP) {
+            if (typeof router.macaddr == "undefined") {	
+              router.macaddr = entry.SRC_MAC;
+            } 
+            var bytes = parseInt(entry.BYTES);
+            temp = (temp < bytes) ? bytes : temp;
+          }
+        });
+    } catch (error) {
+      console.debug("pmacct error " + error);
     }
-		router.tranBytes = temp;
+		router.uploaded = temp;
 		temp = 0;
-		var direction = "in";
     try {
-	afrimesh.villagebus.pmacct(direction).map(function(host){		
-    	if (router.address == host.DST_IP) {
-		if (temp<parseInt(host.BYTES)){
-	  	  temp = parseInt(host.BYTES);
-		  }
-	}
-     });
-    } catch(error) {
-       console.debug("pmaccto error " + error);
+      afrimesh.villagebus.pmacct("in").map(function(entry) {
+          if (router.address == entry.DST_IP) {
+            var bytes = parseInt(entry.BYTES);
+            temp = (temp < bytes) ? bytes : temp;
+          }
+        });
+    } catch (error) {
+      console.debug("pmacct error " + error);
     }
-   router.recBytes = temp; 
-   return router;
-		
-  }
+    router.downloaded = temp; 
+    return router;
+  };
+
+  /** 
+   * decorates a list of routers with network accounting information 
+   */
+  network.accounting.routers = function(routers) {
+    /* TODO - single call for retrieving pmacct stats please */
+    var targets = {};
+    routers.map(function(router) {
+        targets[router.address] = router;
+        console.debug("Added: " + router.address);
+      });
+    afrimesh.villagebus.pmacct("out").map(function(entry) { 
+        var router = targets[entry.SRC_IP];
+        if (router) {
+          console.debug("OUT: " + entry.SRC_IP + " -> " + entry.SRC_MAC + " -> " + entry.BYTES);
+          //console.debug(dump_object(entry));
+          router.mac      = entry.SRC_MAC;
+          router.uploaded = { bytes : entry.BYTES, packets : entry.PACKETS };
+          //targets[entry.SRC_IP] = router;
+        }
+      });
+    afrimesh.villagebus.pmacct("in").map(function(entry) {
+        var router = targets[entry.DST_IP];
+        if (router) {
+          console.debug("IN: " + entry.DST_IP + " -> " + entry.DST_MAC + " -> " + entry.BYTES);          
+          //router.mac        = entry.DST_MAC;
+          router.downloaded = { bytes : entry.BYTES, packets : entry.PACKETS };
+          //targets[entry.DST_IP] = router;
+        }
+      });
+    routers = [];
+    for (var router in targets) {
+      router = targets[router];
+      routers.push(router);
+    }
+    return routers;
+  };
 
   network.routes  = function() { return this.backbone().concat(this.mesh()); };
   network.routers = function() { return this.backbone.routers().concat(this.mesh.routers()); };
