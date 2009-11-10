@@ -1,10 +1,13 @@
 #!/bin/sh
 
-echo "Cleaning: "
-find . -name "*~" 
-find . -name .DS_Store 
-find . -name "._*" 
+TRUNK=`dirname $0`
 
-find . -name "*~" | xargs rm -f
-find . -name .DS_Store | xargs rm -f
-find . -name "._*" | xargs rm -f
+echo "Cleaning: $TRUNK "
+find $TRUNK -name "*~" 
+find $TRUNK -name .DS_Store 
+find $TRUNK -name "._*" 
+find $TRUNK -name "*~" | xargs rm -f
+find $TRUNK -name .DS_Store | xargs rm -f
+find $TRUNK -name "._*" | xargs rm -f
+
+cd $TRUNK ; make clean

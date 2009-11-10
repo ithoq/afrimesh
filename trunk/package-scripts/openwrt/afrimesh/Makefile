@@ -32,7 +32,7 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ------------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=558
+PKG_REV:=559
 PKG_VERSION:=r$(PKG_REV)-0.4alpha
 PKG_RELEASE:=1
 
@@ -276,8 +276,9 @@ define Build/Prepare
 	-$(call Build/Prepare/Default)
 	if [ -z "$(PKG_SOURCE_URL)" ]; then \
 		echo "Building from local sources" ; \
-		rm -rf $(PKG_BUILD_DIR)	; \
-		mkdir $(PKG_BUILD_DIR) ; \
+		rm -rf $(PKG_BUILD_DIR)	  ; \
+		mkdir  $(PKG_BUILD_DIR)   ; \
+    $(LOCAL_SOURCES)/clean.sh ; \
 		$(CP) $(LOCAL_SOURCES)/*  $(PKG_BUILD_DIR) ; \
 	fi
 endef
