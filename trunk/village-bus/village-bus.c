@@ -200,7 +200,7 @@ struct json_object* jsonrpc_dispatch_sys_syslog(const char* name, struct json_ob
 
 struct json_object* jsonrpc_dispatch_sys_uname(const char* name, struct json_object* arguments)
 {
-  return sys_exec("uname -a");
+  return sys_exec("uname -srm"); /* TODO - add flags for arguments */
 }
 
 /**
