@@ -49,11 +49,19 @@ CFLAGS+=-g $(DEFINES) $(JSON_CFLAGS) $(UCI_CFLAGS) $(SNMP_CFLAGS)
 LDFLAGS+=-L$(DEPROOT)/lib $(JSON_LDFLAGS) $(UCI_LDFLAGS) $(SNMP_LDFLAGS)
 
 
+objects=json_cgi.o json_rpc.o village-bus-snmp.o village-bus-uci.o village-bus-sys.o village-bus.o main.o 
+ifeq ($(UNAME),Linux)
+objects+=fgetln.o
+endif
+
 # targets
-village-bus : json_cgi.o json_rpc.o village-bus-snmp.o village-bus-uci.o village-bus-sys.o village-bus.o main.o 
-	$(CC) $(CFLAGS) -o village-bus *.o $(LDFLAGS) 
+village-bus : $(objects)
+	$(CC) $(CFLAGS) -o village-bus $(objects) $(LDFLAGS) 
 
 # objects
+fgetln.o : ../common/fgetln.c
+	$(CC) $(INCLUDES) $(CFLAGS) -c ../common/fgetln.c
+
 json_cgi.o : ../common/json_cgi.h ../common/json_cgi.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c ../common/json_cgi.c
 
