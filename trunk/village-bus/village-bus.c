@@ -190,7 +190,7 @@ struct json_object* jsonrpc_dispatch_snmp(const char* name, struct json_object* 
 }
 
 
-struct json_object* jsonrpc_dispatch_syslog_read(const char* name, struct json_object* arguments)
+struct json_object* jsonrpc_dispatch_sys_syslog(const char* name, struct json_object* arguments)
 {
   /* dispatch request */
   int count = json_object_get_int(json_object_array_get_idx(arguments, 0));
@@ -200,7 +200,7 @@ struct json_object* jsonrpc_dispatch_syslog_read(const char* name, struct json_o
 
 struct json_object* jsonrpc_dispatch_sys_uname(const char* name, struct json_object* arguments)
 {
-  return sys_uname();
+  return sys_exec("uname -a");
 }
 
 /**

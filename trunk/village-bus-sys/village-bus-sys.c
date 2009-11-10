@@ -177,16 +177,17 @@ struct json_object* sys_syslog(int n)
 }
 
 
+
 /**
- * uname -a
+ * execute the given command and return standard output as an array of lines
  */
-struct json_object* sys_uname()
+struct json_object* sys_exec(char* command, char** arguments)
 {
   size_t max   = 100; /* Hard limit on number of output lines - TODO last 'max' lines rather than first ? */
   size_t count = 0;
   struct json_object* lines = json_object_new_array();
 
-  FILE* output = popen("uname -a", "r");
+  FILE* output = popen(command, "r");
   while (1 && count < max) { 
     size_t length;
     char* line = fgetln(output, &length);
@@ -208,4 +209,5 @@ struct json_object* sys_uname()
 
   return response;
 }
+
 
