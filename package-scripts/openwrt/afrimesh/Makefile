@@ -32,7 +32,7 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ------------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=537
+PKG_REV:=558
 PKG_VERSION:=r$(PKG_REV)-0.4alpha
 PKG_RELEASE:=1
 
@@ -101,7 +101,7 @@ define Package/afrimesh-base/install
 	$(INSTALL_DIR)  $(1)/etc
 	#$(INSTALL_BIN)  ./files/etc/firewall.afrimesh $(1)/etc
 	$(INSTALL_DIR)  $(1)/etc/config
-	$(INSTALL_DATA) ./files/etc/config/afrimesh $(1)/etc/config
+	$(INSTALL_CONF) ./files/etc/config/afrimesh $(1)/etc/config
 	$(INSTALL_DIR)  $(1)/www/cgi-bin
 	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/village-bus/village-bus $(1)/www/cgi-bin/village-bus
 endef
@@ -122,34 +122,34 @@ endef
 define Package/afrimesh-webif/install
 	#$(INSTALL_DIR)  $(1)/etc
 	#$(INSTALL_DIR)  $(1)/etc/config
-	#$(INSTALL_DATA) ./files.router/etc/config/afrimesh $(1)/etc/config
-	$(INSTALL_DIR)  $(1)/www/afrimesh
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/index.redirect.html  $(1)/www/index.html
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/index.router.html    $(1)/www/afrimesh/index.html
-	$(INSTALL_DIR)  $(1)/www/cgi-bin
-	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/dashboard/cgi-bin/ajax-proxy.cgi   $(1)/www/cgi-bin
-	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/dashboard/cgi-bin/village-bus-echo $(1)/www/cgi-bin/village-bus-echo.kml
-	$(INSTALL_DIR)  $(1)/www/afrimesh/images
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/images/*.gif         $(1)/www/afrimesh/images
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/images/*.png         $(1)/www/afrimesh/images
-	$(INSTALL_DIR)  $(1)/www/afrimesh/javascript
-	$(INSTALL_DIR)  $(1)/www/afrimesh/javascript/jquery
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/jquery/*      $(1)/www/afrimesh/javascript/jquery
-	$(INSTALL_DIR)  $(1)/www/afrimesh/javascript/openlayers
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/openlayers/*  $(1)/www/afrimesh/javascript/openlayers
-	$(INSTALL_DIR)  $(1)/www/afrimesh/javascript/yahoo
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/yahoo/*       $(1)/www/afrimesh/javascript/yahoo
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/afrimesh*.js  $(1)/www/afrimesh/javascript
-	$(INSTALL_DIR)  $(1)/www/afrimesh/modules
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/*.html       $(1)/www/afrimesh/modules
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/*.js         $(1)/www/afrimesh/modules
-	$(INSTALL_DIR)  $(1)/www/afrimesh/style
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/*.css          $(1)/www/afrimesh/style
-	$(INSTALL_DIR)  $(1)/www/afrimesh/style/images
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/images/*.gif   $(1)/www/afrimesh/style/images
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/images/*.png   $(1)/www/afrimesh/style/images
-	$(INSTALL_DIR)  $(1)/www/afrimesh/style/images/controls
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/images/controls/*.png   $(1)/www/afrimesh/style/images/controls
+	#$(INSTALL_CONF) ./files.router/etc/config/afrimesh $(1)/etc/config
+	$(INSTALL_DIR)   $(1)/www/afrimesh
+	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/www/index.redirect.html  $(1)/www/index.html
+	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/www/index.router.html    $(1)/www/afrimesh/index.html
+	$(INSTALL_DIR)   $(1)/www/cgi-bin
+	$(INSTALL_BIN)   $(PKG_BUILD_DIR)/dashboard/cgi-bin/ajax-proxy.cgi   $(1)/www/cgi-bin
+	$(INSTALL_BIN)   $(PKG_BUILD_DIR)/dashboard/cgi-bin/village-bus-echo $(1)/www/cgi-bin/village-bus-echo.kml
+	$(INSTALL_DIR)   $(1)/www/afrimesh/images
+	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/www/images/*.gif         $(1)/www/afrimesh/images
+	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/www/images/*.png         $(1)/www/afrimesh/images
+	$(INSTALL_DIR)   $(1)/www/afrimesh/javascript
+	$(INSTALL_DIR)   $(1)/www/afrimesh/javascript/jquery
+	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/javascript/jquery/*      $(1)/www/afrimesh/javascript/jquery
+	$(INSTALL_DIR)   $(1)/www/afrimesh/javascript/openlayers
+	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/javascript/openlayers/*  $(1)/www/afrimesh/javascript/openlayers
+	$(INSTALL_DIR)   $(1)/www/afrimesh/javascript/yahoo
+	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/javascript/yahoo/*       $(1)/www/afrimesh/javascript/yahoo
+	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/javascript/afrimesh*.js  $(1)/www/afrimesh/javascript
+	$(INSTALL_DIR)   $(1)/www/afrimesh/modules
+	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/www/modules/*.html       $(1)/www/afrimesh/modules
+	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/www/modules/*.js         $(1)/www/afrimesh/modules
+	$(INSTALL_DIR)   $(1)/www/afrimesh/style
+	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/www/style/*.css          $(1)/www/afrimesh/style
+	$(INSTALL_DIR)   $(1)/www/afrimesh/style/images
+	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/www/style/images/*.gif   $(1)/www/afrimesh/style/images
+	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/www/style/images/*.png   $(1)/www/afrimesh/style/images
+	$(INSTALL_DIR)   $(1)/www/afrimesh/style/images/controls
+	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/www/style/images/controls/*.png   $(1)/www/afrimesh/style/images/controls
 endef
 
 
@@ -194,7 +194,7 @@ endef
 define Package/afrimesh-dashboard/install
 	$(INSTALL_DIR)  $(1)/etc
 	$(INSTALL_DIR)  $(1)/etc/config
-	$(INSTALL_DATA) ./files/etc/config/afrimesh $(1)/etc/config
+	$(INSTALL_CONF) ./files/etc/config/afrimesh $(1)/etc/config
 	$(INSTALL_DIR)  $(1)/www/afrimesh
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/index.html           $(1)/www/afrimesh/index.html
 	$(INSTALL_DIR)  $(1)/www/cgi-bin
@@ -239,7 +239,7 @@ endef
 define Package/afrimesh-potato/install
 	$(INSTALL_DIR)  $(1)/etc
 	$(INSTALL_DIR)  $(1)/etc/config
-	$(INSTALL_DATA) ./files.potato/etc/config/afrimesh $(1)/etc/config
+	$(INSTALL_CONF) ./files.potato/etc/config/afrimesh $(1)/etc/config
 	$(INSTALL_DIR)  $(1)/www/afrimesh
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/index.redirect.html  $(1)/www/index.html
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/index.potato.html    $(1)/www/afrimesh/index.html
