@@ -40,8 +40,8 @@ struct MethodDispatch dispatch_table[] = {
   { "/uci",    "set",    {json_type_array }, 1, jsonrpc_dispatch_uci_set  },
   { "/snmp",   "get",    {json_type_string, json_type_string, json_type_array }, 3, jsonrpc_dispatch_snmp   },
   { "/snmp",   "walk",   {json_type_string, json_type_string, json_type_string}, 3, jsonrpc_dispatch_snmp   },
-  { "/sys",    "syslog", {json_type_int},   1, jsonrpc_dispatch_syslog_read },
-  { "/sys",    "uname",  {},                0, jsonrpc_dispatch_sys_uname   },
+  { "/sys",    "syslog", {json_type_int},   1, jsonrpc_dispatch_sys_syslog },
+  { "/sys",    "uname",  {},                0, jsonrpc_dispatch_sys_uname  },
   { 0, 0, 0, 0 }
 };
 
