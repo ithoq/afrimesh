@@ -204,6 +204,21 @@ var BootVillageBus = function (afrimesh) {
   };
 
 
+  /** - villagebus.sys ---------------------------------------------------- */
+  villagebus.sys = function(address) {
+    return { uname : "", "syslog" : "" };
+  };
+  villagebus.sys.url = function(address) { 
+    if (address == afrimesh.settings.address) {
+      return "http://" + address + "/cgi-bin/village-bus/sys";
+    }
+    return afrimesh.villagebus.ajax_proxy() + "http://" + address + "/cgi-bin/village-bus/sys";
+  };
+  villagebus.sys.uname = function(address) { return villagebus.sys.uname.sync(address); };
+  villagebus.sys.uname.sync  = function(address)    { return rpc(villagebus.sys.url(address), "uname", []); };
+  villagebus.sys.uname.async = function(f, address) { return rpc_async(f, villagebus.sys.url(address), "uname", []); };  
+
+
   /** - villagebus.uci ---------------------------------------------------- */
   // UDE - sometimes there are problems with permissions on /etc/config & /tmp/.uci 
   villagebus.uci = function(address) {

@@ -50,7 +50,7 @@ LDFLAGS+=-L$(DEPROOT)/lib $(JSON_LDFLAGS) $(UCI_LDFLAGS) $(SNMP_LDFLAGS)
 
 
 objects=json_cgi.o json_rpc.o village-bus-snmp.o village-bus-uci.o village-bus-sys.o village-bus.o main.o 
-ifeq ($(TARGET),LINUX)
+ifeq ($(FLAVOR),LINUX)
 objects+=fgetln.o
 endif
 

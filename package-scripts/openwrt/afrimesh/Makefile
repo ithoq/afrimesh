@@ -32,7 +32,7 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ------------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=560
+PKG_REV:=564
 PKG_VERSION:=r$(PKG_REV)-0.4alpha
 PKG_RELEASE:=1
 
@@ -78,7 +78,7 @@ MAKE_VILLAGEBUS_ARGS += \
 	CC='$(TARGET_CC) $(PKG_EXTRA_CFLAGS) $(TARGET_CFLAGS_EXTRA) ' \
 	CFLAGS='$(TARGET_CFLAGS) ' \
 	LDFLAGS='$(TARGET_LDFLAGS) -ljson -luci -lnetsnmp' \
-	TARGET=LINUX
+	FLAVOR=LINUX
 
 
 
@@ -92,6 +92,14 @@ define Package/afrimesh-base
 	DEPENDS:=+busybox +libuci +libjson +batmand +libnetsnmp
 	TITLE:=Easy management for B.A.T.M.A.N. wireless mesh networks
 	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
+	#$(call Config,afrimesh.location.latitude,string,-25.7481182,Router Latitude)
+	#$(call Config,afrimesh.location.longitude,string,28.2822312,Router Longitude)
+endef
+
+# if CONTROL/conffiles manages upgrades, then what does this section do?
+define Package/base-files/conffiles
+/etc/config/afrimesh
+$(call $(TARGET)/conffiles)
 endef
 
 define Package/afrimesh-base/description
@@ -99,10 +107,12 @@ define Package/afrimesh-base/description
 endef
 
 define Package/afrimesh-base/install
+	mkdir -p $(1)/CONTROL
 	$(INSTALL_DIR)  $(1)/etc
-	#$(INSTALL_BIN)  ./files/etc/firewall.afrimesh $(1)/etc
+	#$(INSTALL_BIN)  ./files/etc/firewall.afrimesh $(1)/etc/firewall.afrimesh  # TODO - this must go into gateway
 	$(INSTALL_DIR)  $(1)/etc/config
 	$(INSTALL_CONF) ./files/etc/config/afrimesh $(1)/etc/config
+	echo "/etc/config/afrimesh" >> $(1)/CONTROL/conffiles
 	$(INSTALL_DIR)  $(1)/www/cgi-bin
 	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/village-bus/village-bus $(1)/www/cgi-bin/village-bus
 endef

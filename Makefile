@@ -66,14 +66,14 @@ WWW_ROOT=$(DESTDIR)/www
 DASHBOARD_WWW=$(WWW_ROOT)/afrimesh
 DASHBOARD_CGI=$(DESTDIR)/www/cgi-bin
 DASHBOARD_ETC=$(DESTDIR)/etc
-TARGET=BSD
+FLAVOR=BSD
 UNAME = $(shell uname)
 
 ifeq ($(UNAME),Linux)
 WWW_ROOT=$(DESTDIR)/var/www
 DASHBOARD_WWW=$(WWW_ROOT)/afrimesh
 DASHBOARD_CGI=$(DESTDIR)/usr/lib/cgi-bin
-TARGET=LINUX
+FLAVOR=LINUX
 endif
 
 ifeq ($(UNAME),FreeBSD)
@@ -82,7 +82,7 @@ DASHBOARD_WWW=$(WWW_ROOT)/afrimesh
 DASHBOARD_CGI=$(DESTDIR)/usr/local/www/apache22/cgi-bin
 DEPROOT=/usr/local
 MAKE=gmake
-TARGET=BSD
+FLAVOR=BSD
 endif
 
 

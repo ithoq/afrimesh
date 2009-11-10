@@ -50,7 +50,7 @@
     /* get accounting info for routers */
     routers = afrimesh.network.accounting.routers(routers);
     var html = "<table class='network-devices' border=0>"
-    html += "<thead><th>mac</th><th>address</th><th>name</th><th>downloaded</th><th>uploaded</th><th>version</th></thead>";
+    html += "<thead><th>mac</th><th>address</th><th>name</th><th>downloaded</th><th>uploaded</th><th>version</th><th>uname</th></thead>";
     html += "<tbody></tbody></table>";
     $("div#network-devices").html(html);
     var table = $("#network-devices table > tbody:last");
@@ -63,6 +63,7 @@
         rows += "<td id='usage'>"   + router.downloaded.bytes + "</td>";
         rows += "<td id='usage'>"   + router.uploaded.bytes   + "</td>";
         rows += "<td id='version'>" + "r557"                  + "</td>";
+        rows += "<td id='uname'>"   + afrimesh.villagebus.sys.uname(router.address) + "</td>";
         rows += "</tr>";
       });
     table.append(rows);
