@@ -68,12 +68,14 @@ DASHBOARD_CGI=$(DESTDIR)/www/cgi-bin
 DASHBOARD_ETC=$(DESTDIR)/etc
 TARGET=BSD
 UNAME = $(shell uname)
+
 ifeq ($(UNAME),Linux)
 WWW_ROOT=$(DESTDIR)/var/www
 DASHBOARD_WWW=$(WWW_ROOT)/afrimesh
 DASHBOARD_CGI=$(DESTDIR)/usr/lib/cgi-bin
 TARGET=LINUX
 endif
+
 ifeq ($(UNAME),FreeBSD)
 WWW_ROOT=$(DESTDIR)/usr/local/www/apache22/data
 DASHBOARD_WWW=$(WWW_ROOT)/afrimesh
@@ -156,6 +158,7 @@ distclean : clean
 	cd village-bus-batman ; make distclean
 
 sources : clean
+	echo "Assembling local sources"
 	rm -rf /tmp/afrimesh-$(VERSION).tar.gz
 	cp -r ../trunk /tmp/afrimesh-$(VERSION)
 	rm -rf /tmp/afrimesh-$(VERSION)/upstream
