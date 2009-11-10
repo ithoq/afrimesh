@@ -50,7 +50,7 @@ LDFLAGS+=-L$(DEPROOT)/lib $(JSON_LDFLAGS) $(UCI_LDFLAGS) $(SNMP_LDFLAGS)
 
 
 # targets
-village-bus : json_cgi.o json_rpc.o village-bus-snmp.o village-bus-uci.o village-bus-syslog.o village-bus.o main.o 
+village-bus : json_cgi.o json_rpc.o village-bus-snmp.o village-bus-uci.o village-bus-sys.o village-bus.o main.o 
 	$(CC) $(CFLAGS) -o village-bus *.o $(LDFLAGS) 
 
 # objects
@@ -69,8 +69,8 @@ village-bus-snmp.o : ../village-bus-snmp/village-bus-snmp.h ../village-bus-snmp/
 village-bus-uci.o : ../village-bus-uci/village-bus-uci.h ../village-bus-uci/village-bus-uci.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c ../village-bus-uci/village-bus-uci.c
 
-village-bus-syslog.o : ../village-bus-syslog/village-bus-syslog.h ../village-bus-syslog/village-bus-syslog.c
-	$(CC) $(INCLUDES) $(CFLAGS) -c ../village-bus-syslog/village-bus-syslog.c
+village-bus-sys.o : ../village-bus-sys/village-bus-sys.h ../village-bus-sys/village-bus-sys.c
+	$(CC) $(INCLUDES) $(CFLAGS) -c ../village-bus-sys/village-bus-sys.c
 
 main.o : village-bus.h main.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c main.c 
@@ -115,8 +115,11 @@ test-jsonrpc-snmp-get : village-bus
 	#./village-bus /snmp '{ $(RPC), "method" : "get", "params" : [ $(HOST), [".1.3.6.1.2.1.1.1"] ] }'	
 	./village-bus /snmp '{ $(RPC), "method" : "get", "params" : [ $(HOST), [".1.3.6.1.2.1.2.2.1.10.1",".1.3.6.1.2.1.2.2.1.16.1"] ] }'				
 
-
 test-jsonrpc-syslog :
-	./village-bus /syslog '{ $(RPC), "method" : "read", "params" : [ 3 ] }'
+	./village-bus /sys '{ $(RPC), "method" : "syslog", "params" : [ 3 ] }'
+
+test-jsonrpc-uname :
+	./village-bus /sys '{ $(RPC), "method" : "uname", "params" : [ ] }'
+
 
 # run /syslog '{ "id" : 123, "version" : "2.0", "method" : "read", "params" : [ 3 ] }'

@@ -62,7 +62,6 @@ struct json_object* jsonrpc_dispatch_uci_show(const char* name, struct json_obje
   }
   struct json_object* response = json_object_new_object();
   json_object_object_add(response, "result", result);
-  json_object_object_add(response, "error",  NULL);
 
   /* cleanup */
   if (UCI_CONTEXT) {
@@ -184,8 +183,6 @@ struct json_object* jsonrpc_dispatch_snmp(const char* name, struct json_object* 
     return jsonrpc_error("Could not find name '%s' in module '/snmp'", name);
   }
 
-  json_object_object_add(response, "error",  NULL);
-
   /* cleanup */
   snmp_stop(session);
 
@@ -197,9 +194,14 @@ struct json_object* jsonrpc_dispatch_syslog_read(const char* name, struct json_o
 {
   /* dispatch request */
   int count = json_object_get_int(json_object_array_get_idx(arguments, 0));
-  return readlog(count);
+  return sys_syslog(count);
 }
 
+
+struct json_object* jsonrpc_dispatch_sys_uname(const char* name, struct json_object* arguments)
+{
+  return sys_uname();
+}
 
 /**
  */

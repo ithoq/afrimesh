@@ -55,6 +55,7 @@ struct json_object* jsonrpc_dispatch_snmp        (const char* name, struct json_
 struct json_object* jsonrpc_dispatch_uci_show    (const char* name, struct json_object* arguments);
 struct json_object* jsonrpc_dispatch_uci_set     (const char* name, struct json_object* arguments);
 struct json_object* jsonrpc_dispatch_syslog_read (const char* name, struct json_object* arguments);
+struct json_object* jsonrpc_dispatch_sys_uname   (const char* name, struct json_object* arguments);
 
 #endif /* VILLAGE_BUS_H */
 

@@ -253,17 +253,17 @@ var BootVillageBus = function (afrimesh) {
   villagebus.syslog = function() { return this.syslog.sync(); }
 
   villagebus.syslog.url = function(address) {
-    return "http://" + afrimesh.settings.address + "/cgi-bin/village-bus/syslog";
+    return "http://" + afrimesh.settings.address + "/cgi-bin/village-bus/sys";
   };
 
   villagebus.syslog.sync = function(count) {
     if (count == undefined) { count = 10; }
-    return rpc(villagebus.syslog.url(), "read", [count]);
+    return rpc(villagebus.syslog.url(), "syslog", [count]);
   };
 
   villagebus.syslog.async = function(f, count) {
     if (count == undefined) { count = 10; }
-    return rpc_async(villagebus.syslog.url(), "read", [count], f);
+    return rpc_async(villagebus.syslog.url(), "syslog", [count], f);
   };
 
 

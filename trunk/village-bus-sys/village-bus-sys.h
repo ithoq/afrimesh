@@ -29,11 +29,12 @@
  */
 
 
-#ifndef VILLAGE_BUS_SYSLOG_H
-#define VILLAGE_BUS_SYSLOG_H
+#ifndef VILLAGE_BUS_SYS_H
+#define VILLAGE_BUS_SYS_H
 
 #include <stdio.h>
 
-struct json_object* readlog(int n);
+struct json_object* sys_readlog(int n);
+struct json_object* sys_uname();
 
-#endif /* VILLAGE_BUS_SYSLOG_H */
+#endif /* VILLAGE_BUS_SYS_H */

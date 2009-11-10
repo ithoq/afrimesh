@@ -33,7 +33,7 @@
 #include <errno.h>
 #include <sys/types.h>
 
-#include "village-bus-syslog.h"
+#include "village-bus-sys.h"
 
 
 struct json_object* die_gracefully(FILE* file, struct json_object* error)
@@ -97,7 +97,11 @@ LogEntry parse_entry(const char* input, size_t length)
 }
 
 
-struct json_object* readlog(int n)
+
+/**
+ * Return the last 'n' lines of the system log
+ */
+struct json_object* sys_syslog(int n)
 {
   size_t readsize = 256;
   char   buffer[readsize];
@@ -173,20 +177,35 @@ struct json_object* readlog(int n)
 }
 
 
-  /*
-  printf("%s\n\n", buffer);*/
-  /*char* line;
-  size_t length;
-  int lineno = 0;
-  while ((line = fgetln(logfile, &length)) != NULL) {
-    line[length-1] = 0;
-    printf("-> %d: %s\n", lineno++, line);
-  }*/
+/**
+ * uname -a
+ */
+struct json_object* sys_uname()
+{
+  size_t max   = 100; /* Hard limit on number of output lines - TODO last 'max' lines rather than first ? */
+  size_t count = 0;
+  struct json_object* lines = json_object_new_array();
 
+  FILE* output = popen("uname -a", "r");
+  while (1 && count < max) { 
+    size_t length;
+    char* line = fgetln(output, &length);
+    if (line == NULL) {
+      if (feof(output) != 0) {          /* eof */
+        break;
+      } else if (ferror(output) != 0) { /* error */
+        return die_gracefully(output, jsonrpc_error("Error reading command output - %s", strerror(errno)));
+      } 
+      return die_gracefully(output, jsonrpc_error("Unexpected end of command output - %s", strerror(errno)));
+    }
+    json_object_array_add(lines, json_object_new_string_len(line, length - 1));
+    count++;
+  }
+  fclose(output);
 
-  
-  /* read last 'readsize' bytes of file */
-  /*if (fseek(logfile, eof - readsize, SEEK_SET) == -1) {
-    return die_gracefully(logfile, jsonrpc_error("Seek failed - %s", strerror(errno)));
-    }*/
+  struct json_object* response = json_object_new_object();
+  json_object_object_add(response, "result", lines);
+
+  return response;
+}
 
