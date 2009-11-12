@@ -32,6 +32,8 @@
 #include "village-bus.h"
 
 
+/** - uci --------------------------------------------------------------- */
+
 /**
  * Handle request dispatch for uci module
  */
@@ -70,6 +72,7 @@ struct json_object* jsonrpc_dispatch_uci_show(const char* name, struct json_obje
 
   return response;
 }
+
 
 struct json_object* jsonrpc_dispatch_uci_set(const char* name, struct json_object* arguments)
 {
@@ -127,6 +130,8 @@ struct json_object* jsonrpc_dispatch_uci_set(const char* name, struct json_objec
   return response;
 }
 
+
+/** - snmp -------------------------------------------------------------- */
 
 /**
  * Handle request dispatch for snmp module
@@ -190,6 +195,8 @@ struct json_object* jsonrpc_dispatch_snmp(const char* name, struct json_object* 
 }
 
 
+/** - sys --------------------------------------------------------------- */
+
 struct json_object* jsonrpc_dispatch_sys_syslog(const char* name, struct json_object* arguments)
 {
   /* dispatch request */
@@ -197,11 +204,17 @@ struct json_object* jsonrpc_dispatch_sys_syslog(const char* name, struct json_ob
   return sys_syslog(count);
 }
 
-
 struct json_object* jsonrpc_dispatch_sys_uname(const char* name, struct json_object* arguments)
 {
   return sys_exec("uname -srm"); /* TODO - add flags for arguments */
 }
+
+struct json_object* jsonrpc_dispatch_sys_version(const char* name, struct json_object* arguments)
+{
+  return sys_version();
+}
+
+
 
 /**
  */
