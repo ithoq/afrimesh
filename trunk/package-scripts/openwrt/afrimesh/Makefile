@@ -32,7 +32,7 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ------------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=564
+PKG_REV:=565
 PKG_VERSION:=r$(PKG_REV)-0.4alpha
 PKG_RELEASE:=1
 
@@ -53,6 +53,7 @@ PKG_SOURCE:=$(PKG_SOURCE_SUBDIR).tar.gz
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_SOURCE_SUBDIR)
 
 COMPILE_COMMAND:=	$(TARGET_CC) $(TARGET_CFLAGS) \
+                -DAFRIMESH_VERSION=$(PKG_VERSION) \
                 -DDISABLE_LOG \
                 -D_METAPACK \
                 -DOPENWRT \
