@@ -32,7 +32,7 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ------------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=566
+PKG_REV:=567
 PKG_VERSION:=r$(PKG_REV)-0.4alpha
 PKG_RELEASE:=1
 
@@ -46,23 +46,16 @@ PKG_RELEASE:=1
 LOCAL_SOURCES:=~/afrimesh/trunk
 # ----------------------------------------------------------------------------
 
+# source setup
 PKG_SOURCE_PROTO:=svn
 PKG_SOURCE_VERSION:=$(PKG_REV)
 PKG_SOURCE_SUBDIR:=$(if $(PKG_BRANCH),$(PKG_BRANCH),$(PKG_NAME))-$(PKG_VERSION)
 PKG_SOURCE:=$(PKG_SOURCE_SUBDIR).tar.gz
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_SOURCE_SUBDIR)
 
-#COMPILE_COMMAND:=	$(TARGET_CC) $(TARGET_CFLAGS) \
-#                -DDISABLE_LOG \
-#                -D_METAPACK \
-#                -DOPENWRT \
-#                -I$(PKG_BUILD_DIR) \
-#                -I$(STAGING_DIR)/include-host -I$(STAGING_DIR_HOST)/include -include endian.h \
-#                -I$(STAGING_DIR)/usr/include \
-#               $(TARGET_CFLAGS_EXTRA) \
-#                $(TARGET_LDFLAGS) 
-
+# build flags
 PKG_EXTRA_CFLAGS= \
+  -DAFRIMESH_VERSION="\"$(VERSION)\"" \
 	-DDISABLE_LOG                 \
 	-D_METAPACK                   \
 	-DOPENWRT                     \
@@ -72,7 +65,6 @@ PKG_EXTRA_CFLAGS= \
   -I$(STAGING_DIR)/include-host \
 	-I$(STAGING_DIR_HOST)/include \
 	-include endian.h             \
-
 
 MAKE_VILLAGEBUS_ARGS += \
 	CC='$(TARGET_CC) $(PKG_EXTRA_CFLAGS) $(TARGET_CFLAGS_EXTRA) ' \

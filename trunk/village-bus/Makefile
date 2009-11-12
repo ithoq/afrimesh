@@ -28,6 +28,7 @@
 #
 
 
+# version
 ifndef VERSION
 REVISION=$(shell svnversion . -n)
 	ifeq (,$(REVISION))
