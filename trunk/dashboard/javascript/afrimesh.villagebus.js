@@ -206,7 +206,7 @@ var BootVillageBus = function (afrimesh) {
 
   /** - villagebus.sys ---------------------------------------------------- */
   villagebus.sys = function(address) {
-    return { uname : "", "syslog" : "" };
+    return { uname : "", syslog : "", version : "" };
   };
   villagebus.sys.url = function(address) { 
     if (address == afrimesh.settings.address) {
@@ -217,6 +217,9 @@ var BootVillageBus = function (afrimesh) {
   villagebus.sys.uname = function(address) { return villagebus.sys.uname.sync(address); };
   villagebus.sys.uname.sync  = function(address)    { return rpc(villagebus.sys.url(address), "uname", []); };
   villagebus.sys.uname.async = function(f, address) { return rpc_async(f, villagebus.sys.url(address), "uname", []); };  
+  villagebus.sys.version = function(address) { return villagebus.sys.version.sync(address); };
+  villagebus.sys.version.sync  = function(address)    { return rpc(villagebus.sys.url(address), "version", []); };
+  villagebus.sys.version.async = function(f, address) { return rpc_async(f, villagebus.sys.url(address), "version", []); };  
 
 
   /** - villagebus.uci ---------------------------------------------------- */
