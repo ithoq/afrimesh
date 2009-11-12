@@ -247,7 +247,7 @@ define Package/afrimesh-potato/install
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/index.redirect.html  $(1)/www/index.html
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/index.potato.html    $(1)/www/afrimesh/index.html
 	$(INSTALL_DIR)  $(1)/www/cgi-bin
-	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/village-bus-uci/village-bus-uci    $(1)/www/cgi-bin/village-bus-uci
+	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/village-bus/village-bus            $(1)/www/cgi-bin/village-bus-uci
 	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/dashboard/cgi-bin/ajax-proxy.cgi   $(1)/www/cgi-bin
 	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/dashboard/cgi-bin/village-bus-echo $(1)/www/cgi-bin/village-bus-echo.kml
 	$(INSTALL_DIR)  $(1)/www/afrimesh/images
