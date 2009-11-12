@@ -30,7 +30,7 @@
 
 
 # - configuration ------------------------------------------------------------
-VERSION=r517-0.3alpha
+VERSION=r566-0.4alpha
 RELEASE=1
 
 # DEPRECATED
@@ -93,7 +93,7 @@ all:
 	export DEPROOT=$(DEPROOT); cd village-bus-radius ; $(MAKE)
 	export DEPROOT=$(DEPROOT); cd village-bus-snmp   ; $(MAKE)
 	export DEPROOT=$(DEPROOT); cd village-bus-uci    ; $(MAKE)
-	export DEPROOT=$(DEPROOT); cd village-bus        ; $(MAKE)
+	export DEPROOT=$(DEPROOT); cd village-bus        ; VERSION=$(VERSION) $(MAKE)
 
 install: install-www 
 	@if ! test -f $(DASHBOARD_ETC)/config/afrimesh ; then $(MAKE) install-config ; fi

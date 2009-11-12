@@ -28,6 +28,16 @@
 #
 
 
+ifndef VERSION
+REVISION=$(shell svnversion . -n)
+	ifeq (,$(REVISION))
+	REVISION="unknown"
+	endif
+	VERSION=$(REVISION)-i-think
+endif
+
+test-version :
+	@echo $(VERSION)
 
 # json
 JSON_CFLAGS=
@@ -45,7 +55,7 @@ SNMP_LDFLAGS=-lnetsnmp
 CC=gcc 
 INCLUDES+=-I. -I../common -I../village-bus-snmp -I../village-bus-uci -I$(DEPROOT)/include 
 DEFINES+=
-CFLAGS+=-g $(DEFINES) $(JSON_CFLAGS) $(UCI_CFLAGS) $(SNMP_CFLAGS) -DAFRIMESH_VERSION=$(VERSION)
+CFLAGS+=-g $(DEFINES) $(JSON_CFLAGS) $(UCI_CFLAGS) $(SNMP_CFLAGS) -DAFRIMESH_VERSION="\"$(VERSION)\""
 LDFLAGS+=-L$(DEPROOT)/lib $(JSON_LDFLAGS) $(UCI_LDFLAGS) $(SNMP_LDFLAGS)
 
 
@@ -129,5 +139,7 @@ test-jsonrpc-syslog :
 test-jsonrpc-uname :
 	./village-bus /sys '{ $(RPC), "method" : "uname", "params" : [ ] }'
 
+test-jsonrpc-version :
+	./village-bus /sys '{ $(RPC), "method" : "version", "params" : [ ] }'
 
 # run /syslog '{ "id" : 123, "version" : "2.0", "method" : "read", "params" : [ 3 ] }'

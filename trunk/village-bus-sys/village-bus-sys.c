@@ -179,11 +179,13 @@ struct json_object* sys_syslog(int n)
 
 struct json_object* sys_version()
 {
+  struct json_object* response = json_object_new_object();
 #ifdef AFRIMESH_VERSION
-  return json_object_new_string(AFRIMESH_VERSION);
+  json_object_object_add(response, "result", json_object_new_string(AFRIMESH_VERSION));
 #else
-  return json_object_new_string("unknown");
+  json_object_object_add(response, "result", json_object_new_string("r?-unknown"));
 #endif
+  return response;
 }
 
 

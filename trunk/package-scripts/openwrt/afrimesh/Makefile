@@ -32,7 +32,7 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ------------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=565
+PKG_REV:=566
 PKG_VERSION:=r$(PKG_REV)-0.4alpha
 PKG_RELEASE:=1
 
@@ -52,16 +52,15 @@ PKG_SOURCE_SUBDIR:=$(if $(PKG_BRANCH),$(PKG_BRANCH),$(PKG_NAME))-$(PKG_VERSION)
 PKG_SOURCE:=$(PKG_SOURCE_SUBDIR).tar.gz
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_SOURCE_SUBDIR)
 
-COMPILE_COMMAND:=	$(TARGET_CC) $(TARGET_CFLAGS) \
-                -DAFRIMESH_VERSION=$(PKG_VERSION) \
-                -DDISABLE_LOG \
-                -D_METAPACK \
-                -DOPENWRT \
-                -I$(PKG_BUILD_DIR) \
-                -I$(STAGING_DIR)/include-host -I$(STAGING_DIR_HOST)/include -include endian.h \
-                -I$(STAGING_DIR)/usr/include \
-                $(TARGET_CFLAGS_EXTRA) \
-                $(TARGET_LDFLAGS) 
+#COMPILE_COMMAND:=	$(TARGET_CC) $(TARGET_CFLAGS) \
+#                -DDISABLE_LOG \
+#                -D_METAPACK \
+#                -DOPENWRT \
+#                -I$(PKG_BUILD_DIR) \
+#                -I$(STAGING_DIR)/include-host -I$(STAGING_DIR_HOST)/include -include endian.h \
+#                -I$(STAGING_DIR)/usr/include \
+#               $(TARGET_CFLAGS_EXTRA) \
+#                $(TARGET_LDFLAGS) 
 
 PKG_EXTRA_CFLAGS= \
 	-DDISABLE_LOG                 \
@@ -299,7 +298,7 @@ define Build/Configure
 endef
 
 define Build/Compile
-	cd $(PKG_BUILD_DIR)/village-bus ; make $(MAKE_VILLAGEBUS_ARGS)
+	cd $(PKG_BUILD_DIR)/village-bus ; VERSION=$(PKG_VERSION) make $(MAKE_VILLAGEBUS_ARGS)
 endef
 
 
