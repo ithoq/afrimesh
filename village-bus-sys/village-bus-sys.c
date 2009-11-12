@@ -177,6 +177,15 @@ struct json_object* sys_syslog(int n)
 }
 
 
+struct json_object* sys_version()
+{
+#ifdef AFRIMESH_VERSION
+  return json_object_new_string(AFRIMESH_VERSION);
+#else
+  return json_object_new_string("unknown");
+#endif
+}
+
 
 /**
  * execute the given command and return standard output as an array of lines

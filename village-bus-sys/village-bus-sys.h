@@ -34,7 +34,8 @@
 
 #include <stdio.h>
 
-struct json_object* sys_readlog(int n);
+struct json_object* sys_syslog(int n);
+struct json_object* sys_version();
 struct json_object* sys_exec(char* command, char** arguments);
 
 #endif /* VILLAGE_BUS_SYS_H */

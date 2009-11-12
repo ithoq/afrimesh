@@ -64,6 +64,7 @@
         rows += "<td id='usage'>"   + router.uploaded.bytes   + "</td>";
         rows += "<td id='version'>" + "r557"                  + "</td>";
         //rows += "<td id='uname'>uname</td>";
+        // TODO - this should be cached, async & wrapped around the router like accounting above
         rows += "<td id='uname'>"   + afrimesh.villagebus.sys.uname(router.address) + "</td>";
         rows += "</tr>";
       });
