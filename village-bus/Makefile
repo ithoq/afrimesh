@@ -36,9 +36,6 @@ REVISION=$(shell svnversion . -n)
 	VERSION=$(REVISION)-i-think
 endif
 
-test-version :
-	@echo $(VERSION)
-
 # json
 JSON_CFLAGS=
 JSON_LDFLAGS=$(DEPROOT)/lib/libjson.a
