@@ -214,6 +214,28 @@ struct json_object* jsonrpc_dispatch_sys_version(const char* name, struct json_o
   return sys_version();
 }
 
+/** ipkg ----------------------------------------------------------------- */
+struct json_object* jsonrpc_dispatch_ipkg_update (const char* name, struct json_object* arguments)
+{
+  return sys_exec("opkg update");
+}
+
+struct json_object* jsonrpc_dispatch_ipkg_list   (const char* name, struct json_object* arguments)
+{ 
+  return sys_exec("opkg list_upgradable");
+}
+
+struct json_object* jsonrpc_dispatch_ipkg_status (const char* name, struct json_object* arguments)
+{
+  return NULL;
+}
+
+struct json_object* jsonrpc_dispatch_ipkg_upgrade(const char* name, struct json_object* arguments)
+{
+  return NULL;
+}
+
+
 
 
 /**
