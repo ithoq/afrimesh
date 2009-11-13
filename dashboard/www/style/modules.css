@@ -219,6 +219,12 @@ td.v-brace {
 }
 
 
+/* - utility upgrade module ---------------------------------------------- */
+.utility-upgrade td {
+  height: 3.0em;
+}
+
+
 /* - internet-configure module -------------------------------------------- */
 .ui-sortable, .ui-sortable-brace, .ui-sortable-instructions { width: 310px; padding: 5px; }
 .ui-sortable        { border:1px solid gray; min-height: 230px; margin: 5px; }
@@ -262,6 +268,7 @@ dl.sort dd { background-color:red;  }
 .help div.navigation {
   background: #f7f7f7;
 }
+
 
 
 

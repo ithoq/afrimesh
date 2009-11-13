@@ -107,6 +107,7 @@
         add_menu_item("help",      "group");
         add_menu_item("help",      "chat");
         add_menu_item("utility",   "settings-potato");
+        add_menu_item("utility",   "upgrade");
         add_menu_item("utility",   "logout");
 
         /** loader for luci webif */
@@ -120,7 +121,8 @@
           });
 
         /** set default page */
-        $("ul#menu ul#utility li#settings-potato").click();
+        //$("ul#menu ul#utility li#settings-potato").click();
+        $("ul#menu ul#utility li#upgrade").click();
         //$("ul#menu ul#network li#map").click();
 
         /** loading complete, we can now remove our message */
@@ -178,16 +180,17 @@
             </ul> 
           </li> 
           <li>&nbsp;</li>
-          <li class="searchContainer"> 
+          <!-- li class="searchContainer"> 
             <div> 
               <input type="text" size=16 id="searchField" /> 
               <img src="style/images/magnifier.png" alt="Search" onclick="alert('You clicked on search button')" /></div> 
-          </li>
+          </li -->
           <li class="right"><img src="images/gear.png" />
             <ul id="utility">
               <img class="top_left" alt="" src="style/images/top_left.png"/>
               <li id="settings-potato">Settings</li>
-              <li id="settings-luci">LuCI Advanced</li>
+              <li id="upgrade">Upgrade</li>
+              <li id="settings-luci">LuCI</li>
               <li id="logout">Logout</li>
               <li class="last">
                 <img class="bottom_left" alt="" src="style/images/bottom_left.png"/>
