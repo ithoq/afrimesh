@@ -2,9 +2,11 @@
 
 # 1. get combined image
 wget http://192.168.1.9/~antoine/firmware/openwrt-atheros-vmlinux.lzma
+wget http://192.168.1.9/~antoine/firmware/openwrt-atheros-vmlinux.gz
 wget http://192.168.1.9/~antoine/firmware/openwrt-atheros-root.jffs2-64k
-cat openwrt-atheros-vmlinux.lzma   | mtd -e linux write - linux
-cat openwrt-atheros-root/jffs2-64k | mtd -e rootfs write - rootfs
+mtd -e linux write ./openwrt-atheros-vmlinux.lzma linux
+mtd -e rootfs write ./openwrt-atheros-root.jffs2-64k rootfs
+mtd write openwrt-atheros-vmlinux.gz linux
 
 # 2. check image checksum
 
@@ -13,4 +15,3 @@ cat openwrt-atheros-root/jffs2-64k | mtd -e rootfs write - rootfs
 # 4. flash images
 
 # 5. copy config files back
-
