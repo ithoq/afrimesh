@@ -216,28 +216,23 @@ var Map = undefined;
       html += "<div id='neighbours'>";
       html+= "Neighbours";
       html+= "<table border=0>";
-      var tog = true;
+      var rowend = false;
       feature.router.routes.map(function (route) {
           if (route.neighbour) { 
-            if (tog) {  
-              html += "<tr>";
-            }
-            html += "<td><span style='color:" + lq_to_color(route.label) + "'>";
+            html += (!rowend ? "<tr>" : "");
+            html += "<td><span style='color:" + lq_to_color(route.label).rgb + "'>";
             html += route.neighbour + "&nbsp;" + "(" + route.label + ")";
-            html += "</span>&nbsp;&nbsp;</td>";
-            if (!tog) {
-              html += "</tr>";
-            }
-            tog = !tog;
+            html += "</span></td>";
+            html += (rowend ? "</tr>" : "");
+            rowend = !rowend;
           }
         });
-      html += (tog ? "</tr>" : "") + "</table>";
-      html+= "</div>";
-
-      html += "</div><p></p><br/>";
+      html += (rowend ? "</tr>" : "") + "</table>";
+      html+= "</div>";  /* end neighbours */
+      html += "</div>"; /* end popup */
       var popup = new OpenLayers.Popup.AnchoredBubble("id" + feature.router.address,
                                                       feature.geometry.getBounds().getCenterLonLat(),
-                                                      new OpenLayers.Size(200, 130), html, null, true, 
+                                                      new OpenLayers.Size(250, 150), html, null, true, 
                                                       function(event){on_unselect_router(the_map.selected);} );
       popup.setBackgroundColor("black");
       popup.setOpacity(0.95);
