@@ -32,7 +32,7 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ------------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=567
+PKG_REV:=568
 PKG_VERSION:=r$(PKG_REV)-0.4alpha
 PKG_RELEASE:=1
 
@@ -114,7 +114,7 @@ endef
 define Package/afrimesh-webif
 	SECTION:=admin
 	CATEGORY:=Administration
-	DEPENDS:=+afrimesh-base +curl
+	DEPENDS:=+afrimesh-base +curl-nossl
 	TITLE:=Web interface for mesh nodes
 endef
 
@@ -186,7 +186,7 @@ endef
 define Package/afrimesh-dashboard
 	SECTION:=admin
 	CATEGORY:=Administration
-	DEPENDS:=+afrimesh-base +curl 
+	DEPENDS:=+afrimesh-base +curl-nossl 
 	TITLE:=Mesh management dashboard
 endef
 
@@ -231,7 +231,7 @@ endef
 define Package/afrimesh-potato
 	SECTION:=admin
 	CATEGORY:=Administration
-	DEPENDS:=+busybox +libuci +libjson +batmand	+curl 
+	DEPENDS:=+libuci +libjson +batmand	+curl-nossl
 	TITLE:=Web interface for the Mesh Potato
 endef
 
@@ -247,8 +247,8 @@ define Package/afrimesh-potato/install
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/index.redirect.html  $(1)/www/index.html
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/index.potato.html    $(1)/www/afrimesh/index.html
 	$(INSTALL_DIR)  $(1)/www/cgi-bin
-	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/village-bus/village-bus            $(1)/www/cgi-bin/village-bus-uci
-	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/dashboard/cgi-bin/ajax-proxy.cgi   $(1)/www/cgi-bin
+	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/village-bus/village-bus            $(1)/www/cgi-bin/village-bus
+	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/dashboard/cgi-bin/ajax-proxy.cgi   $(1)/www/cgi-bin/ajax-proxy.cgi
 	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/dashboard/cgi-bin/village-bus-echo $(1)/www/cgi-bin/village-bus-echo.kml
 	$(INSTALL_DIR)  $(1)/www/afrimesh/images
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/images/*.gif         $(1)/www/afrimesh/images
