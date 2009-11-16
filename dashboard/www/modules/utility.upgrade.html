@@ -57,6 +57,15 @@
     console.debug("updating packages");
     $("#packages td:eq(0)").html("Checking...");
     $("#packages button").html("<img src='images/indicator.gif'/>");
+
+    // 1. update
+
+    // 2. list upgradable packages
+    console.debug("This router: " + afrimesh.settings.address);
+    var upgradable = afrimesh.villagebus.ipkg.list(afrimesh.settings.address, "upgradable");
+    console.debug(JSON.stringify(upgradable));
+
+    // 3. option to upgrade
   };
 
   function onfirmware() {
