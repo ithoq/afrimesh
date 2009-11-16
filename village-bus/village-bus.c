@@ -206,7 +206,11 @@ struct json_object* jsonrpc_dispatch_sys_syslog(const char* name, struct json_ob
 
 struct json_object* jsonrpc_dispatch_sys_uname(const char* name, struct json_object* arguments)
 {
-  return sys_exec("uname -srm"); /* TODO - add flags for arguments */
+  char* argv[3];
+  argv[0] = "uname";
+  argv[1] = "-srm";
+  argv[2] = 0;
+  return sys_exec(argv[0], argv); /* TODO - add flags for arguments ? */
 }
 
 struct json_object* jsonrpc_dispatch_sys_version(const char* name, struct json_object* arguments)
@@ -217,12 +221,37 @@ struct json_object* jsonrpc_dispatch_sys_version(const char* name, struct json_o
 /** ipkg ----------------------------------------------------------------- */
 struct json_object* jsonrpc_dispatch_ipkg_update (const char* name, struct json_object* arguments)
 {
-  return sys_exec("opkg update");
+  char* argv[3];
+  argv[0] = "opkg";
+  argv[1] = "update";
+  argv[2] = 0;
+  return sys_exec(argv[0], argv);
+}
+
+
+struct json_object* ipkg_list_exec_parser(const char* line, size_t length)
+{
+  char* name;
+  char* version;
+  char* comment;
+  char* cursor = line;
+  cursor = parse_field(cursor, length, (char[]){' ',-1}, &name) + 2;
+  cursor = parse_field(cursor, length, (char[]){' ',-1}, &version) + 2;
+  cursor = parse_field(cursor, length, (char[]){'\n',-1}, &comment);
+  struct json_object* package = json_object_new_object();
+  json_object_object_add(package, "name", json_object_new_string(name));
+  json_object_object_add(package, "version", json_object_new_string(version));
+  json_object_object_add(package, "comment", json_object_new_string(comment));
+  return package;
 }
 
 struct json_object* jsonrpc_dispatch_ipkg_list   (const char* name, struct json_object* arguments)
 { 
-  return sys_exec("opkg list_upgradable");
+  char* argv[3];
+  argv[0] = "opkg";
+  argv[1] = "list_upgradable";
+  argv[2] = 0;
+  return sys_exec_parsed(argv[0], argv, ipkg_list_exec_parser);
 }
 
 struct json_object* jsonrpc_dispatch_ipkg_status (const char* name, struct json_object* arguments)
@@ -232,7 +261,12 @@ struct json_object* jsonrpc_dispatch_ipkg_status (const char* name, struct json_
 
 struct json_object* jsonrpc_dispatch_ipkg_upgrade(const char* name, struct json_object* arguments)
 {
-  return NULL;
+  char* argv[4];
+  argv[0] = "opkg";
+  argv[1] = "upgrade";
+  argv[2] = json_object_get_string(json_object_array_get_idx(arguments, 0));
+  argv[3] = 0;
+  return sys_exec(argv[0], argv);
 }
 
 

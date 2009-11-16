@@ -7,24 +7,23 @@
  * New BSD License. See /LICENSE for more information.
 -->
 
-<h2>Upgrade Firmware</h2>
 
 <div class="utility-upgrade">
 
-  <table border=0 width=300>
-    <thead><th colspan=2>Network Updates</th></thead>
-    <tr id="packages">
-      <td>Check for updated packages</td><td><button>check</button></td>
+  <table border=0 width=600>
+    <thead id="network-updates"><th colspan=2>Update Potato</th></thead>
+    <tr id="packages" valign="top" style="height: 3.0em;">
+      <td width=550>Check for updated packages</td><td width=50><button>check</button></td>
     </tr>
-    <tr id="firmware">
-      <td>Check for updated firmware</td><td><button>check</button></td>
+    <tr id="firmware" valign="top" style="height: 3.0em;">
+      <td width=550>Check for updated firmware</td><td width=50><button>check</button></td>
     </tr>
     
     <tr><td colspan=2>&nbsp;</td></tr>
     
-    <thead><th colspan=2>Reflash Potato</th></thead>
-    <tr id="upload">
-      <td>Upload new firmware</td><td><button>browse</button></td>
+    <thead id="reflash-firmware"><th colspan=2>Reflash Potato</th></thead>
+    <tr id="upload" valign="top" style="height: 3.0em;">
+      <td width=550>Upload new firmware</td><td width=50><button>browse</button></td>
     </tr>
   </table>
 
@@ -40,9 +39,9 @@
   /** construction -------------------------------------------------------- */
   ready = function() { // INJ 'ready' should be the only symbol we're exposing to the global namespace
     console.debug("loaded utility.upgrade.html");
-   $("#packages button").click(onpackages);
-   $("#firmware button").click(onfirmware);
-   $("#upload button").click(onupload);
+    $("#packages button").click(onpackages);
+    $("#firmware button").click(onfirmware);
+    $("#upload button").click(onupload);
     return unload;
   };
 
@@ -51,22 +50,60 @@
   };
 
 
-  /** updaters ------------------------------------------------------------ */
+  /** update packages ------------------------------------------------------ */
 
   function onpackages() {
-    console.debug("updating packages");
-    $("#packages td:eq(0)").html("Checking...");
+    $("#network-updates th").html("Update Potato Packages");
+    $("#packages button").unbind("click");
     $("#packages button").html("<img src='images/indicator.gif'/>");
+    $("#packages td:eq(0)").html("<pre>Updating package list...</pre>");
+    $("#firmware").html("");
+    $("#upload").html("");
+    $("#reflash-firmware").html("");
 
-    // 1. update
+    var address = "192.168.20.2";
+    //var address = "10.0.0.42";
 
-    // 2. list upgradable packages
-    console.debug("This router: " + afrimesh.settings.address);
-    var upgradable = afrimesh.villagebus.ipkg.list(afrimesh.settings.address, "upgradable");
-    console.debug(JSON.stringify(upgradable));
+    afrimesh.villagebus.ipkg.update.async(update_complete, address);
+    function update_complete(log) {
+      $("#packages td:eq(0)").append("<pre>" + log.join("\n") + "</pre>");
+      afrimesh.villagebus.ipkg.list.async(list_complete, address, "upgradable");
+    };
 
-    // 3. option to upgrade
+    function list_complete(packages) {
+      var updates = $("#packages td:eq(0)").html("");
+      var html = "<table cellspacing=0 cellpadding=0 border=0 style='margin:0px; padding:0px;'>";
+      packages.map(function(package) { 
+          html += "<tr>" + "<td><pre>" + package.name    + "</pre></td>" + 
+                           "<td><pre>" + package.version + "</pre></td>" +
+                           "<td><pre>" + package.comment + "</pre></td></tr>";
+        });
+      html += "</table";
+      updates.append(html);
+      $("#packages button").html("update");  
+      $("#packages button").click(function() { 
+          $("#packages button").unbind("click");
+          $("#packages button").html("<img src='images/indicator.gif'/>")
+          $("#packages td:eq(0)").html("<pre>Updating packages...</pre>");
+          upgrade_complete([], packages);
+        });  
+    };
+    
+    function upgrade_complete(log, packages) {
+      $("#packages td:eq(0)").append("<pre>" + log.join("\n") + "</pre>");
+      if (packages.length) {
+        var package = packages.pop();
+        afrimesh.villagebus.ipkg.upgrade.async(function(log) { 
+            upgrade_complete(log, packages); 
+          }, address, package.name);
+        return;
+      }
+      $("#packages button").html("done")
+    };
   };
+
+
+  /** update firmware ------------------------------------------------------ */
 
   function onfirmware() {
     console.debug("updating firmware");
@@ -74,8 +111,14 @@
     $("#firmware button").html("<img src='images/indicator.gif'/>");
   };
 
+
+  /** upload firmware ------------------------------------------------------ */
+
   function onupload() {
     console.debug("uploading firmware");
+    afrimesh.villagebus.ipkg.upgrade.async(function(log) {
+        console.debug(log);
+      }, "192.168.20.2", "afrimesh-base");
   };
 
 

@@ -36,6 +36,8 @@
 
 struct json_object* sys_syslog (int n);
 struct json_object* sys_version();
-struct json_object* sys_exec   (char* command, char** arguments);
+struct json_object* sys_exec(char* command, char** arguments);
+struct json_object* sys_exec_parsed(char* command, char** arguments, 
+                                    struct json_object* (*parser)(const char*, size_t));
 
 #endif /* VILLAGE_BUS_SYS_H */

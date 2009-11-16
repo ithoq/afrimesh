@@ -38,15 +38,15 @@
 struct MethodDispatch dispatch_table[] = {
   { "/uci",    "show",    {json_type_string}, 1, jsonrpc_dispatch_uci_show },
   { "/uci",    "set",     {json_type_array }, 1, jsonrpc_dispatch_uci_set  },
-  { "/snmp",   "get",     {json_type_string, json_type_string, json_type_array }, 3, jsonrpc_dispatch_snmp   },
-  { "/snmp",   "walk",    {json_type_string, json_type_string, json_type_string}, 3, jsonrpc_dispatch_snmp   },
-  { "/sys",    "syslog",  {json_type_int},   1, jsonrpc_dispatch_sys_syslog  },
-  { "/sys",    "uname",   {},                0, jsonrpc_dispatch_sys_uname   },
-  { "/sys",    "version", {},                0, jsonrpc_dispatch_sys_version },
-  { "/ipkg",   "update",  {},                0, jsonrpc_dispatch_ipkg_update },
-  { "/ipkg",   "list",    {},                0, jsonrpc_dispatch_ipkg_list },
-  { "/ipkg",   "status",  {},                0, jsonrpc_dispatch_ipkg_status },
-  { "/ipkg",   "upgrade", {},                0, jsonrpc_dispatch_ipkg_upgrade },
+  { "/snmp",   "get",     {json_type_string,  json_type_string, json_type_array }, 3, jsonrpc_dispatch_snmp   },
+  { "/snmp",   "walk",    {json_type_string,  json_type_string, json_type_string}, 3, jsonrpc_dispatch_snmp   },
+  { "/sys",    "syslog",  {json_type_int},    1, jsonrpc_dispatch_sys_syslog  },
+  { "/sys",    "uname",   {},                 0, jsonrpc_dispatch_sys_uname   },
+  { "/sys",    "version", {},                 0, jsonrpc_dispatch_sys_version },
+  { "/ipkg",   "update",  {},                 0, jsonrpc_dispatch_ipkg_update },
+  { "/ipkg",   "list",    {},                 0, jsonrpc_dispatch_ipkg_list },
+  { "/ipkg",   "status",  {},                 0, jsonrpc_dispatch_ipkg_status },
+  { "/ipkg",   "upgrade", {json_type_string}, 1, jsonrpc_dispatch_ipkg_upgrade },
   { 0, 0, 0, 0 }
 };
 
