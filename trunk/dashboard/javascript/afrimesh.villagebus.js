@@ -222,6 +222,33 @@ var BootVillageBus = function (afrimesh) {
   villagebus.sys.version.async = function(f, address) { return rpc_async(f, villagebus.sys.url(address), "version", []); };  
 
 
+  /** - villagebus.ipkg --------------------------------------------------- */
+  villagebus.ipkg = function(address) {
+    return { update : "", list : "", status : "", upgrade : "" };
+  };
+  villagebus.ipkg.url = function(address) { 
+    if (address == afrimesh.settings.address) {
+      return "http://" + address + "/cgi-bin/village-bus/ipkg";
+    }
+    return afrimesh.villagebus.ajax_proxy() + "http://" + address + "/cgi-bin/village-bus/ipkg";
+  };
+  villagebus.ipkg.update       = function(address) { return villagebus.ipkg.update.sync(address); };
+  villagebus.ipkg.update.sync  = function(address) { return rpc(villagebus.ipkg.url(address), "update", []); };
+  villagebus.ipkg.update.async = function(f, address) { return rpc_async(f, villagebus.ipkg.url(address), "update", []); };
+
+  villagebus.ipkg.list       = function(address) { return villagebus.ipkg.list.sync(address); };
+  villagebus.ipkg.list.sync  = function(address) { return rpc(villagebus.ipkg.url(address), "list", []); };
+  villagebus.ipkg.list.async = function(f, address) { return rpc_async(f, villagebus.ipkg.url(address), "list", []); };
+
+  villagebus.ipkg.status       = function(address) { return villagebus.ipkg.status.sync(address); };
+  villagebus.ipkg.status.sync  = function(address) { return rpc(villagebus.ipkg.url(address), "status", []); };
+  villagebus.ipkg.status.async = function(f, address) { return rpc_async(f, villagebus.ipkg.url(address), "status", []); };
+
+  villagebus.ipkg.upgrade       = function(address) { return villagebus.ipkg.upgrade.sync(address); };
+  villagebus.ipkg.upgrade.sync  = function(address) { return rpc(villagebus.ipkg.url(address), "upgrade", []); };
+  villagebus.ipkg.upgrade.async = function(f, address) { return rpc_async(f, villagebus.ipkg.url(address), "upgrade", []); };
+
+
   /** - villagebus.uci ---------------------------------------------------- */
   // UDE - sometimes there are problems with permissions on /etc/config & /tmp/.uci 
   villagebus.uci = function(address) {
@@ -243,28 +270,14 @@ var BootVillageBus = function (afrimesh) {
     return afrimesh.villagebus.ajax_proxy() + "http://" + address + "/cgi-bin/village-bus/uci";
   };
 
-  villagebus.uci.get = function(address, selector) {
-    return villagebus.uci.get.sync(address, selector);
-  };
-  villagebus.uci.set = function(address, entries) {
-    return villagebus.uci.set.sync(address, entries);
-  };
+  villagebus.uci.get = function(address, selector) { return villagebus.uci.get.sync(address, selector);  };
+  villagebus.uci.set = function(address, entries)  { return villagebus.uci.set.sync(address, entries);   };
 
-  villagebus.uci.get.sync = function(address, selector) {
-    return rpc(villagebus.uci.url(address), "show", [selector]);
-  };
+  villagebus.uci.get.sync = function(address, selector) { return rpc(villagebus.uci.url(address), "show", [selector]);  };
+  villagebus.uci.get.async = function(f, address, selector) { return rpc_async(villagebus.uci.url(address), "show", [selector], f);  };
 
-  villagebus.uci.get.async = function(f, address, selector) {
-    return rpc_async(villagebus.uci.url(address), "show", [selector], f);
-  };
-
-  villagebus.uci.set.sync = function(address, entries) {
-    return rpc(villagebus.uci.url(address), "set", [entries]);
-  };
-
-  villagebus.uci.set.async = function(f, address, entries) {
-    return rpc_async(villagebus.uci.url(address), "set", [entries], f);
-  };
+  villagebus.uci.set.sync = function(address, entries) { return rpc(villagebus.uci.url(address), "set", [entries]);  };
+  villagebus.uci.set.async = function(f, address, entries) { return rpc_async(villagebus.uci.url(address), "set", [entries], f);  };
 
 
   /** - villagebus.syslog -------------------------------------------------------- */
