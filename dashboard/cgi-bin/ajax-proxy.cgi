@@ -11,6 +11,9 @@ CURL=curl
 if [ -f /usr/bin/curl ]; then
     CURL=/usr/bin/curl
 fi
+if [ -f /usr/bin/curl-nossl ]; then
+    CURL=/usr/bin/curl-nossl
+fi
 #if [ -f /usr/local/bin/wget ]; then
 #    WGET=/usr/local/bin/wget
 #fi
