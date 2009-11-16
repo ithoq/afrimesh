@@ -234,19 +234,19 @@ var BootVillageBus = function (afrimesh) {
   };
   villagebus.ipkg.update       = function(address) { return villagebus.ipkg.update.sync(address); };
   villagebus.ipkg.update.sync  = function(address) { return rpc(villagebus.ipkg.url(address), "update", []); };
-  villagebus.ipkg.update.async = function(f, address) { return rpc_async(f, villagebus.ipkg.url(address), "update", []); };
+  villagebus.ipkg.update.async = function(f, address) { return rpc_async(villagebus.ipkg.url(address), "update", [], f); };
 
   villagebus.ipkg.list       = function(address) { return villagebus.ipkg.list.sync(address); };
   villagebus.ipkg.list.sync  = function(address) { return rpc(villagebus.ipkg.url(address), "list", []); };
-  villagebus.ipkg.list.async = function(f, address) { return rpc_async(f, villagebus.ipkg.url(address), "list", []); };
+  villagebus.ipkg.list.async = function(f, address) { return rpc_async(villagebus.ipkg.url(address), "list", [], f); };
 
   villagebus.ipkg.status       = function(address) { return villagebus.ipkg.status.sync(address); };
   villagebus.ipkg.status.sync  = function(address) { return rpc(villagebus.ipkg.url(address), "status", []); };
-  villagebus.ipkg.status.async = function(f, address) { return rpc_async(f, villagebus.ipkg.url(address), "status", []); };
+  villagebus.ipkg.status.async = function(f, address) { return rpc_async(villagebus.ipkg.url(address), "status", [], f); };
 
-  villagebus.ipkg.upgrade       = function(address) { return villagebus.ipkg.upgrade.sync(address); };
-  villagebus.ipkg.upgrade.sync  = function(address) { return rpc(villagebus.ipkg.url(address), "upgrade", []); };
-  villagebus.ipkg.upgrade.async = function(f, address) { return rpc_async(f, villagebus.ipkg.url(address), "upgrade", []); };
+  villagebus.ipkg.upgrade       = function(address, pkgname) { return villagebus.ipkg.upgrade.sync(address, pkgname); };
+  villagebus.ipkg.upgrade.sync  = function(address, pkgname) { return rpc(villagebus.ipkg.url(address), "upgrade", [pkgname]); };
+  villagebus.ipkg.upgrade.async = function(f, address, pkgname) { return rpc_async(villagebus.ipkg.url(address), "upgrade", [pkgname], f); };
 
 
   /** - villagebus.uci ---------------------------------------------------- */

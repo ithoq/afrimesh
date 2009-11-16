@@ -33,6 +33,8 @@
 #include <errno.h>
 #include <sys/types.h>
 
+#include <common/safelib.h>
+
 #include "village-bus-sys.h"
 
 
@@ -194,11 +196,24 @@ struct json_object* sys_version()
  */
 struct json_object* sys_exec(char* command, char** arguments)
 {
+  return sys_exec_parsed(command, arguments, (void*)NULL);
+}
+
+
+/**
+ * execute the given command and return the result as an array of
+ * objects parsed according to the given parser function
+ */
+struct json_object* sys_exec_parsed(char* command, char** arguments, 
+                                    struct json_object* (*parser)(const char*, size_t))
+{
   size_t max   = 100; /* Hard limit on number of output lines - TODO last 'max' lines rather than first ? */
   size_t count = 0;
   struct json_object* lines = json_object_new_array();
 
-  FILE* output = popen(command, "r");
+  /* TODO - check that command exists */
+
+  FILE* output = safe_popen(command, arguments, "r");
   while (1 && count < max) { 
     size_t length;
     char* line = fgetln(output, &length);
@@ -210,7 +225,12 @@ struct json_object* sys_exec(char* command, char** arguments)
       } 
       return die_gracefully(output, jsonrpc_error("Unexpected end of command output - %s", strerror(errno)));
     }
-    json_object_array_add(lines, json_object_new_string_len(line, length - 1));
+    if (parser == NULL) {
+      json_object_array_add(lines, json_object_new_string_len(line, length - 1));
+    } else {
+      struct json_object* parsed = parser(line, length);
+      json_object_array_add(lines, parsed);
+    }
     count++;
   }
   fclose(output);

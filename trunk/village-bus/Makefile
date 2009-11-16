@@ -51,13 +51,13 @@ SNMP_LDFLAGS=-lnetsnmp
 
 #-std=c99 
 CC=gcc 
-INCLUDES+=-I. -I../common -I../village-bus-snmp -I../village-bus-uci -I$(DEPROOT)/include 
+INCLUDES+=-I. -I.. -I../common -I../village-bus-snmp -I../village-bus-uci -I$(DEPROOT)/include 
 DEFINES+=
 CFLAGS+=-g $(DEFINES) $(JSON_CFLAGS) $(UCI_CFLAGS) $(SNMP_CFLAGS) -DAFRIMESH_VERSION="\"$(VERSION)\""
 LDFLAGS+=-L$(DEPROOT)/lib $(JSON_LDFLAGS) $(UCI_LDFLAGS) $(SNMP_LDFLAGS)
 
 
-objects=json_cgi.o json_rpc.o village-bus-snmp.o village-bus-uci.o village-bus-sys.o village-bus.o main.o 
+objects=safelib.o json_cgi.o json_rpc.o village-bus-snmp.o village-bus-uci.o village-bus-sys.o village-bus.o main.o 
 ifeq ($(FLAVOR),LINUX)
 objects+=fgetln.o
 endif
@@ -67,6 +67,9 @@ village-bus : $(objects)
 	$(CC) $(CFLAGS) -o village-bus $(objects) $(LDFLAGS) 
 
 # objects
+safelib.o : ../common/safelib.c ../common/safelib.h
+	$(CC) $(INCLUDES) $(CFLAGS) -c ../common/safelib.c
+
 fgetln.o : ../common/fgetln.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c ../common/fgetln.c
 
@@ -139,5 +142,12 @@ test-jsonrpc-uname :
 
 test-jsonrpc-version :
 	./village-bus /sys '{ $(RPC), "method" : "version", "params" : [ ] }'
+
+test-jsonrpc-ipkg :
+	./village-bus /ipkg '{ $(RPC), "method" : "upgrade", "params" : [ "afrimesh-base" ] }'
+
+
+
+# /www/cgi-bin/village-bus /ipkg '{ "id" : 123, "version" : "2.0", "method" : "upgrade", "params" : [ "afrimesh-base" ] }'
 
 # run /syslog '{ "id" : 123, "version" : "2.0", "method" : "read", "params" : [ 3 ] }'
