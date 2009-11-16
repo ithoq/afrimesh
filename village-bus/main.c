@@ -43,6 +43,10 @@ struct MethodDispatch dispatch_table[] = {
   { "/sys",    "syslog",  {json_type_int},   1, jsonrpc_dispatch_sys_syslog  },
   { "/sys",    "uname",   {},                0, jsonrpc_dispatch_sys_uname   },
   { "/sys",    "version", {},                0, jsonrpc_dispatch_sys_version },
+  { "/ipkg",   "update",  {},                0, jsonrpc_dispatch_ipkg_update },
+  { "/ipkg",   "list",    {},                0, jsonrpc_dispatch_ipkg_list },
+  { "/ipkg",   "status",  {},                0, jsonrpc_dispatch_ipkg_status },
+  { "/ipkg",   "upgrade", {},                0, jsonrpc_dispatch_ipkg_upgrade },
   { 0, 0, 0, 0 }
 };
 
