@@ -278,7 +278,7 @@ form.two-column {
 form.two-column fieldset {
   /*border:1px solid blue;*/
   padding-bottom: 1.0em;
-  width: 320px;
+  width: 340px;
 }
 form.two-column fieldset:last-child {
   padding-bottom: 0px;
