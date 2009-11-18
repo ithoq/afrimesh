@@ -11,13 +11,13 @@ config 'afrimesh' 'settings'
 	option 'locale' 'en_US.UTF-8'
 
 config 'afrimesh' 'location'
-	option 'longitude' '18.650362'
-	option 'latitude' '-33.825499'
+	option 'longitude' '28.278337'
+	option 'latitude' '-25.746633'
 
 config 'afrimesh' 'map'
 	option 'server' 'openstreetmap.org'
-	option 'extent' '10.025'
-	option 'zoom' '16'
+	option 'extent' '0.1'
+	option 'zoom' '15'
 	option 'aerial' 'false'
 
 config 'afrimesh' 'gateway'
