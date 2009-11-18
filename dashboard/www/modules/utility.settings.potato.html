@@ -37,6 +37,23 @@
           <input  id="afrimesh|settings|network|wireless|bssid" />
           <div class="tooltip"><h3>bssid</h3></div>
         </fieldset>      
+
+        <fieldset>
+          <legend>Map</legend>
+          <div class="label">Map Server</div>
+          <input id="afrimesh|settings|map|server"  type="text" />
+          <div class="tooltip"><h3>map server</h3>
+            <p class="explain">The Network Map gets the terrain data from the server at this address.</p>
+            <p class="typical">If your mesh has internet access you will not need to change this setting.</p>
+            <p class="obstacle">
+              If your mesh does not have internet access you will need to set up your own map server and enter its address here.
+            </p>
+            <p class="learnmore">
+              You can learn how to set up your own map server by reading 
+              <a href="http://code.google.com/p/afrimesh/wiki/HowTo">HowToMapServer</a>
+            </p>
+          </div>
+        </fieldset>      
       </td>
 
       <td>
@@ -59,7 +76,6 @@
           <input id="is_mesh_gateway" name="is_mesh_gateway" type="checkbox"  />
           <div class="routing_class">
             <div class="label">Routing Class</div>
-            <!-- input  id="afrimesh|settings|network|mesh|routing_class" / -->
             <select id="afrimesh|settings|network|mesh|routing_class">
               <option value="0">disable default route</option>
               <option value="1">use fastest connection</option>
@@ -94,7 +110,6 @@
               </p>
             </div>
           </div>
-
         </fieldset>
         
         <fieldset>
@@ -117,21 +132,6 @@
   </tr></table>
 
   <fieldset>
-    <legend>Map</legend>
-    <div class="label">Map Server</div>
-    <input id="afrimesh|settings|map|server"  type="text" />
-    <div class="tooltip"><h3>map server</h3>
-      <p class="explain">The Network Map gets the terrain data from the server at this address.</p>
-      <p class="typical">If your mesh has internet access you will not need to change this setting.</p>
-      <p class="obstacle">
-        If your mesh does not have internet access you will need to set up your own map server and enter its address here.
-      </p>
-      <p class="learnmore">
-        You can learn how to set up your own map server by reading 
-        <a href="http://code.google.com/p/afrimesh/wiki/HowTo">HowToMapServer</a>
-      </p>
-    </div>
-
     <div class="label">Location</div>
     <input id="location" />
   </fieldset>
