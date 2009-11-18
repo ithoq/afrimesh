@@ -40,7 +40,7 @@
 
 struct uci_context* UCI_CONTEXT;
 
-bool _uci_show_package(const char* package, struct json_object* result);
+int _uci_show_package(const char* package, struct json_object* result);
 bool uci_show_package(const char* package);
 bool uci_set_config(const char* config, const char* section, const char* option, const char* value);
 
