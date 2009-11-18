@@ -59,7 +59,7 @@ struct json_object* jsonrpc_dispatch_uci_show(const char* name, struct json_obje
     char** p;
     for (p = configs; *p; p++) {
       int num_sections = _uci_show_package(*p, result);
-      //log_message("Queried package: %s -> %d\n", *p, num_sections);
+      //printf("Queried package: %s -> %d\n", *p, num_sections);
     }
   }
   struct json_object* response = json_object_new_object();

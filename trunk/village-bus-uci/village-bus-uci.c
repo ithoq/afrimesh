@@ -46,13 +46,14 @@ static struct uci_type_list* type_list = NULL;
 /**
  *
  */
-bool _uci_show_package(const char* package, struct json_object* result)
+int _uci_show_package(const char* package, struct json_object* result)
 {
   int num_sections = 0;
   struct uci_ptr ptr;
   if (uci_lookup_ptr(UCI_CONTEXT, &ptr, package, true) != UCI_OK) {
     log_message("uci_show: could not lookup package\n");
-    uci_perror(UCI_CONTEXT, "village-bus-uci");
+    //uci_perror(UCI_CONTEXT, "village-bus-uci");
+    return 0;
   }
 
   struct json_object* json_package = json_object_new_object();

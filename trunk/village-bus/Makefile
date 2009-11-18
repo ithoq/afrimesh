@@ -118,9 +118,10 @@ SET1={"config":"afrimesh","section":"potato","option":"asterisk","value":"127.0.
 SET2={"config":"afrimesh","section":"potato","option":"trunkcalls","value":"true"}
 
 test-jsonrpc-uci :
-	#./village-bus /uci '{ $(RPC), "method" : "show", "params" : [ "" ] }'	
-	./village-bus /uci '{ $(RPC), "method" : "show", "params" : [ "afrimesh.location" ] }'
-	#./village-bus /uci '{ $(RPC), "method" : "set", "params" : [ [ $(SET1), $(SET2) ] ] }'	
+	@#./village-bus /uci '{ $(RPC), "method" : "show", "params" : [ "afrimesh.location" ] }'
+	@#./village-bus /uci '{ $(RPC), "method" : "set", "params" : [ [ $(SET1), $(SET2) ] ] }'	
+	./village-bus /uci '{ $(RPC), "method" : "show", "params" : [ "" ] }'	
+
 
 
 HOST="192.168.20.1", "public"
@@ -147,7 +148,8 @@ test-jsonrpc-ipkg :
 	./village-bus /ipkg '{ $(RPC), "method" : "upgrade", "params" : [ "afrimesh-base" ] }'
 
 
-
+# ./village-bus /sys '{ "id" : 123, "version" : "2.0", "method" : "syslog", "params" : [ 3 ] }'
+# ./village-bus /uci '{ "id" : 123, "version" : "2.0", "method" : "show", "params" : [ "system" ] }'
 # /www/cgi-bin/village-bus /ipkg '{ "id" : 123, "version" : "2.0", "method" : "upgrade", "params" : [ "afrimesh-base" ] }'
 
 # run /syslog '{ "id" : 123, "version" : "2.0", "method" : "read", "params" : [ 3 ] }'
