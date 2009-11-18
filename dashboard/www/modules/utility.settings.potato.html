@@ -10,58 +10,74 @@
 <!-- h2>Settings</h2 -->
 
 <form class="two-column">
+
+  <table border=0>
+    <tr valign="top">
+
+      <td>
+        <fieldset>
+          <legend>Network</legend>
+          <div class="label">IP Address</div>
+          <input  id="afrimesh|settings|network|wireless|address" />
+          <div class="tooltip"><h3>ip address</h3></div>
+          <div class="label">Netmask</div>
+          <input  id="afrimesh|settings|network|wireless|netmask" />
+          <div class="tooltip"><h3>netmask</h3></div>
+        </fieldset>
+        
+        <fieldset>
+          <legend>Wireless</legend>
+          <div class="label">Channel</div>
+          <input  id="afrimesh|settings|network|wireless|channel" />
+          <div class="tooltip"><h3>channel</h3></div>
+          <div class="label">SSID</div>
+          <input  id="afrimesh|settings|network|wireless|ssid" />
+          <div class="tooltip"><h3>ssid</h3></div>
+          <div class="label">BSSID</div>
+          <input  id="afrimesh|settings|network|wireless|bssid" />
+          <div class="tooltip"><h3>bssid</h3></div>
+        </fieldset>      
+      </td>
+
+      <td>
+        <fieldset>
+          <legend>B.A.T.M.A.N.</legend>
+          <div class="label">Visualization Server</div>
+          <input id="afrimesh|settings|network|mesh|vis_server" style="background:#FFAAAA;" type="text" />
+          <div class="tooltip"><h3>visualization server</h3>
+            <p class="explain">The Network Map gets the available mesh nodes and their connections from the server at this address.</p>
+            <p class="typical">
+              By default the visualization server runs on the same address as the dashboard server and you should not need to change it.
+            </p>
+            <p class="learnmore">
+              You can learn how to configure a different vis server by reading the
+              <a href="http://code.google.com/p/afrimesh/wiki/HowTo">HowtoVisServer</a>
+            </p>
+            <p id="vis_server|error" style="color:#FF0000;"></p>
+          </div>
+        </fieldset>
+        
+        <fieldset>
+          <legend>Telephony</legend>
+          <div class="label">User Extension</div>
+          <input  id="extension" />
+          <div class="tooltip"><h3>user extension</h3></div>
+          <div class="label">Inbound DID</div>
+          <input  id="did|inbound" />
+          <div class="tooltip"><h3>inbound did</h3></div>
+          <div class="label">Trunk Calls</div>
+          <input id="afrimesh|settings|potato|trunkcalls" type="checkbox"  />
+          <div class="trunk">
+            <div class="label">Asterisk Server</div>
+            <input  id="afrimesh|settings|potato|asterisk" />
+            <div class="tooltip"><h3>asterisk</h3></div>
+          </div>
+        </fieldset>
+      </td>
+  </tr></table>
+
   <fieldset>
-    <legend>Address</legend>
-
-    <div class="label">Mesh IP Address</div>
-    <input  id="afrimesh|settings|network|wireless|address" />
-    <div class="tooltip"><h3>ip address</h3></div>
-
-    <div class="label">Netmask</div>
-    <input  id="afrimesh|settings|network|wireless|netmask" />
-    <div class="tooltip"><h3>netmask</h3></div>
-  </fieldset>
-
-  <fieldset>
-    <legend>Telephone</legend>
-
-    <div class="label">User Extension</div>
-    <input  id="extension" />
-    <div class="tooltip"><h3>user extension</h3></div>
-
-    <div class="label">Inbound DID</div>
-    <input  id="did|inbound" />
-    <div class="tooltip"><h3>inbound did</h3></div>
-
-    <div class="label">Trunk Calls</div>
-    <input id="afrimesh|settings|potato|trunkcalls" type="checkbox"  />
-    
-    <div class="trunk">
-      <div class="label">Asterisk Server</div>
-      <input  id="afrimesh|settings|potato|asterisk" />
-      <div class="tooltip"><h3>asterisk</h3></div>
-    </div>
-
-
-  </fieldset>
-
-  <fieldset>
-    <legend>Network</legend>
-
-    <div class="label">Visualization Server</div>
-    <input id="afrimesh|settings|network|mesh|vis_server" style="background:#FFAAAA;" type="text" />
-    <div class="tooltip"><h3>visualization server</h3>
-        <p class="explain">The Network Map gets the available mesh nodes and their connections from the server at this address.</p>
-        <p class="typical">
-          By default the visualization server runs on the same address as the dashboard server and you should not need to change it.
-        </p>
-        <p class="learnmore">
-          You can learn how to configure a different vis server by reading the
-          <a href="http://code.google.com/p/afrimesh/wiki/HowTo">HowtoVisServer</a>
-        </p>
-        <p id="vis_server|error" style="color:#FF0000;"></p>
-    </div>
-
+    <legend>Map</legend>
     <div class="label">Map Server</div>
     <input id="afrimesh|settings|map|server"  type="text" />
     <div class="tooltip"><h3>map server</h3>
@@ -80,21 +96,6 @@
     <input id="location" />
   </fieldset>
 
-  <fieldset>
-    <legend>Wireless</legend>
-    
-    <div class="label">Channel</div>
-    <input  id="afrimesh|settings|network|wireless|channel" />
-    <div class="tooltip"><h3>channel</h3></div>
-
-    <div class="label">SSID</div>
-    <input  id="afrimesh|settings|network|wireless|ssid" />
-    <div class="tooltip"><h3>ssid</h3></div>
-
-    <div class="label">BSSID</div>
-    <input  id="afrimesh|settings|network|wireless|bssid" />
-    <div class="tooltip"><h3>bssid</h3></div>
-  </fieldset>
 </form>
 
 
