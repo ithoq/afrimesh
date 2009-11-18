@@ -9,6 +9,10 @@
 
 var populate_dom = null;
 var populate_select_interface = null;
+var populate_mesh_controls = null;
+var update_asterisk_server = null;
+var update_radius_server = null;
+var update_vis_server = null;
 var LocationMap = null;
 (function() {
 
@@ -73,9 +77,23 @@ var LocationMap = null;
     }
     $("select.[id*=afrimesh|settings|internet_gateway|snmp|interface]").html(options);
   }
+
+  update_mesh_controls = function() {
+    var routing_class = afrimesh.settings.network.mesh.routing_class;
+    var gateway_class = afrimesh.settings.network.mesh.gateway_class;
+    if (gateway_class != undefined && 
+        gateway_class != "0" && 
+        gateway_class != "") {
+      $("input[name='is_mesh_gateway']").attr("checked", true);
+    } else {
+      $("input[name='is_mesh_gateway']").attr("checked", false);
+      $("select.[id*=afrimesh|settings|network|mesh|routing_class]").val(routing_class);
+    }
+    $("input[name='is_mesh_gateway']").change();
+  };
   
   update_asterisk_server = function() {
-    console.debug("checked: " + $("input.[id*=afrimesh|settings|potato|trunkcalls]").is(":checked"));
+    //console.debug("checked: " + $("input.[id*=afrimesh|settings|potato|trunkcalls]").is(":checked"));
     var enabled = $("input.[id*=afrimesh|settings|potato|trunkcalls]").attr("checked");
     if (!enabled) {
       $(".trunk").hide();
@@ -85,33 +103,36 @@ var LocationMap = null;
     var server = $("input.[id*=afrimesh|settings|potato|asterisk]").val();
     console.debug("asterisk server: " + server);
     // TODO - try to ping asterisk server
-  }
+  };
   
   update_vis_server = function() {
     $("input.[id*=afrimesh|settings|network|mesh|vis_server]").css("background", "#FFAAAA");
     try {
-      var routes = afrimesh.villagebus.mesh_topology();
-      if (routes != undefined && isArray(routes)) {
-        $("input.[id*=afrimesh|settings|network|mesh|vis_server]").css("background", "#AAFFAA");
-        $("p.[id*=vis_server|error]").html("");
-      } else {
-        console.debug("utility.settings.js->update_vis_server: Visualization server unreachable.");
-        $("p.[id*=vis_server|error]").html("Visualization server unreachable.");
-      }
+      //var routes = afrimesh.villagebus.mesh_topology();
+      function update (routes) {
+        if (routes != undefined && isArray(routes)) {
+          $("input.[id*=afrimesh|settings|network|mesh|vis_server]").css("background", "#AAFFAA");
+          $("p.[id*=vis_server|error]").html("");
+        } else {
+          console.debug("utility.settings.js->update_vis_server: Visualization server unreachable.");
+          $("p.[id*=vis_server|error]").html("Visualization server unreachable.");
+        }
+      };
+      afrimesh.villagebus.mesh_topology.vis.async(update);
     } catch (error) {
       $("p.[id*=vis_server|error]").html("Visualization server unreachable. " + error + ".");
       console.debug("Vis server is unreachable. " + error);
     }
-  }
+  };
   
   update_radius_server = function() {
     var radtype_current = afrimesh.settings.radius.radtype;
     if (radtype_current == 1) {
       $("select.[id*=afrimesh|settings|radius|radtype]").html
-        ("<option value = '1' selected>mysql</option> <option value = '2'>memcachcedb</option>");
+        ("<option value = '1' selected>mysql</option> <option value = '2'>memcachedb</option>");
     } else {
       $("select.[id*=afrimesh|settings|radius|radtype]").html
-      ("<option value = '1'>mysql</option> <option value = '2' selected>memcachcedb</option>");
+      ("<option value = '1'>mysql</option> <option value = '2' selected>memcachedb</option>");
     }
     
     $("input.[id*=afrimesh|settings|radius|server]").css("background", "#FFAAAA");
@@ -135,7 +156,7 @@ var LocationMap = null;
       console.debug("Unexpected error while contacting RADIUS server: " + error);
       $("p.[id*=radius|server|error]").html("RADIUS server unreachable. Unknown reason.");
     }
-  }
+  };
   
   
   /** create a map which can be used to set the router location --------- */

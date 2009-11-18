@@ -294,7 +294,7 @@ form.two-column .label {
   width: 170px;
   float: left;
 }
-form.two-column .trunk {
+form.two-column .trunk, .gateway_class, .routing_class {
   margin-top: .5em;
 }
 form.two-column input, select  {
