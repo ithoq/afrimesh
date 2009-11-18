@@ -12,12 +12,13 @@
 var afrimesh = undefined;
 (function() {
   function Afrimesh() {
-    console.log("Location: " + window.location.hostname);
+    console.log("Window Location: " + window.location.hostname);
     this.settings = { 
       //address      : window.location.hostname ? window.location.hostname : "196.211.3.106",
       address      : window.location.hostname ? window.location.hostname : "192.168.1.1",
       ajax_proxy   : "/cgi-bin/ajax-proxy.cgi?url="
     };
+    console.log("this.settings.address : " + this.settings.address);
 
     this.storage    = BootStorage(this);
     this.network    = BootNetwork(this);
@@ -25,11 +26,13 @@ var afrimesh = undefined;
     this.villagebus = BootVillageBus(this);
 
     // override default settings with live settings from the server
-    console.debug("Booting from: " + window.location.hostname ? window.location.hostname : "local-" + this.settings.address);
+    console.log("Booting config from: " + this.settings.address);
     this.settings = BootSettings(this, this.settings.address); 
 
   };
   afrimesh = new Afrimesh();
+  console.log("afrimesh.settings.address : " + afrimesh.settings.address);
+
 })();
 console.debug("loaded afrimesh.js - completed afrimesh node bootstrap");
 
