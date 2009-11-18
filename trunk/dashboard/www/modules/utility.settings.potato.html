@@ -43,7 +43,7 @@
         <fieldset>
           <legend>B.A.T.M.A.N.</legend>
           <div class="label">Visualization Server</div>
-          <input id="afrimesh|settings|network|mesh|vis_server" style="background:#FFAAAA;" type="text" />
+          <input id="afrimesh|settings|network|mesh|vis_server" style="background:#FFAAAA;" />
           <div class="tooltip"><h3>visualization server</h3>
             <p class="explain">The Network Map gets the available mesh nodes and their connections from the server at this address.</p>
             <p class="typical">
@@ -55,6 +55,53 @@
             </p>
             <p id="vis_server|error" style="color:#FF0000;"></p>
           </div>
+          <div class="label">Mesh Gateway</div>
+          <input id="is_mesh_gateway" name="is_mesh_gateway" type="checkbox"  />
+          <div class="routing_class">
+            <div class="label">Routing Class</div>
+            <!-- input  id="afrimesh|settings|network|mesh|routing_class" / -->
+            <select id="afrimesh|settings|network|mesh|routing_class">
+              <option value="0">disable default route</option>
+              <option value="1">use fastest connection</option>
+              <option value="2">use most stable connection</option>
+              <option value="3">auto</option>
+            </select>
+            <div class="tooltip"><h3>routing class</h3>
+              <p class="explain">
+              The routing class can be set to four values - it enables "internet search modus". The deamon will choose an internet gateway based on certain criteria (unless "\-p" is specified):
+              default: 0 \-> set no default route
+              allowed values: 1 \-> use fast connection
+              2  \-> use stable connection
+              3  \-> use fast-switch connection
+              XX \-> use late-switch connection
+              In level 1, B.A.T.M.A.N tries to find the best available connection by watching the uplinks throughput and the link quality.
+              In level 2, B.A.T.M.A.N compares the link quality of the internet node and chooses the one with the best link quality.
+              In level 3, B.A.T.M.A.N compares the link quality of the internet node and chooses the one with the best link quality but switches to another gateway as soon as a better connection is found.
+              In level XX (number between 3 and 256) B.A.T.M.A.N compares the link quality of the internet node and chooses the one with the best link quality but switches to another gateway as soon as this gateway has a TQ value which is XX better than the currently selected gateway.
+              </p>
+            </div>
+          </div>
+          <div class="gateway_class">
+            <div class="label">Gateway Class</div>
+            <input  id="afrimesh|settings|network|mesh|gateway_class" />
+            <div class="tooltip"><h3>gateway class</h3> 
+              <p class="explain">
+                The gateway class is used to tell other nodes in the network your available internet bandwidth. Just enter any number (optionally followed by "kbit" or "mbit") and the daemon will guess your appropriate gateway class. Use "/" to seperate the download and upload rates. You can omit the upload rate and batmand will assume an upload of download / 5.
+              </p>
+              <p class="typical">
+                default: <code>0 -> gateway disabled</code>
+                examples: <br/>
+                <code>5000<br/>
+                  5000kbit<br/>
+                  5mbit<br/>
+                  5mbit/1024<br/>
+                  5mbit/1024kbit<br/>
+                  5mbit/1mbit<br/>
+                </code>
+              </p>
+            </div>
+          </div>
+
         </fieldset>
         
         <fieldset>
@@ -110,6 +157,7 @@
   ready = function() { // INJ 'ready' should be the only symbol we're exposing to the global namespace
     console.debug("loaded utility.settings.html");
 
+    /** set controls to the values of afrimesh.settings.* ----------------- */
     populate_dom();
 
     /** install tooltips -------------------------------------------------- */
@@ -150,6 +198,19 @@
         save_element(this.id, this.value);
         update_vis_server();
       });
+    $("#is_mesh_gateway").bind("change", function(event) { 
+        if ($("input[name='is_mesh_gateway']").attr("checked")) {
+          $(".routing_class").hide();
+          $(".gateway_class").show();
+          $("select.[id*=afrimesh|settings|network|mesh|routing_class]").val(0);
+          save_element("afrimesh|settings|network|mesh|routing_class", "");
+        } else {
+          $(".routing_class").show();
+          $(".gateway_class").hide();
+          $("input.[id*=afrimesh|settings|network|mesh|gateway_class]").val("");
+          save_element("afrimesh|settings|network|mesh|gateway_class", "");
+        }
+      });
     $("input.[id=afrimesh|settings|potato|trunkcalls]").bind("change", function(event) { 
         save_element(this.id, this.checked.toString());
         update_asterisk_server();
@@ -158,6 +219,9 @@
         save_element(this.id, this.value);
         update_asterisk_server();
       });
+
+    /** update mesh routing controls --------------------------------- */
+    update_mesh_controls();
 
     /** query asterisk server for availability ----------------------- */
     update_asterisk_server();
