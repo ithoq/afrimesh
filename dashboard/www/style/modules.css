@@ -276,9 +276,9 @@ form.two-column {
   padding: 0px; 
 }
 form.two-column fieldset {
-  /*border:1px solid blue;*/
+  border:1px solid blue;
   padding-bottom: 1.0em;
-  width: 400px;
+  width: 320px;
 }
 form.two-column fieldset:last-child {
   padding-bottom: 0px;
@@ -288,10 +288,10 @@ form.two-column legend {
   padding-bottom: .25em;
 }
 form.two-column .label {
-  /*border:1px solid red;*/
+  border:1px solid red;
   color: darkgray; 
   font-size: 1.25em;
-  width: 170px;
+  width: 120px;
   float: left;
 }
 form.two-column .trunk, .gateway_class, .routing_class {
