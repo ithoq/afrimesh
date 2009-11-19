@@ -220,7 +220,10 @@ td.v-brace {
 
 
 /* - utility upgrade module ---------------------------------------------- */
-.utility-upgrade td {}
+.utility-upgrade td { 
+  margin:0px; 
+  padding:0px; 
+}
 
 
 /* - internet-configure module -------------------------------------------- */

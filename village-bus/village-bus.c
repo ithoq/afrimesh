@@ -218,6 +218,14 @@ struct json_object* jsonrpc_dispatch_sys_version(const char* name, struct json_o
   return sys_version();
 }
 
+struct json_object* jsonrpc_dispatch_sys_upgrade(const char* name, struct json_object* arguments)
+{
+  char* filename = json_object_get_string(json_object_array_get_idx(arguments, 0));
+  // TODO - deprecate
+  return NULL;
+}
+
+
 /** ipkg ----------------------------------------------------------------- */
 struct json_object* jsonrpc_dispatch_ipkg_update (const char* name, struct json_object* arguments)
 {
