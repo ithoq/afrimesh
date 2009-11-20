@@ -23,7 +23,7 @@
       <td>Upload new firmware</td>
       <td align="right">
         <form id="uploader" name="uploader" method="POST" enctype="multipart/form-data" 
-              action="http://192.168.1.1/cgi-bin/firmware-upload.cgi">
+              action="/cgi-bin/firmware-upload.cgi">
           <input name="file" id="file" type="file" />
           <button>upload</button><br/>
         </form>
@@ -158,7 +158,7 @@
           $("#reflash-firmware button").html("<img src='images/indicator.gif'/>");
           $("#reflash-firmware td:eq(0)").html("Flashing firmware image . . .");
           $("#post_iframe").contents().text("");
-          $("#post_iframe").attr("src", "http://192.168.1.1/cgi-bin/firmware-flash.cgi?image=" + result.image);
+          $("#post_iframe").attr("src", "/cgi-bin/firmware-flash.cgi?image=" + result.image);
           timer = setTimeout(check_flash, 1000);
         });
     };
