@@ -26,14 +26,24 @@
               action="http://192.168.1.1/cgi-bin/firmware-upload.cgi">
           <input name="file" id="file" type="file" />
           <button>upload</button><br/>
-          <iframe /*style="width: 0px; height:0px; visibility:hidden;" */
-                  id="post_iframe" name="post_iframe" src=""></iframe>
         </form>
       </td>
     </tr>
+    <tr><td colspan=2>&nbsp;</td></tr>
+    <tr>
+      <td colspan=2>
+        <div style="width:600px; max-height:200px; overflow:auto; word-wrap:break-word; white-space:pre-wrap;" 
+             id="log"></div>
+      </td>
+    </tr>
   </table>
-
+  
 </div>
+
+<!-- hidden iframe for communication with the router during reflash operation -->
+<iframe style="width: 0px; height:0px; visibility:hidden;"
+        id="post_iframe" name="post_iframe" src="">
+</iframe>
 
 <script type="text/javascript"> //<![CDATA[    
 (function() {
@@ -64,7 +74,7 @@
   function on_update_packages() {
     $("#update-packages button").unbind("click");
     $("#update-packages button").html("<img src='images/indicator.gif'/>");
-    $("#update-packages td:eq(0)").html("Updating package list...");
+    $("#update-packages td:eq(0)").html("Updating package list . . .");
     $("#reflash-firmware").html("");
 
     var address = afrimesh.settings.address;
@@ -90,7 +100,7 @@
       $("#update-packages button").click(function() { 
           $("#update-packages button").unbind("click");
           $("#update-packages button").html("<img src='images/indicator.gif'/>")
-          $("#update-packages td:eq(0)").html("Updating packages...");
+          $("#update-packages td:eq(0)").html("Updating packages . . .");
           upgrade_complete([], packages);
         });  
     };
@@ -115,7 +125,7 @@
   function on_reflash_firmware() {
     $("#reflash-firmware button").unbind("click");
     $("#reflash-firmware button").html("<img src='images/indicator.gif'/>");
-    $("#reflash-firmware td:eq(0)").html("Uploading firmware image...");
+    $("#reflash-firmware td:eq(0)").html("Uploading firmware image . . .");
     $("#reflash-firmware #file").hide();
     $("#update-packages").html("");
 
@@ -129,7 +139,7 @@
     var timer = setTimeout(check_upload, 1000);
     function check_upload() {
       clearTimeout(timer);
-      $("#reflash-firmware td:eq(0)").append(".");
+      $("#reflash-firmware td:eq(0)").append(" .");
       var result = $("#post_iframe").contents().text();
       if (result == "") { // TODO - ajax to check progress % ?  ->  the original form needs to send a unique id which our haserl upload handler can use to write a file containing progress info
         timer = setTimeout(check_upload, 1000);
@@ -146,7 +156,7 @@
       $("#reflash-firmware button").click(function() { 
           $("#reflash-firmware button").unbind("click");
           $("#reflash-firmware button").html("<img src='images/indicator.gif'/>");
-          $("#reflash-firmware td:eq(0)").html("Flashing firmware image...");
+          $("#reflash-firmware td:eq(0)").html("Flashing firmware image . . .");
           $("#post_iframe").contents().text("");
           $("#post_iframe").attr("src", "http://192.168.1.1/cgi-bin/firmware-flash.cgi?image=" + result.image);
           timer = setTimeout(check_flash, 1000);
@@ -155,25 +165,23 @@
 
     function check_flash() {
       clearTimeout(timer);
-      $("#reflash-firmware td:eq(0)").append(".");
+      $("#reflash-firmware td:eq(0)").append(" .");
       var result = $("#post_iframe").contents().text();
-      if (result == "") { // TODO - ajax to check progress % ?  ->  the original form needs to send a unique id which our haserl upload handler can use to write a file containing progress info
-        console.debug("still flashing");
-        timer = setTimeout(check_flash, 1000);
-        return;
-      }
-      console.debug("RESULT: " + result);
-      result = JSON.parse(result);
-      if (!result || result.error) {
+      if (result.indexOf("\"error\"") != -1) {
+        result = JSON.parse(result);
         $("#reflash-firmware td:eq(0)").html("<b>error:</b> " + result.error);
-        $("#reflash-firmware button").html("retry").click(function() {
-            $("ul#menu ul#utility li#upgrade").click(); 
-          });
+        $("#reflash-firmware button").html("retry").click(done);
+        return;
+      } else if (result.indexOf("Rebooting") == -1) {
+        $("#reflash-firmware #log").html("<pre>" + result + "</pre>");
+        timer = setTimeout(check_flash, 10000); 
         return;
       }
-      $("#reflash-firmware td:eq(0)").html("<p>" + result.output + "</p>" + 
-                                           "<p>Firmware flashed successfully. Rebooting router.</p>");
+      console.log("UPGRADED ROUTER: " + result);
+      $("#reflash-firmware td:eq(0)").html("<p>Upgrade completed</p><br/>" + 
+                                           "<p>Rebooting system . . .</p><br/>");
       $("#reflash-firmware button").hide();
+      $("#reflash-firmware #log").hide();
     };
   };
 

@@ -1,12 +1,10 @@
-#!/usr/bin/haserl --accept-all 
+#!/usr/bin/haserl --accept-all
 content-type: text/plain
 
 <%
-
   if test -n "$FORM_image"; then
-
     # sysupgrade options
-    OPTIONS="-d 10 -v"
+    OPTIONS="-v"
     
     # check that the firmware image exists
     IMAGEFILE="/tmp/$FORM_image.img"
@@ -15,19 +13,23 @@ content-type: text/plain
       exit 1
     }
 
-    # perform the actual upgrade
-    #UPGRADELOG=`ls -al $IMAGEFILE 2>&1`
-    UPGRADELOG=`/sbin/sysupgrade $OPTIONS $IMAGEFILE 2>&1`
+    # perform the actual upgrade 
+    /sbin/sysupgrade $OPTIONS $IMAGEFILE 2>&1
     [ $? -eq 0 ] || {
       rm -f "$IMAGEFILE"
-      echo "{ \"error\" : \"$(echo $UPGRADELOG)\" }"
+      echo "{ \"error\" : \"sysupgrade failed\" }"
       exit 1
     }
-    
-    # reflash firmware
-    echo "{ \"output\" : \"$(echo $UPGRADELOG)\" }"
+    rm -f "$IMAGEFILE"
+    echo "GREAT SUCCESS!"
+    echo "Upgrade completed"
+    echo "Rebooting system..."
 
   else
-    echo "{ \"error\" : \"No image found\" }"
+    echo "{ \"error\" : \"No firmware image specified\" }"
   fi
 %>
+
+
+
+
