@@ -23,10 +23,10 @@
       <td>Upload new firmware</td>
       <td align="right">
         <form id="uploader" name="uploader" method="POST" enctype="multipart/form-data" 
-              action="http://localhost/cgi-bin/firmware-upload.cgi">
+              action="http://192.168.1.1/cgi-bin/firmware-upload.cgi">
           <input name="file" id="file" type="file" />
           <button>upload</button><br/>
-          <iframe style="width: 0px; height:0px; visibility:hidden;" 
+          <iframe /*style="width: 0px; height:0px; visibility:hidden;" */
                   id="post_iframe" name="post_iframe" src=""></iframe>
         </form>
       </td>
@@ -54,30 +54,35 @@
     console.debug("unloaded utility.upgrade.html");
   };
 
+  function done() {
+    $("ul#menu ul#utility li#upgrade").click(); 
+  };
+
 
   /** update packages ------------------------------------------------------ */
 
   function on_update_packages() {
     $("#update-packages button").unbind("click");
     $("#update-packages button").html("<img src='images/indicator.gif'/>");
-    $("#update-packages td:eq(0)").html("<pre>Updating package list...</pre>");
+    $("#update-packages td:eq(0)").html("Updating package list...");
     $("#reflash-firmware").html("");
 
     var address = afrimesh.settings.address;
 
     afrimesh.villagebus.ipkg.update.async(update_complete, address);
     function update_complete(log) {
-      $("#update-packages td:eq(0)").append("<pre>" + log.join("\n") + "</pre>");
+      $("#update-packages td:eq(0)").append(log.join("<br/>"));
       afrimesh.villagebus.ipkg.list.async(list_complete, address, "upgradable");
     };
 
     function list_complete(packages) {
       var updates = $("#update-packages td:eq(0)").html("");
       var html = "<table cellspacing=0 cellpadding=0 border=0 style='margin:0px; padding:0px;'>";
+      //html += "<tr><td width=100><i>package</i></td><td><i>current</i></td><td><i>update</i></td></tr>";
       packages.map(function(package) { 
-          html += "<tr>" + "<td><pre>" + package.name    + "    </pre></td>" + 
-                           "<td><pre>" + package.version + "    </pre></td>" +
-                           "<td><pre>" + package.comment + "</pre></td></tr>";
+          html += "<tr>" + "<td width=100><b>" + package.name    + "</b>&nbsp;&nbsp;</td>" + 
+                           "<td>"    + package.version + "&nbsp;&nbsp;</td>" +
+                           "<td>"    + package.comment + "</td></tr>";
         });
       html += "</table";
       updates.append(html);
@@ -85,13 +90,13 @@
       $("#update-packages button").click(function() { 
           $("#update-packages button").unbind("click");
           $("#update-packages button").html("<img src='images/indicator.gif'/>")
-          $("#update-packages td:eq(0)").html("<pre>Updating packages...</pre>");
+          $("#update-packages td:eq(0)").html("Updating packages...");
           upgrade_complete([], packages);
         });  
     };
     
     function upgrade_complete(log, packages) {
-      $("#update-packages td:eq(0)").append("<pre>" + log.join("\n") + "</pre>");
+      $("#update-packages td:eq(0)").append(log.join("<br/>"));
       if (packages.length) {
         var package = packages.pop();
         afrimesh.villagebus.ipkg.upgrade.async(function(log) { 
@@ -99,7 +104,8 @@
           }, address, package.name);
         return;
       }
-      $("#update-packages button").html("done")
+      $("#update-packages button").html("done");
+      $("#update-packages button").click(done);
     };
   };
 
@@ -107,37 +113,67 @@
   /** upload firmware ------------------------------------------------------ */
 
   function on_reflash_firmware() {
-    $("#reflash-firmware #file").hide();
     $("#reflash-firmware button").unbind("click");
     $("#reflash-firmware button").html("<img src='images/indicator.gif'/>");
-    $("#reflash-firmware td:eq(0)").html("<pre>Uploading firmware image...</pre>");
+    $("#reflash-firmware td:eq(0)").html("Uploading firmware image...");
+    $("#reflash-firmware #file").hide();
     $("#update-packages").html("");
 
-    console.debug("uploading firmware");
-    $("#uploader").attr("target", "post_iframe");
-    $("#uploader").submit();
+    // post the firmware
+    $("#reflash-firmware #uploader").attr("target", "post_iframe");
+    $("#reflash-firmware #uploader").submit();
+    $("#reflash-firmware #uploader").unbind("submit");
+    $("#reflash-firmware #uploader").bind("submit", function() { return false; });
 
-    var timer = setTimeout(check_upload, 2000);
+    // check for upload completion
+    var timer = setTimeout(check_upload, 1000);
     function check_upload() {
       clearTimeout(timer);
+      $("#reflash-firmware td:eq(0)").append(".");
       var result = $("#post_iframe").contents().text();
-      if (result == "") {
-        // TODO - ajax to check progress % ?
-        // the original form needs to send a unique id which our haserl upload handler can use to 
-        // write a file containing progress info
-        timer = setTimeout(check_upload, 2000);
+      if (result == "") { // TODO - ajax to check progress % ?  ->  the original form needs to send a unique id which our haserl upload handler can use to write a file containing progress info
+        timer = setTimeout(check_upload, 1000);
         return;
       } 
       result = JSON.parse(result);
-      if (!result || result.error) {
-        console.error("UPLOAD FAILED");
-        $("#reflash-firmware button").html("cancel");
-        $("#reflash-firmware td:eq(0)").html("<pre>Firmware uploaded failed: " + result.error + "</pre>");
+      if (!result || result.error || !result.image || result.image == "") {
+        $("#reflash-firmware td:eq(0)").html("<b>error:</b> " + result.error);
+        $("#reflash-firmware button").html("retry").click(done);
         return;
       } 
-      console.debug("UPLOAD SUCCEEDED: " + JSON.stringify(result));
+      $("#reflash-firmware td:eq(0)").html("Firmware uploaded successfully. Ready to flash.");
       $("#reflash-firmware button").html("flash");
-      $("#reflash-firmware td:eq(0)").html("<pre>Firmware uploaded successfully</pre>");
+      $("#reflash-firmware button").click(function() { 
+          $("#reflash-firmware button").unbind("click");
+          $("#reflash-firmware button").html("<img src='images/indicator.gif'/>");
+          $("#reflash-firmware td:eq(0)").html("Flashing firmware image...");
+          $("#post_iframe").contents().text("");
+          $("#post_iframe").attr("src", "http://192.168.1.1/cgi-bin/firmware-flash.cgi?image=" + result.image);
+          timer = setTimeout(check_flash, 1000);
+        });
+    };
+
+    function check_flash() {
+      clearTimeout(timer);
+      $("#reflash-firmware td:eq(0)").append(".");
+      var result = $("#post_iframe").contents().text();
+      if (result == "") { // TODO - ajax to check progress % ?  ->  the original form needs to send a unique id which our haserl upload handler can use to write a file containing progress info
+        console.debug("still flashing");
+        timer = setTimeout(check_flash, 1000);
+        return;
+      }
+      console.debug("RESULT: " + result);
+      result = JSON.parse(result);
+      if (!result || result.error) {
+        $("#reflash-firmware td:eq(0)").html("<b>error:</b> " + result.error);
+        $("#reflash-firmware button").html("retry").click(function() {
+            $("ul#menu ul#utility li#upgrade").click(); 
+          });
+        return;
+      }
+      $("#reflash-firmware td:eq(0)").html("<p>" + result.output + "</p>" + 
+                                           "<p>Firmware flashed successfully. Rebooting router.</p>");
+      $("#reflash-firmware button").hide();
     };
   };
 
