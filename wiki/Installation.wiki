@@ -13,8 +13,8 @@
   * Step 1 - Add the Afrimesh package archive keys to your system:
   {{{
   sudo  su -
-  apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 382AF1D2
-  echo "deb http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu hardy main" >> /etc/apt/sources.list 
+  apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 50CFBA3E
+  echo "deb http://ppa.launchpad.net/afrimesh/ppa/ubuntu hardy main" >> /etc/apt/sources.list 
   apt-get update
   }}}
 
