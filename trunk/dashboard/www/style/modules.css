@@ -179,7 +179,7 @@ td.v-brace {
   padding-right: 10px;
 }
 .network-messages td#timestamp {
-  width: 8.0em;
+  width: 10.0em;
   color: gray;
 }
 .network-messages td#level {
