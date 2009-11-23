@@ -14,8 +14,9 @@ var afrimesh = undefined;
   function Afrimesh() {
     console.log("Window Location: " + window.location.hostname);
     this.settings = { 
-      //address      : window.location.hostname ? window.location.hostname : "196.211.3.106",
-      address      : window.location.hostname ? window.location.hostname : "192.168.1.1",
+      address      : window.location.hostname ? window.location.hostname : "196.211.3.106",
+      //address      : window.location.hostname ? window.location.hostname : "192.168.1.1",
+      //address      : window.location.hostname ? window.location.hostname : "192.168.20.2",
       ajax_proxy   : "/cgi-bin/ajax-proxy.cgi?url="
     };
     console.log("this.settings.address : " + this.settings.address);
