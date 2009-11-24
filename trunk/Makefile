@@ -262,7 +262,7 @@ depends-packages-linux-json-c :
 	#wget --no-clobber -P $(PKG_BUILD_DIR) http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu/pool/main/j/json-c/json-c_0.9.orig.tar.gz
 	@cd $(PKG_BUILD_DIR)/json-c-0.9 ; debuild -S
 	# to build binaries
-	#@cd $(PKG_BUILD_DIR)/uci-0.7.5 ; pdebuild
+	#@cd $(PKG_BUILD_DIR)/json-c-0.9 ; pdebuild
 	#@cd $(PKG_BUILD_DIR)/json-c-0.9 ; fakeroot dpkg-buildpackage -b -uc
 
 
