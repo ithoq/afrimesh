@@ -49,17 +49,26 @@ UCI_LDFLAGS=$(DEPROOT)/lib/libuci.a
 SNMP_CFLAGS=
 SNMP_LDFLAGS=-lnetsnmp
 
-#-std=c99 
+# build flags
 CC=gcc 
 INCLUDES+=-I. -I.. -I../common -I../village-bus-snmp -I../village-bus-uci -I$(DEPROOT)/include 
 DEFINES+=
-CFLAGS+=-g $(DEFINES) $(JSON_CFLAGS) $(UCI_CFLAGS) $(SNMP_CFLAGS) -DAFRIMESH_VERSION="\"$(VERSION)\""
-LDFLAGS+=-L$(DEPROOT)/lib $(JSON_LDFLAGS) $(UCI_LDFLAGS) $(SNMP_LDFLAGS)
+CFLAGS+=-g $(DEFINES) $(JSON_CFLAGS) $(UCI_CFLAGS) -DAFRIMESH_VERSION="\"$(VERSION)\""
+LDFLAGS+=-L$(DEPROOT)/lib $(JSON_LDFLAGS) $(UCI_LDFLAGS) 
+ifndef DISABLE_SNMP
+CFLAGS+=$(SNMP_CFLAGS)
+LDFLAGS+=$(SNMP_LDFLAGS)
+else
+CFLAGS+=-DDISABLE_SNMP
+endif
 
-
-objects=safelib.o json_cgi.o json_rpc.o village-bus-snmp.o village-bus-uci.o village-bus-sys.o village-bus.o main.o 
+# objects
+objects=safelib.o json_cgi.o json_rpc.o village-bus-uci.o village-bus-sys.o village-bus.o main.o 
 ifeq ($(FLAVOR),LINUX)
 objects+=fgetln.o
+endif
+ifndef DISABLE_SNMP
+objects+=village-bus-snmp.o 
 endif
 
 # targets

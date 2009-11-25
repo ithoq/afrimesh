@@ -132,7 +132,7 @@ struct json_object* jsonrpc_dispatch_uci_set(const char* name, struct json_objec
 
 
 /** - snmp -------------------------------------------------------------- */
-
+#ifndef DISABLE_SNMP
 /**
  * Handle request dispatch for snmp module
  */
@@ -193,7 +193,14 @@ struct json_object* jsonrpc_dispatch_snmp(const char* name, struct json_object* 
 
   return response;
 }
-
+#else
+struct json_object* jsonrpc_dispatch_snmp(const char* name, struct json_object* arguments)
+{
+  const char* message = "SNMP has been disabled in this build. Please recompile without the DISABLE_SNMP flag.";
+  log_message(message);
+  return jsonrpc_error(message);
+}
+#endif
 
 /** - sys --------------------------------------------------------------- */
 
