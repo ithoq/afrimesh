@@ -65,12 +65,14 @@ PKG_EXTRA_CFLAGS= \
   -I$(STAGING_DIR)/include-host \
 	-I$(STAGING_DIR_HOST)/include \
 	-include endian.h             \
+	-DDISABLE_SNMP	              \
 
 MAKE_VILLAGEBUS_ARGS += \
 	CC='$(TARGET_CC) $(PKG_EXTRA_CFLAGS) $(TARGET_CFLAGS_EXTRA) ' \
 	CFLAGS='$(TARGET_CFLAGS) ' \
 	LDFLAGS='$(TARGET_LDFLAGS) -ljson -luci -lnetsnmp' \
-	FLAVOR=LINUX
+	FLAVOR=LINUX \
+	DISABLE_SNMP=1
 
 
 
@@ -299,7 +301,7 @@ define Build/Configure
 endef
 
 define Build/Compile
-	cd $(PKG_BUILD_DIR)/village-bus ; VERSION=$(PKG_VERSION) make $(MAKE_VILLAGEBUS_ARGS) DISABLE_SNMP=1 
+	cd $(PKG_BUILD_DIR)/village-bus ; VERSION=$(PKG_VERSION) make $(MAKE_VILLAGEBUS_ARGS) 
 endef
 
 
