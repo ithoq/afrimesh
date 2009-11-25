@@ -32,7 +32,7 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ------------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=592
+PKG_REV:=593
 PKG_VERSION:=r$(PKG_REV)-0.4alpha
 PKG_RELEASE:=1
 
@@ -65,13 +65,13 @@ PKG_EXTRA_CFLAGS= \
   -I$(STAGING_DIR)/include-host \
 	-I$(STAGING_DIR_HOST)/include \
 	-include endian.h             \
-	-DDISABLE_SNMP	              \
+	-DDISABLE_SNMP                \
 
 MAKE_VILLAGEBUS_ARGS += \
 	CC='$(TARGET_CC) $(PKG_EXTRA_CFLAGS) $(TARGET_CFLAGS_EXTRA) ' \
 	CFLAGS='$(TARGET_CFLAGS) ' \
-	LDFLAGS='$(TARGET_LDFLAGS) -ljson -luci -lnetsnmp' \
-	FLAVOR=LINUX \
+	LDFLAGS='$(TARGET_LDFLAGS) -ljson -luci' \
+	FLAVOR='LINUX' \
 	DISABLE_SNMP=1
 
 
