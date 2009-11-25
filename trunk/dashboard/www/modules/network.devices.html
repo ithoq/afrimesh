@@ -60,8 +60,8 @@
         rows += "<td id='mac'>"     + router.mac     + "</td>";
         rows += "<td id='address'>" + router.address + "</td>";
         rows += "<td id='name'>"    + "name"         + "</td>";
-        rows += "<td id='usage'>"   + router.downloaded.bytes + "</td>";
-        rows += "<td id='usage'>"   + router.uploaded.bytes   + "</td>";
+        rows += "<td id='usage'>"   + (router.downloaded ? router.downloaded.bytes : "no data") + "</td>";
+        rows += "<td id='usage'>"   + (router.uploaded   ? router.uploaded.bytes   : "no data") + "</td>";
         rows += "<td id='version'>" + "" /*afrimesh.villagebus.sys.version(router.address)*/ + "</td>";
         //rows += "<td id='uname'>uname</td>";
         // TODO - this should be cached, async & wrapped around the router like accounting above
