@@ -299,7 +299,7 @@ define Build/Configure
 endef
 
 define Build/Compile
-	cd $(PKG_BUILD_DIR)/village-bus ; VERSION=$(PKG_VERSION) make $(MAKE_VILLAGEBUS_ARGS)
+	cd $(PKG_BUILD_DIR)/village-bus ; VERSION=$(PKG_VERSION) make $(MAKE_VILLAGEBUS_ARGS) DISABLE_SNMP=1 
 endef
 
 
