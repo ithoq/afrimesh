@@ -63,12 +63,12 @@ objects=safelib.o json_cgi.o json_rpc.o village-bus-uci.o village-bus-sys.o vill
 ifeq ($(FLAVOR),LINUX)
 objects+=fgetln.o
 endif
-ifneq ($(DISABLE_SNMP),1)
+ifeq ($(DISABLE_SNMP),1)
+CFLAGS+=-DDISABLE_SNMP
+else
 objects+=village-bus-snmp.o 
 CFLAGS+=$(SNMP_CFLAGS)
 LDFLAGS+=$(SNMP_LDFLAGS)
-else
-CFLAGS+=-DDISABLE_SNMP
 endif
 
 # targets
