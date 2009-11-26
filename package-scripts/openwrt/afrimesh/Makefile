@@ -246,7 +246,8 @@ define Package/afrimesh-potato/install
 	$(INSTALL_DIR)  $(1)/etc/config
 	$(INSTALL_CONF) ./files.potato/etc/config/afrimesh $(1)/etc/config
 	$(INSTALL_DIR)  $(1)/www/afrimesh
-	#$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/index.redirect.html  $(1)/www/index.html
+	$(INSTALL_CONF) ./files.potato/www/index.luci.html                  $(1)/www/afrimesh/index.luci.html
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/index.redirect.html  $(1)/www/afrimesh/index.redirect.html
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/index.potato.html    $(1)/www/afrimesh/index.html
 	$(INSTALL_DIR)  $(1)/www/cgi-bin
 	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/village-bus/village-bus                $(1)/www/cgi-bin/village-bus
@@ -282,6 +283,16 @@ define Package/afrimesh-potato/install
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/images/*.png   $(1)/www/afrimesh/style/images
 	$(INSTALL_DIR)  $(1)/www/afrimesh/style/images/controls
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/images/controls/*.png   $(1)/www/afrimesh/style/images/controls
+endef
+
+define Package/afrimesh-potato/postinst
+#!/bin/sh
+[ -n "$${IPKG_INSTROOT}" ] || {
+	# relocate LuCI 
+	echo "relocating LuCI"
+	cp /www/afrimesh/index.luci.html     /www/index.luci.html
+	cp /www/afrimesh/index.redirect.html /www/index.html
+}
 endef
 
 

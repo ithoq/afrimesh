@@ -137,15 +137,38 @@ var LocationMap = null;
   };
 
   update_map_server = function() {
-    $("input.[id*=afrimesh|settings|map|server]").css("background", "#FFAAAA");
-    function update (routes) {
+    $("input.[id*=afrimesh|settings|map|server]").css("background", "#FFAAAA")
+    $("#location").addClass("message");
+    $("#location").html("<p><br/><p>Contacting Map Server...</p>");
+
+    function update(data, textStatus) {
+      if (data == "") {
+        var message = "<p><br/><p>Could not contact Map Server.</p>";
+        message += "<p><br/><p><b>Please check:</b> ";
+        message += "The Map Server address and your network connection.";
+        message += "</p>";
+        $("#location").html(message);
+        return;
+      }
       $("input.[id*=afrimesh|settings|map|server]").css("background", "#AAFFAA");
       $("p.[id*=map|server|error]").html("");
+      $("#location").replaceWith("<div id='location' />");
+      var location_map = new LocationMap("location", 
+                                         parseFloat(afrimesh.settings.location.longitude),
+                                         parseFloat(afrimesh.settings.location.latitude),
+                                         parseFloat(afrimesh.settings.map.extent),
+                                         parseInt(afrimesh.settings.map.zoom));
+      var router = { address : afrimesh.settings.address };
+      location_map.router(router);
     };
+
     try {
       // if it's a valid map server it will have the OSM/OpenLayers scripts hosted
-      $.getScript("http://" + afrimesh.settings.map.server + "/openlayers/OpenStreetMap.js",
-                 update);
+      //$.getScript("http://" + afrimesh.settings.map.server + "/openlayers/OpenStreetMap.js",
+      //           update);
+      var request = $.get("http://" + afrimesh.settings.map.server + "/openlayers/OpenStreetMap.js",
+                          "", update, "text");
+      console.debug("REQUEST: " + request);
       /** TODO 
        * load OpenLayers.js
        * remove load() calls in afrimesh.maps.js

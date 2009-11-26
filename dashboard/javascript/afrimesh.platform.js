@@ -34,7 +34,7 @@
   platform.browser.sleep = function() {
   };
 
-    /** - capability tests ---------------------------------------------------- */
+  /** - capability tests ---------------------------------------------------- */
   try { load; } catch (e) {
     load = platform.browser.load;
   }
