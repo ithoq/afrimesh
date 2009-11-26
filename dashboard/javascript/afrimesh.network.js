@@ -123,6 +123,25 @@ function BootNetwork(parent) {
     }
     return routers;
   };
+
+  network.mesh.routers.async = function(f) {
+    function on_complete(routes) {
+      var routers = [];
+      var included = {};
+      routes.map(function(route) {
+          if (!included[route.router]) { 
+            router = { address : route.router,
+                       routes  : [ route ]     };
+            routers.push(router);
+            included[router.address] = router;
+          } else {
+            included[router.address].routes.push(route);
+          }
+        });
+      f(routers);
+    };
+    afrimesh.villagebus.mesh_topology.async(on_complete);
+  };
   
   return network;
 };
