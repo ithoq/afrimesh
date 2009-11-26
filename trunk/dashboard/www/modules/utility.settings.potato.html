@@ -133,9 +133,9 @@
       </td>
   </tr></table>
 
-  <fieldset>
+  <fieldset style="border:0px solid green; width:850px">
     <div class="label">Location</div>
-    <input id="location" />
+    <div id="location" />
   </fieldset>
 
 </form>
@@ -228,14 +228,14 @@
     update_map_server();
 
     /** create map to set dashboard location ------------------------------ */
-    $("#location").replaceWith("<div id='location' />");
+    /*$("#location").replaceWith("<div id='location' />");
     var location_map = new LocationMap("location", 
                                        parseFloat(afrimesh.settings.location.longitude),
                                        parseFloat(afrimesh.settings.location.latitude),
                                        parseFloat(afrimesh.settings.map.extent),
                                        parseInt(afrimesh.settings.map.zoom));
     var router = { address : afrimesh.settings.address };
-    location_map.router(router);
+    location_map.router(router);*/
   
     return unload;
   };

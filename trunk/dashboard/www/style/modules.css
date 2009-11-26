@@ -275,6 +275,7 @@ dl.sort dd { background-color:red;  }
 
 /* - setting module ------------------------------------------------------- */
 form.two-column {
+  /*border: 1px solid red;*/
   margin: 0px;  
   padding: 0px; 
 }
@@ -303,7 +304,7 @@ form.two-column .label {
   float: left;
 }
 form.two-column .label #potato {
-  border:1px solid red;
+  /*border:1px solid red;*/
   color: darkgray; 
   font-size: 1.25em;
   width: 120px; 
@@ -312,7 +313,7 @@ form.two-column .label #potato {
 form.two-column .trunk, .gateway_class, .routing_class {
   margin-top: .5em;
 }
-form.two-column input, select  {
+form.two-column input, select {
   /*border:1px solid green;*/
   font-size: 1.25em;
   margin-bottom: .5em;
@@ -322,6 +323,12 @@ form.two-column input[type=checkbox] {  /* aaaaaaaaaargh */
 form.two-column #location {
   width:  600px;
   height: 300px;
+}
+form.two-column #location.message {
+  font-size: 1.25em;
+  border: 1px dashed gray;
+  text-align: center;
+  float: left;
 }
 
 
