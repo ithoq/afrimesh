@@ -1,11 +1,5 @@
-
 config 'afrimesh' 'dashboard'
-	option 'dashboard_server' 'afrimesh.7degrees.co.za'
-	option 'mesh_gateway' '192.168.20.200'
 	option 'network_name' 'Mesh Potato'
-
-config 'afrimesh' 'router'
-	option 'owner' 'joe smith'
 
 config 'afrimesh' 'settings'
 	option 'locale' 'en_US.UTF-8'
@@ -19,13 +13,6 @@ config 'afrimesh' 'map'
 	option 'extent' '0.1'
 	option 'zoom' '15'
 	option 'aerial' 'false'
-
-config 'afrimesh' 'gateway'
-	option 'snmp_community' 'public'
-	option 'bandwidth_down' '512'
-	option 'bandiwdth_up' '256'
-	option 'snmp_interface' '1'
-	option 'address' '127.0.0.1'
 
 config 'afrimesh' 'potato'
   option 'trunkcalls' 'off'

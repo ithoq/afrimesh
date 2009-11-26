@@ -38,7 +38,7 @@
   
   /** support functions --------------------------------------------------- */
   function mash_site(site_base, page_uri) {
-    var ajax_proxy = "http://" + afrimesh.settings.hosts.dashboard_server + afrimesh.settings.ajax_proxy;
+    var ajax_proxy = afrimesh.villagebus.ajax_proxy();
     $.ajax({ url: ajax_proxy + site_base + "/" + page_uri,
              success: on_got_content });
   }
