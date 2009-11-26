@@ -4,6 +4,11 @@ config 'afrimesh' 'dashboard'
 config 'afrimesh' 'settings'
 	option 'locale' 'en_US.UTF-8'
 
+config 'afrimesh' 'support'
+  option 'howto'  'afrimesh'
+  option 'group'  'village-telco-dev'
+  option 'irc'    'http://webchat.freenode.net/?channels=villagetelco'
+
 config 'afrimesh' 'location'
 	option 'longitude' '28.278337'
 	option 'latitude' '-25.746633'

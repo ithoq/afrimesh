@@ -38,6 +38,10 @@ function BootSettings(parent, address) {
     "afrimesh|settings|locale"       : { remote : "afrimesh|settings|locale",        init : "en_US.UTF-8"  },
     "afrimesh|settings|ajax_proxy"   : { remote : "afrimesh|settings|ajax_proxy",    init : "/cgi-bin/ajax-proxy.cgi?url=" },
 
+    "afrimesh|settings|support|howto" : { remote : "afrimesh|support|howto", init : "afrimesh"  },
+    "afrimesh|settings|support|group" : { remote : "afrimesh|support|group", init : "afrimesh"  },
+    "afrimesh|settings|support|irc"   : { remote : "afrimesh|support|irc",   init : "http://webchat.freenode.net/?channels=afrimesh"  },
+
     "afrimesh|settings|potato|trunkcalls" : { remote : "afrimesh|potato|trunkcalls",  init : "off" },
     "afrimesh|settings|potato|asterisk"   : { remote : "afrimesh|potato|asterisk",    init : " " },
 
