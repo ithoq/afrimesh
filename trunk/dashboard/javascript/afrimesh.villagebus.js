@@ -28,10 +28,13 @@ var BootVillageBus = function (afrimesh) {
 
 
   /** - villagebus.mesh_topology ------------------------------------------------- */
-  villagebus.mesh_topology     = function() { return this.mesh_topology.vis();};
-  villagebus.mesh_topology.vis = function() { 
+  villagebus.mesh_topology       = function()  { return this.mesh_topology.vis();};
+  villagebus.mesh_topology.vis   = function()  { 
     return this.vis.sync(); 
   }; 
+  villagebus.mesh_topology.async = function(f) {
+    return this.vis.async(f);
+  };
 
   villagebus.mesh_topology.vis.url  = function() { 
     if (afrimesh.settings.network.mesh.vis_server == afrimesh.settings.address) {

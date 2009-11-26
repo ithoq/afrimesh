@@ -15,7 +15,7 @@
     <!-- this.style.opacity=0.1;this.filters.alpha.opacity=10 -->
     <img src="images/network-map-legend.png" style="padding:0px; margin:0px; border:0px black solid;"/>
   </div>
-  <div id="network-map" style="width: 100%; height: 75%;">
+  <div id="network-map" style="width: 100%; height: 80%;">
     please wait a moment...
   </div>
 </div>
@@ -140,10 +140,16 @@ function() {
   var timer = {};
   function update(network_map) {
     clearTimeout(timer);
+    afrimesh.network.mesh.routers.async(function(routers) { 
+        update_complete(network_map, routers); 
+      });
+  };
+
+  function update_complete(network_map, routers) {
     var now = new Date();
 
     // Update LQ display, tag all active network elements with last seen time and add new elements to the map
-    afrimesh.network.mesh.routers().map(function(router) { 
+    routers.map(function(router) { 
         var feature = network_map.router(router);
         feature.last_seen = now;
         router.routes.map(function(route) {
@@ -157,7 +163,6 @@ function() {
             route_feature.last_seen = now; 
           });
       });
-
         
     // go through all features and set transparency relative to when they were last seen
     network_map.routers.features.map(function(router_feature) {
