@@ -9,7 +9,9 @@
 
 <!-- h2>Settings</h2 -->
 
-<form class="two-column" id="potato">
+<form class="two-column" 
+      id="potato" 
+      OnKeyPress="return disable_key(13, event);">
 
   <table border=0>
     <tr valign="top">
@@ -18,7 +20,7 @@
         <fieldset>
           <legend>Network</legend>
           <div class="label">IP Address</div>
-          <input  id="afrimesh|settings|network|wireless|address" />
+          <input  id="afrimesh|settings|network|wireless|address"/>
           <div class="tooltip"><h3>ip address</h3></div>
           <div class="label">Netmask</div>
           <input  id="afrimesh|settings|network|wireless|netmask" />
@@ -177,19 +179,20 @@
         populate_dom();
       });
     $("input.[id*=afrimesh|settings]").bind("keypress", function(event) {
-	      if (event.keyCode == 13) {
-	        console.debug("Saving Setting: " + this.id + " -> " + this.value);
-          save_element(this.id, this.value);
-          populate_dom();
- 	      } 
+	      if (event.keyCode != 13) return true;
+        console.debug("Saving Setting: " + this.id + " -> " + this.value);
+        save_element(this.id, this.value);
+        populate_dom();
+        return false;
       });
     $("select.[id*=afrimesh|settings]").bind("blur", function(event) { 
         save_element(this.id, this.value); 
     });
     $("input.[id*=afrimesh|settings|network|mesh|vis_server]").bind("blur", function(event) { 
-        console.debug("Override Setting for vis server " + this.id + " -> " + this.value);
-        save_element(this.id, this.value);
         update_vis_server();
+      });
+    $("input.[id*=afrimesh|settings|map|server]").bind("blur", function(event) { 
+        update_map_server();
       });
     $("#is_mesh_gateway").bind("change", function(event) { 
         if ($("input[name='is_mesh_gateway']").attr("checked")) {
@@ -209,7 +212,6 @@
         update_asterisk_server();
       });
     $("input.[id=afrimesh|settings|potato|asterisk]").bind("blur", function(event) { 
-        save_element(this.id, this.value);
         update_asterisk_server();
       });
 
@@ -219,8 +221,11 @@
     /** query asterisk server for availability ----------------------- */
     update_asterisk_server();
 
-    /** query vis server for availability --------------------- */
+    /** query vis server for availability ---------------------------- */
     update_vis_server();
+
+    /** query map server for availability ---------------------------- */
+    update_map_server();
 
     /** create map to set dashboard location ------------------------------ */
     $("#location").replaceWith("<div id='location' />");
