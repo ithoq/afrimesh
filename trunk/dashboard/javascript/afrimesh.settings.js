@@ -51,7 +51,7 @@ function BootSettings(parent, address) {
     "afrimesh|settings|network|wireless|ssid"     : { remote : "wireless|@wifi-iface[0]|ssid",  init : "?" },
     "afrimesh|settings|network|wireless|bssid"    : { remote : "wireless|@wifi-iface[0]|bssid", init : "??:??:??:??:??:??" },
 
-    "afrimesh|settings|hosts|dashboard_server"  : { remote : "afrimesh|dashboard|dashboard_server", init : "default.dashboard.server"  },
+    "afrimesh|settings|hosts|dashboard_server"  : { remote : "afrimesh|dashboard|dashboard_server", init : "10.0.0.1"  },
 
     "afrimesh|settings|network|mesh|vis_server"        : { remote : "batmand|general|visualisation_srv", init : "localhost" },  
     "afrimesh|settings|network|mesh|routing_class"     : { remote : "batmand|general|routing_class", init : "" },  
@@ -65,14 +65,14 @@ function BootSettings(parent, address) {
     "afrimesh|settings|map|zoom"   : {  remote : "afrimesh|map|zoom",   init : "16" },
     "afrimesh|settings|map|aerial" : {  remote : "afrimesh|map|aerial", init : "false" },
 
-    "afrimesh|settings|internet_gateway|address"        : {  remote : "afrimesh|gateway|address",        init : "192.168.20.1" },
+    "afrimesh|settings|internet_gateway|address"        : {  remote : "afrimesh|gateway|address",        init : "10.0.0.1" },
     "afrimesh|settings|internet_gateway|snmp|community" : {  remote : "afrimesh|gateway|snmp_community", init : "public" },
     "afrimesh|settings|internet_gateway|snmp|interface" : {  remote : "afrimesh|gateway|snmp_interface", init : "4" },
     "afrimesh|settings|internet_gateway|bandwidth|down" : {  remote : "afrimesh|gateway|bandwidth_down", init : "512" },
     "afrimesh|settings|internet_gateway|bandwidth|up"   : {  remote : "afrimesh|gateway|bandwidth_up",   init : "256" },
     
-    "afrimesh|settings|radius|server"   : {  remote : "afrimesh|radius|server",   init : "localhost" },
-    "afrimesh|settings|radius|radtype"  : {  remote : "afrimesh|radius|radtype",     init : "1" },
+    "afrimesh|settings|radius|server"   : {  remote : "afrimesh|radius|server",   init : "10.0.0.1" },
+    "afrimesh|settings|radius|radtype"  : {  remote : "afrimesh|radius|radtype",  init : "1" },
     "afrimesh|settings|radius|database" : {  remote : "afrimesh|radius|database", init : "radius" },
     "afrimesh|settings|radius|username" : {  remote : "afrimesh|radius|username", init : "radius" },
     "afrimesh|settings|radius|password" : {  remote : "afrimesh|radius|password", init : "radpass" }
