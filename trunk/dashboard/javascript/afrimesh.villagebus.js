@@ -187,8 +187,10 @@ var BootVillageBus = function (afrimesh) {
     return villagebus.snmp.sync("walk", address, community, oid);
   };
 
+  // will always use the machine being viewed for the snmp service
+  // if snmp is not supported on that machine, use another one!
   villagebus.snmp.url = function() {
-    return "http://" + afrimesh.settings.hosts.dashboard_server + "/cgi-bin/village-bus/snmp";
+    return "http://" + afrimesh.settings.address + "/cgi-bin/village-bus/snmp";
   };
 
   villagebus.snmp.poll = function(f, frequency, address, community, oids) {
@@ -283,7 +285,9 @@ var BootVillageBus = function (afrimesh) {
   /** - villagebus.syslog -------------------------------------------------------- */
   villagebus.syslog = function() { return this.syslog.sync(); }
 
-  villagebus.syslog.url = function(address) {
+  // will always show the log on the machine being viewed. If you want all nodes in the log, view
+  // the remote log server
+  villagebus.syslog.url = function() {
     return "http://" + afrimesh.settings.address + "/cgi-bin/village-bus/sys";
   };
 

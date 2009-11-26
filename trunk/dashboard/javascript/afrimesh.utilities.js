@@ -175,7 +175,7 @@ function Qsplit(this_object, selector, root) {
    * Pull in remote content - TODO - merge refactors from help.group.html
    */
   function load_remote_content(base, uri, src_selector, dest_selector) {
-    var ajax_proxy = "http://" + afrimesh.settings.hosts.dashboard_server + afrimesh.settings.ajax_proxy;
+    var ajax_proxy = afrimesh.villagebus.ajax_proxy();
     $(dest_selector).load(ajax_proxy + base + "/" + uri + " " + src_selector,
                           null,
                           function() {
@@ -192,7 +192,7 @@ function Qsplit(this_object, selector, root) {
   };  
   function url_to_uri(url) {
     var file_uri = ("file:///");
-    var http_uri = ("http://" + afrimesh.settings.hosts.dashboard_server + "/");
+    var http_uri = ("http://" + afrimesh.settings.address + "/");
     var uri = url;
     if (uri.indexOf(file_uri) == 0) {
       uri = uri.replace(file_uri, "");
