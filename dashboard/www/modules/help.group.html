@@ -18,7 +18,7 @@
 
   /** includes ------------------------------------------------------------ */
   var group_base = "http://groups.google.com";
-  var group_uri  = "group/afrimesh/topics?gvc=2";
+  var group_uri  = "group/" + afrimesh.settings.support.group + "afrimesh/topics?gvc=2";
 
   /** construction -------------------------------------------------------- */
   ready = function() { // INJ 'ready' should be the only symbol we're exposing to the global namespace
@@ -67,7 +67,7 @@
       $("#groupcontent").append("<div class='spacer';></div>");
       $("#groupcontent").append("<div class='navigation'><a href='/" + group_uri + "'>Back to topics</a></div>");
     }  else {
-      $("#groupcontent").append("There was a problem accessing the google groups content");
+      $("#groupcontent").append("There was a problem accessing the support group content");
     }
     $("#groupcontent img").remove();
   } 

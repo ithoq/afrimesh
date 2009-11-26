@@ -18,7 +18,9 @@
   /** construction -------------------------------------------------------- */
   ready = function() { // INJ 'ready' should be the only symbol we're exposing to the global namespace
 
-    load_remote_content("http://code.google.com", "p/afrimesh/wiki/HowTo", "div#wikicontent", "#wikicontent");
+    load_remote_content("http://code.google.com", 
+                        "p/" + afrimesh.settings.support.howto + "/wiki/HowTo", 
+                        "div#wikicontent", "#wikicontent");
 
     console.debug("loaded help.howto.html");
     return unload;
