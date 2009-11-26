@@ -22,9 +22,7 @@ if (afrimesh.settings.map.aerial) {
   load("javascript/yahoo/ymapapi_3_8_2_1.js");
 }
 load("javascript/openlayers/OpenLayers.js");
-//load("http://www.openstreetmap.org/openlayers/OpenLayers.js");
 load("javascript/openlayers/OpenStreetMap.js");
-//load("http://www.openstreetmap.org/openlayers/OpenStreetMap.js");
 
 
 /** 

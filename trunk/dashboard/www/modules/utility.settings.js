@@ -13,6 +13,7 @@ var populate_mesh_controls = null;
 var update_asterisk_server = null;
 var update_radius_server = null;
 var update_vis_server = null;
+var update_map_server = null;
 var LocationMap = null;
 (function() {
 
@@ -37,10 +38,20 @@ var LocationMap = null;
             }
             $(element).attr("checked", checked); 
           } else {
-            $(element).val(Q(afrimesh, element.id) + ""); 
+            var value = Q(afrimesh, element.id);
+            if (value != undefined) {
+              $(element).val(String(value)); 
+            } else {
+              $(element).val("");
+            }
           }
         } else if (element instanceof HTMLElement) {
-          $(element).html(Q(afrimesh, element.id) + ""); 
+            var value = Q(afrimesh, element.id);
+            if (value != undefined) {
+              $(element).html(String(value)); 
+            } else {
+              $(element).html("");
+            }
         } else {
           console.warn("UNKNOWN ELEMENT TYPE: " + element);
         }
@@ -122,6 +133,27 @@ var LocationMap = null;
     } catch (error) {
       $("p.[id*=vis_server|error]").html("Visualization server unreachable. " + error + ".");
       console.debug("Vis server is unreachable. " + error);
+    }
+  };
+
+  update_map_server = function() {
+    $("input.[id*=afrimesh|settings|map|server]").css("background", "#FFAAAA");
+    function update (routes) {
+      $("input.[id*=afrimesh|settings|map|server]").css("background", "#AAFFAA");
+      $("p.[id*=map|server|error]").html("");
+    };
+    try {
+      // if it's a valid map server it will have the OSM/OpenLayers scripts hosted
+      $.getScript("http://" + afrimesh.settings.map.server + "/openlayers/OpenStreetMap.js",
+                 update);
+      /** TODO 
+       * load OpenLayers.js
+       * remove load() calls in afrimesh.maps.js
+       * don't draw the map until this has succeeded
+       */
+    } catch (error) {
+      $("p.[id*=afrimesh|settings|map|server|error]").html("Map server unreachable: " + error + ".");
+      console.debug("Map server unreachable: " + error);
     }
   };
   
@@ -239,5 +271,15 @@ var LocationMap = null;
     
   };
   LocationMap = _LocationMap;
+
+
+  /** helpers ------------------------------------------------------------- */
+  disable_key = function(key, event) {
+    var pressed;      
+    if (window.event) pressed = window.event.keyCode; // IE
+    else              pressed = e.which;              // firefox      
+    return (pressed != key);
+  }
+
   
 })();

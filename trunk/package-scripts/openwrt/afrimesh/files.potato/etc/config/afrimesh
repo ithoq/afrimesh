@@ -2,7 +2,8 @@ config 'afrimesh' 'dashboard'
 	option 'network_name' 'Mesh Potato'
 
 config 'afrimesh' 'settings'
-	option 'locale' 'en_US.UTF-8'
+	option 'locale'     'en_US.UTF-8'
+  option 'configured' '0'
 
 config 'afrimesh' 'support'
   option 'howto'  'afrimesh'
@@ -11,14 +12,14 @@ config 'afrimesh' 'support'
 
 config 'afrimesh' 'location'
 	option 'longitude' '28.278337'
-	option 'latitude' '-25.746633'
+	option 'latitude'  '-25.746633'
 
 config 'afrimesh' 'map'
 	option 'server' 'openstreetmap.org'
 	option 'extent' '0.1'
-	option 'zoom' '15'
+	option 'zoom'   '15'
 	option 'aerial' 'false'
 
 config 'afrimesh' 'potato'
   option 'trunkcalls' 'off'
-  option 'asterisk' ''
+  option 'asterisk'   ''
