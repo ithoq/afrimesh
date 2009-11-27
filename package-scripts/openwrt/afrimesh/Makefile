@@ -32,7 +32,7 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ------------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=6
+PKG_REV:=608
 PKG_VERSION:=r$(PKG_REV)-0.4alpha
 PKG_RELEASE:=1
 
@@ -291,6 +291,8 @@ define Package/afrimesh-potato/postinst
 	echo "relocating LuCI"
 	cp /www/afrimesh/index.luci.html     /www/index.luci.html
 	cp /www/afrimesh/index.redirect.html /www/index.html
+	# fix permissions for config - TODO why ?!
+	chmod 0644 /etc/config/afrimesh
 }
 endef
 
