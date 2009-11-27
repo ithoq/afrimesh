@@ -32,7 +32,7 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ------------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=600
+PKG_REV:=6
 PKG_VERSION:=r$(PKG_REV)-0.4alpha
 PKG_RELEASE:=1
 
@@ -228,12 +228,10 @@ endef
 
 
 # - afrimesh-potato -----------------------------------------------------------
-#+luci-admin-full
-#+luci-admin-mini
 define Package/afrimesh-potato
 	SECTION:=admin
 	CATEGORY:=Administration
-	DEPENDS:=+libuci +libjson +batmand	+curl-nossl +haserl
+	DEPENDS:=+libuci +libjson +batmand +curl-nossl +haserl +luci-admin-full
 	TITLE:=Web interface for the Mesh Potato
 endef
 
@@ -269,9 +267,10 @@ define Package/afrimesh-potato/install
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/jquery/jquery.checkbox.js  \
 			            $(1)/www/afrimesh/javascript/jquery
 	$(INSTALL_DIR)  $(1)/www/afrimesh/javascript/openlayers
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/openlayers/*  $(1)/www/afrimesh/javascript/openlayers
-	$(INSTALL_DIR)  $(1)/www/afrimesh/javascript/yahoo
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/yahoo/*       $(1)/www/afrimesh/javascript/yahoo
+	#$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/openlayers/OpenLayers.js   $(1)/www/afrimesh/javascript/openlayers
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/openlayers/OpenStreetMap.js $(1)/www/afrimesh/javascript/openlayers
+	#$(INSTALL_DIR)  $(1)/www/afrimesh/javascript/yahoo
+	#$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/yahoo/*       $(1)/www/afrimesh/javascript/yahoo
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/afrimesh*.js  $(1)/www/afrimesh/javascript
 	$(INSTALL_DIR)  $(1)/www/afrimesh/modules
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/*.html       $(1)/www/afrimesh/modules

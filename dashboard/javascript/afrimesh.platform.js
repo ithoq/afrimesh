@@ -9,28 +9,42 @@
 (function() {
 
   var platform = {
-    browser : {},
-    shell   : {}
+    browser  : {},
+    shell    : {},
+    includes : {}
   };
   // TODO - investigate http://code.google.com/p/ajaxsoft/wiki/xLazyLoader
   platform.browser.load = function(uri) {
-    if (!this.includes) { this.includes = {}; }
-    if (this.includes.hasOwnProperty(uri)) {
-      console.warn("Attempting to load " + uri + " multiple times.");
-      return this.includes[uri];
+    if (platform.includes.hasOwnProperty(uri)) {
+      console.debug("Attempting to load " + uri + " multiple times.");
+      return platform.includes[uri];
     }
-    this.includes[uri] = true;
-    $.ajax({ 
+    var data = $.ajax({ 
         url: uri,
-          dataType: "script",
-          async: false,
-          success: 
-        function(js) {
+        dataType: "script",
+        async: false,
+        success: function(js) {
+          platform.includes[uri] = true;
           /**if (jQuery.browser.safari) { eval(js);  }*/
         }
       });
     console.debug("utilities.loaded " + uri);
+    return data;
   };
+
+  platform.browser.load.async = function(uri, f) {
+    if (platform.includes.hasOwnProperty(uri)) {
+      console.debug("Attempting to load " + uri + " multiple times.");
+      f("jquery suckz", "success");
+      return platform.includes[uri];
+    }
+    $.getScript(uri, function(data, status) {
+        platform.includes[uri] = true;
+        console.debug("utilities.loaded.async " + uri);
+        f("jquery suckz", "success");
+      });
+  };
+  
   platform.browser.sleep = function() {
   };
 

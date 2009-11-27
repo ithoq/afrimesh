@@ -147,5 +147,19 @@ function BootSettings(parent, address) {
   //settings.hosts = { dashboard_server : settings.address };
   settings.hosts.dashboard_server = settings.address;
 
+  /* TODO - cleanup this evilness to deal w/ hosting OpenLayers elsewhere in order to save space */
+  settings.map.openlayers_url = "http://" + settings.map.server + "/openlayers/";
+  if (settings.map.server == "openstreetmap.org") { 
+    /* TODO very very evil hack - we assume that if
+       openstreetmap.org is specced that we have access to
+       openlayers.org as a workaround for the fact that the
+       OpenLayers.js on openstreetmap has serious issues */
+    settings.map.openlayers_url = "http://www.openlayers.org/api/OpenLayers.js";
+  }
+  //settings.map.openlayers_url = "http://192.168.20.2/afrimesh/javascript/openlayers/OpenLayers.js";
+  //settings.map.openlayers_url = "http://192.168.1.20/afrimesh/javascript/openlayers/OpenLayers.js";
+  //settings.map.openlayers_url = "javascript/openlayers/OpenLayers.js"; // <- TODO - add some config option to host this locally
+  settings.map.osm_url = "javascript/openlayers/OpenStreetMap.js";
+
   return settings;
 };

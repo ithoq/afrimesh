@@ -17,11 +17,6 @@ var update_map_server = null;
 var LocationMap = null;
 (function() {
 
-  /** mapping Includes ---------------------------------------------------- */
-  load("javascript/afrimesh.maps.js"); 
-  OpenLayers.ImgPath = "images/";
-
-
   /** populate DOM with the values in afrimesh.settings ------------------- */
   populate_dom = function() {
     var elements = $("[id*=afrimesh|settings]");
@@ -136,12 +131,21 @@ var LocationMap = null;
     }
   };
 
-  update_map_server = function() {
+  update_map_server = function() { 
     $("input.[id*=afrimesh|settings|map|server]").css("background", "#FFAAAA")
     $("#location").addClass("message");
     $("#location").html("<p><br/><p>Contacting Map Server...</p>");
+    // if it's a valid map server it will have the OSM/OpenLayers scripts hosted
+    try {
+      var request = $.get(afrimesh.villagebus.ajax_proxy() + "http://" + afrimesh.settings.map.server + "/openlayers/OpenStreetMap.js",
+                          "", check_complete, "text");
+    } catch (error) {
+      $("p.[id*=afrimesh|settings|map|server|error]").html("Map server unreachable: " + error + ".");
+      console.debug("Map server unreachable: " + error);
+      return;
+    }
 
-    function update(data, textStatus) {
+    function check_complete(data, textStatus) {
       if (data == "") {
         var message = "<p><br/><p>Could not contact Map Server.</p>";
         message += "<p><br/><p><b>Please check:</b> ";
@@ -150,7 +154,22 @@ var LocationMap = null;
         $("#location").html(message);
         return;
       }
+
+      // we have a map server
       $("input.[id*=afrimesh|settings|map|server]").css("background", "#AAFFAA");
+      $("#location").html("<p><br/><p>Map Server Contacted.</p> <p><br/><p>Loading Network Map...</p>");
+
+      // Now Load OpenStreetMap & OpenLayers libraries
+      load.async(afrimesh.settings.map.openlayers_url, function(data, textStatus) {
+          if (typeof OpenLayers == "undefined") {
+            return load_error("The OpenLayers mapping service could not be found.");
+          }
+          load.async(afrimesh.settings.map.osm_url, load_complete);
+        });
+    };
+
+    function load_complete(data, textStatus) {
+      load("javascript/afrimesh.maps.js"); 
       $("p.[id*=map|server|error]").html("");
       $("#location").replaceWith("<div id='location' />");
       var location_map = new LocationMap("location", 
@@ -162,22 +181,12 @@ var LocationMap = null;
       location_map.router(router);
     };
 
-    try {
-      // if it's a valid map server it will have the OSM/OpenLayers scripts hosted
-      //$.getScript("http://" + afrimesh.settings.map.server + "/openlayers/OpenStreetMap.js",
-      //           update);
-      var request = $.get("http://" + afrimesh.settings.map.server + "/openlayers/OpenStreetMap.js",
-                          "", update, "text");
-      console.debug("REQUEST: " + request);
-      /** TODO 
-       * load OpenLayers.js
-       * remove load() calls in afrimesh.maps.js
-       * don't draw the map until this has succeeded
-       */
-    } catch (error) {
-      $("p.[id*=afrimesh|settings|map|server|error]").html("Map server unreachable: " + error + ".");
-      console.debug("Map server unreachable: " + error);
-    }
+    function load_error(message) {
+      var html = "<p><br/><p>Could Not Contact Map Server.</p>";
+      html += "<p><br/><p>" + message + "</p>";
+      $("#location").html(html);
+    };
+
   };
   
   update_radius_server = function() {

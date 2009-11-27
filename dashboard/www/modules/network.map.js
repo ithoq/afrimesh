@@ -11,9 +11,6 @@ var Map = undefined;
 (function() {
 
   /** Includes ------------------------------------------------------------ */
-  load("javascript/afrimesh.maps.js");
-  OpenLayers.ImgPath = "images/";
-
 
   /** Map ----------------------------------------------------------------- */
   function _Map(id, longitude, latitude, extent, zoom, update_frequency) {
@@ -42,7 +39,7 @@ var Map = undefined;
       } else {
         relief = new OpenLayers.Layer.OSM.LocalMap("Relief Map", "http://" + afrimesh.settings.map.server + "/tiles/");
       }
-      if (afrimesh.settings.map.aerial) {
+      if (afrimesh.settings.map.aerial == "1") {
         var satellite = new OpenLayers.Layer.Yahoo("Aerial Map", { // TODO - http://labs.metacarta.com/osm/over-yahoo/
             type              : YAHOO_MAP_SAT,
             sphericalMercator : true
