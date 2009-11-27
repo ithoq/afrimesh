@@ -32,7 +32,7 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ------------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=608
+PKG_REV:=611
 PKG_VERSION:=r$(PKG_REV)-0.4alpha
 PKG_RELEASE:=1
 
@@ -228,10 +228,11 @@ endef
 
 
 # - afrimesh-potato -----------------------------------------------------------
+# +curl-nossl
 define Package/afrimesh-potato
 	SECTION:=admin
 	CATEGORY:=Administration
-	DEPENDS:=+libuci +libjson +batmand +curl-nossl +haserl +luci-admin-full
+	DEPENDS:=+libuci +libjson +batmand +haserl +luci-admin-full
 	TITLE:=Web interface for the Mesh Potato
 endef
 
