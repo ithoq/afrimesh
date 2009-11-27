@@ -7,6 +7,12 @@ div#network-map a:visited { color: orange; }
 div#network-map a:active { color: orange; }
 div#network-map a:hover { color: orange; }
 
+div#network-map.message {
+  font-size: 1.25em;
+  border: 1px dashed gray;
+  text-align: center;
+}
+
 div#network-map .popup { 
   color: white;
   margin:0px;

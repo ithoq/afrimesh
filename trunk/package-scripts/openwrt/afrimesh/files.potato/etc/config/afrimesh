@@ -18,7 +18,7 @@ config 'afrimesh' 'map'
 	option 'server' 'openstreetmap.org'
 	option 'extent' '0.1'
 	option 'zoom'   '15'
-	option 'aerial' 'false'
+	option 'aerial' '0'
 
 config 'afrimesh' 'potato'
   option 'trunkcalls' 'off'

@@ -15,8 +15,7 @@
     <!-- this.style.opacity=0.1;this.filters.alpha.opacity=10 -->
     <img src="images/network-map-legend.png" style="padding:0px; margin:0px; border:0px black solid;"/>
   </div>
-  <div id="network-map" style="width: 100%; height: 80%;">
-    please wait a moment...
+  <div id="network-map" style="width: 100%; height: 75%;">
   </div>
 </div>
 
@@ -31,30 +30,54 @@
 function() {
 
   /** includes ------------------------------------------------------------ */
-  load("modules/network.map.js");
 
   /** construction -------------------------------------------------------- */
   ready = function() {
     console.debug("loaded network.map.html");
-    $("div#network-map").html("");
-    var network_map = new Map("network-map",  // TODO - consider caching the map :)
-                              parseFloat(afrimesh.settings.location.longitude),
-                              parseFloat(afrimesh.settings.location.latitude),
-                              parseFloat(afrimesh.settings.map.extent),
-                              parseInt(afrimesh.settings.map.zoom),
-                              15.0 * 1000.0);
-    console.debug("location.longitude -> " + afrimesh.settings.location.longitude);
-    console.debug("location.latitude -> " + afrimesh.settings.location.latitude);
-    console.debug("map.extent -> " + afrimesh.settings.map.extent);
-    console.debug("map.zoom -> " + afrimesh.settings.map.zoom);
-    
-    $("form.export-map").submit(function() {
-        console.debug("submitting");
-        export_kml(network_map);
-        return true;
+
+    $("div#network-map").addClass("message");
+    $("div#network-map").html("<p><br/><p>Loading Network Map...</p>");
+
+    // Load OpenStreetMap & OpenLayers libraries
+    load.async(afrimesh.settings.map.openlayers_url, function(data, textStatus) {
+        if (typeof OpenLayers == "undefined") {
+          return load_error("The OpenLayers mapping service could not be found.");
+        }
+        load.async(afrimesh.settings.map.osm_url, load_complete);
       });
-    
-    update(network_map);
+
+    // Create map once libs are loaded
+    function load_complete(data, textStatus) {
+      if (typeof OpenLayers.Layer.OSM == "undefined") {
+        return load_error("The OpenStreetMaps mapping service could not be found.");
+      }
+      load("javascript/afrimesh.maps.js"); 
+      load("modules/network.map.js");
+      $("div#network-map").html("");
+      $("div#network-map").removeClass("message");
+      var network_map = new Map("network-map",  // TODO - consider caching the map :)
+                                parseFloat(afrimesh.settings.location.longitude),
+                                parseFloat(afrimesh.settings.location.latitude),
+                                parseFloat(afrimesh.settings.map.extent),
+                                parseInt(afrimesh.settings.map.zoom),
+                                15.0 * 1000.0);
+      console.debug("location.longitude -> " + afrimesh.settings.location.longitude);
+      console.debug("location.latitude -> " + afrimesh.settings.location.latitude);
+      console.debug("map.extent -> " + afrimesh.settings.map.extent);
+      console.debug("map.zoom -> " + afrimesh.settings.map.zoom);
+      $("form.export-map").submit(function() {
+          console.debug("submitting");
+          export_kml(network_map);
+          return true;
+        });
+      update(network_map); 
+    };
+
+    function load_error(message) {
+      var html = "<p><br/><p>Could Not Contact Map Server.</p>";
+      html += "<p><br/><p>" + message + "</p>";
+      $("div#network-map").html(html);
+    };
 
     //$("div#network-map-legend").corner("10px");
 
