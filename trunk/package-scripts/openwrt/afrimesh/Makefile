@@ -32,7 +32,7 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ------------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=611
+PKG_REV:=612
 PKG_VERSION:=r$(PKG_REV)-0.4alpha
 PKG_RELEASE:=1
 
@@ -42,8 +42,8 @@ PKG_RELEASE:=1
 ##PKG_SOURCE_MIRROR=0
 
 # - to use local sources, disable PKG_SOURCE_URL & set LOCAL_SOURCES ---------
-#PKG_SOURCE_URL:=http://afrimesh.googlecode.com/svn/trunk
-LOCAL_SOURCES:=~/afrimesh/trunk
+PKG_SOURCE_URL:=http://afrimesh.googlecode.com/svn/trunk
+#LOCAL_SOURCES:=~/afrimesh/trunk
 # ----------------------------------------------------------------------------
 
 # source setup
