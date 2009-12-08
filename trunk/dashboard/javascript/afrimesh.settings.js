@@ -64,7 +64,7 @@ function BootSettings(parent, address) {
     "afrimesh|settings|map|zoom"   : {  remote : "afrimesh|map|zoom",   init : "16" },
     "afrimesh|settings|map|aerial" : {  remote : "afrimesh|map|aerial", init : "false" },
 
-    "afrimesh|settings|internet_gateway|address"        : {  remote : "afrimesh|gateway|address",        init : "10.0.0.1" },
+    "afrimesh|settings|internet_gateway|address"        : {  remote : "afrimesh|gateway|address",        init : "" },
     "afrimesh|settings|internet_gateway|snmp|community" : {  remote : "afrimesh|gateway|snmp_community", init : "public" },
     "afrimesh|settings|internet_gateway|snmp|interface" : {  remote : "afrimesh|gateway|snmp_interface", init : "4" },
     "afrimesh|settings|internet_gateway|bandwidth|down" : {  remote : "afrimesh|gateway|bandwidth_down", init : "512" },
