@@ -273,11 +273,17 @@ define Package/afrimesh-potato/install
 	#$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/openlayers/OpenLayers.js   $(1)/www/afrimesh/javascript/openlayers
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/openlayers/OpenStreetMap.js $(1)/www/afrimesh/javascript/openlayers
 	#$(INSTALL_DIR)  $(1)/www/afrimesh/javascript/yahoo
-	#$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/yahoo/*       $(1)/www/afrimesh/javascript/yahoo
+	#$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/yahoo/*      $(1)/www/afrimesh/javascript/yahoo
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/afrimesh*.js  $(1)/www/afrimesh/javascript
 	$(INSTALL_DIR)  $(1)/www/afrimesh/modules
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/*.html       $(1)/www/afrimesh/modules
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/*.js         $(1)/www/afrimesh/modules
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/help.chat.html                $(1)/www/afrimesh/modules
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/help.group.html               $(1)/www/afrimesh/modules
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/help.howto.html               $(1)/www/afrimesh/modules
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/network.map.html              $(1)/www/afrimesh/modules
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/utility.settings.potato.html  $(1)/www/afrimesh/modules
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/utility.upgrade.html          $(1)/www/afrimesh/modules
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/network.map.js                $(1)/www/afrimesh/modules
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/utility.settings.js           $(1)/www/afrimesh/modules
 	$(INSTALL_DIR)  $(1)/www/afrimesh/style
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/*.css          $(1)/www/afrimesh/style
 	$(INSTALL_DIR)  $(1)/www/afrimesh/style/images

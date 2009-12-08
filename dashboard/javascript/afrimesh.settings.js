@@ -120,7 +120,12 @@ function BootSettings(parent, address) {
     parent.settings.uci_config = config;
     console.debug("REMOTE CONFIG: \n" + rpretty_print(config));
     for (var local in afrimesh2uci) {
-      var value = Q(config, afrimesh2uci[local].remote, "config"); 
+      var value = "";
+      try { 
+        value = (afrimesh2uci[local] ? Q(config, afrimesh2uci[local].remote, "config") : ""); 
+      } catch (e) { 
+        console.error("Failed to load configuration item: " + e);
+      }
       if (value) {
         Qset(parent, local, value);
       } else {
@@ -131,7 +136,7 @@ function BootSettings(parent, address) {
     for (var setting in parent.settings) {
       settings[setting] = parent.settings[setting];
     }
-  }
+  };
   load_remote();
   //settings.hosts = { dashboard_server : settings.address };
   settings.hosts.dashboard_server = settings.address;
