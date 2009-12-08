@@ -156,7 +156,6 @@ var LocationMap = null;
       }
 
       // we have a map server
-      $("input.[id*=afrimesh|settings|map|server]").css("background", "#AAFFAA");
       $("#location").html("<p><br/><p>Map Server Contacted.</p> <p><br/><p>Loading Network Map...</p>");
 
       // Now Load OpenStreetMap & OpenLayers libraries
@@ -179,6 +178,7 @@ var LocationMap = null;
                                          parseInt(afrimesh.settings.map.zoom));
       var router = { address : afrimesh.settings.address };
       location_map.router(router);
+      $("input.[id*=afrimesh|settings|map|server]").css("background", "#AAFFAA");
     };
 
     function load_error(message) {
