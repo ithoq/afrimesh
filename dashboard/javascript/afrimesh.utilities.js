@@ -8,6 +8,25 @@
  */
 //(function() {
 
+  /** - Add any missing pieces -------------------------------------------- */
+  if (typeof(window.console) == "undefined") {  // Some browsers really have no console at all
+    window.console = { debug   : function(){},
+                       warning : function(){},
+                       error   : function(){},
+                       log     : function(){}   };
+    console = window.console;
+  }
+
+  if (typeof(JSON) == "undefined") {              // And some Javascript implementation don't have native JSON
+    console.debug("No native support for JSON. Falling back to jquery.json");
+    JSON = {
+      stringify : $.toJSON,
+      parse     : $.secureEvalJSON
+    };
+  }
+
+
+
   /** - Make Javascript a better Lisp ------------------------------------- */
   Array.prototype.car = function() { return (this.length > 0) ? this[0]       : []; };
   //Array.prototype.rac = function() { return (this.length > 0) ? this[this.length() - 1] : [] };
@@ -20,7 +39,7 @@
   //Array.prototype.init  = Array.prototype.rdc;
   //Array.prototype.last  = Array.prototype.rac;
 
-  
+
   /** - Make Javascript a better Javascript ------------------------------- */
   // See: http://thinkweb2.com/projects/prototype/instanceof-considered-harmful-or-how-to-write-a-robust-isarray/
   //      http://ajaxian.com/archives/isarray-why-is-it-so-bloody-hard-to-get-right
@@ -44,7 +63,6 @@
     return object instanceof Date;
   };
 
-
   String.prototype.trim = function() {
     return this.replace(/^\s+|\s+$/g,"");
   };
@@ -60,6 +78,7 @@
     }
     return object_1;
   };
+
   
   /** - Query object graphs using simple selectors ------------------------ */
   var regex_nested_selector = new RegExp(/\([\w_\|\@\-\[\]]+\)|[\|\w\@\-\[\]]+/g);  // a|(nested|selector)|pattern -> (nested|selector)
@@ -68,7 +87,7 @@
   var regex_parse_selector  = new RegExp(/[\w\-\_]+/g);                             // @some-name[0]               -> some-name,0
 
 
-function Qsplit(this_object, selector, root) {
+  function Qsplit(this_object, selector, root) {
     // Evaluate nested selectors e.g.  network|(wireless|@wifi-iface[0]|device)|ipaddr 
     var selectors = selector.match(regex_nested_selector);
     selector = "";
@@ -203,7 +222,6 @@ function Qsplit(this_object, selector, root) {
   }
 
   
-  
   /**
    * Dump the object contents to a string
    */
@@ -263,7 +281,7 @@ function Qsplit(this_object, selector, root) {
     return s;
   };
   
-  
+
   /**
    * Generate a timestamp string
    */
@@ -291,8 +309,7 @@ function Qsplit(this_object, selector, root) {
     window.console.native_info  = print;
     window.console.native_warn  = print;
     window.console.native_error = print; 
-  } else if (!window.console) { // not running in firebug, not safari
-    // assuming firefox , TODO - we need to do some decent platform detection at some point - jquery ?
+  } else if (typeof(netscape) != "undefined") { // not running in firebug, not safari - maybe netscape ?
     window.console = { };
     try {
       netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect'); // argh!
@@ -375,10 +392,10 @@ function Qsplit(this_object, selector, root) {
     }
     return window.console.native_log(message);
   };
-  
+
 //})();  
 //if (!console && window.console) {
-  console = window.console; //TODO CLEAN 
+console = window.console; //TODO CLEAN 
 //}
 console.debug("loaded afrimesh.utilities.js");
 
