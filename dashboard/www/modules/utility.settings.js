@@ -137,8 +137,10 @@ var LocationMap = null;
     $("#location").html("<p><br/><p>Contacting Map Server...</p>");
     // if it's a valid map server it will have the OSM/OpenLayers scripts hosted
     try {
-      var request = $.get(afrimesh.villagebus.ajax_proxy() + "http://" + afrimesh.settings.map.server + "/openlayers/OpenStreetMap.js",
-                          "", check_complete, "text");
+      //var request = $.get(afrimesh.villagebus.ajax_proxy() + "http://" + afrimesh.settings.map.server + "/openlayers/OpenStreetMap.js",
+      //                    "", check_complete, "text");
+      // TODO - cleanup. Disabled ^^^^ so we don't end up loading the OSM libs twice
+      check_complete();
     } catch (error) {
       $("p.[id*=afrimesh|settings|map|server|error]").html("Map server unreachable: " + error + ".");
       console.debug("Map server unreachable: " + error);
@@ -163,7 +165,8 @@ var LocationMap = null;
           if (typeof OpenLayers == "undefined") {
             return load_error("The OpenLayers mapping service could not be found.");
           }
-          load.async(afrimesh.settings.map.osm_url, load_complete);
+          //load.async(afrimesh.settings.map.osm_url, load_complete); // TODO - see above where we disabled double OSM load
+          load.async("http://" + afrimesh.settings.map.server + "/openlayers/OpenStreetMap.js", load_complete);
         });
     };
 
