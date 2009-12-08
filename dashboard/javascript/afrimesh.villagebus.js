@@ -75,10 +75,21 @@ var BootVillageBus = function (afrimesh) {
   }; 
 
   villagebus.pmacct.url  = function() { 
-   if (afrimesh.settings.internet_gateway.address == afrimesh.settings.address) {	
+    var address = "";
+    if (typeof(afrimesh.settings.internet_gateway.address) != "undefined" && 
+        afrimesh.settings.internet_gateway.address != "") {
+      address = afrimesh.settings.internet_gateway.address;
+    } else if (typeof(afrimesh.settings.network.mesh.vis_server) != "undefined" &&
+               afrimesh.settings.network.mesh.vis_server != "") {
+      address = afrimesh.settings.network.mesh.vis_server;
+    } else {
+      console.error("Could not determine address for pmacct server");
+      address = afrimesh.settings.address;
+    }
+   if (address == afrimesh.settings.address) {	
       return "http://" + afrimesh.settings.address + "/cgi-bin/village-bus-pmacct.cgi"; 
     }
-    return villagebus.ajax_proxy() + "http://" + afrimesh.settings.internet_gateway.address + "/cgi-bin/village-bus-pmacct.cgi"; 
+    return villagebus.ajax_proxy() + "http://" + address + "/cgi-bin/village-bus-pmacct.cgi"; 
   };
   
   villagebus.pmacct.async = function(handler, direction) { 
