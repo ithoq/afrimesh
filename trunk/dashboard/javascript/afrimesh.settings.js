@@ -15,7 +15,6 @@
  * @arg address  - override default settings object with the config settings from the network node at this address
  */
 function BootSettings(parent, address) {
-
   /**
    * Map our afrimesh.settings object to UCI for persistent storage
    *
@@ -77,7 +76,6 @@ function BootSettings(parent, address) {
     "afrimesh|settings|radius|username" : {  remote : "afrimesh|radius|username", init : "radius" },
     "afrimesh|settings|radius|password" : {  remote : "afrimesh|radius|password", init : "radpass" }
   };
-
 
   /** - create dynamic settings object & apply parent.settings ------------ */
   // TODO - get rid of parent.settings and apply defaults from above afrimesh2uci object

@@ -9,6 +9,7 @@
    
    
 /** - afrimesh node bootstrap --------------------------------------------- */
+
 var afrimesh = undefined;
 (function() {
   function Afrimesh() {
@@ -28,7 +29,9 @@ var afrimesh = undefined;
 
     // override default settings with live settings from the server
     console.log("Booting config from: " + this.settings.address);
+    alert("Fee");
     this.settings = BootSettings(this, this.settings.address); 
+    alert("Fie");
 
   };
   afrimesh = new Afrimesh();
