@@ -43,7 +43,7 @@ function BootSettings(parent, address) {
     "afrimesh|settings|support|irc"   : { remote : "afrimesh|support|irc",   init : "http://webchat.freenode.net/?channels=afrimesh"  },
 
     "afrimesh|settings|potato|trunkcalls" : { remote : "afrimesh|potato|trunkcalls",  init : "off" },
-    "afrimesh|settings|potato|asterisk"   : { remote : "afrimesh|potato|asterisk",    init : " " },
+    "afrimesh|settings|potato|asterisk"   : { remote : "afrimesh|potato|asterisk",    init : " "   },
 
     "afrimesh|settings|network|wireless|address"  : { remote : "network|(wireless|@wifi-iface[0]|device)|ipaddr",     init : "?" },
     "afrimesh|settings|network|wireless|netmask"  : { remote : "network|(wireless|@wifi-iface[0]|device)|netmask",    init : "?" },
@@ -53,7 +53,7 @@ function BootSettings(parent, address) {
 
     "afrimesh|settings|hosts|dashboard_server"  : { remote : "afrimesh|dashboard|dashboard_server", init : "10.0.0.1"  },
 
-    "afrimesh|settings|network|mesh|vis_server"        : { remote : "batmand|general|visualisation_srv", init : "localhost" },  
+    "afrimesh|settings|network|mesh|vis_server"        : { remote : "batmand|general|visualisation_srv", init : "10.0.0.1" },  
     "afrimesh|settings|network|mesh|routing_class"     : { remote : "batmand|general|routing_class", init : "" },  
     "afrimesh|settings|network|mesh|gateway_class"     : { remote : "batmand|general|gateway_class", init : "" },  
 
@@ -123,7 +123,6 @@ function BootSettings(parent, address) {
     console.debug("REMOTE CONFIG: \n" + rpretty_print(config));
     for (var local in afrimesh2uci) {
       var value = Q(config, afrimesh2uci[local].remote, "config"); 
-      
       if (value) {
         Qset(parent, local, value);
       } else {
@@ -155,6 +154,10 @@ function BootSettings(parent, address) {
        openlayers.org as a workaround for the fact that the
        OpenLayers.js on openstreetmap has serious issues */
     settings.map.openlayers_url = "http://www.openlayers.org/api/OpenLayers.js";
+    /* TODO scratch that - openlayers wants to install google gears - so we're going
+       to assume that if you have access to openstreetmap.org then you have access to 
+       Google */
+    //settings.map.openlayers_url = "http://afrimesh.googlecode.com/svn/trunk/dashboard/javascript/openlayers/OpenLayers.js";
   }
   //settings.map.openlayers_url = "http://192.168.20.2/afrimesh/javascript/openlayers/OpenLayers.js";
   //settings.map.openlayers_url = "http://192.168.1.20/afrimesh/javascript/openlayers/OpenLayers.js";
