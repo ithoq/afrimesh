@@ -34,7 +34,7 @@ function BootSettings(parent, address) {
    *  . set the value of the node at that position
    */
   var afrimesh2uci = { 
-    "afrimesh|settings|network_name" : { remote : "afrimesh|dashboard|network_name", init : "mesh testbed", explain : "the name of the network" },
+    "afrimesh|settings|network_name" : { remote : "afrimesh|dashboard|network_name", init : "mesh testbed" },
     "afrimesh|settings|locale"       : { remote : "afrimesh|settings|locale",        init : "en_US.UTF-8"  },
     "afrimesh|settings|ajax_proxy"   : { remote : "afrimesh|settings|ajax_proxy",    init : "/cgi-bin/ajax-proxy.cgi?url=" },
 
@@ -45,17 +45,17 @@ function BootSettings(parent, address) {
     "afrimesh|settings|potato|trunkcalls" : { remote : "afrimesh|potato|trunkcalls",  init : "off" },
     "afrimesh|settings|potato|asterisk"   : { remote : "afrimesh|potato|asterisk",    init : " "   },
 
-    "afrimesh|settings|network|wireless|address"  : { remote : "network|(wireless|@wifi-iface[0]|device)|ipaddr",     init : "?" },
-    "afrimesh|settings|network|wireless|netmask"  : { remote : "network|(wireless|@wifi-iface[0]|device)|netmask",    init : "?" },
-    "afrimesh|settings|network|wireless|channel"  : { remote : "wireless|wifi0|channel",   init : "?" },
+    "afrimesh|settings|network|wireless|address"  : { remote : "network|(wireless|@wifi-iface[0]|device)|ipaddr",  init : "?" },
+    "afrimesh|settings|network|wireless|netmask"  : { remote : "network|(wireless|@wifi-iface[0]|device)|netmask", init : "?" },
+    "afrimesh|settings|network|wireless|channel"  : { remote : "wireless|(wireless|@wifi-iface[0]|device)|channel",        init : "?" },
     "afrimesh|settings|network|wireless|ssid"     : { remote : "wireless|@wifi-iface[0]|ssid",  init : "?" },
     "afrimesh|settings|network|wireless|bssid"    : { remote : "wireless|@wifi-iface[0]|bssid", init : "??:??:??:??:??:??" },
 
     "afrimesh|settings|hosts|dashboard_server"  : { remote : "afrimesh|dashboard|dashboard_server", init : "10.0.0.1"  },
 
     "afrimesh|settings|network|mesh|vis_server"        : { remote : "batmand|general|visualisation_srv", init : "10.0.0.1" },  
-    "afrimesh|settings|network|mesh|routing_class"     : { remote : "batmand|general|routing_class", init : "" },  
-    "afrimesh|settings|network|mesh|gateway_class"     : { remote : "batmand|general|gateway_class", init : "" },  
+    "afrimesh|settings|network|mesh|routing_class"     : { remote : "batmand|general|routing_class",     init : "" },  
+    "afrimesh|settings|network|mesh|gateway_class"     : { remote : "batmand|general|gateway_class",     init : "" },  
 
     "afrimesh|settings|location|longitude" : {  remote : "afrimesh|location|longitude", init : "18.339733" },
     "afrimesh|settings|location|latitude"  : {  remote : "afrimesh|location|latitude",  init : "-34.138061" },
@@ -130,17 +130,9 @@ function BootSettings(parent, address) {
         console.debug ("Missing configuration entry '" + local + "'; reverting to default: " + afrimesh2uci[local].init);
       }
     }
-
     for (var setting in parent.settings) {
       settings[setting] = parent.settings[setting];
     }
-    
-    /*
-      parent.villagebus.uci.get.async(function (config) {
-        console.debug("CONFIG:\n" + rpretty_print(config));
-        },
-        address, "afrimesh");
-    */
   }
   load_remote();
   //settings.hosts = { dashboard_server : settings.address };
