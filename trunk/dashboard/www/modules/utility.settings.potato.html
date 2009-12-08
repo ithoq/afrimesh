@@ -147,13 +147,14 @@
   /** includes ------------------------------------------------------------ */
   load("modules/utility.settings.js"); 
 
-
   /** construction -------------------------------------------------------- */
   ready = function() { // INJ 'ready' should be the only symbol we're exposing to the global namespace
     console.debug("loaded utility.settings.html");
 
     /** set controls to the values of afrimesh.settings.* ----------------- */
-    populate_dom();
+    try {
+      populate_dom();
+    } catch (e) { console.error("populate_dom: " + e); }
 
     /** install tooltips -------------------------------------------------- */
     $("input.[id*=afrimesh]").tooltip({
@@ -216,7 +217,9 @@
       });
 
     /** update mesh routing controls --------------------------------- */
-    update_mesh_controls();
+    try { 
+      update_mesh_controls(); 
+    } catch (e) { console.error("update_mesh_controls: " + e); }
 
     /** query asterisk server for availability ----------------------- */
     update_asterisk_server();
@@ -226,16 +229,6 @@
 
     /** query map server for availability ---------------------------- */
     update_map_server();
-
-    /** create map to set dashboard location ------------------------------ */
-    /*$("#location").replaceWith("<div id='location' />");
-    var location_map = new LocationMap("location", 
-                                       parseFloat(afrimesh.settings.location.longitude),
-                                       parseFloat(afrimesh.settings.location.latitude),
-                                       parseFloat(afrimesh.settings.map.extent),
-                                       parseInt(afrimesh.settings.map.zoom));
-    var router = { address : afrimesh.settings.address };
-    location_map.router(router);*/
   
     return unload;
   };
