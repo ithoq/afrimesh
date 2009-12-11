@@ -32,7 +32,7 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ------------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=620
+PKG_REV:=623
 PKG_VERSION:=r$(PKG_REV)-0.4alpha
 PKG_RELEASE:=1
 
@@ -118,7 +118,8 @@ endef
 define Package/afrimesh-webif
 	SECTION:=admin
 	CATEGORY:=Administration
-	DEPENDS:=+afrimesh-base +curl-nossl
+	DEPENDS:=+afrimesh-base 
+#+curl-nossl
 	TITLE:=Web interface for mesh nodes
 endef
 
@@ -190,7 +191,8 @@ endef
 define Package/afrimesh-dashboard
 	SECTION:=admin
 	CATEGORY:=Administration
-	DEPENDS:=+afrimesh-base +curl-nossl 
+	DEPENDS:=+afrimesh-base 
+#+curl-nossl 
 	TITLE:=Mesh management dashboard
 endef
 
@@ -234,7 +236,7 @@ endef
 define Package/afrimesh-potato
 	SECTION:=admin
 	CATEGORY:=Administration
-	DEPENDS:=+libuci +libjson +batmand +haserl +luci-admin-full
+	DEPENDS:=+libuci +libjson +batmand +haserl +luci-admin-full +luci-admin-rpc
 	TITLE:=Web interface for the Mesh Potato
 endef
 
@@ -270,7 +272,7 @@ define Package/afrimesh-potato/install
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/jquery/jquery.checkbox.js  \
 			            $(1)/www/afrimesh/javascript/jquery
 	$(INSTALL_DIR)  $(1)/www/afrimesh/javascript/openlayers
-	#$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/openlayers/OpenLayers.js   $(1)/www/afrimesh/javascript/openlayers
+	#$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/openlayers/OpenLayers.js    $(1)/www/afrimesh/javascript/openlayers
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/openlayers/OpenStreetMap.js $(1)/www/afrimesh/javascript/openlayers
 	#$(INSTALL_DIR)  $(1)/www/afrimesh/javascript/yahoo
 	#$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/yahoo/*      $(1)/www/afrimesh/javascript/yahoo
@@ -281,6 +283,7 @@ define Package/afrimesh-potato/install
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/help.howto.html               $(1)/www/afrimesh/modules
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/network.map.html              $(1)/www/afrimesh/modules
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/utility.settings.potato.html  $(1)/www/afrimesh/modules
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/utility.login.html            $(1)/www/afrimesh/modules
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/utility.upgrade.html          $(1)/www/afrimesh/modules
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/network.map.js                $(1)/www/afrimesh/modules
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/utility.settings.js           $(1)/www/afrimesh/modules

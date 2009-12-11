@@ -165,8 +165,7 @@ var LocationMap = null;
           if (typeof OpenLayers == "undefined") {
             return load_error("The OpenLayers mapping service could not be found.");
           }
-          //load.async(afrimesh.settings.map.osm_url, load_complete); // TODO - see above where we disabled double OSM load
-          load.async("http://" + afrimesh.settings.map.server + "/openlayers/OpenStreetMap.js", load_complete);
+          load.async(afrimesh.settings.map.osm_url, load_complete); // TODO - see above where we disabled double OSM load
         });
     };
 
