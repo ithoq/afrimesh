@@ -106,17 +106,45 @@
         add_menu_item("help",      "chat");
         add_menu_item("utility",   "settings-potato");
         add_menu_item("utility",   "upgrade");
-        add_menu_item("utility",   "logout");
 
         /** loader for luci webif */
         $("ul#menu ul#utility li#settings-luci").click(function() {
-            var luci_url = "/index.luci.html";
-            $("div#content").html("<iframe id='luci' src='" + luci_url + "' scrolling='no' frameborder='no' ALLOWTRANSPARENCY='true' width='100%' height='0' />");
+            if (!afrimesh.session) { // not logged in, just jump straight to LuCI
+              window.location.href = "/cgi-bin/luci";
+              return;
+            }
+            var hidden = ""; // TODO RPC auth can't be used to access webif :-(
+            hidden += "<form id='luci' method='post' action='/cgi-bin/luci'>";
+            hidden += "<input type='hidden' name='username' value='" + afrimesh.session.username + "' />";
+            hidden += "<input type='hidden' name='password' value='" + afrimesh.session.password + "' />";
+            hidden += "</form>";
+            $("#content").append(hidden);
+            $("#luci").submit();
+            /*$("div#content").html("<iframe id='luci' src='"/cgi-bin/luci"' scrolling='no' frameborder='no' ALLOWTRANSPARENCY='true' width='100%' height='0' />");
             $("#luci").load(function() {
                 this.style.height = this.contentWindow.document.body.offsetHeight + 'px';
                 console.debug("Resized: " + this.contentWindow.document.body.offsetHeight);
+              });*/
+          });
+
+        /** logout handler */
+        $("ul#menu ul#utility li#login").click(function() {
+            $("div#content").hide();
+            $("ul#menu ul#utility li#settings-potato").hide();
+            $("ul#menu ul#utility li#upgrade").hide()
+            $("ul#menu ul#utility li#login").html("Login");
+            afrimesh.session = undefined;
+            $("#content").load("modules/utility.login.html", function(page) {
+                $("div#content").fadeIn("slow"); 
+                unloader = ready();
               });
           });
+
+        /** handle login authorization */
+        if (!afrimesh.session) { // if we have no session id we're not logged in 
+          $("ul#menu ul#utility li#login").click();
+          return;
+        }
 
         /** set default page */
         $("ul#menu ul#utility li#settings-potato").click();
@@ -189,7 +217,7 @@
               <li id="settings-potato">Settings</li>
               <li id="upgrade">Updates</li>
               <li id="settings-luci">LuCI</li>
-              <li id="logout">Logout</li>
+              <li id="login">Login</li>
               <li class="last">
                 <img class="bottom_left" alt="" src="style/images/bottom_left.png"/>
                 <span class="middle"></span>

@@ -26,7 +26,27 @@ var BootVillageBus = function (afrimesh) {
     return "http://" + afrimesh.settings.address + afrimesh.settings.ajax_proxy; 
   };
 
-
+  /** - villagebus.login --------------------------------------------------------- */
+  // TODO - support multiple authentication mechanisms e.g.  luci, htaccess, cert, ldap etc.
+  villagebus.login = function(username, password, continuation, error) {
+    return this.login.async(username, password, continuation, error);
+  };
+  villagebus.login.url = function() {
+    return "http://" + afrimesh.settings.address + "/cgi-bin/luci/rpc/auth";
+  };
+  villagebus.login.async = function(username, password, continuation, error) {
+    // LuCI RPC doesn't give us a session token so RPC login is f.useless 
+    // for accessing the web interface  *sigh* 
+    return rpc_async(this.url(), "login", [ username, password ], function(session) {
+        //Set-Cookie: sysauth=7F6D11773AF2D11DFC308242C4E71A32; path=/cgi-bin/luci/;stok=15C3499EA0FDC5D342288A07A90CF643
+        //console.error("GOTTA COOKIE: " + document.cookie);
+        //console.error("sysauth: " + afrimesh.storage.cookie("sysauth"));
+        //console.error("stok: " + afrimesh.storage.cookie("stok"));
+        //console.error("path: " + afrimesh.storage.cookie("path"));
+        continuation(session);
+      }, error); 
+  };
+  
   /** - villagebus.mesh_topology ------------------------------------------------- */
   villagebus.mesh_topology       = function()  { return this.mesh_topology.vis();};
   villagebus.mesh_topology.vis   = function()  { 
@@ -417,7 +437,7 @@ var BootVillageBus = function (afrimesh) {
     return request.result;
   }; 
 
-  function rpc_async(url, method, parameters, continuation) {
+  function rpc_async(url, method, parameters, continuation, error) {
     var request = {
       url          :  url, //"http://" + rpc.host + rpc.path, 
       type         : "POST",
@@ -432,20 +452,30 @@ var BootVillageBus = function (afrimesh) {
         method  : method,
         params  : parameters
       });
-    request.success = rpc_async_success(request);
+    request.error   = (typeof(error) == "undefined" ? rpc_async_error(request) : error);
+    request.success = rpc_async_success(request, request.error);
     return $.ajax(request);
   };
 
-  function rpc_async_success(request) {
+  function rpc_async_error(request) {
+    return function(xhr, status, error) {
+      console.error("FATAL JSON/RPC ERROR: " + JSON.stringify(request) + " - xhr: " + xhr + " status: " + status + " error: " + error);
+    };
+  };
+
+  function rpc_async_success(request, error) {
     return function(response, result) {
       if (!response) {
         console.error("JSON/RPC ERROR: " + JSON.stringify(request.data) + " - empty response");
+        error("empty response");
       } else if (response.error) {
         console.error("JSON/RPC ERROR: " + JSON.stringify(request.data) + " - " + response.error);
+        error(response.error);
       } else if (response.result) {
         request.continuation(response.result);
       } else {
-        console.error("JSON/RPC ERROR: " + JSON.stringify(request.data) + " - unknown");
+        console.error("JSON/RPC ERROR: " + JSON.stringify(request.data) + " - unknown error: " + JSON.stringify(response));
+        error("unknown error");
       }
     };
   };
