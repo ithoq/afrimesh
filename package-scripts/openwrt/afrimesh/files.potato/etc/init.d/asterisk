@@ -1,0 +1,128 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2006 OpenWrt.org
+
+#mknod -m 666 /dev/8250mp c 33 0
+#mknod -m 666 /dev/mp c 34 0
+#insmod /usr/lib/serial_core.ko
+#insmod /usr/lib/8250mp.ko
+#insmod /usr/lib/mp.ko
+#sleep 1
+
+START=50 
+
+DEST=
+DEFAULT=$DEST/etc/default/asterisk
+OPTIONS=""
+
+
+append_sip_parm() {
+  local section="$1"
+  local option="$2"
+  local default="$3"
+  local key="$4"
+  if [ -z "$key" ] ; then 
+      key="$option"
+  fi
+  local value
+  config_get value "$section" "$option"
+  if [ -z "$value" ] ; then
+      value="DEFAULT->$default"
+  fi
+  if [ ! -z "$key" ] && [ ! -z "$value" ] ; then
+    append sipconf "\n$key=$value"
+  else
+    echo "UNKNOWN: $key . $value"
+  fi
+}
+
+append_sip() {
+  local cfg="$1"
+  append sipconf "\n\n[$cfg]"
+  append_sip_parm "$cfg" "type"        "peer"     "type"
+  append_sip_parm "$cfg" "username"    "potato"
+  append_sip_parm "$cfg" "fromuser"    "potato"
+  append_sip_parm "$cfg" "secret"      "password"
+  append_sip_parm "$cfg" "context"     "default"
+  append_sip_parm "$cfg" "disallow"    "all"
+  append_sip_parm "$cfg" "qualify"     "500"
+  append_sip_parm "$cfg" "dtmfmode"    "rfc2833"
+  append_sip_parm "$cfg" "callerid"    "server"
+  append_sip_parm "$cfg" "canreinvite" "no"
+  append_sip_parm "$cfg" "host"        "10.0.0.1"
+  append sipconf "\nallow=$(uci get asterisk.@sipgeneral[0].allow)"
+}
+
+
+configure_asterisk() {
+  # load asterisk configuration from UCI
+  config_load asterisk
+
+  # build & write out sip.conf
+  sipconf=""
+  config_foreach append_sip sip
+  cat > /etc/asterisk/sip.conf << EOF
+[general]
+context=default
+;allowguest=no; Allow or reject guest calls (default is yes)
+allowoverlap=no
+bindport=5060
+bindaddr=0.0.0.0
+srvlookup=no
+EOF
+  echo -e "$sipconf" >> /etc/asterisk/sip.conf
+  echo WRITING OUT EXTENSIONS
+  # build & write out extensions.conf
+  extconf=""
+  cat > /etc/asterisk/extensions.conf << EOF
+[general]
+static=yes
+writeprotect=no
+clearglobalvars=no
+[globals]
+CONSOLE=Console/dsp; Console interface for demo
+IAXINFO=guest; IAXtel username/password
+TRUNK=Zap/g2; Trunk interface
+TRUNKMSD=1; MSD digits to strip (usually 1 or 0)
+[default]
+exten => 4000,1,Dial(MP/1)
+exten => _1,1,Dial(SIP/ip04/1001)  ; call my analog phone
+exten => _2,1,Dial(SIP/ip04/7002)  ; call SIP phone
+exten => _3,1,Dial(SIP/ip04/1003)
+exten => _0,1,DIal(SIP/ip04/1004)   
+EOF
+
+#; 1,2 or 3 digit dialling of last octet
+#exten => _X,1,Dial(SIP/4000@10.130.1.${EXTEN})
+#exten => _XX,1,Dial(SIP/4000@10.130.1.${EXTEN})
+#exten => _XXX,1,Dial(SIP/4000@10.130.1.${EXTEN})
+#; full a*b*c*d IP dialling, e.g. 10*130*1*144*
+#exten => _X.,1,Set(OCTETS=${EXTEN})
+#exten => _X.,n,Set(IP=${CUT(OCTETS,*,1)}.${CUT(OCTETS,*,2)}.${CUT(OCTETS,*,3)}.${CUT(OCTETS,*,4)}
+#exten => _X.,n,Dial(SIP/4000@${IP})
+
+}
+
+
+reload() {
+  echo "configuring asterisk..."
+  configure_asterisk
+  echo "completed configuration"
+}
+
+
+start() {
+  [ -f $DEFAULT ] && . $DEFAULT
+  [ -d $DEST/var/run ] || mkdir -p $DEST/var/run
+  [ -d $DEST/var/log/asterisk ] || mkdir -p $DEST/var/log/asterisk
+  [ -d $DEST/var/spool/asterisk ] || mkdir -p $DEST/var/spool/asterisk
+  [ -d /var/spool/asterisk ] || mkdir -p /var/spool/asterisk
+  [ -h $DEST/usr/lib/asterisk/astdb ] || ln -sf /var/spool/asterisk/astdb $DEST/usr/lib/asterisk/astdb
+  # $DEST/usr/sbin/asterisk $OPTIONS
+  /usr/sbin/asterisk -f 2>&1 > /dev/null &
+}
+
+
+stop() {
+  [ -f $DEST/var/run/asterisk.pid ] && kill $(cat $DEST/var/run/asterisk.pid) >/dev/null 2>&1
+}
+

@@ -20,6 +20,7 @@ config 'afrimesh' 'map'
 	option 'zoom'   '15'
 	option 'aerial' '0'
 
-config 'afrimesh' 'potato'
-	option 'trunkcalls' 'off'
-	option 'asterisk'   ''
+config 'afrimesh' 'telephony'
+	option 'sip' 'off'
+	option 'iax' 'off'
+

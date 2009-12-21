@@ -41,8 +41,13 @@ function BootSettings(parent, address) {
     "afrimesh|settings|support|group" : { remote : "afrimesh|support|group", init : "afrimesh"  },
     "afrimesh|settings|support|irc"   : { remote : "afrimesh|support|irc",   init : "http://webchat.freenode.net/?channels=afrimesh"  },
 
-    "afrimesh|settings|potato|trunkcalls" : { remote : "afrimesh|potato|trunkcalls",  init : "off" },
-    "afrimesh|settings|potato|asterisk"   : { remote : "afrimesh|potato|asterisk",    init : " "   },
+    "afrimesh|settings|telephony|iax|enable"   : { remote : "afrimesh|telephony|iax",  init : "off" },
+    "afrimesh|settings|telephony|iax|address"  : { remote : "asterisk|@sip[0]|host",   init : ""       },
+
+    "afrimesh|settings|telephony|sip|enable"   : { remote : "afrimesh|telephony|sip",    init : "off" },
+    "afrimesh|settings|telephony|sip|address"  : { remote : "asterisk|@sip[0]|host",     init : ""    },
+    "afrimesh|settings|telephony|sip|username" : { remote : "asterisk|@sip[0]|username", init : ""    },
+    "afrimesh|settings|telephony|sip|password" : { remote : "asterisk|@sip[0]|password", init : ""    },
 
     "afrimesh|settings|network|wireless|address"  : { remote : "network|(wireless|@wifi-iface[0]|device)|ipaddr",  init : "?" },
     "afrimesh|settings|network|wireless|netmask"  : { remote : "network|(wireless|@wifi-iface[0]|device)|netmask", init : "?" },
@@ -118,7 +123,7 @@ function BootSettings(parent, address) {
   var load_remote = function() {
     var config = parent.villagebus.uci.get.sync(address, "");
     parent.settings.uci_config = config;
-    console.debug("REMOTE CONFIG: \n" + rpretty_print(config));
+    console.debug("REMOTE CONFIG: \n" + rshow(config));
     for (var local in afrimesh2uci) {
       var value = "";
       try { 
@@ -156,7 +161,7 @@ function BootSettings(parent, address) {
   }
   //settings.map.openlayers_url = "http://192.168.20.2/afrimesh/javascript/openlayers/OpenLayers.js";
   //settings.map.openlayers_url = "http://192.168.1.20/afrimesh/javascript/openlayers/OpenLayers.js";
-  //settings.map.openlayers_url = "javascript/openlayers/OpenLayers.js"; // <- TODO - add some config option to host this locally
+  settings.map.openlayers_url = "javascript/openlayers/OpenLayers.js"; // <- TODO - add some config option to host this locally
   settings.map.osm_url = "javascript/openlayers/OpenStreetMap.js";
 
   return settings;

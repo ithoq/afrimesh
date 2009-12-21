@@ -68,7 +68,7 @@ int _uci_show_package(const char* package, struct json_object* result)
     //cur_section_ref = uci_lookup_section_ref(section);  // TODO - better handling for lists
     struct uci_element* element_option;
     struct json_object* json_section = json_object_new_object();
-    json_object_object_add(json_section, "type", json_object_new_string(section->type));
+    json_object_object_add(json_section, "_sectiontype", json_object_new_string(section->type));
     uci_foreach_element(&section->options, element_option) { /* for each option */
       struct uci_option* option;
       option = uci_to_option(element_option);
@@ -119,7 +119,7 @@ bool uci_show_package(const char* package)
     } else {
       printf(",\n\t\t    ");
     }
-    printf("%s\t: { type\t: \"%s\"", (cur_section_ref ? cur_section_ref : section->e.name), section->type);
+    printf("%s\t: { _sectiontype\t: \"%s\"", (cur_section_ref ? cur_section_ref : section->e.name), section->type);
     struct uci_element* element_option;
     uci_foreach_element(&section->options, element_option) { /* for each option */
       struct uci_option* option;
