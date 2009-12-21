@@ -41,8 +41,8 @@ function BootSettings(parent, address) {
     "afrimesh|settings|support|group" : { remote : "afrimesh|support|group", init : "afrimesh"  },
     "afrimesh|settings|support|irc"   : { remote : "afrimesh|support|irc",   init : "http://webchat.freenode.net/?channels=afrimesh"  },
 
-    "afrimesh|settings|telephony|iax|enable"   : { remote : "afrimesh|telephony|iax",  init : "off" },
-    "afrimesh|settings|telephony|iax|address"  : { remote : "asterisk|@sip[0]|host",   init : ""       },
+    "afrimesh|settings|telephony|iax|enable"  : { remote : "afrimesh|telephony|iax",  init : "off" },
+    "afrimesh|settings|telephony|iax|address" : { remote : "asterisk|@sip[0]|host",   init : ""       },
 
     "afrimesh|settings|telephony|sip|enable"   : { remote : "afrimesh|telephony|sip",    init : "off" },
     "afrimesh|settings|telephony|sip|address"  : { remote : "asterisk|@sip[0]|host",     init : ""    },
