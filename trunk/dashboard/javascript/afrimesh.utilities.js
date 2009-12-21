@@ -156,9 +156,9 @@
     var count = 0;
     for (var entry in this_object) {
       candidate = this_object[entry];
-      if (candidate.type == type && index == count) {
+      if (candidate._sectiontype == type && index == count) {
         return entry;
-      } else if (candidate.type == type) {
+      } else if (candidate._sectiontype == type) {
         count++;
       }
     }
@@ -233,7 +233,7 @@
     }
     return s;
   };
-  function pretty_print(item) {
+  function show(item) {
     var s = "";
     for (var p in item) {
       s += p + ": " + item[p] + "\t";
@@ -259,18 +259,18 @@
     }
     return "object";
   }
-  function rpretty_print(item) {
+  function rshow(item) {
     var s = "";
     for (var property in item) {
       if (typeOf(item[property]) == 'object') {
-        s += property + " : { " + rpretty_print(item[property]) + " } \n";
+        s += property + " : { " + rshow(item[property]) + " } \n";
       } else {
         s += property + " : |" + item[property] + "|\t";
       }
     }
     return s;
   }
-  function pretty_print_json(item) {
+  function show_json(item) {
     var s = "{ ";
     var first_property = true;
     for (var p in item) {

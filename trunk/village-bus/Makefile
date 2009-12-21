@@ -163,3 +163,5 @@ test-jsonrpc-ipkg :
 # /www/cgi-bin/village-bus /ipkg '{ "id" : 123, "version" : "2.0", "method" : "upgrade", "params" : [ "afrimesh-base" ] }'
 
 # run /syslog '{ "id" : 123, "version" : "2.0", "method" : "read", "params" : [ 3 ] }'
+
+# DEPROOT=/Volumes/afrimesh-dev/ext CFLAGS=-m32 make clean village-bus test-jsonrpc-uci

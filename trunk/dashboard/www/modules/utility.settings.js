@@ -10,7 +10,8 @@
 var populate_dom = null;
 var populate_select_interface = null;
 var populate_mesh_controls = null;
-var update_asterisk_server = null;
+var update_sip_server = null;
+var update_iax_server = null;
 var update_radius_server = null;
 var update_vis_server = null;
 var update_map_server = null;
@@ -98,7 +99,20 @@ var LocationMap = null;
     $("input[name='is_mesh_gateway']").change();
   };
   
-  update_asterisk_server = function() {
+  update_sip_server = function() {
+    //console.debug("checked: " + $("input.[id*=afrimesh|settings|potato|trunkcalls]").is(":checked"));
+    var enabled = $("input.[id*=afrimesh|settings|potato|trunkcalls]").attr("checked");
+    if (!enabled) {
+      $(".trunk").hide();
+      return;
+    } 
+    $(".trunk").show();
+    var server = $("input.[id*=afrimesh|settings|potato|asterisk]").val();
+    console.debug("asterisk server: " + server);
+    // TODO - try to ping sip server
+  };
+
+  update_iax_server = function() {
     //console.debug("checked: " + $("input.[id*=afrimesh|settings|potato|trunkcalls]").is(":checked"));
     var enabled = $("input.[id*=afrimesh|settings|potato|trunkcalls]").attr("checked");
     if (!enabled) {

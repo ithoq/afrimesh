@@ -141,6 +141,7 @@
           });
 
         /** handle login authorization */
+        afrimesh.session = true; // TODO
         if (!afrimesh.session) { // if we have no session id we're not logged in 
           $("ul#menu ul#utility li#login").click();
           return;
