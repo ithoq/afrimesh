@@ -47,7 +47,7 @@ function BootSettings(parent, address) {
     "afrimesh|settings|telephony|sip|enable"   : { remote : "afrimesh|telephony|sip",    init : "off" },
     "afrimesh|settings|telephony|sip|address"  : { remote : "asterisk|@sip[0]|host",     init : ""    },
     "afrimesh|settings|telephony|sip|username" : { remote : "asterisk|@sip[0]|username", init : ""    },
-    "afrimesh|settings|telephony|sip|password" : { remote : "asterisk|@sip[0]|password", init : ""    },
+    "afrimesh|settings|telephony|sip|password" : { remote : "asterisk|@sip[0]|secret",   init : ""    },
 
     "afrimesh|settings|network|wireless|address"  : { remote : "network|(wireless|@wifi-iface[0]|device)|ipaddr",  init : "?" },
     "afrimesh|settings|network|wireless|netmask"  : { remote : "network|(wireless|@wifi-iface[0]|device)|netmask", init : "?" },

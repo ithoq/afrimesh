@@ -21,6 +21,6 @@ config 'afrimesh' 'map'
 	option 'aerial' '0'
 
 config 'afrimesh' 'telephony'
-	option 'sip' 'off'
+	option 'sip' 'on'
 	option 'iax' 'off'
 
