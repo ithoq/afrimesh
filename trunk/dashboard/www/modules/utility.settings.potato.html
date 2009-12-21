@@ -124,24 +124,24 @@
           <input  id="did|inbound" />
           <div class="tooltip"><h3>inbound did</h3></div>
           <div class="label">Trunk Calls</div>
-          <input id="afrimesh|settings|potato|trunkcalls" type="checkbox"  />
-          <div class="trunk">
+          <input id="afrimesh|settings|telephony|iax|enable" type="checkbox"  />
+          <div class="iax_trunk">
             <div class="label">Asterisk Server</div>
-            <input  id="afrimesh|settings|potato|asterisk" />
+            <input  id="afrimesh|settings|telephony|iax|address" />
             <div class="tooltip"><h3>asterisk</h3></div>
           </div -->
 
-          <div class="label">Enable SIP</div>
-          <input id="afrimesh|settings|potato|sip" type="checkbox"  />
-          <div class="sip">
-            <div class="label">SIP Address</div>
-            <input  id="afrimesh|settings|sip|address" />
+          <div class="label">SIP Trunk</div>
+          <input id="afrimesh|settings|telephony|sip|enable" type="checkbox"  />
+          <div class="sip_trunk">
+            <div class="label">Address</div>
+            <input  id="afrimesh|settings|telephony|sip|address" />
             <div class="tooltip"><h3>sip address</h3></div>
-            <div class="label">SIP Username</div>
-            <input  id="afrimesh|settings|sip|username" />
+            <div class="label">Username</div>
+            <input  id="afrimesh|settings|telephony|sip|username" />
             <div class="tooltip"><h3>sip username</h3></div>
-            <div class="label">SIP Password</div>
-            <input type="password" id="afrimesh|settings|sip|password" />
+            <div class="label">Password</div>
+            <input type="password" id="afrimesh|settings|telephony|sip|password" />
             <div class="tooltip"><h3>sip password</h3></div>
           </div>
 
@@ -224,12 +224,20 @@
           save_element("afrimesh|settings|network|mesh|gateway_class", "");
         }
       });
-    $("input.[id=afrimesh|settings|potato|trunkcalls]").bind("change", function(event) { 
+    $("input.[id=afrimesh|settings|telephony|iax|enable]").bind("change", function(event) { 
         save_element(this.id, this.checked.toString());
         update_iax_server();
       });
-    $("input.[id=afrimesh|settings|potato|asterisk]").bind("blur", function(event) { 
+    $("input.[id=afrimesh|settings|telephony|iax|address]").bind("blur", function(event) { 
         update_iax_server();
+      });
+    $("input.[id=afrimesh|settings|telephony|sip|enable]").bind("change", function(event) { 
+        save_element(this.id, this.checked.toString());
+        update_sip_server();
+      });
+    $("input.[id=afrimesh|settings|telephony|sip|*]").bind("blur", function(event) { 
+        console.error("UPDATING SIP");
+        update_sip_server();
       });
 
     /** update mesh routing controls --------------------------------- */
@@ -237,7 +245,8 @@
       update_mesh_controls(); 
     } catch (e) { console.error("update_mesh_controls: " + e); }
 
-    /** query asterisk server for availability ----------------------- */
+    /** query telephony servers for availability --------------------- */
+    update_sip_server();
     update_iax_server();
 
     /** query vis server for availability ---------------------------- */
