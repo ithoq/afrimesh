@@ -13,9 +13,6 @@ config 'asterisk'
 
 config 'sipgeneral'
 	option 'allow' 'ulaw'
-  # not used
-	#option 'realm' 'sip.mydomain.net'
-	option 'extension' '7001'
 
 config 'sip' 'ip04'
 	option 'context' 'default'
@@ -27,40 +24,3 @@ config 'sip' 'ip04'
 	option 'qualify' '500'
 	option 'dtmfmode' 'rfc2833'
 	option 'insecure' 'invite'
-
-
-	#option 'canreinvite' 'no'	
-  # not in LuCI schema
-	#option 'disallow' 'all'     
-	#option 'callerid' 'server'
-  # not used by drowe's config
-	#option 'port' '5060'
- 	#option 'selfmailbox' 'yes'
-	#option 'incoming' 'provider_inbound'
-	#option 'extension' '101'
-	#option 'mailbox' '1001@default'
-
-
-#config 'sip' 'providerphone'
-#  option 'provider' 'yes'
-#  option 'type' 'friend'
-#  option 'timeout' '55'
-#  option 'internationalprefix' '0011'
-#  option 'alwaysinternational' 'no'
-#  option 'countrycode' '63'
-#  option 'register' 'yes'
-#  option 'host' '200.200.200.200'
-#  option 'username' '0899999999'
-#  option 'fromuser' '0899999999'
-#  option 'secret' 'mysecret'
-#  option 'fromdomain' 'providerphone.provider.net.au'
-#  option 'context' 'provider_inbound'
-#  option 'canreinvite' 'no'
-#  option 'nat' 'yes'
-#  option 'qualify' 'yes'
-#  option 'insecure' 'very'
-#  option 'pedantic' 'no'
-#  option 'qualify' '1000'
-
-
-
