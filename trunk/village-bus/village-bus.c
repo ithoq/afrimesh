@@ -232,6 +232,24 @@ struct json_object* jsonrpc_dispatch_sys_upgrade(const char* name, struct json_o
   return NULL;
 }
 
+struct json_object* jsonrpc_dispatch_sys_service(const char* name, struct json_object* arguments)
+{
+  char* service = json_object_get_string(json_object_array_get_idx(arguments, 0));
+  char* command = json_object_get_string(json_object_array_get_idx(arguments, 1));
+  char path[32];
+  snprintf(path, 32, "/etc/init.d/%s", service);
+  char* argv[3];
+  argv[0] = path; 
+  argv[1] = command;
+  argv[2] = 0;
+
+  if (strncmp(command, "reload", 6) == 0) {
+    return sys_exec(argv[0], argv);
+  } 
+
+  return jsonrpc_error("Unknown command: '%s' for service: '%s'", command, service);  
+}
+
 
 /** ipkg ----------------------------------------------------------------- */
 struct json_object* jsonrpc_dispatch_ipkg_update (const char* name, struct json_object* arguments)

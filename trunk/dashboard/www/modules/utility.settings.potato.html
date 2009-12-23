@@ -7,18 +7,17 @@
  * New BSD License. See /LICENSE for more information.
 -->
 
-<!-- h2>Settings</h2 -->
-
 <form class="two-column" 
       id="potato" 
+      OnSubmit="return false;"
       OnKeyPress="return disable_key(13, event);">
 
   <table border="0">
     <tr valign="top">
 
       <td>
-        <fieldset>
-          <legend>Network</legend>
+        <fieldset id="network">
+          <legend>Network &nbsp; <button /></legend>
           <div class="label">IP Address</div>
           <input  id="afrimesh|settings|network|wireless|address"/>
           <div class="tooltip"><h3>ip address</h3></div>
@@ -27,7 +26,7 @@
           <div class="tooltip"><h3>netmask</h3></div>
         </fieldset>
         
-        <fieldset>
+        <fieldset id="network">
           <legend>Wireless</legend>
           <div class="label">Channel</div>
           <input  id="afrimesh|settings|network|wireless|channel" />
@@ -40,7 +39,7 @@
           <div class="tooltip"><h3>bssid</h3></div>
         </fieldset>      
 
-        <fieldset>
+        <fieldset id="map">
           <legend>Map</legend>
           <div class="label">Map Server</div>
           <input id="afrimesh|settings|map|server"  type="text" />
@@ -59,8 +58,8 @@
       </td>
 
       <td>
-        <fieldset>
-          <legend>B.A.T.M.A.N.</legend>
+        <fieldset id="batmand">
+          <legend>B.A.T.M.A.N. &nbsp; <button /></legend>
           <div class="label">Vis Server</div>
           <input id="afrimesh|settings|network|mesh|vis_server" style="background:#FFAAAA;" />
           <div class="tooltip"><h3>visualization server</h3>
@@ -114,8 +113,8 @@
           </div>
         </fieldset>
         
-        <fieldset>
-          <legend>Telephony</legend>
+        <fieldset id="telephony">
+          <legend>Telephony &nbsp; <button/></legend>
           
           <!-- div class="label">Extension</div>
           <input  id="extension" />
@@ -186,24 +185,54 @@
     /** style controls ----------------------------------------------------- */
     $('form.two-column :checkbox').slider();
 
-    /** install callbacks to save settings -------------------------------- */
+    /** service reload buttons --------------------------------------------- */
+    $("form.two-column :button").hide();
+    function reload_service(fieldset) {
+      var button   = $("fieldset#" + fieldset + " :button");
+      button.unbind("click");
+      button.click(function() { 
+          $(this).html("<img src='images/reload-busy.gif'/>");
+          button.attr("disabled", true); 
+          $("fieldset#" + fieldset + " *").attr("disabled", true);
+          var service = fieldset; // <-- any mapping required in future happens here
+          afrimesh.villagebus.sys.service.async(reload_complete, afrimesh.settings.address, service, "reload");
+          function reload_complete(output) {
+            console.debug("Reloaded '" + fieldset + "'");
+            console.debug(output);
+            $("fieldset#" + fieldset + " *").attr("disabled", false);
+            $("fieldset#" + fieldset + " :button").hide(); 
+          };
+        });
+      button.html("<img src='images/reload.png'/>");
+      $("fieldset#" + fieldset + " :button").show(); 
+    };
+
+
+    /** install callbacks to save settings --------------------------------- */
     function save_element(id, value) {
-      return (Q(afrimesh, id) != value) ? afrimesh.settings.save(id, value) : null;
+      if (Q(afrimesh, id) == value) {
+        return false;
+      } 
+      console.debug("Saving setting: " + id + " -> " + value);
+      return afrimesh.settings.save(id, value);
     };
     $("input.[id*=afrimesh|settings]").bind("blur", function(event) {
-        console.debug("Saving Setting: " + this.id + " -> " + this.value);
-        save_element(this.id, this.value);
-        populate_dom();
+        if (save_element(this.id, this.value)) {
+          populate_dom();
+          reload_service($(this).closest("fieldset").attr("id"));
+        }
       });
     $("input.[id*=afrimesh|settings]").bind("keypress", function(event) {
 	      if (event.keyCode != 13) return true;
-        console.debug("Saving Setting: " + this.id + " -> " + this.value);
-        save_element(this.id, this.value);
-        populate_dom();
+        if (save_element(this.id, this.value)) {
+          populate_dom();
+        }
         return false;
       });
     $("select.[id*=afrimesh|settings]").bind("blur", function(event) { 
-        save_element(this.id, this.value); 
+        if (save_element(this.id, this.value)) {
+          reload_service($(this).closest("fieldset").attr("id"));
+        } 
     });
     $("input.[id*=afrimesh|settings|network|mesh|vis_server]").bind("blur", function(event) { 
         update_vis_server();
@@ -225,14 +254,18 @@
         }
       });
     $("input.[id=afrimesh|settings|telephony|iax|enable]").bind("change", function(event) { 
-        save_element(this.id, this.checked.toString());
+        if (save_element(this.id, this.checked.toString())) {
+          reload_service($(this).closest("fieldset").attr("id"));
+        }
         update_iax_server();
       });
     $("input.[id=afrimesh|settings|telephony|iax|address]").bind("blur", function(event) { 
         update_iax_server();
       });
     $("input.[id=afrimesh|settings|telephony|sip|enable]").bind("change", function(event) { 
-        save_element(this.id, this.checked.toString());
+        if (save_element(this.id, this.checked.toString())) {
+          reload_service($(this).closest("fieldset").attr("id"));
+        }
         update_sip_server();
       });
     $("input.[id=afrimesh|settings|telephony|sip|*]").bind("blur", function(event) { 

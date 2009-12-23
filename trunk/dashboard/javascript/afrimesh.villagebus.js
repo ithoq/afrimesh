@@ -252,11 +252,13 @@ var BootVillageBus = function (afrimesh) {
   };
   villagebus.sys.uname = function(address) { return villagebus.sys.uname.sync(address); };
   villagebus.sys.uname.sync  = function(address)    { return rpc(villagebus.sys.url(address), "uname", []); };
-  villagebus.sys.uname.async = function(f, address) { return rpc_async(f, villagebus.sys.url(address), "uname", []); };  
+  villagebus.sys.uname.async = function(f, address) { return rpc_async(villagebus.sys.url(address), "uname", [], f); };  
   villagebus.sys.version = function(address) { return villagebus.sys.version.sync(address); };
   villagebus.sys.version.sync  = function(address)    { return rpc(villagebus.sys.url(address), "version", []); };
-  villagebus.sys.version.async = function(f, address) { return rpc_async(f, villagebus.sys.url(address), "version", []); };  
-
+  villagebus.sys.version.async = function(f, address) { return rpc_async(villagebus.sys.url(address), "version", [], f); };  
+  villagebus.sys.service = function(address, service, command)       { return villagebus.sys.service.sync(address, service, command); };
+  villagebus.sys.service.sync  = function(address, name, command)    { return rpc(villagebus.sys.url(address), "service", [ name, command ]); };
+  villagebus.sys.service.async = function(f, address, name, command) { return rpc_async(villagebus.sys.url(address), "service", [ name, command ], f); };  
 
   /** - villagebus.ipkg --------------------------------------------------- */
   villagebus.ipkg = function(address) {
@@ -454,6 +456,7 @@ var BootVillageBus = function (afrimesh) {
       });
     request.error   = (typeof(error) == "undefined" ? rpc_async_error(request) : error);
     request.success = rpc_async_success(request, request.error);
+    //console.debug("making request: " + show(request));
     return $.ajax(request);
   };
 

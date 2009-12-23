@@ -60,6 +60,7 @@ struct json_object* jsonrpc_dispatch_sys_syslog (const char* name, struct json_o
 struct json_object* jsonrpc_dispatch_sys_uname  (const char* name, struct json_object* arguments);
 struct json_object* jsonrpc_dispatch_sys_version(const char* name, struct json_object* arguments); /* TODO - all components */
 struct json_object* jsonrpc_dispatch_sys_upgrade(const char* name, struct json_object* arguments);
+struct json_object* jsonrpc_dispatch_sys_service(const char* name, struct json_object* arguments);
 
 struct json_object* jsonrpc_dispatch_ipkg_update (const char* name, struct json_object* arguments);
 struct json_object* jsonrpc_dispatch_ipkg_list   (const char* name, struct json_object* arguments); /* TODO - non-standard    */
