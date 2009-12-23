@@ -30,12 +30,61 @@
 
 
 #include <fcntl.h>
+#include <unistd.h>
+#include <limits.h>
 #include <errno.h>
 #include <sys/types.h>
 
 #include <common/safelib.h>
 
 #include "village-bus-sys.h"
+
+
+/**
+ * Check to see if a file called 'name' exists as specified or in the system path
+ */
+int path_exists(const char* name)
+{
+  const char *path, *cursor;
+  size_t count;
+  size_t namelen;
+  char buf[PATH_MAX];
+
+  if (name == NULL || name[0] == '\0') {
+    return 0;
+  }
+
+  /* if it is an absolute or relative path, just check it  */
+  if (strchr(name, '/') && access(path, F_OK) == 0) {
+    return 1;
+  }
+
+  /* Search the system path for the file */
+  namelen = strlen(name);
+  if (!(path = getenv("PATH"))) {
+    path = "/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin";
+  }
+  cursor = path;
+  do {
+    for (path = cursor; *cursor != 0 && *cursor != ':'; cursor++) continue;
+    if (cursor == path) {
+      path = ".";
+      count = 1;
+    } else {
+      count = cursor - path;
+    }
+    memcpy(buf, path, count);
+    buf[count] = '/';
+    memcpy(buf + count + 1, name, namelen);
+    buf[count + namelen + 1] = '\0';
+    if (access(buf, F_OK) == 0) {
+      return 1;
+    }
+  } while (*cursor++ == ':');
+
+  return 0;
+
+}
 
 
 struct json_object* die_gracefully(FILE* file, struct json_object* error)
@@ -209,11 +258,15 @@ struct json_object* sys_exec_parsed(char* command, char** arguments,
 {
   size_t max   = 100; /* Hard limit on number of output lines - TODO last 'max' lines rather than first ? */
   size_t count = 0;
-  struct json_object* lines = json_object_new_array();
+  struct json_object* lines;
+  FILE* output;
 
-  /* TODO - check that command exists */
-
-  FILE* output = safe_popen(command, arguments, "r");
+  if (!path_exists(command)) {
+    return jsonrpc_error("%s: command not found", command);
+  }
+  
+  lines = json_object_new_array();
+  output = safe_popen(command, arguments, "r");
   while (1 && count < max) { 
     size_t length;
     char* line = fgetln(output, &length);

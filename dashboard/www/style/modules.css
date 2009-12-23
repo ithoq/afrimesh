@@ -271,40 +271,47 @@ dl.sort dd { background-color:red;  }
 }
 
 
-
-
 /* - setting module ------------------------------------------------------- */
 form.two-column {
-  /*border: 1px solid red;*/
+  /*border: 1px solid lightgray;*/
   margin: 0px;  
   padding: 0px; 
 }
 form.two-column fieldset {
   /*border:1px solid blue;*/
-  padding-bottom: 1.0em;
-  width: 400px; /* 340 for potato */
+  padding-bottom: 0.5em;
+  width: 400px; 
 }
-form.two-column fieldset .potato {
-  /*border:1px solid blue;*/
-  padding-bottom: 1.0em;
+form.two-column#potato fieldset    {
+  /*border:1px solid orange;*/
+  padding-bottom: 0.5em;
   width: 340px; 
 }
 form.two-column fieldset:last-child {
   padding-bottom: 0px;
 }
+form.two-column#potato fieldset:last-child {
+  padding-bottom: 0px;
+}
+form.two-column button {
+  /*border: 1px solid blue;*/
+  vertical-align: bottom;
+}
 form.two-column legend {
-  font-size: 1.5em;
+  /*border: 1px solid red;*/
+  font-size: 1.85em;
+  padding-top: 0px;
   padding-bottom: .25em;
 }
 form.two-column .label {
-  /*border:1px solid red;*/
+  /*border:1px solid green;*/
   color: darkgray; 
   font-size: 1.25em;
   width: 180px; /* 120 for potato */
   float: left;
 }
-form.two-column .label #potato {
-  /*border:1px solid red;*/
+form.two-column#potato .label  {
+  /*border:1px solid purple;*/
   color: darkgray; 
   font-size: 1.25em;
   width: 120px; 

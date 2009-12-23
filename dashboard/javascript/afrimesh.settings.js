@@ -105,7 +105,7 @@ function BootSettings(parent, address) {
     console.debug("Remote: " + afrimesh2uci[selector].remote + " = " + remote);
     if (remote.length != 3) { 
       console.error("afrimesh.settings: '" + selector + "' has invalid remote selector '" + afrimesh2uci[selector].remote + "'");
-      return;
+      return false;
     }
     Qset(parent, selector, value);                         // apply to local settings object
     parent.villagebus.uci.set.async(function (response) {  // apply to remote UCI
@@ -116,6 +116,7 @@ function BootSettings(parent, address) {
           section : remote[1], 
           option  : remote[2], 
           value   : value }    ]);
+    return true;
   };
 
 
