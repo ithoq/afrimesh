@@ -316,16 +316,17 @@ struct json_object* voip_sip_peers_parser(const char* line, size_t length)
       strcasestr (line, "[Monitored:")       != NULL)  {
     return NULL;
   }  
-  cursor = parse_field(cursor, length, (char[]){' ',-1},         &name);
-  cursor = parse_field(cursor, length, (char[]){' ','_',' ',-1}, &host);
-  cursor = parse_field(cursor, length, (char[]){' ','_',' ',-1}, &port);
-  cursor = parse_field(cursor, length, (char[]){' ','_',' ',-1}, &status);
-  cursor = parse_field(cursor, length, (char[]){'(',')',' ',-1}, &latency);
+
+  /*        1         2         3         4         5         6         7         8
+  012345678901234567890123456789012345678901234567890123456789012345678901234567890  
+  Name/username              Host            Dyn Nat ACL Port     Status         */
   struct json_object* peer = json_object_new_object();
-  json_object_object_add(peer, "name",   json_object_new_string(name));
-  json_object_object_add(peer, "host",   json_object_new_string(triml(host)));
-  json_object_object_add(peer, "port",   json_object_new_string(triml(port)));
-  json_object_object_add(peer, "status", json_object_new_string(triml(status)));
+  json_object_object_add(peer, "name",   json_object_new_string (trimr(cut_field(line,  0, 26))));
+  json_object_object_add(peer, "host",   json_object_new_string (trimr(cut_field(line, 27, 42))));
+  json_object_object_add(peer, "port",   json_object_new_string (trimr(cut_field(line, 55, 63))));
+  cursor = parse_field(line + 64, length, (char[]){' ',-1}, &status);
+  cursor = parse_field(cursor, length, (char[]){'(',')',' ',-1}, &latency);
+  json_object_object_add(peer, "status", json_object_new_string (status));
   json_object_object_add(peer, "latency", json_object_new_string(latency));
   return peer;
 }
