@@ -306,7 +306,7 @@ char* triml(char* s)
 char* trimr(char* s)
 {
   char* _s = s + strlen(s);
-  while (isspace(*_s)) _s--;
+  while (isspace(*--_s));
   *(_s + 1) = '\0';
   return s;
 }

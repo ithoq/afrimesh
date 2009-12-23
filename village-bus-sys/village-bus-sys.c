@@ -94,13 +94,20 @@ struct json_object* die_gracefully(FILE* file, struct json_object* error)
 }
 
 
-typedef struct {
-  char* timestamp;
-  char* level;
-  char* address;
-  char* process;
-  char* message;
-} LogEntry;
+// TODO - not threadsafe
+static char* cut_field_buf = NULL;
+char* cut_field(const char* input, size_t start, size_t end)
+{
+  if (cut_field_buf != NULL) {
+    free(cut_field_buf);
+  }
+  size_t length = end - start;
+  cut_field_buf = malloc((length + 1) * sizeof(char));
+  strncpy(cut_field_buf, input + start, length);
+  cut_field_buf[length] = '\0';
+  return cut_field_buf;
+}
+
 
 char* parse_field(const char* input, size_t length, char* tokens, char** pfield)
 {
@@ -137,9 +144,17 @@ char* parse_field(const char* input, size_t length, char* tokens, char** pfield)
   return cursor;
 }
 
+
 /**
  * Jan  2 18:12:08 <daemon.err> 192.168.20.2 batmand[567]: Error - got packet from unknown client: 10.0.0.3 (tunnelled sender ip 169.254.0.3)  
  */
+typedef struct {
+  char* timestamp;
+  char* level;
+  char* address;
+  char* process;
+  char* message;
+} LogEntry;
 LogEntry parse_entry(const char* input, size_t length)
 {
   LogEntry entry;
