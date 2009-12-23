@@ -27,8 +27,6 @@ append_sip_parm() {
   fi
   if [ ! -z "$key" ] && [ ! -z "$value" ] ; then
     append sipconf "\n$key=$value"
-  else
-    echo "UNKNOWN: $key . $value"
   fi
 }
 
@@ -55,23 +53,27 @@ append_sip_entry() {
   append_sip_parm "$cfg" "canreinvite" ""
   append_sip_parm "$cfg" "allowguest"  ""
   append sipconf "\ndisallow=all"
-  append sipconf "\nallow=$(uci get asterisk.@sipgeneral[0].allow)"
-  
+  append sipconf "\nallow=$(uci get asterisk.@sipgeneral[0].allow)"  
 }
 
 
 configure_sip() {
+  local sipremote="$1"
+  local sipextension="$2"
+
+  # TODO - register incoming sip providers
+
   # build & write out sip.conf  -  TODO don't write sip.conf
   cat > /etc/asterisk/sip.conf << EOF
 [general]
 context=default
 srvlookup=no
-register => 7001:mysecret@192.168.20.230/7001
+register => ${sipremote}
 #include "potato.sip.conf"
 EOF
-  sipconf=""
+  local sipconf=""
   config_foreach append_sip_entry sip
-  echo -e "$sipconf" >> /etc/asterisk/potato.sip.conf
+  echo -e "${sipconf}" >> /etc/asterisk/potato.sip.conf
 
   # build & write out extensions.conf  -  TODO don't write extensions.conf
   extconf=""
@@ -88,7 +90,33 @@ include => default
 EOF
   cat > /etc/asterisk/potato.extensions.conf << EOF
 [default]
-exten => 7001,1,Dial(MP/1) ; answer incoming calls
+; original MP dial rules
+exten => 4000,1,Dial(MP/1)
+exten => 4001,1,Answer
+exten => 4001,2,Echo
+exten => 4002,1,Dial(SIP/sipguest)
+;exten => _XX,1,Dial(SIP/4000@10.130.1.\${EXTEN})
+
+; 1,2 or 3 digit dialling of last octet
+exten => _X,1,Dial(SIP/4000@10.130.1.\${EXTEN})
+exten => _XX,1,Dial(SIP/4000@10.130.1.\${EXTEN})
+exten => _XXX,1,Dial(SIP/4000@10.130.1.\${EXTEN})
+
+; full a*b*c*d IP dialling, e.g. 10*130*1*144*
+exten => _X.,1,Set(OCTETS=\${EXTEN})
+exten => _X.,n,Set(IP=\${CUT(OCTETS,*,1)}.\${CUT(OCTETS,*,2)}.\${CUT(OCTETS,*,3)}.\${CUT(OCTETS,*,4)})
+exten => _X.,n,Dial(SIP/4000@\${IP})
+
+; C-O-N-F -> 2663 to set the IP of this IP04
+exten => 2663,1,Answer
+exten => 2663,2,Background(justwhat)
+exten => 2663,3,Read(newip||15)
+exten => 2663,4,SayDigits(\${newip})
+exten => 2663,5,System(/bin/echo "\${newip}" > /tmp/newip.txt)
+exten => 2663,6,System(/bin/setnewip)
+
+; new dial rules to support SIP client functionality
+exten => ${sipextension},1,Dial(MP/1)                ; answer incoming SIP calls
 exten => _XXXX,1,Dial(SIP/\${EXTEN}@sippotato,30,r)  ; route 4 digit extensions to SIP provider
 exten => _0.,1,Dial(SIP/\${EXTEN}@sippotato,30,r)    ; trunk everything after '0' through SIP provider
 EOF
@@ -120,7 +148,10 @@ configure_asterisk() {
   if is_false $sip_enable ; then
       return
   else
-      configure_sip
+      config_get host     "sippotato" "host"
+      config_get username "sippotato" "username"
+      config_get secret   "sippotato" "secret"
+      configure_sip "${username}:${secret}@${host}/${username}" "${username}"
   fi  
 }
 
