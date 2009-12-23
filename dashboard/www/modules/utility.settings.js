@@ -100,27 +100,33 @@ var LocationMap = null;
   };
   
   update_sip_server = function() {
-    console.debug("checked: " + $("input.[id*=afrimesh|settings|telephony|sip|enable]").is(":checked"));
-    var enabled = $("input.[id*=afrimesh|settings|telephony|sip|enable]").attr("checked");
+    $("fieldset#asterisk :text, :password").css("background", "#FFAAAA");
+    var enabled = $("input.[id*=afrimesh|settings|voip|sip|enable]").attr("checked");
     if (!enabled) {
       $(".sip_trunk").hide();
       return;
     } 
     $(".sip_trunk").show();
-    var server = $("input.[id*=afrimesh|settings|telephony|sip|address]").val();
-    console.debug("sip server: " + server);
-    // TODO - try to ping sip server
+    var server = $("input.[id*=afrimesh|settings|voip|sip|address]").val();
+    afrimesh.villagebus.voip.sip.peers.async(function(peers) {
+        peers.map(function(peer) {
+            console.debug(show(peer));
+            if (peer.host == server && peer.status == "OK") {
+              $("fieldset#asterisk :text, :password").css("background", "#AAFFAA");
+            }
+          });
+      }, afrimesh.settings.address);
   };
 
   update_iax_server = function() {
-    //console.debug("checked: " + $("input.[id*=afrimesh|settings|telephony|iax|enable]").is(":checked"));
-    var enabled = $("input.[id*=afrimesh|settings|telephony|iax|enable]").attr("checked");
+    //console.debug("checked: " + $("input.[id*=afrimesh|settings|voip|iax|enable]").is(":checked"));
+    var enabled = $("input.[id*=afrimesh|settings|voip|iax|enable]").attr("checked");
     if (!enabled) {
       $(".iax_trunk").hide();
       return;
     } 
     $(".iax_trunk").show();
-    var server = $("input.[id*=afrimesh|settings|telephony|iax|address]").val();
+    var server = $("input.[id*=afrimesh|settings|voip|iax|address]").val();
     console.debug("asterisk server: " + server);
     // TODO - try to ping asterisk server
   };

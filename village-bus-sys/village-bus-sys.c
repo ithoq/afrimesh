@@ -114,6 +114,11 @@ char* parse_field(const char* input, size_t length, char* tokens, char** pfield)
     char c = *cursor;
     if (tokens[n] == c) {
       n++;
+    } else if (tokens[n] == '_')  { /* eat whitespace */
+      if (c == ' ' || c == '\t') {
+        continue;
+      } 
+      n++;
     }
     if (tokens[n] == -1) {
       size_t fieldlen = cursor - input;
@@ -282,7 +287,9 @@ struct json_object* sys_exec_parsed(char* command, char** arguments,
       json_object_array_add(lines, json_object_new_string_len(line, length - 1));
     } else {
       struct json_object* parsed = parser(line, length);
-      json_object_array_add(lines, parsed);
+      if (parsed != NULL) {
+        json_object_array_add(lines, parsed);
+      }
     }
     count++;
   }

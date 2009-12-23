@@ -146,7 +146,7 @@ struct json_object* jsonrpc_dispatch_snmp(const char* name, struct json_object* 
   struct json_object* oid       = json_object_array_get_idx(arguments, 2);
 
   /* typecheck request arguments */
-  if (strncmp(name, "get", 3) == 0 &&
+  if (strncasecmp(name, "get", 3) == 0 &&
       !json_typecheck_array(oid, json_type_string)) {
     return jsonrpc_error("/snmp.get (%s) expected (String, String, [String])", 
                          params_tostring(arguments));
@@ -164,7 +164,7 @@ struct json_object* jsonrpc_dispatch_snmp(const char* name, struct json_object* 
 
   /* dispatch request */
   struct json_object* response = json_object_new_object();
-  if (strncmp(name, "get", 3) == 0) {
+  if (strncasecmp(name, "get", 3) == 0) {
     struct json_object* get = snmp_get(session, oid);
     if (!get) {
       int liberr, syserr;
@@ -174,7 +174,7 @@ struct json_object* jsonrpc_dispatch_snmp(const char* name, struct json_object* 
     }
     json_object_object_add(response, "result", get);
 
-  } else if (strncmp(name, "walk", 4) == 0) {
+  } else if (strncasecmp(name, "walk", 4) == 0) {
     struct json_object* walk = snmp_walk(session, json_object_get_string(oid));
     if (!walk) {
       int liberr, syserr;
@@ -185,7 +185,7 @@ struct json_object* jsonrpc_dispatch_snmp(const char* name, struct json_object* 
     json_object_object_add(response, "result", walk);
 
   } else {
-    return jsonrpc_error("Could not find name '%s' in module '/snmp'", name);
+    return jsonrpc_error("/snmp: %s unknown command", name);
   }
 
   /* cleanup */
@@ -243,11 +243,11 @@ struct json_object* jsonrpc_dispatch_sys_service(const char* name, struct json_o
   argv[1] = command;
   argv[2] = 0;
 
-  if (strncmp(command, "reload", 6) == 0) {
+  if (strncasecmp(command, "reload", 6) == 0) {
     return sys_exec(argv[0], argv);
   } 
 
-  return jsonrpc_error("Unknown command: '%s' for service: '%s'", command, service);  
+  return jsonrpc_error("%s: %s unknown command", command, service);  
 }
 
 
@@ -303,6 +303,47 @@ struct json_object* jsonrpc_dispatch_ipkg_upgrade(const char* name, struct json_
 }
 
 
+/** voip ----------------------------------------------------------------- */
+struct json_object* voip_sip_peers_parser(const char* line, size_t length)
+{
+  char* name;
+  char* host;
+  char* port;
+  char* status;
+  char* latency;
+  char* cursor = line;
+  if (strncasecmp(line, "Name/username", 13) == 0 ||
+      strcasestr (line, "[Monitored:")       != NULL)  {
+    return NULL;
+  }  
+  cursor = parse_field(cursor, length, (char[]){' ',-1},         &name);
+  cursor = parse_field(cursor, length, (char[]){' ','_',' ',-1}, &host);
+  cursor = parse_field(cursor, length, (char[]){' ','_',' ',-1}, &port);
+  cursor = parse_field(cursor, length, (char[]){' ','_',' ',-1}, &status);
+  cursor = parse_field(cursor, length, (char[]){'(',')',' ',-1}, &latency);
+  struct json_object* peer = json_object_new_object();
+  json_object_object_add(peer, "name",   json_object_new_string(name));
+  json_object_object_add(peer, "host",   json_object_new_string(triml(host)));
+  json_object_object_add(peer, "port",   json_object_new_string(triml(port)));
+  json_object_object_add(peer, "status", json_object_new_string(triml(status)));
+  json_object_object_add(peer, "latency", json_object_new_string(latency));
+  return peer;
+}
+
+struct json_object* jsonrpc_dispatch_voip_sip(const char* name, struct json_object* arguments)
+{
+  char* command  = json_object_get_string(json_object_array_get_idx(arguments, 0));
+  char* argv[4];
+  argv[0] = "asterisk";
+  argv[1] = "-rx";
+  argv[2] = 0;
+  argv[3] = 0;
+  if (strncasecmp(command, "show peers", 10) == 0) {
+    argv[2] = "sip show peers";
+    return sys_exec_parsed(argv[0], argv, voip_sip_peers_parser);
+  }
+  return jsonrpc_error("sip: %s: unknown command", command);
+}
 
 
 /**

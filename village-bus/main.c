@@ -48,6 +48,7 @@ struct MethodDispatch dispatch_table[] = {
   { "/ipkg",   "list",    {},                 0, jsonrpc_dispatch_ipkg_list },
   { "/ipkg",   "status",  {},                 0, jsonrpc_dispatch_ipkg_status },
   { "/ipkg",   "upgrade", {json_type_string}, 1, jsonrpc_dispatch_ipkg_upgrade },
+  { "/voip",   "sip",     {json_type_string}, 1, jsonrpc_dispatch_voip_sip },
   { 0, 0, 0, 0 }
 };
 

@@ -20,7 +20,7 @@ config 'afrimesh' 'map'
 	option 'zoom'   '15'
 	option 'aerial' '0'
 
-config 'afrimesh' 'telephony'
+config 'afrimesh' 'voip'
 	option 'sip' 'on'
 	option 'iax' 'off'
 

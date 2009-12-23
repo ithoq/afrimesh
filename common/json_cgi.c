@@ -291,3 +291,27 @@ const char* json_cgi_request()
   log_message("Unknown request: %s\n", request_method);
   return "";
 }
+
+
+
+/**
+ * String utilities
+ */
+char* triml(char* s)
+{
+  while (isspace(*s)) s++;
+  return s;
+}
+
+char* trimr(char* s)
+{
+  char* _s = s + strlen(s);
+  while (isspace(*_s)) _s--;
+  *(_s + 1) = '\0';
+  return s;
+}
+
+char* trim(char *s)
+{
+  return trimr(triml(s)); 
+}
