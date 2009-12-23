@@ -14,7 +14,7 @@ config 'asterisk'
 config 'sipgeneral'
 	option 'allow' 'ulaw'
 
-config 'sip' 'ip04'
+config 'sip' 'sippotato'
 	option 'context' 'default'
 	option 'type' 'friend'
 	option 'host' '192.168.20.230'
