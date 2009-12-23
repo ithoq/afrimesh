@@ -89,8 +89,8 @@ EOF
   cat > /etc/asterisk/potato.extensions.conf << EOF
 [default]
 exten => 7001,1,Dial(MP/1) ; answer incoming calls
-exten => _XXXX,1,Dial(SIP/\${EXTEN}@ip04,30,r)  ; route 4 digit extensions to IP04
-exten => _0.,1,Dial(SIP/\${EXTEN}@ip04,30,r)    ; trunk everything after '0' through the IP04
+exten => _XXXX,1,Dial(SIP/\${EXTEN}@sippotato,30,r)  ; route 4 digit extensions to SIP provider
+exten => _0.,1,Dial(SIP/\${EXTEN}@sippotato,30,r)    ; trunk everything after '0' through SIP provider
 EOF
 
   # build & write out users.conf - TODO don't write users.conf
