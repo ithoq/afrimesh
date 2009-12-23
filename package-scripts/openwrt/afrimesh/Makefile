@@ -272,7 +272,7 @@ define Package/afrimesh-potato/install
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/jquery/jquery.checkbox.js  \
 			            $(1)/www/afrimesh/javascript/jquery
 	$(INSTALL_DIR)  $(1)/www/afrimesh/javascript/openlayers
-	#$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/openlayers/OpenLayers.js    $(1)/www/afrimesh/javascript/openlayers
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/openlayers/OpenLayers.js    $(1)/www/afrimesh/javascript/openlayers
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/openlayers/OpenStreetMap.js $(1)/www/afrimesh/javascript/openlayers
 	#$(INSTALL_DIR)  $(1)/www/afrimesh/javascript/yahoo
 	#$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/yahoo/*      $(1)/www/afrimesh/javascript/yahoo
