@@ -41,13 +41,13 @@ function BootSettings(parent, address) {
     "afrimesh|settings|support|group" : { remote : "afrimesh|support|group", init : "afrimesh"  },
     "afrimesh|settings|support|irc"   : { remote : "afrimesh|support|irc",   init : "http://webchat.freenode.net/?channels=afrimesh"  },
 
-    "afrimesh|settings|telephony|iax|enable"  : { remote : "afrimesh|telephony|iax",  init : "off" },
-    "afrimesh|settings|telephony|iax|address" : { remote : "asterisk|@sip[0]|host",   init : ""       },
+    "afrimesh|settings|voip|iax|enable"  : { remote : "afrimesh|voip|iax",  init : "off" },
+    "afrimesh|settings|voip|iax|address" : { remote : "asterisk|@sip[0]|host",   init : ""       },
 
-    "afrimesh|settings|telephony|sip|enable"   : { remote : "afrimesh|telephony|sip",    init : "off" },
-    "afrimesh|settings|telephony|sip|address"  : { remote : "asterisk|@sip[0]|host",     init : ""    },
-    "afrimesh|settings|telephony|sip|username" : { remote : "asterisk|@sip[0]|username", init : ""    },
-    "afrimesh|settings|telephony|sip|password" : { remote : "asterisk|@sip[0]|secret",   init : ""    },
+    "afrimesh|settings|voip|sip|enable"   : { remote : "afrimesh|voip|sip",    init : "off" },
+    "afrimesh|settings|voip|sip|address"  : { remote : "asterisk|@sip[0]|host",     init : ""    },
+    "afrimesh|settings|voip|sip|username" : { remote : "asterisk|@sip[0]|username", init : ""    },
+    "afrimesh|settings|voip|sip|password" : { remote : "asterisk|@sip[0]|secret",   init : ""    },
 
     "afrimesh|settings|network|wireless|address"  : { remote : "network|(wireless|@wifi-iface[0]|device)|ipaddr",  init : "?" },
     "afrimesh|settings|network|wireless|netmask"  : { remote : "network|(wireless|@wifi-iface[0]|device)|netmask", init : "?" },

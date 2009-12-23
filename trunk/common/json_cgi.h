@@ -49,5 +49,10 @@ const char* cgi_request(int argc, char** argv);
 char* cgi_decode(const char* request, size_t length);
 char* request_to_json(const char* request, size_t length);
 
+/* string utilities */
+char* triml(char* s);
+char* trimr(char* s);
+char* trim(char *s);
+
 
 #endif /* JSON_CGI */

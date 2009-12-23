@@ -33,13 +33,13 @@ append_sip_parm() {
 }
 
 
-append_sip() {
+append_sip_entry() {
   local cfg="$1"
   append sipconf "\n\n[$cfg]"
   append_sip_parm "$cfg" "type"        "peer"     "type"
-  append_sip_parm "$cfg" "username"    "potato"
-  append_sip_parm "$cfg" "fromuser"    "potato"
-  append_sip_parm "$cfg" "secret"      "password"
+  append_sip_parm "$cfg" "username"    ""
+  append_sip_parm "$cfg" "username"    ""         "fromuser"
+  append_sip_parm "$cfg" "secret"      ""
   append_sip_parm "$cfg" "context"     "default"
   append_sip_parm "$cfg" "disallow"    "all"
   append_sip_parm "$cfg" "qualify"     "500"
@@ -52,7 +52,7 @@ append_sip() {
 
 
 configure_sip() {
-  # build & write out sip configuration  -  TODO don't write sip.conf
+  # build & write out sip.conf  -  TODO don't write sip.conf
   cat > /etc/asterisk/sip.conf << EOF
 [general]
 context=default
@@ -61,11 +61,10 @@ allowoverlap=no
 bindport=5060
 bindaddr=0.0.0.0
 srvlookup=no
-
 #include "afrimesh.sip.conf"
 EOF
   sipconf=""
-  config_foreach append_sip sip
+  config_foreach append_sip_entry sip
   echo -e "$sipconf" >> /etc/asterisk/afrimesh.sip.conf
 
   # build & write out extensions.conf  -  TODO don't write extensions.conf
@@ -77,19 +76,27 @@ writeprotect=no
 clearglobalvars=no
 [globals]
 CONSOLE=Console/dsp; Console interface for demo
-IAXINFO=guest; IAXtel username/password
-TRUNK=Zap/g2; Trunk interface
+;IAXINFO=guest; IAXtel username/password
+;TRUNK=Zap/g2; Trunk interface
+;TRUNK=SIP/ip04; Trunk interface
 TRUNKMSD=1; MSD digits to strip (usually 1 or 0)
 
 #include "afrimesh.extensions.conf"
 EOF
   cat > /etc/asterisk/afrimesh.extensions.conf << EOF
 [default]
-exten => 4000,1,Dial(MP/1)
-exten => _1,1,Dial(SIP/ip04/1001)  ; call my analog phone
-exten => _2,1,Dial(SIP/ip04/7002)  ; call SIP phone
-exten => _3,1,Dial(SIP/ip04/1003)
-exten => _0,1,DIal(SIP/ip04/1004)   
+;exten => 4000,1,Dial(MP/1)
+;exten => _0,1,Dial(SIP/ip04/1004)  ; get outside line on IP04
+exten => _1,1,Dial(SIP/ip04/1001)  ; call my analog phone on IP04
+exten => _2,1,Dial(SIP/ip04/7002)  ; call my SIP phone on pi via IP04
+EOF
+
+  # build & write out users.conf - TODO don't write extensions.conf
+  cat > /etc/asterisk/users.conf << EOF
+#include "afrimesh.users.conf"
+EOF
+  cat > /etc/asterisk/afrimesh.users.conf << EOF
+#include "afrimesh.users.conf"
 EOF
 }
 
@@ -97,8 +104,8 @@ EOF
 configure_asterisk() {
   # load afrimesh configuration from UCI
   config_load afrimesh
-  config_get sip_enable "telephony" "sip"
-  config_get iax_enable "telephony" "iax"
+  config_get sip_enable "voip" "sip"
+  config_get iax_enable "voip" "iax"
 
   # load asterisk configuration from UCI
   config_load asterisk
@@ -119,13 +126,28 @@ configure_asterisk() {
 }
 
 
-reload() {
+restart() {
+  # kill asterisk
   [ -f $DEST/var/run/asterisk.pid ] && kill $(cat $DEST/var/run/asterisk.pid) >/dev/null 2>&1
-  sleep 1
-  echo -n "reloading asterisk..."
+  sleep 2
+
+  # reconfigure asterisk
   configure_asterisk
+
+  # restart asterisk
   /usr/sbin/asterisk -f 2>&1 > /dev/null &
-  echo "done"
+}
+
+
+reload() {
+  # reconfigure asterisk
+  configure_asterisk
+
+  # reload dialplan
+  /usr/sbin/asterisk -rx 'reload' > /dev/null
+
+  # it takes asterisk a few moments to update peer status
+  sleep 4
 }
 
 

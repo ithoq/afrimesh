@@ -113,7 +113,7 @@
           </div>
         </fieldset>
         
-        <fieldset id="telephony">
+        <fieldset id="asterisk">
           <legend>Telephony &nbsp; <button/></legend>
           
           <!-- div class="label">Extension</div>
@@ -123,24 +123,24 @@
           <input  id="did|inbound" />
           <div class="tooltip"><h3>inbound did</h3></div>
           <div class="label">Trunk Calls</div>
-          <input id="afrimesh|settings|telephony|iax|enable" type="checkbox"  />
+          <input id="afrimesh|settings|voip|iax|enable" type="checkbox"  />
           <div class="iax_trunk">
             <div class="label">Asterisk Server</div>
-            <input  id="afrimesh|settings|telephony|iax|address" />
+            <input  id="afrimesh|settings|voip|iax|address" />
             <div class="tooltip"><h3>asterisk</h3></div>
           </div -->
 
           <div class="label">SIP Trunk</div>
-          <input id="afrimesh|settings|telephony|sip|enable" type="checkbox"  />
+          <input id="afrimesh|settings|voip|sip|enable" type="checkbox"  />
           <div class="sip_trunk">
             <div class="label">Address</div>
-            <input  id="afrimesh|settings|telephony|sip|address" />
+            <input  id="afrimesh|settings|voip|sip|address" />
             <div class="tooltip"><h3>sip address</h3></div>
             <div class="label">Username</div>
-            <input  id="afrimesh|settings|telephony|sip|username" />
+            <input  id="afrimesh|settings|voip|sip|username" />
             <div class="tooltip"><h3>sip username</h3></div>
             <div class="label">Password</div>
-            <input type="password" id="afrimesh|settings|telephony|sip|password" />
+            <input type="password" id="afrimesh|settings|voip|sip|password" />
             <div class="tooltip"><h3>sip password</h3></div>
           </div>
 
@@ -201,6 +201,7 @@
             console.debug(output);
             $("fieldset#" + fieldset + " *").attr("disabled", false);
             $("fieldset#" + fieldset + " :button").hide(); 
+            update_sip_server(); // TODO - we should only call any associated update fn's
           };
         });
       button.html("<img src='images/reload.png'/>");
@@ -253,24 +254,23 @@
           save_element("afrimesh|settings|network|mesh|gateway_class", "");
         }
       });
-    $("input.[id=afrimesh|settings|telephony|iax|enable]").bind("change", function(event) { 
+    $("input.[id=afrimesh|settings|voip|iax|enable]").bind("change", function(event) { 
         if (save_element(this.id, this.checked.toString())) {
           reload_service($(this).closest("fieldset").attr("id"));
         }
         update_iax_server();
       });
-    $("input.[id=afrimesh|settings|telephony|iax|address]").bind("blur", function(event) { 
+    $("input.[id=afrimesh|settings|voip|iax|address]").bind("blur", function(event) { 
         update_iax_server();
       });
-    $("input.[id=afrimesh|settings|telephony|sip|enable]").bind("change", function(event) { 
+    $("input.[id=afrimesh|settings|voip|sip|enable]").bind("change", function(event) { 
         if (save_element(this.id, this.checked.toString())) {
           reload_service($(this).closest("fieldset").attr("id"));
+          update_sip_server();
         }
-        update_sip_server();
       });
-    $("input.[id=afrimesh|settings|telephony|sip|*]").bind("blur", function(event) { 
-        console.error("UPDATING SIP");
-        update_sip_server();
+    $("fieldset#asterisk :text, :password").bind("blur", function(event) { 
+        update_sip_server(); // TODO - only call if field has changed
       });
 
     /** update mesh routing controls --------------------------------- */

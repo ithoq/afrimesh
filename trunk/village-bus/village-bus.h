@@ -67,5 +67,7 @@ struct json_object* jsonrpc_dispatch_ipkg_list   (const char* name, struct json_
 struct json_object* jsonrpc_dispatch_ipkg_status (const char* name, struct json_object* arguments); /* TODO - deprecate above */
 struct json_object* jsonrpc_dispatch_ipkg_upgrade(const char* name, struct json_object* arguments);
 
+struct json_object* jsonrpc_dispatch_voip_sip(const char* name, struct json_object* arguments);
+
 #endif /* VILLAGE_BUS_H */
 

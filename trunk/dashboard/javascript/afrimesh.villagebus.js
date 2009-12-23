@@ -318,7 +318,7 @@ var BootVillageBus = function (afrimesh) {
   villagebus.uci.set.async = function(f, address, entries) { return rpc_async(villagebus.uci.url(address), "set", [entries], f);  };
 
 
-  /** - villagebus.syslog -------------------------------------------------------- */
+  /** - villagebus.syslog ------------------------------------------------- */
   villagebus.syslog = function() { return this.syslog.sync(); }
 
   // will always show the log on the machine being viewed. If you want all nodes in the log, view
@@ -338,6 +338,18 @@ var BootVillageBus = function (afrimesh) {
   };
 
 
+  /** - villagebus.voip --------------------------------------------------- */
+  villagebus.voip = {};
+  villagebus.voip.url = function(address) {
+    if (address == afrimesh.settings.address) {
+      return "http://" + address + "/cgi-bin/village-bus/voip";
+    }
+    return afrimesh.villagebus.ajax_proxy() + "http://" + address + "/cgi-bin/village-bus/voip";
+  }
+  villagebus.voip.sip = {};
+  villagebus.voip.sip.peers = function(address) { return villagebus.voip.sip.peers.sync(address); }
+  villagebus.voip.sip.peers.sync  = function(address)    { return rpc(villagebus.voip.url(address), "sip", [ "show peers" ]);    }
+  villagebus.voip.sip.peers.async = function(f, address) { return rpc_async(villagebus.voip.url(address), "sip", [ "show peers" ], f); }
 
   /** - helper functions -------------------------------------------------- */
   /**
