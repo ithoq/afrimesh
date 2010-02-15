@@ -105,9 +105,9 @@
         add_menu_item("utility",   "logout");
 
         /** set default page */
-        $("ul#menu ul#utility li#settings").click();
+        //$("ul#menu ul#utility li#settings").click();
         //$("ul#menu ul#network li#devices").click();
-        //$("ul#menu ul#network li#map").click();
+        $("ul#menu ul#network li#map").click();
 
         /** loading complete, we can now remove our message */
         $("#message-loading").html("");
@@ -217,13 +217,13 @@
         please wait a moment...
       </div> <!-- /content -->
 
-      <div id="live-chat">
+      <div id="live-chat" style="padding-left: 1.0em;" >
       </div>
 
-      <div id="footer">
-      </div> <!-- /footer -->
+      <!-- div id="footer">
+      </div --> <!-- /footer -->
 
-      <div id="console"></div> <!-- TODO -->
+      <!-- div id="console"></div --> <!-- TODO -->
 
     </div> <!-- /container -->
       
