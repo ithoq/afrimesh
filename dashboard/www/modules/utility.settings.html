@@ -191,7 +191,10 @@
     console.debug("loaded utility.settings.html");
     //$("#bar").val(afrimesh.storage("my_cookie"));
 
-    populate_dom();
+    /** set controls to the values of afrimesh.settings.* ----------------- */
+    try {
+      populate_dom();
+    } catch (e) { console.error("populate_dom: " + e); }
 
     /** install tooltips -------------------------------------------------- */
     $("input.[id*=afrimesh]").tooltip({
@@ -200,6 +203,12 @@
         effect   : 'toggle',              // use a simple show/hide effect 
         opacity  : 0.8                    // custom opacity setting 
       });
+
+    /** round corners ------------------------------------------------------ */
+    $(".tooltip").corner("tr 8px bl 8px br 8px");
+
+    /** style controls ----------------------------------------------------- */
+    //$('form.two-column :checkbox').slider(); // TODO
 
     /** install callbacks to save settings -------------------------------- */
     function save_element(id, value) {
@@ -260,23 +269,11 @@
      /** query vis server for availability --------------------- */
     update_vis_server();
 
+    /** query map server for availability ---------------------------- */
+    update_map_server();
+
      /** query RADIUS server and mysql database for availability --------------------- */
     update_radius_server();
-
-    /** create map to set dashboard location ------------------------------ */
-    $("#location").replaceWith("<div id='location' />");
-    var location_map = new LocationMap("location", 
-                                       parseFloat(afrimesh.settings.location.longitude),
-                                       parseFloat(afrimesh.settings.location.latitude),
-                                       parseFloat(afrimesh.settings.map.extent),
-                                       parseInt(afrimesh.settings.map.zoom));
-    var router = { address : afrimesh.settings.address };
-    location_map.router(router);
-    
-    /** round corners ------------------------------------------------------ */
-    $(".tooltip").corner("tr 8px bl 8px br 8px");
-
-    //console.debug("DEFAULT: " + $(".explain").attr("default"));
 
     return unload;
   };
