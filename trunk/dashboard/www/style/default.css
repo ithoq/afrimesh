@@ -57,9 +57,8 @@ h3 {
 #container {
   background: white;  
   /*border: 1px solid blue;*/
-  margin: 1.0em;
-  margin-top: 0px;
-  margin-right: 0px;
+  margin: 0px;
+  padding: 0px;
 }
 
 #header {
@@ -73,6 +72,7 @@ h3 {
   clear:both;
   /*margin-left: 160px;*/  /* 220 */
   padding: 0px;
+  margin-left: 1.0em;
   padding-left:  0.95em;
   padding-right: 0.75em;
   border-left: 1px solid lightgray;       
@@ -82,7 +82,8 @@ h3 {
 
 #footer {
   clear: both;
-  padding: .5em;  
+  padding: 0px;  
+  margin: 0px;
   color: #333;
   /*border: 1px solid green;*/
 }
