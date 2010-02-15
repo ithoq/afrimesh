@@ -17,10 +17,9 @@
     <link rel="stylesheet" type="text/css" href="style/overlay-router.css"> 
 
     <!-- includes ---------------------------------------------------------- -->
-    <!-- jquery -->
     <!-- script type="text/javascript" src="http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js"></script -->
-    <script type="text/javascript" src="javascript/jquery/jquery.tools.min.js"></script>  <!-- jquery.tools comes with jquery -->
-    <script type="text/javascript" src="javascript/jquery/jquery.json.js"></script>  <!-- TODO switch to json.org -->
+    <script type="text/javascript" src="javascript/json.org/json2.min.js"></script>
+    <script type="text/javascript" src="javascript/jquery/jquery.tools.min.js"></script>
     <script type="text/javascript" src="javascript/jquery/jquery.corner.js"></script> <!-- http://jrc.meerbox.nl/ - TODO deprecate -->
                                                                                       <!-- also look at: http://www.malsup.com/jquery/corner/ -->
                                                                                       <!--               http://www.ruzee.com/files/shadedborder/ -->
@@ -60,11 +59,11 @@
         console.debug("$(document).ready() -------------------- start");
 
         /** global error handler for Ajax requests */
-        $(document).ajaxError(function(ajax, response, request) {
+        /*$(document).ajaxError(function(ajax, response, request) {
             console.error("AJAX: " + ajax.type);
             console.error("RESPONSE: " + response.status + " " + response.statusText + "\n" + response.responseText);
             console.error("REQUEST:  " + request.data);
-          });
+          });*/
 
         /** populate DOM references to afrimesh.settings */
         var elements = $("[id*=afrimesh|settings]");
@@ -106,8 +105,9 @@
         add_menu_item("utility",   "logout");
 
         /** set default page */
-        //$("ul#menu ul#utility li#settings").click();
-        $("ul#menu ul#network li#devices").click();
+        $("ul#menu ul#utility li#settings").click();
+        //$("ul#menu ul#network li#devices").click();
+        //$("ul#menu ul#network li#map").click();
 
         /** loading complete, we can now remove our message */
         $("#message-loading").html("");

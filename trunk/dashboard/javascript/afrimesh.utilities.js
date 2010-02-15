@@ -17,15 +17,6 @@
     console = window.console;
   }
 
-  if (typeof(JSON) == "undefined") {              // And some Javascript implementation don't have native JSON
-    console.debug("No native support for JSON. Falling back to jquery.json");
-    JSON = {
-      stringify : $.toJSON,
-      parse     : $.secureEvalJSON
-    };
-  }
-
-
 
   /** - Make Javascript a better Lisp ------------------------------------- */
   Array.prototype.car = function() { return (this.length > 0) ? this[0]       : []; };

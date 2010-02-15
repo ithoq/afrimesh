@@ -18,15 +18,13 @@
     if ($("#live-chat iframe").length == 0) {
       $("#live-chat").append("<iframe></iframe>");
       $("#live-chat iframe").attr({
-          //src       : "http://widget.mibbit.com/?settings=3670f7c11572f70f219ab975d7b5fe60&server=irc.freenode.net&channel=%23afrimesh&noServerNotices=true&noServerMotd=true",
-          //src         : "http://webchat.freenode.net/?channels=afrimesh",
           src         : afrimesh.settings.support.irc,
           scrolling   : "no",
           frameborder : 0,
           style       : "background: lightgray;"
         });
     }
-    $("#live-chat iframe").attr("width", "100%");
+    $("#live-chat iframe").attr("width", "95%");
     $("#live-chat iframe").attr("height", "80%");
     $("#live-chat iframe").css("visibility", "visible");
     console.debug("loaded help.chat.html");
@@ -45,5 +43,3 @@
  
 })();
 //]]></script>
-
-

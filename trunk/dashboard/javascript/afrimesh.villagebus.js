@@ -362,7 +362,12 @@ var BootVillageBus = function (afrimesh) {
         contentType : "application/json",
         dataType    : "json",
         async       : request.async,
-        data        : $.toJSON(request.request),
+        data        : JSON.stringify(request.request),
+        error       : function () {
+            console.error("JSON error");
+            console.error("url : "  + request.url);
+            console.error("data : " + JSON.stringify(request.request));
+          },
         success     : request.success });
     if (request.async) {
       return xml;

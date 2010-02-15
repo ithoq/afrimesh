@@ -72,7 +72,7 @@ h3 {
 #content {
   clear:both;
   /*margin-left: 160px;*/  /* 220 */
-  padding: .75em;
+  /*padding: .75em;*/
   padding-left: .95em;
   border-left: 1px solid lightgray;       
   /*border: 1px solid green;*/

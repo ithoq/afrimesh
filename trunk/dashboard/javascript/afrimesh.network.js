@@ -97,8 +97,8 @@ function BootNetwork(parent) {
   network.mesh.routes.sync  = function() { 
     var routes  = [];
     try {
-	routes = afrimesh.villagebus.mesh_topology();
-    } catch(error) {
+      routes = afrimesh.villagebus.mesh_topology();
+    } catch (error) {
       console.debug("Vis server unreachable due to unknown reason. " + error);
     }
     return routes;
@@ -118,7 +118,7 @@ function BootNetwork(parent) {
           included[router.address].routes.push(route);
         }
       });
-    } catch(error) {
+    } catch (error) {
       console.debug("Vis server unreachable due to unknown reason. " + error);
     }
     return routers;
