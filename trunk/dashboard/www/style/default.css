@@ -57,7 +57,7 @@ h3 {
 #container {
   background: white;  
   /*border: 1px solid blue;*/
-  margin: 30px;
+  margin: 1.0em;
   margin-top: 0px;
   margin-right: 0px;
 }
@@ -72,8 +72,9 @@ h3 {
 #content {
   clear:both;
   /*margin-left: 160px;*/  /* 220 */
-  /*padding: .75em;*/
-  padding-left: .95em;
+  padding: 0px;
+  padding-left:  0.95em;
+  padding-right: 0.75em;
   border-left: 1px solid lightgray;       
   /*border: 1px solid green;*/
 
