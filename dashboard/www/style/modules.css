@@ -333,7 +333,7 @@ form.two-column #location {
 }
 form.two-column #location.message {
   font-size: 1.25em;
-  border: 1px dashed gray;
+  /*border: 1px dashed gray;*/
   text-align: center;
   float: left;
 }
