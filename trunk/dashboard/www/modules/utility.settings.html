@@ -51,21 +51,50 @@
           </div>
           
           <div class="label">Accounting Server</div>
-          <input id="afrimesh|settings|network|mesh|accounting" style="background:#FFAAAA;" type="text" />
+          <input id="afrimesh|settings|network|mesh|accounting_server" style="background:#FFAAAA;" type="text" />
           <div class="tooltip"><h3>Accounting Server</h3>
             <p class="explain"></p>
             <p class="typical"></p>
             <p class="learnmore"></p>
             <p id="accounting_server|error" style="color:#FF0000;"></p>
           </div>
-
-          
-          <!-- div class="label">Map Extents</div>
-               <input id="afrimesh|settings|map|extent"  type="text" />
-               
-               <div class="label">Map Zoom</div>
-               <input id="afrimesh|settings|map|zoom"  type="text" / -->
         </fieldset>
+
+        <fieldset>
+             <legend>Access Control</legend>
+             
+             <div class="label">Radius Server</div>
+             <input id="afrimesh|settings|radius|server" style="background:#FFAAAA;" type="text"></input>
+             <div class="tooltip"><h3>server</h3>
+               <p class="explain">Afrimesh needs the address of your RADIUS server to be able to monitor it.</p>
+               <p id="radius|server|error" style="color:#FF0000;"></p>
+             </div>
+             
+             <div class="label">Database Type</div>
+             <select id="afrimesh|settings|radius|radtype">
+               <option value = "1">mysql</option>
+               <option value = "2">memcachcedb</option>
+             </select>
+             
+             <!-- div class="label">Database</div>
+             <input id="afrimesh|settings|radius|database" type="text" />
+             <div class="tooltip"><h3>database</h3>
+               <p class="explain">Enter the RADIUS authentication database here.</p>
+             </div -->
+             
+             <div class="label">Username</div>
+             <input id="afrimesh|settings|radius|username" type="text" />
+             <div class="tooltip"><h3>username</h3>
+               <p class="explain">Enter your username for identification on the RADIUS database here.</p>
+             </div>
+             
+             <div class="label">Password</div>
+             <input id="afrimesh|settings|radius|password" type="password" />    
+             <div class="tooltip"><h3>password</h3>
+               <p class="explain">Enter your password for authentication on the RADIUS database here.</p>
+             </div>
+        </fieldset>          
+
       </td>
       <td>
         
@@ -116,40 +145,7 @@
           </div>
         </fieldset>
         
-        <!-- fieldset>
-             <legend>Radius</legend>
-             
-             <div class="label">Server</div>
-             <input id="afrimesh|settings|radius|server" style="background:#FFAAAA;" type="text"></input>
-             <div class="tooltip"><h3>server</h3>
-               <p class="explain">Afrimesh needs the address of your RADIUS server to be able to monitor it.</p>
-               <p id="radius|server|error" style="color:#FF0000;"></p>
-             </div>
-             
-             <div class="label">Database Type</div>
-             <select id="afrimesh|settings|radius|radtype">
-               <option value = "1">mysql</option>
-               <option value = "2">memcachcedb</option>
-             </select>
-             
-             <div class="label">Database</div>
-             <input id="afrimesh|settings|radius|database" type="text" />
-             <div class="tooltip"><h3>database</h3>
-               <p class="explain">Enter the RADIUS authentication database here.</p>
-             </div>
-             
-             <div class="label">Username</div>
-             <input id="afrimesh|settings|radius|username" type="text" />
-             <div class="tooltip"><h3>username</h3>
-               <p class="explain">Enter your username for identification on the RADIUS database here.</p>
-             </div>
-             
-             <div class="label">Password</div>
-             <input id="afrimesh|settings|radius|password" type="text" />    
-             <div class="tooltip"><h3>password</h3>
-               <p class="explain">Enter your password for authentication on the RADIUS database here.</p>
-             </div>
-        </fieldset -->
+
       </td>
     </tr>
   </table>
@@ -169,9 +165,13 @@
         <a href="http://code.google.com/p/afrimesh/wiki/HowTo">HowToMapServer</a>
       </p>
     </div>
-
     <div class="label">Location</div>
     <div id="location" />
+    <!-- div class="label">Map Extents</div>
+         <input id="afrimesh|settings|map|extent"  type="text" />
+         
+         <div class="label">Map Zoom</div>
+         <input id="afrimesh|settings|map|zoom"  type="text" / -->
   </fieldset>
 
 </form>

@@ -49,7 +49,8 @@ PPA=antoine-7degrees-ppa
 #DEPS_URL="https://launchpad.net/~antoine-7degrees/+archive/ppa/+files/"
 
 # - binaries -----------------------------------------------------------------
-VILLAGERS=village-bus village-bus-batman village-bus-radius village-bus-snmp village-bus-uci
+#VILLAGERS=village-bus village-bus-batman village-bus-radius village-bus-snmp village-bus-uci
+VILLAGERS=village-bus village-bus-radius
 
 
 
@@ -89,10 +90,10 @@ endif
 
 # - common -------------------------------------------------------------------
 all: 
-	export DEPROOT=$(DEPROOT); cd village-bus-batman ; $(MAKE)
+	#export DEPROOT=$(DEPROOT); cd village-bus-batman ; $(MAKE)
 	export DEPROOT=$(DEPROOT); cd village-bus-radius ; $(MAKE)
-	export DEPROOT=$(DEPROOT); cd village-bus-snmp   ; $(MAKE)
-	export DEPROOT=$(DEPROOT); cd village-bus-uci    ; $(MAKE)
+	#export DEPROOT=$(DEPROOT); cd village-bus-snmp   ; $(MAKE)
+	#export DEPROOT=$(DEPROOT); cd village-bus-uci    ; $(MAKE)
 	export DEPROOT=$(DEPROOT); cd village-bus        ; VERSION=$(VERSION) FLAVOR=$(FLAVOR) $(MAKE)
 
 install: install-www 
@@ -126,22 +127,23 @@ install-www:
 install-config: 
 	@echo "Installing configuration files in: $(DASHBOARD_ETC)"
 	mkdir -p $(DASHBOARD_ETC)/config
-	cat config/dashboard      >  $(DASHBOARD_ETC)/config/afrimesh
-	cat config/settings       >> $(DASHBOARD_ETC)/config/afrimesh
-	cat config/location       >> $(DASHBOARD_ETC)/config/afrimesh
-	cat config/map            >> $(DASHBOARD_ETC)/config/afrimesh
-	cat config/gateway        >> $(DASHBOARD_ETC)/config/afrimesh
-	cat config/radius         >> $(DASHBOARD_ETC)/config/afrimesh
-	cat config/customer-plans >> $(DASHBOARD_ETC)/config/afrimesh
+	#cat config/dashboard      >  $(DASHBOARD_ETC)/config/afrimesh
+	#cat config/settings       >> $(DASHBOARD_ETC)/config/afrimesh
+	#cat config/location       >> $(DASHBOARD_ETC)/config/afrimesh
+	#cat config/map            >> $(DASHBOARD_ETC)/config/afrimesh
+	#cat config/gateway        >> $(DASHBOARD_ETC)/config/afrimesh
+	#cat config/radius         >> $(DASHBOARD_ETC)/config/afrimesh
+	#cat config/customer-plans >> $(DASHBOARD_ETC)/config/afrimesh
 	#cat config/router         >> $(DASHBOARD_ETC)/config/afrimesh
 	#cat config/batmand        >> $(DASHBOARD_ETC)/config/afrimesh
+	cp config/afrimesh $(DASHBOARD_ETC)/config/afrimesh
 	chmod a+rw $(DASHBOARD_ETC)/config/afrimesh
 
 clean : # clean-www
-	cd village-bus-batman ; $(MAKE) clean
+	#cd village-bus-batman ; $(MAKE) clean
 	cd village-bus-radius ; $(MAKE) clean
-	cd village-bus-snmp   ; $(MAKE) clean
-	cd village-bus-uci    ; $(MAKE) clean
+	#cd village-bus-snmp   ; $(MAKE) clean
+	#cd village-bus-uci    ; $(MAKE) clean
 	cd village-bus        ; $(MAKE) clean
 
 clean-www: 
@@ -155,7 +157,7 @@ clean-www:
 
 distclean : clean
 	cd village-bus-radius ; make distclean
-	cd village-bus-batman ; make distclean
+	#cd village-bus-batman ; make distclean
 
 sources : clean
 	echo "Assembling local sources"
