@@ -30,7 +30,7 @@
 
 
 # - configuration ------------------------------------------------------------
-VERSION=r643-0.5beta
+VERSION=r644-0.5alpha
 RELEASE=1
 
 # DEPRECATED
@@ -140,8 +140,8 @@ install-config:
 
 clean : # clean-www
 	cd village-bus-radius ; $(MAKE) clean
-	#cd village-bus-snmp   ; $(MAKE) clean
-	#cd village-bus-uci    ; $(MAKE) clean
+	cd village-bus-snmp   ; $(MAKE) clean
+	cd village-bus-uci    ; $(MAKE) clean
 	cd village-bus        ; $(MAKE) clean
 
 clean-www: 

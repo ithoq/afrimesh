@@ -14,6 +14,7 @@ var update_sip_server = null;
 var update_iax_server = null;
 var update_radius_server = null;
 var update_vis_server = null;
+var update_accounting_server = null;
 var update_map_server = null;
 var LocationMap = null;
 (function() {
@@ -145,6 +146,25 @@ var LocationMap = null;
         }
       };
       afrimesh.villagebus.mesh_topology.vis.async(update);
+    } catch (error) {
+      $("p.[id*=vis_server|error]").html("Visualization server unreachable. " + error + ".");
+      console.debug("Vis server is unreachable. " + error);
+    }
+  };
+
+  update_accounting_server = function() {
+    $("input.[id*=afrimesh|settings|network|mesh|accounting_server]").css("background", "#FFAAAA");
+    try {
+      function update (data) {
+        if (data != undefined && isArray(data)) {
+          $("input.[id*=afrimesh|settings|network|mesh|accounting_server]").css("background", "#AAFFAA");
+          $("p.[id*=accounting_server|error]").html("");
+        } else {
+          console.debug("utility.settings.js->update_vis_server: Visualization server unreachable.");
+          $("p.[id*=accounting_server|error]").html("Accounting server unreachable.");
+        }
+      };
+      afrimesh.villagebus.pmacct.async(update, "in");
     } catch (error) {
       $("p.[id*=vis_server|error]").html("Visualization server unreachable. " + error + ".");
       console.debug("Vis server is unreachable. " + error);
