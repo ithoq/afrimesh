@@ -59,31 +59,33 @@ var LocationMap = null;
   /** query internet gateway's interfaces via snmp ---------------------- */
   populate_select_interface = function() {
     $("input.[id*=afrimesh|settings|internet_gateway|address]").css("background", "#FFAAAA");
-    var interfaces = afrimesh.villagebus.snmp.walk(afrimesh.settings.internet_gateway.address, 
-                                                   afrimesh.settings.internet_gateway.snmp.community, 
-                                                   ".1.3.6.1.2.1.2.2.1.2");  // IF-MIB::ifDescr
-    console.log("GETTING INTERFACES: " + interfaces);
-    if (!interfaces || interfaces.error) {
-      $("p.[id*=internet_gateway|error]").html("Internet gateway unreachable.");
-      console.debug("SNMP ERROR: " + (interfaces ? interfaces.error : "unknown error"));
-      console.debug("dashboard server: " + afrimesh.settings.hosts.dashboard_server);
-      console.debug("settings  server: " + afrimesh.settings.address);
-      $("select.[id*=afrimesh|settings|internet_gateway|snmp|interface]").html("");
-      return;
-    }
-    $("p.[id*=internet_gateway|error]").html("");
-    $("input.[id*=afrimesh|settings|internet_gateway|address]").css("background", "#AAFFAA");
-    var interface_current = afrimesh.settings.internet_gateway.snmp.interface;
-    var interface_count = 1;
-    var options = "";
-    for (var interface in interfaces) {
-      options += "<option value='" + interface_count + "' ";
-      options += (interface_count == interface_current ? "selected" : "") + ">";
-      options += interfaces[interface];
-      options += "</option>";
-      interface_count++;
-    }
-    $("select.[id*=afrimesh|settings|internet_gateway|snmp|interface]").html(options);
+    function update(interfaces) {
+      if (interfaces == undefined) {
+        $("p.[id*=internet_gateway|error]").html("Internet gateway unreachable.");
+        console.debug("SNMP ERROR: " + (interfaces ? interfaces.error : "unknown error"));
+        console.debug("dashboard server: " + afrimesh.settings.hosts.dashboard_server);
+        console.debug("settings  server: " + afrimesh.settings.address);
+        $("select.[id*=afrimesh|settings|internet_gateway|snmp|interface]").html("");
+        return;
+      }
+      $("p.[id*=internet_gateway|error]").html("");
+      $("input.[id*=afrimesh|settings|internet_gateway|address]").css("background", "#AAFFAA");
+      var interface_current = afrimesh.settings.internet_gateway.snmp.interface;
+      var interface_count = 1;
+      var options = "";
+      for (var interface in interfaces) {
+        options += "<option value='" + interface_count + "' ";
+        options += (interface_count == interface_current ? "selected" : "") + ">";
+        options += interfaces[interface];
+        options += "</option>";
+        interface_count++;
+      }
+      $("select.[id*=afrimesh|settings|internet_gateway|snmp|interface]").html(options);
+    };
+    afrimesh.villagebus.snmp.walk.async(update,
+                                        afrimesh.settings.internet_gateway.address, 
+                                        afrimesh.settings.internet_gateway.snmp.community, 
+                                        ".1.3.6.1.2.1.2.2.1.2");  // IF-MIB::ifDescr
   }
 
   update_mesh_controls = function() {

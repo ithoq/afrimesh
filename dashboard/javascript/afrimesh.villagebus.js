@@ -218,6 +218,10 @@ var BootVillageBus = function (afrimesh) {
     return villagebus.snmp.sync("walk", address, community, oid);
   };
 
+  villagebus.snmp.walk.async = function(f, address, community, oid) {
+    return villagebus.snmp.async(f, "walk", address, community, oid);
+  };
+
   // will always use the machine being viewed for the snmp service
   // if snmp is not supported on that machine, use another one!
   villagebus.snmp.url = function() {
