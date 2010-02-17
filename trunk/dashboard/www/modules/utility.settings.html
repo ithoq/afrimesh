@@ -7,7 +7,6 @@
  * New BSD License. See /LICENSE for more information.
 -->
 
-
 <form class="two-column" 
       id="dashboard"
       OnSubmit="return false;"
@@ -15,27 +14,10 @@
 
   <table border="0">
     <tr valign="top">
-      <td>
 
+      <td>
         <fieldset>
           <legend>Mesh</legend>
-          
-          <!-- div class="label">Network Name</div>
-          <input id="afrimesh|settings|network_name" type="text" />
-          <div class="tooltip"><h3>network name</h3>
-            <p class="explain">
-              This is the name other people will see if you choose to register your network. 
-              You can change it later if you'd like. Even if you've already registered your 
-              network.
-            </p>
-          </div -->
-          
-          <!-- div class="label">Locale</div>
-               <input id="afrimesh|settings|locale" type="text" />
-               <div class="tooltip">
-                 <p class="explain">This sets the language and country for the dashboard interface.</p>
-          </div -->
-          
           <div class="label">Visualization Server</div>
           <input id="afrimesh|settings|network|mesh|vis_server" style="background:#FFAAAA;" type="text" />
           <div class="tooltip"><h3>visualization server</h3>
@@ -49,7 +31,6 @@
             </p>
             <p id="vis_server|error" style="color:#FF0000;"></p>
           </div>
-          
           <div class="label">Accounting Server</div>
           <input id="afrimesh|settings|network|mesh|accounting_server" style="background:#FFAAAA;" type="text" />
           <div class="tooltip"><h3>Accounting Server</h3>
@@ -62,55 +43,38 @@
 
         <fieldset>
              <legend>Access Control</legend>
-             
              <div class="label">Radius Server</div>
              <input id="afrimesh|settings|radius|server" style="background:#FFAAAA;" type="text"></input>
              <div class="tooltip"><h3>server</h3>
                <p class="explain">Afrimesh needs the address of your RADIUS server to be able to monitor it.</p>
                <p id="radius|server|error" style="color:#FF0000;"></p>
              </div>
-             
              <div class="label">Database Type</div>
              <select id="afrimesh|settings|radius|radtype">
                <option value = "1">mysql</option>
                <option value = "2">memcachcedb</option>
              </select>
-             
              <!-- div class="label">Database</div>
              <input id="afrimesh|settings|radius|database" type="text" />
              <div class="tooltip"><h3>database</h3>
                <p class="explain">Enter the RADIUS authentication database here.</p>
              </div -->
-             
              <div class="label">Username</div>
              <input id="afrimesh|settings|radius|username" type="text" />
              <div class="tooltip"><h3>username</h3>
                <p class="explain">Enter your username for identification on the RADIUS database here.</p>
              </div>
-             
              <div class="label">Password</div>
              <input id="afrimesh|settings|radius|password" type="password" />    
              <div class="tooltip"><h3>password</h3>
                <p class="explain">Enter your password for authentication on the RADIUS database here.</p>
              </div>
         </fieldset>          
-
       </td>
-      <td>
-        
-        <!-- fieldset>
-             <legend>Sharing</legend>
-             <div class="label">Internet</div>
-             <input  id="afrimesh|settings|internet_gateway|share" type="checkbox" />
-             <div class="tooltip"><h3>share internet</h3></div>
-             <div class="label">Voice</div>
-             <input  id="afrimesh|settings|internet_gateway|share" type="checkbox" />
-             <div class="tooltip"><h3>share voice</h3></div>
-        </fieldset -->
-        
+
+      <td>        
         <fieldset>
           <legend>Internet Gateway</legend>
-          
           <div class="label">IP Address</div>
           <input id="afrimesh|settings|internet_gateway|address" style="background:#FFAAAA;" type="text"></input>
           <div class="tooltip"><h3>internet gateway address</h3>
@@ -120,23 +84,19 @@
             </p>
             <p id="internet_gateway|error" style="color:#FF0000;"></p>
           </div>
-          
           <div class="label">Community String</div>
           <input id="afrimesh|settings|internet_gateway|snmp|community" type="text" />
           <div class="tooltip"><h3>snmp community string</h3>
             <p class="explain">Afrimesh uses the SNMP protocol to communicate with the Internet gateway.</p>
             <p class="typical">The default setting is usually 'public'</p>
           </div>
-          
           <div class="label">Interface</div>
           <select id="afrimesh|settings|internet_gateway|snmp|interface" />
-          
           <div class="label">Download Bandwidth</div>
           <input id="afrimesh|settings|internet_gateway|bandwidth|down" type="text" />
           <div class="tooltip"><h3>download bandwidth</h3>
             <p class="explain">Enter the download speed of your Internet connection here.</p>
           </div>
-          
           <div class="label">Upload Bandwidth</div>
           <input id="afrimesh|settings|internet_gateway|bandwidth|up" type="text" />    
           <div class="tooltip"><h3>upload bandwidth</h3>
@@ -144,8 +104,6 @@
             <p class="typical">On ADSL connections this is usually half of the download speed</p>
           </div>
         </fieldset>
-        
-
       </td>
     </tr>
   </table>
@@ -167,15 +125,9 @@
     </div>
     <div class="label">Location</div>
     <div id="location" />
-    <!-- div class="label">Map Extents</div>
-         <input id="afrimesh|settings|map|extent"  type="text" />
-         
-         <div class="label">Map Zoom</div>
-         <input id="afrimesh|settings|map|zoom"  type="text" / -->
   </fieldset>
 
 </form>
-
 
 
 <script type="text/javascript"> //<![CDATA[    
@@ -211,14 +163,25 @@
 
     /** install callbacks to save settings -------------------------------- */
     function save_element(id, value) {
-      return (Q(afrimesh, id) != value) ? afrimesh.settings.save(id, value) : null;
+      if (Q(afrimesh, id) == value) {
+        return false;
+      } 
+      console.debug("Saving setting: " + id + " -> " + value);
+      return afrimesh.settings.save(id, value);
     };
     $("input.[id*=afrimesh|settings]").bind("blur", function(event) {
-        console.debug("Saving Setting: " + this.id + " -> " + this.value);
-        save_element(this.id, this.value);
-        populate_dom(); 
+        if (save_element(this.id, this.value)) {
+          populate_dom(); 
+          //reload_service($(this).closest("fieldset").attr("id"));
+        }
       });
     $("input.[id*=afrimesh|settings]").bind("keypress", function(event) {
+	      if (event.keyCode != 13) return true;
+        if (save_element(this.id, this.value)) {
+          populate_dom();
+        }
+        return false;
+/* TODO
 	      if (event.keyCode == 13) {
 	        console.debug("Saving Setting: " + this.id + " -> " + this.value);
           save_element(this.id, this.value);
@@ -231,47 +194,65 @@
           }
           populate_dom();
  	      } 
+*/
       });
-
     $("select.[id*=afrimesh|settings]").bind("change", function(event) { 
+/* TODO
         if ((this.id == "afrimesh|settings|internet_gateway|snmp|interface") || (this.id == "afrimesh|settings|radius|radtype")) {
           save_element(this.id, this.value); 
         }
+*/
+        if (save_element(this.id, this.value)) {
+          //reload_service($(this).closest("fieldset").attr("id"));
+        } 
     });
-
     $("select.[id*=afrimesh|settings]").bind("blur", function(event) { 
-        save_element(this.id, this.value); 
+        if (save_element(this.id, this.value)) {
+          //reload_service($(this).closest("fieldset").attr("id"));
+        }
     });
+    $("input.[id*=afrimesh|settings|network|mesh|vis_server]").bind("blur", function(event) { 
+        update_vis_server();
+      });
+    $("input.[id*=afrimesh|settings|map|server]").bind("blur", function(event) { 
+        update_map_server();
+      });
+    $("input.[id*=afrimesh|settings|radius|server]").bind("blur", function(event) { 
+        update_radius_server();
+      });
+    $("input.[id*=afrimesh|settings|internet_gateway|address]").bind("blur", function(event) { 
+        populate_select_interface();
+      });
+
     //$("input.[id*=afrimesh|settings|internet_gateway|address]").unbind("blur").bind("blur", function(event) { 
+/* TODO
     $("input.[id*=afrimesh|settings|internet_gateway|address]").bind("blur", function(event) { 
         console.debug("Override Setting for gateway " + this.id + " -> " + this.value);
         save_element(this.id, this.value);
         populate_select_interface();
       });
-
     $("input.[id*=afrimesh|settings|network|mesh|vis_server]").bind("blur", function(event) { 
         console.debug("Override Setting for vis server " + this.id + " -> " + this.value);
         save_element(this.id, this.value);
         update_vis_server();
       });
-
     $("input.[id*=afrimesh|settings|radius|server]").bind("blur", function(event) { 
         console.debug("Override Setting for RADIUS server " + this.id + " -> " + this.value);
         save_element(this.id, this.value);
         update_radius_server();
-        
       });
+*/
 
     /** query internet gateway for network interfaces --------------------- */
     populate_select_interface();
 
-     /** query vis server for availability --------------------- */
+     /** query vis server for availability -------------------------------- */
     update_vis_server();
 
-    /** query map server for availability ---------------------------- */
+    /** query map server for availability --------------------------------- */
     update_map_server();
 
-     /** query RADIUS server and mysql database for availability --------------------- */
+     /** query RADIUS server and mysql database for availability ---------- */
     update_radius_server();
 
     return unload;
