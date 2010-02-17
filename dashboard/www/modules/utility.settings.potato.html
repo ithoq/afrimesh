@@ -146,7 +146,8 @@
 
         </fieldset>
       </td>
-  </tr></table>
+    </tr>
+  </table>
 
   <fieldset style="border:0px solid green; width:850px">
     <div class="label">Location</div>
@@ -161,6 +162,7 @@
 
   /** includes ------------------------------------------------------------ */
   load("modules/utility.settings.js"); 
+
 
   /** construction -------------------------------------------------------- */
   ready = function() { // INJ 'ready' should be the only symbol we're exposing to the global namespace
@@ -207,7 +209,6 @@
       button.html("<img src='images/reload.png'/>");
       $("fieldset#" + fieldset + " :button").show(); 
     };
-
 
     /** install callbacks to save settings --------------------------------- */
     function save_element(id, value) {
