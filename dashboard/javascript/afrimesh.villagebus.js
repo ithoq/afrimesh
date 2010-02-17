@@ -96,12 +96,9 @@ var BootVillageBus = function (afrimesh) {
 
   villagebus.pmacct.url  = function() { 
     var address = "";
-    if (typeof(afrimesh.settings.internet_gateway.address) != "undefined" && 
-        afrimesh.settings.internet_gateway.address != "") {
-      address = afrimesh.settings.internet_gateway.address;
-    } else if (typeof(afrimesh.settings.network.mesh.vis_server) != "undefined" &&
-               afrimesh.settings.network.mesh.vis_server != "") {
-      address = afrimesh.settings.network.mesh.vis_server;
+    if (typeof(afrimesh.settings.network.mesh.accounting_server) != "undefined" &&
+               afrimesh.settings.network.mesh.accounting_server != "") {
+      address = afrimesh.settings.network.mesh.accounting_server;
     } else {
       console.error("Could not determine address for pmacct server");
       address = afrimesh.settings.address;

@@ -57,6 +57,8 @@ function BootSettings(parent, address) {
 
     "afrimesh|settings|hosts|dashboard_server"  : { remote : "afrimesh|dashboard|dashboard_server", init : "10.0.0.1"  },
 
+    "afrimesh|settings|network|mesh|accounting_server" : { remote : "afrimesh|dashboard|accounting_server", init : "10.0.0.1" },  
+
     "afrimesh|settings|network|mesh|vis_server"        : { remote : "batmand|general|visualisation_srv", init : "10.0.0.1" },  
     "afrimesh|settings|network|mesh|routing_class"     : { remote : "batmand|general|routing_class",     init : "" },  
     "afrimesh|settings|network|mesh|gateway_class"     : { remote : "batmand|general|gateway_class",     init : "" },  
