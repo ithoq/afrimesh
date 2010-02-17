@@ -181,27 +181,8 @@
           populate_dom();
         }
         return false;
-/* TODO
-	      if (event.keyCode == 13) {
-	        console.debug("Saving Setting: " + this.id + " -> " + this.value);
-          save_element(this.id, this.value);
-          if (this.id == "afrimesh|settings|internet_gateway|address") {
-            populate_select_interface();
-          } else if (this.id == "afrimesh|settings|network|mesh|vis_server") {
-              update_vis_server();
-          } else if (this.id == "afrimesh|settings|radius|server") {
-              update_radius_server();
-          }
-          populate_dom();
- 	      } 
-*/
       });
     $("select.[id*=afrimesh|settings]").bind("change", function(event) { 
-/* TODO
-        if ((this.id == "afrimesh|settings|internet_gateway|snmp|interface") || (this.id == "afrimesh|settings|radius|radtype")) {
-          save_element(this.id, this.value); 
-        }
-*/
         if (save_element(this.id, this.value)) {
           //reload_service($(this).closest("fieldset").attr("id"));
         } 
@@ -224,35 +205,16 @@
         populate_select_interface();
       });
 
-    //$("input.[id*=afrimesh|settings|internet_gateway|address]").unbind("blur").bind("blur", function(event) { 
-/* TODO
-    $("input.[id*=afrimesh|settings|internet_gateway|address]").bind("blur", function(event) { 
-        console.debug("Override Setting for gateway " + this.id + " -> " + this.value);
-        save_element(this.id, this.value);
-        populate_select_interface();
-      });
-    $("input.[id*=afrimesh|settings|network|mesh|vis_server]").bind("blur", function(event) { 
-        console.debug("Override Setting for vis server " + this.id + " -> " + this.value);
-        save_element(this.id, this.value);
-        update_vis_server();
-      });
-    $("input.[id*=afrimesh|settings|radius|server]").bind("blur", function(event) { 
-        console.debug("Override Setting for RADIUS server " + this.id + " -> " + this.value);
-        save_element(this.id, this.value);
-        update_radius_server();
-      });
-*/
-
-    /** query internet gateway for network interfaces --------------------- */
+    /** query internet gateway for network interfaces ---------------- */
     populate_select_interface();
 
-     /** query vis server for availability -------------------------------- */
+    /** query vis server for availability ---------------------------- */
     update_vis_server();
 
-    /** query map server for availability --------------------------------- */
+    /** query map server for availability ---------------------------- */
     update_map_server();
 
-     /** query RADIUS server and mysql database for availability ---------- */
+     /** query RADIUS server and mysql database for availability ----- */
     update_radius_server();
 
     return unload;
