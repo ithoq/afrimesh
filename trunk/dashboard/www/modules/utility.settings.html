@@ -195,6 +195,9 @@
     $("input.[id*=afrimesh|settings|network|mesh|vis_server]").bind("blur", function(event) { 
         update_vis_server();
       });
+    $("input.[id*=afrimesh|settings|network|mesh|accounting_server]").bind("blur", function(event) { 
+        update_accounting_server();
+      });
     $("input.[id*=afrimesh|settings|map|server]").bind("blur", function(event) { 
         update_map_server();
       });
@@ -210,6 +213,9 @@
 
     /** query vis server for availability ---------------------------- */
     update_vis_server();
+
+    /** query accounting server for availability ---------------------------- */
+    update_accounting_server();
 
     /** query map server for availability ---------------------------- */
     update_map_server();
