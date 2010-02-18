@@ -16,6 +16,7 @@ var update_radius_server = null;
 var update_vis_server = null;
 var update_accounting_server = null;
 var update_map_server = null;
+var update_location = null;
 var LocationMap = null;
 (function() {
 
@@ -242,12 +243,10 @@ var LocationMap = null;
       $("select.[id*=afrimesh|settings|radius|radtype]").html
       ("<option value = '1'>mysql</option> <option value = '2' selected>memcachedb</option>");
     }
-    
     $("input.[id*=afrimesh|settings|radius|server]").css("background", "#FFAAAA");
     try {
       var status = afrimesh.customers.status();
       var select = afrimesh.customers.select();
-      
       if (status[0].error) {
         console.debug("RADIUS server is unreachable. " + status[0].error);
         $("p.[id*=radius|server|error]").html("RADIUS server unreachable. " + status[0].error + ".");
@@ -265,7 +264,20 @@ var LocationMap = null;
       $("p.[id*=radius|server|error]").html("RADIUS server unreachable. Unknown reason.");
     }
   };
-  
+
+  update_location = function() {
+    console.debug("locating...");
+    /*var userid = "-6354307135308710025";  // Google Latitude ID
+    $.getJSON("http://www.google.com/latitude/apps/badge/api?user=" + userid + "&type=json", function(latitude) {
+        console.log(JSON.stringify(latitude));
+        });*/
+
+    
+
+    /*load.async("", function() {
+        console.debug("Loaded Geolocation API");
+      });*/
+  };
   
   /** create a map which can be used to set the router location --------- */
   function _LocationMap(id, longitude, latitude, extent, zoom, on_position) {
