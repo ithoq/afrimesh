@@ -10,7 +10,7 @@
 <h2>Customer Status</h2>
 
 
-<div id="widget-customers-watch" class="widget customers-watch">please wait a moment...</div>
+<div id="widget-customers-status" class="widget customers-status">please wait a moment...</div>
 
 
 <script type="text/javascript"> //<![CDATA[    
@@ -40,7 +40,7 @@
     afrimesh.customers.status().map(function(customer) {
         // for (property in customer) { console.log(property + " : " + customer[property]; }
         s += "<tr class='" + customer.type + "'>";
-        s += "<td>" + customer.username + "</td>";
+        s += "<td class='name'>" + customer.username + "</td>";
         s += "<td>unlimited</td>";
         s += "<td>" + customer.caller_id + "</td>";
         s += "<td>" + ((customer.type == "login") ? "logged in" : "idle");
@@ -51,8 +51,8 @@
     s += "</table>";
     s += "<br/>";
 
-    $("div#widget-customers-watch").html(s);
-    $("div#widget-customers-watch table").tablesorter(); 
+    $("div#widget-customers-status").html(s);
+    $("div#widget-customers-status table").tablesorter(); 
   };
 
 

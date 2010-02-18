@@ -31,59 +31,25 @@ td.v-brace {
 }
 
 
-/* - everything-watch module ---------------------------------------------- */
-.everything-watch    {  }
-.everything-watch td { padding-right: 1em; }
-
-
-/* - customers-watch module ----------------------------------------------- */
-.customers-watch         {  }
-.customers-watch table   { width: 40em; } 
-.customers-watch th      {   
-  background-repeat: no-repeat;
-  background-position: center right;
-  background-image: url(images/bg.gif); 
-  cursor: hand;  /* TODO firefox */
-} 
-.customers-watch th.headerSortUp {
-  background-image: url(images/asc.gif);
-}
-.customers-watch th.headerSortDown {
-  background-image: url(images/desc.gif);
-}
-.customers-watch td      {  } 
-.customers-watch tr.idle { color: lightgray;  }
-
-
 /* - customers-manage module ----------------------------------------------- */
-.customers-manage         {  }
-.customers-manage table   { width: 40em; } 
-.customers-manage th      {   
+.customers-manage         { font-size: 1.25em; }
+.customers-manage table   {  } 
+.customers-manage th      {  
   background-repeat: no-repeat;
   background-position: center right;
   background-image: url(images/bg.gif); 
   cursor: hand;  /* TODO firefox */
 } 
-.customers-manage th.headerSortUp {
-  background-image: url(images/asc.gif);
-}
-.customers-manage th.headerSortDown {
-  background-image: url(images/desc.gif);
-}
-.customers-manage td         { 
-  padding-top: 0.5em;
-} 
+.customers-manage th.headerSortUp   { background-image: url(images/asc.gif);  }
+.customers-manage th.headerSortDown { background-image: url(images/desc.gif); }
+.customers-manage td { padding-top: 0.5em; } 
 .customers-manage th.command, td.command { 
   text-align: right;  
   padding-right: 20px;  
 } 
 .customers-manage td.command span { 
   background: lightgray;  
-  /*border: 1px solid red;*/
   padding: 0.1em 0.4em 0.2em 0.4em; /* top right bottom left */     
-  /*padding-left: 0.4em;   
-  padding-right: 0.4em;
-  padding-bottom: 0.1em;*/
   margin-left: 0.3em;
   cursor: hand;  /* TODO firefox */
 } 
@@ -103,18 +69,36 @@ td.v-brace {
 }
 
 
+/* - customers-status module ----------------------------------------------- */
+.customers-status         { font-size: 1.25em; }
+.customers-status table   { } 
+.customers-status th      {   
+  background-repeat: no-repeat;
+  background-position: center right;
+  background-image: url(images/bg.gif); 
+  cursor: hand;  /* TODO firefox */
+  padding:0px; padding-right:1.0em;
+} 
+.customers-status th.headerSortUp {
+  background-image: url(images/asc.gif);
+}
+.customers-status th.headerSortDown {
+  background-image: url(images/desc.gif);
+}
+.customers-status tr.idle { color: lightgray;  }
+.customers-status td      {  } 
+.customers-status td.name { width: 10em; } 
+
+
 /* - customers-plans ------------------------------------------------------ */
-.customers-plans              {  }
-.customers-plans table        { width: 40em; } 
-.customers-plans th           {  } 
+.customers-plans              { font-size: 1.25em; }
+.customers-plans table        {  } 
+.customers-plans th           { padding:0px; padding-right:1.0em;} 
 .customers-plans td           { padding-top: 0.5em; } 
-.customers-plans td.name      { cursor: caret; width: 20em; }
-.customers-plans td.minutes   { cursor: caret; width: 7.5em; text-align: center; }
-.customers-plans td.currency  { cursor: caret; width: 5em; text-align: center; }
-.customers-plans td.price     { cursor: caret; text-align: right; }
-
-
-
+.customers-plans td.name      { cursor: caret; width: 10em;  }
+.customers-plans td.minutes   { cursor: caret;  }
+.customers-plans td.currency  { cursor: caret;  }
+.customers-plans td.price     { cursor: caret;  }
 
 
 /* - customers-recharge module -------------------------------------------- */
