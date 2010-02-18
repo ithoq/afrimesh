@@ -104,9 +104,9 @@ var BootVillageBus = function (afrimesh) {
       address = afrimesh.settings.address;
     }
    if (address == afrimesh.settings.address) {	
-      return "http://" + afrimesh.settings.address + "/cgi-bin/village-bus-pmacct.cgi"; 
+      return "http://" + afrimesh.settings.address + "/cgi-bin/village-bus-pmacct.afrimesh.cgi"; 
     }
-    return villagebus.ajax_proxy() + "http://" + address + "/cgi-bin/village-bus-pmacct.cgi"; 
+    return villagebus.ajax_proxy() + "http://" + address + "/cgi-bin/village-bus-pmacct.afrimesh.cgi"; 
   };
   
   villagebus.pmacct.async = function(handler, direction) { 
