@@ -7,7 +7,7 @@
  * New BSD License. See /LICENSE for more information.
 -->
 
-<h2>Plans</h2>
+<h2>Customer Plans</h2>
 
 <div id="customers-plans" class="customers-plans"></div>
 
@@ -47,16 +47,16 @@
 
     var s = "<table><thead><tr>";
     s += "<th>name</th>";
-    s += "<th style='text-align:center;'>minutes</th>";
-    s += "<th style='text-align:center;'>currency</th>";
-    s += "<th style='text-align:right;'>price</th></tr></thead>";
+    s += "<th>minutes</th>";
+    s += "<th>currency</th>";
+    s += "<th>price</th></tr></thead>";
     s += "<tbody>";
     customer_plans.map(function(plan) {
         s += "<tr class='plan'>";
-        s += "<td id='" + plan.section + "' class='name'>"     + plan.name + "</td>";
-        s += "<td id='" + plan.section + "' class='minutes'>"  + plan.minutes + "</td>";
+        s += "<td id='" + plan.section + "' class='name'>"     + plan.name     + "</td>";
+        s += "<td id='" + plan.section + "' class='minutes'>"  + plan.minutes  + "</td>";
         s += "<td id='" + plan.section + "' class='currency'>" + plan.currency + "</td>";
-        s += "<td id='" + plan.section + "' class='price'>"    + plan.price + "</td>";
+        s += "<td id='" + plan.section + "' class='price'>"    + plan.price    + "</td>";
         s += "</tr>";
       });
     s += "</tbody>";

@@ -16,7 +16,7 @@ var populate_control = undefined;
    * customer management interface with the result.
    */
   populate_control = function() {
-    var s = "<table>";
+    var s = "<table border=0>";
     s += "<thead><tr><th>username</th><th>type</th><th class='command'>command</th></tr></thead>";
     s += "<tbody>";
     afrimesh.customers.select().map(function(customer) {
