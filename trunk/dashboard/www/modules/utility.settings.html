@@ -89,9 +89,9 @@
           <div class="tooltip"><h3>snmp community string</h3>
             <p class="explain">Afrimesh uses the SNMP protocol to communicate with the Internet gateway.</p>
             <p class="typical">The default setting is usually 'public'</p>
-          </div>
+          </div><br/>
           <div class="label">Interface</div>
-          <select id="afrimesh|settings|internet_gateway|snmp|interface" />
+          <select id="afrimesh|settings|internet_gateway|snmp|interface" /><br/>
           <div class="label">Download Bandwidth</div>
           <input id="afrimesh|settings|internet_gateway|bandwidth|down" type="text" />
           <div class="tooltip"><h3>download bandwidth</h3>
@@ -122,13 +122,20 @@
         You can learn how to set up your own map server by reading 
         <a href="http://code.google.com/p/afrimesh/wiki/HowTo">HowToMapServer</a>
       </p>
+    </div><br/>
+    <div class="label">
+      Location
+      <!-- p/><br/>
+      <input id="afrimesh|settings|location|longitude" style="width:100px; font-size:0.8em;" /><br/>
+      <input id="afrimesh|settings|location|latitude"  style="width:100px; font-size:0.8em;" /><br/>
+      <button id="geolocator" style="font-size: 0.8em;">
+        update
+      </button -->
     </div>
-    <div class="label">Location</div>
     <div id="location" />
   </fieldset>
 
 </form>
-
 
 <script type="text/javascript"> //<![CDATA[    
 (function() {
@@ -206,6 +213,9 @@
       });
     $("input.[id*=afrimesh|settings|internet_gateway|address]").bind("blur", function(event) { 
         populate_select_interface();
+      });
+    $("#geolocator").bind("click", function() {
+        update_location();
       });
 
     /** query internet gateway for network interfaces ---------------- */
