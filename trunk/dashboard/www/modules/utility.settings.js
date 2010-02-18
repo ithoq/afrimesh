@@ -64,7 +64,6 @@ var LocationMap = null;
       if (interfaces == undefined) {
         $("p.[id*=internet_gateway|error]").html("Internet gateway unreachable.");
         console.debug("SNMP ERROR: " + (interfaces ? interfaces.error : "unknown error"));
-        console.debug("dashboard server: " + afrimesh.settings.hosts.dashboard_server);
         console.debug("settings  server: " + afrimesh.settings.address);
         $("select.[id*=afrimesh|settings|internet_gateway|snmp|interface]").html("");
         return;

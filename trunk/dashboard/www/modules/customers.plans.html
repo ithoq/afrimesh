@@ -26,13 +26,13 @@
         customer_plans = [];
         for (var section in config.afrimesh) {
           var plan = config.afrimesh[section];
-          if (plan.type == "customer-plan") {  // TODO - design a cleaner solution for uci lists ? 
+          if (plan._sectiontype == "customer-plan") {  // TODO - design a cleaner solution for uci lists ? 
             plan.section = section;            //        Probably not do-able given that uci does not
             customer_plans.push(plan);         //        group entries logically but only in the order
           }                                    //        they appear in the config file.
         }
         populate_control(customer_plans);
-      }, afrimesh.settings.hosts.dashboard_server, "afrimesh");
+      }, afrimesh.settings.address, "afrimesh");
     console.debug("loaded customers.plans.html");
     return unload;
   };
@@ -76,7 +76,7 @@
     afrimesh.villagebus.uci.set.async(function (response) { 
         console.debug("Updated customer plan: " + dump_object(response)); 
       }, 
-      afrimesh.settings.hosts.dashboard_server, 
+      afrimesh.settings.address, 
       [ { config: "afrimesh", section: this.id, option: settings.name, value: new_value } ]);
 
     // UDE - for uci lists the section id changes on commit
