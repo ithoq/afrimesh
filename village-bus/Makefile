@@ -157,6 +157,9 @@ test-jsonrpc-version :
 test-jsonrpc-ipkg :
 	./village-bus /ipkg '{ $(RPC), "method" : "upgrade", "params" : [ "afrimesh-base" ] }'
 
+test-jsonrpc-acct :
+	./village-bus /acct '{ $(RPC), "method" : "gateway", "params" : [ ] }'
+
 
 # ./village-bus /sys '{ "id" : 123, "version" : "2.0", "method" : "syslog", "params" : [ 3 ] }'
 # ./village-bus /uci '{ "id" : 123, "version" : "2.0", "method" : "show", "params" : [ "system" ] }'
@@ -166,5 +169,7 @@ test-jsonrpc-ipkg :
 
 # DEPROOT=/Volumes/afrimesh-dev/ext CFLAGS=-m32 make clean village-bus test-jsonrpc-uci
 
+
+# DEPROOT=/usr/local gmake clean village-bus test-jsonrpc-acct
 
 # /www/cgi-bin/village-bus /sys '{ "id" : 1, "version" : "2.0", "method" : "service", "params" : [ "network", "reload" ] }'
