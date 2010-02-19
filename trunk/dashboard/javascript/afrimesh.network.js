@@ -15,34 +15,20 @@ function BootNetwork(parent) {
   /** 
    * decorates a router with network accounting information 
    */
-  network.accounting = function(router) { /* TODO - afrimesh.villagebus.pmacct a) should be a map keyed w/ IP b) cached */
+  network.accounting = function(router) { /* TODO - afrimesh.villagebus.acct a) should be a map keyed w/ IP b) cached */
     var temp = 0;
+    router.traffic = { bytes : 0, packets : 0 };
     try { 
-      afrimesh.villagebus.pmacct("out").map(function(entry) {		
-          if (router.address == entry.SRC_IP) {
-            if (typeof router.macaddr == "undefined") {	
-              router.macaddr = entry.SRC_MAC;
-            } 
-            var bytes = parseInt(entry.BYTES);
-            temp = (temp < bytes) ? bytes : temp;
-          }
-        });
-    } catch (error) {
-      console.debug("pmacct error " + error);
-    }
-		router.uploaded = temp;
-		temp = 0;
-    try {
-      afrimesh.villagebus.pmacct("in").map(function(entry) {
+      afrimesh.villagebus.acct.gateway().map(function(entry) {		
           if (router.address == entry.DST_IP) {
-            var bytes = parseInt(entry.BYTES);
-            temp = (temp < bytes) ? bytes : temp;
+            if (typeof router.mac == "undefined") {	router.mac = entry.DST_MAC; } 
+            router.traffic.bytes   += parseInt(entry.BYTES);
+            router.traffic.packets += parseInt(entry.PACKETS);
           }
         });
     } catch (error) {
       console.debug("pmacct error " + error);
     }
-    router.downloaded = temp; 
     return router;
   };
 
@@ -50,29 +36,19 @@ function BootNetwork(parent) {
    * decorates a list of routers with network accounting information 
    */
   network.accounting.routers = function(routers) {
-    /* TODO - single call for retrieving pmacct stats please */
     var targets = {};
     routers.map(function(router) {
+        router.traffic = { bytes : 0, packets : 0 };
         targets[router.address] = router;
         console.debug("Added: " + router.address);
       });
-    afrimesh.villagebus.pmacct("out").map(function(entry) { 
-        var router = targets[entry.SRC_IP];
-        if (router) {
-          console.debug("OUT: " + entry.SRC_IP + " -> " + entry.SRC_MAC + " -> " + entry.BYTES);
-          //console.debug(dump_object(entry));
-          router.mac      = entry.SRC_MAC;
-          router.uploaded = { bytes : entry.BYTES, packets : entry.PACKETS };
-          //targets[entry.SRC_IP] = router;
-        }
-      });
-    afrimesh.villagebus.pmacct("in").map(function(entry) {
+    afrimesh.villagebus.acct.gateway().map(function(entry) {
         var router = targets[entry.DST_IP];
         if (router) {
-          console.debug("IN: " + entry.DST_IP + " -> " + entry.DST_MAC + " -> " + entry.BYTES);          
-          //router.mac        = entry.DST_MAC;
-          router.downloaded = { bytes : entry.BYTES, packets : entry.PACKETS };
-          //targets[entry.DST_IP] = router;
+          console.debug("IN: " + entry.DST_IP + " (" + entry.DST_MAC + ") -> " + entry.PACKETS + " packets  " + entry.BYTES + " bytes");          
+          if (typeof router.mac == "undefined") {	router.mac = entry.DST_MAC; } 
+          router.traffic.bytes   += parseInt(entry.BYTES);
+          router.traffic.packets += parseInt(entry.PACKETS);
         }
       });
     routers = [];

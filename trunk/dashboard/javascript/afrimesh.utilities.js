@@ -300,7 +300,7 @@
     window.console.native_info  = print;
     window.console.native_warn  = print;
     window.console.native_error = print; 
-  } else if (typeof(netscape) != "undefined") { // not running in firebug, not safari - maybe netscape ?
+  } else if (typeof netscape != "undefined") { // not running in firebug, not safari - maybe netscape ?
     window.console = { };
     try {
       netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect'); // argh!

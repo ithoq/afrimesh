@@ -166,7 +166,7 @@ var LocationMap = null;
           $("p.[id*=accounting_server|error]").html("Accounting server unreachable.");
         }
       };
-      afrimesh.villagebus.pmacct.async(update, "in");
+      afrimesh.villagebus.acct.gateway.async(update);
     } catch (error) {
       $("p.[id*=vis_server|error]").html("Visualization server unreachable. " + error + ".");
       console.debug("Vis server is unreachable. " + error);

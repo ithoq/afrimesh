@@ -89,50 +89,17 @@ var BootVillageBus = function (afrimesh) {
   };
 
 
-  /** - villagebus.pmacct bytes data ------------------------------------------------- */
-  villagebus.pmacct = function(direction) { 
-    return this.pmacct.sync(direction); 
-  }; 
-
-  villagebus.pmacct.url  = function() { 
-    var address = "";
-    if (typeof(afrimesh.settings.network.mesh.accounting_server) != "undefined" &&
-               afrimesh.settings.network.mesh.accounting_server != "") {
-      address = afrimesh.settings.network.mesh.accounting_server;
-    } else {
-      console.error("Could not determine address for pmacct server");
-      address = afrimesh.settings.address;
+  /** - villagebus.acct -------------------------------------------------- */
+  villagebus.acct = { }; 
+  villagebus.acct.url  = function() { 
+    if (afrimesh.settings.network.mesh.accounting_server == afrimesh.settings.address) {
+      return "http://" + afrimesh.settings.address + "/cgi-bin/village-bus/acct";
     }
-   if (address == afrimesh.settings.address) {	
-      return "http://" + afrimesh.settings.address + "/cgi-bin/village-bus-pmacct.afrimesh.cgi"; 
-    }
-    return villagebus.ajax_proxy() + "http://" + address + "/cgi-bin/village-bus-pmacct.afrimesh.cgi"; 
+    return afrimesh.villagebus.ajax_proxy() + "http://" + afrimesh.settings.network.mesh.accounting_server + "/cgi-bin/village-bus/acct";
   };
-  
-  villagebus.pmacct.async = function(handler, direction) { 
-    var xml = make_json_request({
-        url     : this.url() + "?direction=" + direction,
-        request : {},
-        success : handler,
-        async   : true });
-    return xml;
-  };
-  villagebus.pmacct.poll = function(f, frequency) {   
-    this.async(f);
-    setTimeout(function() { afrimesh.villagebus.pmacct.poll(f, frequency); }, 
-               frequency);
-  };
-  villagebus.pmacct.sync = function(direction) { 
-    console.debug("PMACCT USES: " + this.url());
-    var handler  = function(data) { 
-      handler.response = data;  
-    };
-    return make_json_request({
-        url     : this.url() + "?direction=" + direction,
-        request : {},
-        success : handler,
-        async   : false });
-  };
+  villagebus.acct.gateway = function() { return villagebus.acct.gateway.sync(); }
+  villagebus.acct.gateway.sync  = function()  { return rpc(villagebus.acct.url(), "gateway", []); }
+  villagebus.acct.gateway.async = function(f) { return rpc_async(villagebus.acct.url(), "gateway", [], f); }
 
   /** - villagebus.radius ------------------------------------------------- */
   villagebus.radius        = function() { return villagebus.radius.who(); };
@@ -346,7 +313,7 @@ var BootVillageBus = function (afrimesh) {
       return "http://" + address + "/cgi-bin/village-bus/voip";
     }
     return afrimesh.villagebus.ajax_proxy() + "http://" + address + "/cgi-bin/village-bus/voip";
-  }
+  };
   villagebus.voip.sip = {};
   villagebus.voip.sip.peers = function(address) { return villagebus.voip.sip.peers.sync(address); }
   villagebus.voip.sip.peers.sync  = function(address)    { return rpc(villagebus.voip.url(address), "sip", [ "show peers" ]);    }
@@ -472,7 +439,7 @@ var BootVillageBus = function (afrimesh) {
         method  : method,
         params  : parameters
       });
-    request.error   = (typeof(error) == "undefined" ? rpc_async_error(request) : error);
+    request.error   = (typeof error == "undefined" ? rpc_async_error(request) : error);
     request.success = rpc_async_success(request, request.error);
     //console.debug("making request: " + show(request));
     return $.ajax(request);

@@ -30,7 +30,7 @@
 
 
 # - configuration ------------------------------------------------------------
-VERSION=r644-0.5alpha
+VERSION=r652-0.5alpha
 RELEASE=1
 
 # DEPRECATED

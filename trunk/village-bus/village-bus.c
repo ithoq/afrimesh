@@ -344,12 +344,10 @@ struct json_object* acct_pmacct_exec_parser(const char* line, size_t length)
 
 struct json_object* jsonrpc_dispatch_acct_gateway(const char* name, struct json_object* arguments)
 {
-  char* argv[5];
+  char* argv[3];
   argv[0] = "pmacct";
   argv[1] = "-s";
-  argv[2] = "-p";
-  argv[3] = "/tmp/in.pipe";
-  argv[4] = 0;
+  argv[2] = 0;
   return sys_exec_parsed(argv[0], argv, acct_pmacct_exec_parser);
 }
 
