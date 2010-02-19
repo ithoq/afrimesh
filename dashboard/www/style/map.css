@@ -38,7 +38,7 @@ div#network-map .popup #health {
 div#network-map .popup #traffic { 
   margin-bottom: 5px;   
 }
-div#network-map .popup #bytes { 
+span#network-map .popup #traffic { 
   color: darkgray;
   font-size: 0.75em;
 }

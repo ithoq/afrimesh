@@ -189,6 +189,7 @@ td.v-brace {
 }
         
 /* - network devices module ------------------------------------------------ */
+.network-devices { font-size: 1.25em; }
 .network-devices thead {
   color: black;
 }

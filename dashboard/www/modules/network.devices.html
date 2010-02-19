@@ -50,22 +50,21 @@
     /* get accounting info for routers */
     routers = afrimesh.network.accounting.routers(routers);
     var html = "<table class='network-devices' border=0>"
-    html += "<thead><th>mac</th><th>address</th><th>name</th><th>downloaded</th><th>uploaded</th><th>version</th><th>uname</th></thead>";
+    html += "<thead><th>mac</th><th>address</th><th>packets</th><th>bytes</th><!-- th>version</th><th>uname</th --></thead>";
     html += "<tbody></tbody></table>";
     $("div#network-devices").html(html);
     var table = $("#network-devices table > tbody:last");
     var rows = "";
     routers.map(function(router) {
         rows += "<tr>";
-        rows += "<td id='mac'>"     + router.mac     + "</td>";
+        rows += "<td id='mac'>"     + (router.mac ? router.mac : "-")  + "</td>";
         rows += "<td id='address'>" + router.address + "</td>";
-        rows += "<td id='name'>"    + "name"         + "</td>";
-        rows += "<td id='usage'>"   + (router.downloaded ? router.downloaded.bytes : "no data") + "</td>";
-        rows += "<td id='usage'>"   + (router.uploaded   ? router.uploaded.bytes   : "no data") + "</td>";
-        rows += "<td id='version'>" + "" /*afrimesh.villagebus.sys.version(router.address)*/ + "</td>";
+        rows += "<td id='traffic'>" + (router.traffic.packets ? router.traffic.packets : "-") + "</td>";
+        rows += "<td id='traffic'>" + (router.traffic.bytes   ? router.traffic.bytes   : "-") + "</td>";
+        //rows += "<td id='version'>" + "" /*afrimesh.villagebus.sys.version(router.address)*/ + "</td>";
         //rows += "<td id='uname'>uname</td>";
         // TODO - this should be cached, async & wrapped around the router like accounting above
-        rows += "<td id='uname'>"   + "" /*afrimesh.villagebus.sys.uname(router.address)*/ + "</td>";
+        //rows += "<td id='uname'>"   + "" /*afrimesh.villagebus.sys.uname(router.address)*/ + "</td>";
         rows += "</tr>";
       });
     table.append(rows);

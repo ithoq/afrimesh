@@ -197,7 +197,7 @@ var Map = undefined;
       var html = "<div class='popup'>";
       html += "<div id='address'>";
       html += "<span id='ip'>" + "<a href='#'>" + feature.router.address + "</a>" + "</span>&nbsp;&nbsp;";
-      html += "<span id='mac'>" + (feature.router.macaddr ? feature.router.macaddr : "unknown mac")  + "</span></div>";
+      html += "<span id='mac'>" + (feature.router.mac ? feature.router.mac : "unknown mac")  + "</span></div>";
       var last_seen = (new Date()) - feature.last_seen;
       html += "<div id='health'>";
       if (last_seen <= (update_frequency * 2.0)) { // UDE - this is a bit clumsy
@@ -206,9 +206,11 @@ var Map = undefined;
         html += "<span style='color:red;'>node last checked in " + Math.floor(last_seen / 1000) + " seconds ago</span>";
       }
       html += "</div>";
-      if (feature.router.downloaded && feature.router.uploaded) {
-        html += "<div id='traffic'>Bytes down/up: ";
-        html += "<span id='bytes'>" + feature.router.downloaded + "/" + feature.router.uploaded + "</span></div>" ;
+      if (feature.router.traffic) {
+        html += "<div id='traffic'>";
+        html += "<span>" + feature.router.traffic.packets + " packets " +
+                           feature.router.traffic.bytes   + " bytes</span>";
+        html += "</div>";
       } 
       html += "<div id='neighbours'>";
       html+= "Neighbours";
@@ -229,7 +231,7 @@ var Map = undefined;
       html += "</div>"; /* end popup */
       var popup = new OpenLayers.Popup.AnchoredBubble("id" + feature.router.address,
                                                       feature.geometry.getBounds().getCenterLonLat(),
-                                                      new OpenLayers.Size(250, 150), html, null, true, 
+                                                      new OpenLayers.Size(275, 150), html, null, true, 
                                                       function(event){on_unselect_router(the_map.selected);} );
       popup.setBackgroundColor("black");
       popup.setOpacity(0.95);
