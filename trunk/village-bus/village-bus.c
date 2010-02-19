@@ -302,6 +302,57 @@ struct json_object* jsonrpc_dispatch_ipkg_upgrade(const char* name, struct json_
   return sys_exec(argv[0], argv);
 }
 
+/** accounting ----------------------------------------------------------- */
+struct json_object* acct_pmacct_exec_parser(const char* line, size_t length)
+{
+  ((char*)line)[length - 1] = '\0';   // TODO - supremely evil - fix when there's time to debug
+
+  /* parse header */
+  static struct json_object* header_fields = NULL;
+  if (header_fields == NULL) {
+    header_fields = json_object_new_array();
+    char* field = line;
+    while (field = strtok(field, " ")) {
+      json_object_array_add(header_fields, json_object_new_string(field));
+      field = NULL;
+    }
+    return NULL;
+  }
+
+  /* lose junk lines */
+  if (length <= 1 ||
+      strncasecmp(line, "For a total", 11) == 0) {
+    return NULL;
+  }
+  
+  /* parse line */
+  struct json_object* entry = json_object_new_object();
+  char*  field = line;
+  size_t count = 0;
+  while ((field = strtok(field, " ")) && 
+         count < json_object_array_length(header_fields)) {
+    struct json_object* field_name = json_object_array_get_idx(header_fields, count);
+    json_object_object_add(entry,
+                           json_object_get_string(field_name),  
+                           json_object_new_string(field));
+    field = NULL;
+    count++;
+  }
+
+  return entry;
+}
+
+struct json_object* jsonrpc_dispatch_acct_gateway(const char* name, struct json_object* arguments)
+{
+  char* argv[5];
+  argv[0] = "pmacct";
+  argv[1] = "-s";
+  argv[2] = "-p";
+  argv[3] = "/tmp/in.pipe";
+  argv[4] = 0;
+  return sys_exec_parsed(argv[0], argv, acct_pmacct_exec_parser);
+}
+
 
 /** voip ----------------------------------------------------------------- */
 struct json_object* voip_sip_peers_parser(const char* line, size_t length)
