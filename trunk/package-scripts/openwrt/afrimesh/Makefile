@@ -191,7 +191,7 @@ endef
 define Package/afrimesh-dashboard
 	SECTION:=admin
 	CATEGORY:=Administration
-	DEPENDS:=+afrimesh-base 
+	DEPENDS:=+afrimesh-base +afrimesh-pmacctd +afrimesh-pmacct-client
 #+curl-nossl 
 	TITLE:=Mesh management dashboard
 endef
