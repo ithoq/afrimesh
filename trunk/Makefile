@@ -27,16 +27,9 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-
-
 # - configuration ------------------------------------------------------------
 VERSION=r652-0.5alpha
 RELEASE=1
-
-# DEPRECATED
-# If you want to build packages for OpenWRT you need to set this to the
-# location of a copy of the kamikaze sources or SDK
-# KAMIKAZE=/Volumes/afrimesh-dev/ext/kamikaze
 
 # Ubuntu Launchpad Personal Package Archive 
 #   _DO_ set this to your personal ppa if you want to build test packages
@@ -49,16 +42,13 @@ PPA=antoine-7degrees-ppa
 #DEPS_URL="https://launchpad.net/~antoine-7degrees/+archive/ppa/+files/"
 
 # - binaries -----------------------------------------------------------------
-#VILLAGERS=village-bus village-bus-radius village-bus-snmp village-bus-uci
 VILLAGERS=village-bus village-bus-radius
-
 
 
 # - commands -----------------------------------------------------------------
 INSTALL=cp -rf
 MKDIR=mkdir -p
 MAKE=make
-
 
 
 # - platform detection -------------------------------------------------------
@@ -87,26 +77,21 @@ FLAVOR=BSD
 endif
 
 
-
 # - common -------------------------------------------------------------------
 all: 
 	export DEPROOT=$(DEPROOT); cd village-bus-radius ; $(MAKE)
-	#export DEPROOT=$(DEPROOT); cd village-bus-snmp   ; $(MAKE)
-	#export DEPROOT=$(DEPROOT); cd village-bus-uci    ; $(MAKE)
 	export DEPROOT=$(DEPROOT); cd village-bus        ; VERSION=$(VERSION) FLAVOR=$(FLAVOR) $(MAKE)
 
-install: install-www 
-	@if ! test -f $(DASHBOARD_ETC)/config/afrimesh ; then $(MAKE) install-config ; fi
+install: install-www install-config
 
 install-www: 
 	@echo "Installing dashboard web interface in: $(DASHBOARD_WWW)"
-	#rm dashboard/www/javascript
 	@if ! test -d $(DASHBOARD_WWW) ; then mkdir -p $(DASHBOARD_WWW) ; fi
 	$(INSTALL) dashboard/www/index.html $(DASHBOARD_WWW)
 	$(INSTALL) dashboard/www/images     $(DASHBOARD_WWW)
 	$(INSTALL) dashboard/www/style      $(DASHBOARD_WWW)
 	$(INSTALL) dashboard/www/modules    $(DASHBOARD_WWW)
-	$(INSTALL) dashboard/javascript     $(DASHBOARD_WWW) # TODO - crunch all javascript into a single file ?
+	$(INSTALL) dashboard/javascript     $(DASHBOARD_WWW) # TODO - crunch all javascript into a single file 
 	@if ! test -f $(WWW_ROOT)/index.html ; then $(INSTALL) dashboard/www/index.redirect.html $(WWW_ROOT)/index.html ; fi # redirect
 	@echo "Installing dashboard cgi scripts in: $(DASHBOARD_CGI)"
 	@if ! test -d $(DASHBOARD_CGI) ; then mkdir -p $(DASHBOARD_CGI) ; fi
@@ -115,28 +100,23 @@ install-www:
 	$(INSTALL) dashboard/cgi-bin/village-bus-echo $(DASHBOARD_CGI)/village-bus-echo.kml
 	chmod 0755 $(DASHBOARD_CGI)/village-bus-echo.kml
 	$(INSTALL) dashboard/cgi-bin/village-bus-pmacct.cgi $(DASHBOARD_CGI)
-	# TODO $(INSTALL) dashboard/cgi-bin/pmacct $(DASHBOARD_CGI)
 	for i in $(VILLAGERS); do echo "Installing: $$i"; $(INSTALL) ./$$i/$$i $(DASHBOARD_CGI); done
 	find $(DASHBOARD_WWW) -name "*~"   | xargs rm -f
 	find $(DASHBOARD_WWW) -name ".svn" | xargs rm -rf
 	find $(DASHBOARD_CGI) -name "*~"   | xargs rm -f
 	find $(DASHBOARD_CGI) -name ".svn" | xargs rm -rf
-	#cd dashboard/www ; ln -s ../javascript ./javascript # replace symlink
 
 install-config: 
 	@echo "Installing configuration files in: $(DASHBOARD_ETC)"
-	mkdir -p $(DASHBOARD_ETC)/config
-	#cat config/dashboard      >  $(DASHBOARD_ETC)/config/afrimesh
-	#cat config/settings       >> $(DASHBOARD_ETC)/config/afrimesh
-	#cat config/location       >> $(DASHBOARD_ETC)/config/afrimesh
-	#cat config/map            >> $(DASHBOARD_ETC)/config/afrimesh
-	#cat config/gateway        >> $(DASHBOARD_ETC)/config/afrimesh
-	#cat config/radius         >> $(DASHBOARD_ETC)/config/afrimesh
-	#cat config/customer-plans >> $(DASHBOARD_ETC)/config/afrimesh
-	#cat config/router         >> $(DASHBOARD_ETC)/config/afrimesh
-	#cat config/batmand        >> $(DASHBOARD_ETC)/config/afrimesh
-	cp config/afrimesh $(DASHBOARD_ETC)/config/afrimesh
-	chmod a+rw $(DASHBOARD_ETC)/config/afrimesh
+	[ ! -d $(DASHBOARD_ETC)/config ] && mkdir -p $(DASHBOARD_ETC)/config
+	[ ! -e $(DASHBOARD_ETC)/config/afrimesh ] && { \
+		cp config/afrimesh $(DASHBOARD_ETC)/config/afrimesh; \
+		chmod a+rw $(DASHBOARD_ETC)/config/afrimesh; \
+	}
+	[ ! -e $(DASHBOARD_ETC)/config/batmand ] && { \
+		cp config/batmand $(DASHBOARD_ETC)/config/batmand; \
+		chmod a+rw $(DASHBOARD_ETC)/config/batmand; \
+	}
 
 clean : # clean-www
 	cd village-bus-radius ; $(MAKE) clean
@@ -170,9 +150,8 @@ sources : clean
 	ls -al /tmp/afrimesh-$(VERSION).tar.gz
 
 
-
 # - linux --------------------------------------------------------------------
-# read: https://wiki.ubuntu.com/PackagingGuide/Complete
+# also see: https://wiki.ubuntu.com/PackagingGuide/Complete
 PKG_BUILD_DIR=/tmp/build
 DEPS_HOOK="A70deps"
 linux : all
@@ -245,7 +224,6 @@ prep-linux : clean-linux sources #hooks-linux
 #	echo "dpkg -i /tmp/libmemcachedb-dev_0.25-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
 #	chmod 0755 $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
 
-
 depends-packages-linux-json-c :
 	wget --no-clobber -c -P $(PKG_BUILD_DIR) http://oss.metaparadigm.com/json-c/json-c-0.9.tar.gz
 	rm -rf $(PKG_BUILD_DIR)/json-c-0.9
@@ -263,8 +241,6 @@ depends-packages-linux-json-c :
 	# to build binaries
 	#@cd $(PKG_BUILD_DIR)/json-c-0.9 ; pdebuild
 	#@cd $(PKG_BUILD_DIR)/json-c-0.9 ; fakeroot dpkg-buildpackage -b -uc
-
-
 
 depends-packages-linux-uci :
 	wget --no-clobber -P $(PKG_BUILD_DIR) http://mirror2.openwrt.org/sources/uci-0.7.5.tar.gz
@@ -321,6 +297,10 @@ install-freebsd : freebsd install-www
 
 
 # - openwrt ------------------------------------------------------------------
+# DEPRECATED
+# If you want to build packages for OpenWRT you need to set this to the
+# location of a copy of the kamikaze sources or SDK
+# KAMIKAZE=/Volumes/afrimesh-dev/ext/kamikaze
 #prep-openwrt :
 #	rm -f $(KAMIKAZE)/package/afrimesh
 #	ln -s $(shell pwd)/package-scripts/openwrt/afrimesh $(KAMIKAZE)/package/afrimesh
