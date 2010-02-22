@@ -5,6 +5,9 @@
 
 set -e
 
+touch /tmp/arghlearghle
+
+
 case "$1" in
     configure)
         # setup permissions so that uci can edit configs from the httpd process
