@@ -5,18 +5,13 @@
 
 set -e
 
-touch /tmp/arghlearghle
-
-
 case "$1" in
     configure)
         # setup permissions so that uci can edit configs from the httpd process
-        touch /tmp/afrimesh-post-called
         chown -R :www-data /etc/config
         chmod 0775 /etc/config
-        chmod -R 0664 /etc/config
-        touch /tmp/afrimesh-post-one
-        touch /root/boingaboinga
+        chmod -R 0664 /etc/config/afrimesh
+        chmod -R 0664 /etc/config/batmand
      ;;
  
     abort-upgrade|abort-remove|abort-deconfigure)
