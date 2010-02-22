@@ -99,7 +99,6 @@ install-www:
 	$(INSTALL) dashboard/cgi-bin/ajax-proxy.cgi $(DASHBOARD_CGI)
 	$(INSTALL) dashboard/cgi-bin/village-bus-echo $(DASHBOARD_CGI)/village-bus-echo.kml
 	chmod 0755 $(DASHBOARD_CGI)/village-bus-echo.kml
-	$(INSTALL) dashboard/cgi-bin/village-bus-pmacct.cgi $(DASHBOARD_CGI)
 	for i in $(VILLAGERS); do echo "Installing: $$i"; $(INSTALL) ./$$i/$$i $(DASHBOARD_CGI); done
 	find $(DASHBOARD_WWW) -name "*~"   | xargs rm -f
 	find $(DASHBOARD_WWW) -name ".svn" | xargs rm -rf
@@ -108,15 +107,19 @@ install-www:
 
 install-config: 
 	@echo "Installing configuration files in: $(DASHBOARD_ETC)"
-	[ ! -d $(DASHBOARD_ETC)/config ] && mkdir -p $(DASHBOARD_ETC)/config
-	[ ! -e $(DASHBOARD_ETC)/config/afrimesh ] && { \
-		cp config/afrimesh $(DASHBOARD_ETC)/config/afrimesh; \
-		chmod a+rw $(DASHBOARD_ETC)/config/afrimesh; \
+	[ -d $(DASHBOARD_ETC)/config ] || { \
+		mkdir -p $(DASHBOARD_ETC)/config; \
+		chmod 0775 $(DASHBOARD_ETC)/config; \
 	}
-	[ ! -e $(DASHBOARD_ETC)/config/batmand ] && { \
-		cp config/batmand $(DASHBOARD_ETC)/config/batmand; \
-		chmod a+rw $(DASHBOARD_ETC)/config/batmand; \
+	[ -e $(DASHBOARD_ETC)/config/afrimesh ] || { \
+		$(INSTALL) config/afrimesh $(DASHBOARD_ETC)/config/afrimesh; \
+		chmod 0664 $(DASHBOARD_ETC)/config/afrimesh; \
 	}
+	[ -e $(DASHBOARD_ETC)/config/batmand ] || { \
+		$(INSTALL) config/batmand $(DASHBOARD_ETC)/config/batmand; \
+		chmod 0664 $(DASHBOARD_ETC)/config/batmand; \
+	}
+	chown -R :www-data $(DASHBOARD_ETC)/config
 
 clean : # clean-www
 	cd village-bus-radius ; $(MAKE) clean
