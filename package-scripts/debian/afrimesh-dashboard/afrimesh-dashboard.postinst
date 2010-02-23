@@ -14,6 +14,8 @@ case "$1" in
         chmod -R 0664 /etc/config/batmand
         # add www-data to adm group so that it can read the system log files
         adduser www-data adm
+        # restart httpd to register change
+        /etc/init.d/apache2 restart
      ;;
  
     abort-upgrade|abort-remove|abort-deconfigure)
