@@ -179,7 +179,7 @@ struct json_object* sys_syslog(int n)
   struct json_object* entries = json_object_new_array();
 
   /* TODO - find logfile */
-  //const char* name = "/var/log/system.log";
+  //const char* name = "/var/log/system.log"; // OSX
   const char* name = "/var/log/messages";
 
   /* open logfile */
@@ -190,7 +190,7 @@ struct json_object* sys_syslog(int n)
 
   /* find eof */
   if (fseek(logfile, 0, SEEK_END) == -1) {
-    return die_gracefully(logfile, jsonrpc_error("Seek failed - %s", strerror(errno)));
+    return die_gracefully(logfile, jsonrpc_error("Initial seek failed - %s", strerror(errno)));
   }
   long eof = ftell(logfile);
   if (eof == -1) {
@@ -199,7 +199,11 @@ struct json_object* sys_syslog(int n)
   
   long eol = eof;
   size_t lines = 0;
-  for (lines = 0; lines < n; lines++) {
+  for (lines = 0; lines < n && eol > 0; lines++) {
+    if (readsize > eol) { 
+      readsize = eol; 
+    }
+    //printf("lines: %d  eol:%d  readsize:%d\n", lines, eol, readsize);
 
     /* go to last known line end & read previous 'readsize' bytes */
     if (fseek(logfile, eol - readsize, SEEK_SET) == -1) {
@@ -223,8 +227,11 @@ struct json_object* sys_syslog(int n)
     size_t line_length = (buffer + bytesread) - start;
     start[line_length] = 0;
     /* TODO - parse line */
+    if (start[0] == '\n') { start++; }
+    //printf("-> %d : |%s|\n", lines, start);
+    LogEntry logentry = parse_entry(start, strlen(start));
     //printf("-> %d : |%s|\n", lines, start + 1);
-    LogEntry logentry = parse_entry(start + 1, strlen(start + 1));
+    //LogEntry logentry = parse_entry(start + 1, strlen(start + 1));
     struct json_object* entry = json_object_new_object();
     json_object_object_add(entry, "timestamp", json_object_new_string(logentry.timestamp));
     json_object_object_add(entry, "level",     json_object_new_string(logentry.level));

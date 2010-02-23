@@ -119,7 +119,6 @@ install-config:
 		$(INSTALL) config/batmand $(DASHBOARD_ETC)/config/batmand; \
 		chmod 0664 $(DASHBOARD_ETC)/config/batmand; \
 	}
-	chown -R :www-data $(DASHBOARD_ETC)/config
 
 clean : # clean-www
 	cd village-bus-radius ; $(MAKE) clean
@@ -159,6 +158,7 @@ PKG_BUILD_DIR=/tmp/build
 DEPS_HOOK="A70deps"
 linux : all
 install-linux : install
+	chown -R :www-data $(DASHBOARD_ETC)/config
 clean-linux : clean
 	rm -rf $(PKG_BUILD_DIR)
 
@@ -297,6 +297,7 @@ depends-launchpad-linux : #depends-packages-linux-json-c depends-packages-linux-
 # - freebsd ------------------------------------------------------------------
 freebsd : village-bus
 install-freebsd : freebsd install-www
+	#chown -R :www $(DASHBOARD_ETC)/config/
 
 
 # - openwrt ------------------------------------------------------------------

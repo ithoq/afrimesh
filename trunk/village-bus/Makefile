@@ -146,7 +146,7 @@ test-jsonrpc-snmp-get : village-bus
 	./village-bus /snmp '{ $(RPC), "method" : "get", "params" : [ $(HOST), [".1.3.6.1.2.1.2.2.1.10.1",".1.3.6.1.2.1.2.2.1.16.1"] ] }'				
 
 test-jsonrpc-syslog :
-	./village-bus /sys '{ $(RPC), "method" : "syslog", "params" : [ 3 ] }'
+	./village-bus /sys '{ $(RPC), "method" : "syslog", "params" : [ 10 ] }'
 
 test-jsonrpc-uname :
 	./village-bus /sys '{ $(RPC), "method" : "uname", "params" : [ ] }'
