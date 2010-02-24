@@ -59,6 +59,8 @@
 
   /** update displays ----------------------------------------------------- */
   var timer = {};
+  var update_frequency = 2000;
+  var update_target = 30000;
   function update() {
     clearTimeout(timer);
 
@@ -72,9 +74,12 @@
                                          ".1.3.6.1.2.1.2.2.1.16." + afrimesh.settings.internet_gateway.snmp.interface ]); 
 
     // messages
-    afrimesh.villagebus.syslog.async(update_network_messages, 10);
+    afrimesh.villagebus.syslog.async(update_network_messages, 20);
 
-    timer = setTimeout(update, 10000);
+    timer = setTimeout(update, update_frequency); 
+    if (update_frequency < update_target) {  
+      update_frequency *= 2;
+    }
   };
 
   var traffic = {
@@ -165,7 +170,7 @@
         row += "<td id='level'>"     + entry.level     + "</td>";
         row += "<td id='node'>"      + entry.address   + "</td>";
         row += "<td id='process'>"   + entry.process   + "</td>";
-        row += "<td id='message'>"   + entry.message   + "</td>";
+        row += "<td><div id='message'>"   + entry.message   + "</div></td>";
         row += "</tr>";
         table.append(row);
       });    
