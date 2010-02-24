@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DECODE=/usr/local/bin/urldecode
+DECODE=./urldecode
 
 # read & parse query
 QUERY=$QUERY_STRING

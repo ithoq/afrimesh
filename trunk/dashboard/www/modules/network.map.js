@@ -122,10 +122,10 @@ var Map = undefined;
       feature.id = router.address;
       feature.router = router;
       the_map.routers.addFeatures([feature]);
-      afrimesh.villagebus.uci.get.async(function (config) {
-          feature.geometry = new Point(config.afrimesh.location.longitude, config.afrimesh.location.latitude);
+      afrimesh.villagebus.geolocation(router.address, function (longitude, latitude) {
+          feature.geometry = new Point(longitude, latitude);
           the_map.routers.redraw();
-        }, router.address, "afrimesh.location");
+        });
       return feature;
     };
 
@@ -275,11 +275,12 @@ var Map = undefined;
     function on_position(feature) {
       // update router location config
       var location = new OpenLayers.LonLat(feature.geometry.x, feature.geometry.y).transform(epsg_900913, epsg_4326);
-      afrimesh.villagebus.uci.set.async(function (response) {
+      afrimesh.villagebus.geolocation.set(feature.router.address, 
+                                          location.lon, 
+                                          location.lat, 
+                                          function (response) {
           console.debug("Updated router location for:" + feature.router.address);
-        }, feature.router.address, 
-        [ { config: "afrimesh", section: "location", option: "longitude", value: location.lon.toString() }, 
-          { config: "afrimesh", section: "location", option: "latitude",  value: location.lat.toString() } ]);
+        });
       
       // update route geometry
       feature.router.routes.map(function(route) {
