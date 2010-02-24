@@ -28,7 +28,7 @@
 #
 
 # - configuration ------------------------------------------------------------
-VERSION=r668-0.5alpha
+VERSION=1.0beta-r669
 RELEASE=1
 
 # Ubuntu Launchpad Personal Package Archive 

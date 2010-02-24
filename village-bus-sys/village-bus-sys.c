@@ -42,28 +42,34 @@
 
 /**
  * Check to see if a file called 'name' exists as specified or in the system path
+ * 
+ * NULL if not, else fully qualified binary name
  */
-int path_exists(const char* name)
+char* path_exists(const char* name)
 {
   const char *path, *cursor;
   size_t count;
   size_t namelen;
-  char buf[PATH_MAX];
+  static char* buf = NULL;
+  if (buf == NULL) {
+    free(buf);
+    buf = malloc(PATH_MAX * sizeof(char));
+  }
 
   if (name == NULL || name[0] == '\0') {
-    return 0;
+    return NULL;
   }
 
   /* if it is an absolute or relative path, just check it  */
   if (strchr(name, '/') && access(path, F_OK) == 0) {
-    return 1;
+    return name;
   }
 
   /* Search the system path for the file */
   namelen = strlen(name);
-  if (!(path = getenv("PATH"))) {
-    path = "/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin";
-  }
+  //path = getenv("PATH"); {  TODO - we need a better solution for crappy httpd paths
+  path = "/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin:/opt/local/bin";
+
   cursor = path;
   do {
     for (path = cursor; *cursor != 0 && *cursor != ':'; cursor++) continue;
@@ -78,12 +84,11 @@ int path_exists(const char* name)
     memcpy(buf + count + 1, name, namelen);
     buf[count + namelen + 1] = '\0';
     if (access(buf, F_OK) == 0) {
-      return 1;
+      return buf;
     }
   } while (*cursor++ == ':');
 
-  return 0;
-
+  return NULL;
 }
 
 
@@ -308,7 +313,7 @@ struct json_object* sys_exec_parsed(char* command, char** arguments,
   struct json_object* lines;
   FILE* output;
 
-  if (!path_exists(command)) {
+  if ((command = path_exists(command)) == NULL) {
     return jsonrpc_error("%s: command not found", command);
   }
   
