@@ -25,11 +25,11 @@ var Map = undefined;
         displayProjection : epsg_4326,
         units             : "m",
         numZoomLevels     : 20,
-        restrictedExtent  : new OpenLayers.Bounds(),
+        //restrictedExtent  : new OpenLayers.Bounds(),
         theme             : "style/map.default.css"
       };
-      options.restrictedExtent.extend(LonLat(longitude - extent, latitude - extent));
-      options.restrictedExtent.extend(LonLat(longitude + extent, latitude + extent));
+      //options.restrictedExtent.extend(LonLat(longitude - extent, latitude - extent));
+      //options.restrictedExtent.extend(LonLat(longitude + extent, latitude + extent));
       var map = new OpenLayers.Map(id, options);
       //var osma = new OpenLayers.Layer.OSM.Osmarender("Osmarender");
       var mapnik = new OpenLayers.Layer.OSM.Mapnik("Street Map");
@@ -88,6 +88,14 @@ var Map = undefined;
       route_hover_selector.activate();
       
       return map;
+    };
+
+
+    /** 
+     * Zoom map
+     */
+    this.zoom = function(level) {
+      the_map.zoomTo(level);
     };
 
 
