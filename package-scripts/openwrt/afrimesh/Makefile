@@ -32,7 +32,7 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ------------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=673
+PKG_REV:=674
 PKG_VERSION:=1.0betaRC1-r$(PKG_REV)
 PKG_RELEASE:=1
 
