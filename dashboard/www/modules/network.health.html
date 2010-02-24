@@ -166,11 +166,11 @@
           row += "<tr class='unknown'>";
         }
 
-        row += "<td id='timestamp'>" + entry.timestamp + "</td>";
-        row += "<td id='level'>"     + entry.level     + "</td>";
-        row += "<td id='node'>"      + entry.address   + "</td>";
-        row += "<td id='process'>"   + entry.process   + "</td>";
-        row += "<td><div id='message'>"   + entry.message   + "</div></td>";
+        row += "<td id='timestamp'>"    + entry.timestamp + "</td>";
+        row += "<td id='level'>"        + entry.level     + "</td>";
+        row += "<td><div id='node'>"    + entry.address   + "</div></td>";
+        row += "<td id='process'>"      + entry.process   + "</td>";
+        row += "<td><div id='message'>" + entry.message   + "</div></td>";
         row += "</tr>";
         table.append(row);
       });    
