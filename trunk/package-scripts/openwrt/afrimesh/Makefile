@@ -32,8 +32,8 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ------------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=672
-PKG_VERSION:=1.0beta-rc1-r$(PKG_REV)
+PKG_REV:=673
+PKG_VERSION:=1.0betaRC1-r$(PKG_REV)
 PKG_RELEASE:=1
 
 # See: http://downloads.openwrt.org/people/florian/fosdem/openwrt_cfp_fosdem2008.pdf
