@@ -73,6 +73,11 @@ LDFLAGS+=$(SNMP_LDFLAGS)
 endif
 
 # targets
+all : village-bus urldecode
+
+urldecode : ../common/urldecode.c
+	$(CC) $(CFLAGS) -o urldecode ../common/urldecode.c
+
 village-bus : $(objects)
 	$(CC) $(CFLAGS) -o village-bus $(objects) $(LDFLAGS) 
 
@@ -107,7 +112,7 @@ main.o : village-bus.h main.c
 
 # util
 clean : 
-	rm -f *.o *~ village-bus
+	rm -f *.o *~ village-bus urldecode
 
 # TODO - tests
 test : village-bus
