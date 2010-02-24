@@ -56,11 +56,13 @@
     var table = $("#network-devices table > tbody:last");
     var rows = "";
     routers.map(function(router) {
+        var packets = (router.traffic.packets ? router.traffic.packets : "-");
+        var bytes   = (router.traffic.bytes   ? pretty_bytes(router.traffic.bytes) : "-");
         rows += "<tr>";
         rows += "<td id='mac'>"     + (router.mac ? router.mac : "-")  + "</td>";
         rows += "<td id='address'>" + router.address + "</td>";
-        rows += "<td id='traffic'>" + (router.traffic.packets ? router.traffic.packets : "-") + "</td>";
-        rows += "<td id='traffic'>" + (router.traffic.bytes   ? router.traffic.bytes   : "-") + "</td>";
+        rows += "<td id='traffic'>" + packets + "</td>";
+        rows += "<td id='traffic'>" + bytes   + "</td>";
         //rows += "<td id='version'>" + "" /*afrimesh.villagebus.sys.version(router.address)*/ + "</td>";
         //rows += "<td id='uname'>uname</td>";
         // TODO - this should be cached, async & wrapped around the router like accounting above

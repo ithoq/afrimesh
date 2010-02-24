@@ -209,16 +209,18 @@ var Map = undefined;
       html += "<span id='mac'>" + (feature.router.mac ? feature.router.mac : "unknown mac")  + "</span></div>";
       var last_seen = (new Date()) - feature.last_seen;
       html += "<div id='health'>";
-      if (last_seen <= (update_frequency * 2.0)) { // UDE - this is a bit clumsy
+      if (last_seen <= (update_target * 2.0)) { // UDE - this is a bit clumsy
         html += "node is healthy";
       } else {
-        html += "<span style='color:red;'>node last checked in " + Math.floor(last_seen / 1000) + " seconds ago</span>";
+        html += "<span style='color:red;'>node last checked in " + pretty_seconds(last_seen / 1000.0) + " ago</span>";
       }
       html += "</div>";
       if (feature.router.traffic) {
+        var packets = (feature.router.traffic.packets ? feature.router.traffic.packets : "-");
+        var bytes   = (feature.router.traffic.bytes   ? pretty_bytes(feature.router.traffic.bytes) : "-");
         html += "<div id='traffic'>";
-        html += "<span>" + feature.router.traffic.packets + " packets " +
-                           feature.router.traffic.bytes   + " bytes</span>";
+        html += "<span>" + packets + " packets " +
+                           bytes   + " </span>";
         html += "</div>";
       } 
       html += "<div id='neighbours'>";
