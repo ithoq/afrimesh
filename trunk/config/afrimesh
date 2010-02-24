@@ -17,7 +17,7 @@ config 'afrimesh' 'location'
 config 'afrimesh' 'map'
 	option 'aerial' 'false'
 	option 'server' 'openstreetmap.org'
-	option 'extent' '0.1'
+	option 'extent' '5.0'
 	option 'zoom'   '15'
 
 config 'afrimesh' 'gateway'
