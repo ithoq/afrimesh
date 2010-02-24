@@ -215,13 +215,13 @@ var LocationMap = null;
       load("javascript/afrimesh.maps.js"); 
       $("p.[id*=map|server|error]").html("");
       $("#location").replaceWith("<div id='location' />");
-      var location_map = new LocationMap("location", 
+      this.location_map = new LocationMap("location", 
                                          parseFloat(afrimesh.settings.location.longitude),
                                          parseFloat(afrimesh.settings.location.latitude),
                                          parseFloat(afrimesh.settings.map.extent),
                                          parseInt(afrimesh.settings.map.zoom));
       var router = { address : afrimesh.settings.address };
-      location_map.router(router);
+      this.location_map.router(router);
       $("input.[id*=afrimesh|settings|map|server]").css("background", "#AAFFAA");
     };
 
@@ -270,28 +270,34 @@ var LocationMap = null;
     $.getJSON("http://www.google.com/latitude/apps/badge/api?user=" + userid + "&type=json", function(latitude) {
         console.log(JSON.stringify(latitude));
         });*/
-
-    
-
-    /*load.async("", function() {
-        console.debug("Loaded Geolocation API");
-      });*/
+    console.debug(afrimesh.settings.location.longitude + ", " + 
+                  afrimesh.settings.location.latitude);
+    var longitude = parseFloat($("input.[id*=afrimesh|settings|location|longitude]").val());
+    var latitude = parseFloat($("input.[id*=afrimesh|settings|location|latitude]").val());
+    console.debug(longitude + ", " + latitude);
+    this.location_map.center(longitude, latitude);
   };
   
   /** create a map which can be used to set the router location --------- */
   function _LocationMap(id, longitude, latitude, extent, zoom, on_position) {
-    
+
     var the_map = (function() { 
+        var bounds = new OpenLayers.Bounds();
+        bounds.extend(LonLat(-28, -28));
+        bounds.extend(LonLat(28, 28));
         var options = {
           projection        : epsg_900913,
           displayProjection : epsg_4326,
           units             : "m",
           numZoomLevels     : 20,
-          restrictedExtent  : new OpenLayers.Bounds(),
+          //maxExtent         : bounds,
+          transitionEffect  : "resize",
+          //maxScale          : 100,
+          //restrictedExtent  : new OpenLayers.Bounds(),
           theme             : "style/map.default.css"
         };
-        options.restrictedExtent.extend(LonLat(longitude - extent, latitude - extent));
-        options.restrictedExtent.extend(LonLat(longitude + extent, latitude + extent));
+        /*options.restrictedExtent.extend(LonLat(longitude - extent, latitude - extent));
+          options.restrictedExtent.extend(LonLat(longitude + extent, latitude + extent));*/
         var map = new OpenLayers.Map(id, options);
         if (afrimesh.settings.map.server == "openstreetmap.org") { // TODO afrimesh.settings.map.server == afrimesh.settings.map.server.default
           map.addLayers([ new OpenLayers.Layer.OSM.CycleMap("Relief Map") ]);
@@ -302,28 +308,40 @@ var LocationMap = null;
         map.addControl(new OpenLayers.Control.MousePosition());
         map.addControl(new OpenLayers.Control.ScaleLine());
         map.setCenter(LonLat(longitude, latitude), zoom);
-        if (!map.getCenter()) { map.zoomToMaxExtent(); }
+        if (!map.getCenter()) {  map.zoomToMaxExtent();  }
         map.addLayer(new OpenLayers.Layer.Vector("Mesh Routers"));
         map.routers  = map.getLayersByName("Mesh Routers")[0];
         
-        var dragger = new OpenLayers.Control.DragFeature(map.routers);
+        map.dragger = new OpenLayers.Control.DragFeature(map.routers);
         if (on_position) {
-          dragger.onComplete = on_position;
-        } else { 
-          dragger.onComplete = function(feature) {     // TODO - ultimately we want this to be just "feature.router.settings.location=" 
+          map.dragger.onComplete = on_position;
+        } else {
+          map.dragger.onComplete = function(feature) {     // TODO - ultimately we want this to be just "feature.router.settings.location=" 
             var location = new OpenLayers.LonLat(feature.geometry.x, feature.geometry.y).transform(epsg_900913, epsg_4326);
+            $("input.[id*=afrimesh|settings|location|longitude]").val(location.lon);
+            $("input.[id*=afrimesh|settings|location|latitude]").val(location.lat);
             afrimesh.villagebus.uci.set.async(function (response) {
                 console.debug("Updated router location for:" + feature.router.address);
-              }, feature.router.address,     
+              }, feature.router.address,
               [ { config: "afrimesh", section: "location", option: "longitude", value: location.lon.toString() },
                 { config: "afrimesh", section: "location", option: "latitude",  value: location.lat.toString() } ]);
           };
         }
-        map.addControl(dragger);
-        dragger.activate();
+        map.addControl(map.dragger);
+        map.dragger.activate();
         return map;
       })(); /* create_map */
+
     
+    /**
+     * Recenter map on coordinates
+     */
+    this.center = function(longitude, latitude) {
+      var feature = this.router({ address : afrimesh.settings.address });
+      var location = new LonLat(longitude, latitude);
+      feature.move(location);
+      the_map.setCenter(LonLat(longitude, latitude), the_map.zoom);
+    };
     
     /** 
      * Return the map feature representing the given router, creating it and 
@@ -338,6 +356,7 @@ var LocationMap = null;
       return add_router(router);
     };
     function add_router(router) {
+      console.error("Adding new router");
       var feature = new OpenLayers.Feature.Vector();
       feature.style = { fillColor: "black", 
                         fillOpacity: 0.5, 
@@ -348,10 +367,8 @@ var LocationMap = null;
       feature.id = router.address;
       feature.router = router;
       the_map.routers.addFeatures([feature]);
-      afrimesh.villagebus.uci.get.async(function (config) {
-          feature.geometry = new Point(config.afrimesh.location.longitude, config.afrimesh.location.latitude);
-          the_map.routers.redraw();
-        }, router.address, "afrimesh.location");
+      feature.geometry = new Point(longitude, latitude);
+      the_map.routers.redraw();
       return feature;
     };
     
