@@ -21,7 +21,7 @@
 </div>
 
 <!-- see: http://bbs.keyhole.com/ubb/ubbthreads.php?ubb=showflat&Number=283026 -->
-<form class="export-map" action="/cgi-bin/village-bus-echo.kml" method="POST" target="_blank">
+<form class="export-map" action="/cgi-bin/mesh-topology.kml" method="POST" target="_blank">
 <input id="export-map-data" type="hidden" name="data" />
 <input id="export-map-type" type="hidden" name="type" value="application/vnd.google-earth.kml+xml" />
 <input type="submit" style="color: blue" value="Export to Google Earth" />
@@ -166,11 +166,9 @@ function() {
     console.debug(my_kml_data);
     $("#export-map-data").val(my_kml_data); 
     //window.location = 'data:application/vnd.google-earth.kml+xml,' + escape(my_kml_data);
-    //$.post("/~sprinter/cgi-bin/village-bus-echo?Content-type=application/vnd.google-earth.kml+xml", my_kml_data);
+    //$.post("/~sprinter/cgi-bin/mesh-topology.kml?Content-type=application/vnd.google-earth.kml+xml", my_kml_data);
   };
        
-
-
 
   /** update map ---------------------------------------------------------- */
   var timer = {};
