@@ -69,7 +69,7 @@ function() {
                                 parseFloat(afrimesh.settings.location.latitude),
                                 parseFloat(afrimesh.settings.map.extent),
                                 parseInt(afrimesh.settings.map.zoom),
-                                15.0 * 1000.0);
+                                60.0 * 1000.0);
       console.debug("location.longitude -> " + afrimesh.settings.location.longitude);
       console.debug("location.latitude -> " + afrimesh.settings.location.latitude);
       console.debug("map.extent -> " + afrimesh.settings.map.extent);
@@ -226,6 +226,9 @@ function() {
 
     //console.debug("updated network map");
     timer = setTimeout(function() { update(network_map); }, network_map.update_frequency);
+    if (network_map.update_frequency < network_map.update_target) {
+      network_map.update_frequency *= 2.0;
+    }
   };
 
 })();

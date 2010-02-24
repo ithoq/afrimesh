@@ -175,6 +175,12 @@ td.v-brace {
 .network-messages td#process {
   color: gray;
 }
+.network-messages div#message {
+/*vertical-align: top; */
+height: 1.3em; 
+overflow: hidden; 
+display: block; 
+}
 .network-messages tr.notice td {
   color: blue;
 }

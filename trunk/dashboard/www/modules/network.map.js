@@ -13,9 +13,10 @@ var Map = undefined;
   /** Includes ------------------------------------------------------------ */
 
   /** Map ----------------------------------------------------------------- */
-  function _Map(id, longitude, latitude, extent, zoom, update_frequency) {
+  function _Map(id, longitude, latitude, extent, zoom, update_target) {
 
-    this.update_frequency = update_frequency;
+    this.update_target    = update_target;
+    this.update_frequency = 3000;
     var the_map = create_map();
 
     function create_map() { 

@@ -178,9 +178,29 @@ struct json_object* sys_syslog(int n)
   char   buffer[readsize];
   struct json_object* entries = json_object_new_array();
 
-  /* TODO - find logfile */
-  //const char* name = "/var/log/system.log"; // OSX
-  const char* name = "/var/log/messages";
+  /* track down logfile in common locations */
+  const char* name_linux   = "/var/log/messages";
+  const char* name_freebsd = "/var/log/messages";
+  const char* name_osx     = "/var/log/system.log";
+  const char* name;
+  if (access(name_linux, F_OK) == 0) {
+    name = name_linux;
+  } else if (access(name_freebsd, F_OK) == 0) {
+    name = name_freebsd;
+  } else if (access(name_osx, F_OK) == 0) {
+    name = name_osx;
+  } else {
+    struct json_object* entry = json_object_new_object();
+    json_object_object_add(entry, "timestamp", json_object_new_string("-"));
+    json_object_object_add(entry, "level",     json_object_new_string("<daemon.err>"));
+    json_object_object_add(entry, "address",   json_object_new_string("localhost"));
+    json_object_object_add(entry, "process",   json_object_new_string("village-bus-syslog"));
+    json_object_object_add(entry, "message",   json_object_new_string("Could not locate system logfile"));
+    json_object_array_add(entries, entry);  
+    struct json_object* response = json_object_new_object();
+    json_object_object_add(response, "result", entries);
+    return response;
+  }
 
   /* open logfile */
   FILE* logfile = fopen(name, "r");
