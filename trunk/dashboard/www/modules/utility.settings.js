@@ -215,14 +215,20 @@ var LocationMap = null;
       load("javascript/afrimesh.maps.js"); 
       $("p.[id*=map|server|error]").html("");
       $("#location").replaceWith("<div id='location' />");
-      this.location_map = new LocationMap("location", 
+      var location_map = new LocationMap("location", 
                                          parseFloat(afrimesh.settings.location.longitude),
                                          parseFloat(afrimesh.settings.location.latitude),
                                          parseFloat(afrimesh.settings.map.extent),
                                          parseInt(afrimesh.settings.map.zoom));
       var router = { address : afrimesh.settings.address };
-      this.location_map.router(router);
+      location_map.router(router);
+      this.location_map = location_map;
       $("input.[id*=afrimesh|settings|map|server]").css("background", "#AAFFAA");
+      $("#OpenLayers.Control.PanZoom_5_zoomworld_innerImage").unbind("click");
+      $("#OpenLayers.Control.PanZoom_5_zoomworld").unbind("click");
+      $("div[id$=_zoomworld]").click(function () {
+          location_map.zoom(1);
+        });
     };
 
     function load_error(message) {
@@ -282,22 +288,14 @@ var LocationMap = null;
   function _LocationMap(id, longitude, latitude, extent, zoom, on_position) {
 
     var the_map = (function() { 
-        var bounds = new OpenLayers.Bounds();
-        bounds.extend(LonLat(-28, -28));
-        bounds.extend(LonLat(28, 28));
         var options = {
           projection        : epsg_900913,
           displayProjection : epsg_4326,
           units             : "m",
-          numZoomLevels     : 20,
-          //maxExtent         : bounds,
           transitionEffect  : "resize",
-          //maxScale          : 100,
-          //restrictedExtent  : new OpenLayers.Bounds(),
+          //numZoomLevels     : 20,
           theme             : "style/map.default.css"
         };
-        /*options.restrictedExtent.extend(LonLat(longitude - extent, latitude - extent));
-          options.restrictedExtent.extend(LonLat(longitude + extent, latitude + extent));*/
         var map = new OpenLayers.Map(id, options);
         if (afrimesh.settings.map.server == "openstreetmap.org") { // TODO afrimesh.settings.map.server == afrimesh.settings.map.server.default
           map.addLayers([ new OpenLayers.Layer.OSM.CycleMap("Relief Map") ]);
@@ -308,10 +306,8 @@ var LocationMap = null;
         map.addControl(new OpenLayers.Control.MousePosition());
         map.addControl(new OpenLayers.Control.ScaleLine());
         map.setCenter(LonLat(longitude, latitude), zoom);
-        if (!map.getCenter()) {  map.zoomToMaxExtent();  }
         map.addLayer(new OpenLayers.Layer.Vector("Mesh Routers"));
         map.routers  = map.getLayersByName("Mesh Routers")[0];
-        
         map.dragger = new OpenLayers.Control.DragFeature(map.routers);
         if (on_position) {
           map.dragger.onComplete = on_position;
@@ -340,7 +336,18 @@ var LocationMap = null;
       var feature = this.router({ address : afrimesh.settings.address });
       var location = new LonLat(longitude, latitude);
       feature.move(location);
-      the_map.setCenter(LonLat(longitude, latitude), the_map.zoom);
+      //the_map.setCenter(LonLat(longitude, latitude), the_map.zoom);
+      if (the_map.zoom < 10) {
+        the_map.zoomTo(10);
+      }
+      the_map.panTo(LonLat(longitude, latitude));
+    };
+
+    /** 
+     * Zoom map
+     */
+    this.zoom = function(level) {
+      the_map.zoomTo(level);
     };
     
     /** 
@@ -356,7 +363,6 @@ var LocationMap = null;
       return add_router(router);
     };
     function add_router(router) {
-      console.error("Adding new router");
       var feature = new OpenLayers.Feature.Vector();
       feature.style = { fillColor: "black", 
                         fillOpacity: 0.5, 

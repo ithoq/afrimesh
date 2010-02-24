@@ -80,6 +80,9 @@ function() {
           return true;
         });
       update(network_map); 
+      $("div[id$=_zoomworld]").click(function () {
+            network_map.zoom(2);
+          });    
     };
 
     function load_error(message) {
