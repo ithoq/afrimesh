@@ -314,13 +314,15 @@ var LocationMap = null;
         } else {
           map.dragger.onComplete = function(feature) {     // TODO - ultimately we want this to be just "feature.router.settings.location=" 
             var location = new OpenLayers.LonLat(feature.geometry.x, feature.geometry.y).transform(epsg_900913, epsg_4326);
-            $("input.[id*=afrimesh|settings|location|longitude]").val(location.lon);
-            $("input.[id*=afrimesh|settings|location|latitude]").val(location.lat);
+            var longitude = parseFloat(location.lon).toFixed(7);
+            var latitude  = parseFloat(location.lat).toFixed(7);
+            $("input.[id*=afrimesh|settings|location|longitude]").val(longitude);
+            $("input.[id*=afrimesh|settings|location|latitude]").val(latitude);
             afrimesh.villagebus.uci.set.async(function (response) {
                 console.debug("Updated router location for:" + feature.router.address);
               }, feature.router.address,
-              [ { config: "afrimesh", section: "location", option: "longitude", value: location.lon.toString() },
-                { config: "afrimesh", section: "location", option: "latitude",  value: location.lat.toString() } ]);
+              [ { config: "afrimesh", section: "location", option: "longitude", value: longitude.toString() },
+                { config: "afrimesh", section: "location", option: "latitude",  value: latitude.toString() } ]);
           };
         }
         map.addControl(map.dragger);

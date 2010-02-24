@@ -169,17 +169,21 @@ td.v-brace {
 .network-messages td#level {
   color: gray;
 }
-.network-messages td#node {
+.network-messages div#node {
   color: gray;
+  vertical-align: top; 
+  height: 1.3em;  
+  overflow: hidden; 
+  display: block; 
 }
 .network-messages td#process {
   color: gray;
 }
 .network-messages div#message {
-/*vertical-align: top; */
-height: 1.3em; 
-overflow: hidden; 
-display: block; 
+  vertical-align: top; 
+  height: 1.3em; 
+  overflow: hidden; 
+  display: block; 
 }
 .network-messages tr.notice td {
   color: blue;
