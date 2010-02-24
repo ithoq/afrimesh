@@ -285,6 +285,36 @@
     ret += now.getHours() + ":" + now.getMinutes();
     return ret;
   };
+
+
+  /**
+   * Various pretty printers
+   */
+  function pretty_bytes(bytes) {
+    var onegig = Math.pow(1024, 3);
+    var onemeg = Math.pow(1024, 2);
+    var onekay = 1024;
+    bytes = parseFloat(bytes);
+    if (bytes > onegig) {
+      return (bytes / onegig).toFixed(1) + " GB";
+    } else if (bytes > onemeg) {
+      return (bytes / onemeg).toFixed(1) + " MB";
+    }
+    return (bytes / onekay).toFixed(1) + " KB";
+  };
+  function pretty_seconds(seconds) {
+    var minute = 60.0;
+    var hour   = 60.0 * minute;
+    var day    = hour * 24.0;
+    if (seconds > day) {
+      return Math.floor(seconds / day) + " days";
+    } else if (seconds > hour) {
+      return Math.floor(seconds / hour) + " hours";
+    } else if (seconds > minute) {
+      return Math.floor(seconds / minute) + " minutes";
+    } 
+    return Math.floor(seconds) + " seconds";
+  };
   
   /**
    * Cross-platform console functions
