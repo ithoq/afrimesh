@@ -193,7 +193,7 @@ If you do not have an Internet Connection on your mesh you will need
 to set up a Map Server on your local network and set this field to the
 address of that server.
 
-Instructions for doing this can be found here: [TODO TODO]
+Instructions for doing this can be found [TODO].
 
 === Location ===
 
