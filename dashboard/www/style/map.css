@@ -50,8 +50,11 @@ div#network-map .popup #neighbours {
   color: yellow;
   font-size: 1.1em;
 }
-div#network-map .popup #neighbours table, tr, td { 
+div#network-map .popup #neighbours td { 
   font-size: 0.9em;
+  margin: 0px;
+  padding: 0px;
+  padding-right: 10px;
 }
 
 div#network-map-legend {
