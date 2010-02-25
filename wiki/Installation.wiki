@@ -43,6 +43,10 @@ Alternatively, the afrimesh-dashboard package will now also be
 available for installation from Synaptic Package Manager:
 
 [http://afrimesh.googlecode.com/svn/wiki/Installation.images/ubuntu-synaptic.png]
+
+That's it! 
+
+Now you can go on to Step 2: Configure the Afrimesh Dashboard Server
 --------
 
 
@@ -75,7 +79,7 @@ obtained from: [http://code.google.com/p/afrimesh/downloads/list]
 --------
 
 
-= Step 2 - Configure the afrimesh-dashboard package =
+= Step 2 - Configure the Afrimesh Dashboard Server =
 
 Once you have installed the afrimesh dashboard package you can
 access the web interface by opening a browser and going to:
