@@ -41,10 +41,15 @@
         $("#menu .left").corner("bl 13px");
 
         /** init overlay window TODO - should be in network.maps See: http://flowplayer.org/forum/20/21252 */
-        var api = $("#overlay-router").overlay({ api:true }); 
+        var api = $("#overlay-router").overlay({ 
+            api:true,
+            zIndex:200000
+            //top: "0%", // TODO - update to latest jquery.tools
+          }); 
         evil_display_overlay = function(url) {
            api.getContent().find("iframe.wrap").attr('src', url);
            api.load();
+           $("#overlay-router").css("z-index", "200000");
         }
 
         /** global error handler for Ajax requests */
@@ -107,8 +112,8 @@
 
     <!-- TODO - should be in network.maps See: http://flowplayer.org/forum/20/21252 -->
     <div class="overlay-router" id="overlay-router">
-      <iframe class="wrap" style="overflow-x: hidden;" width="780" height="600" scrolling="yes"></iframe>
-      <div id="router-dashboard"></div>
+      <iframe class="wrap" style="overflow-x: hidden;" width="800" height="600" scrolling="no"></iframe>
+      <!-- div id="router-dashboard"></div -->
     </div>
 
     <div id="container">
