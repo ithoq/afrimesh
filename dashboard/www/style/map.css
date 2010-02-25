@@ -17,9 +17,13 @@ div#network-map .popup {
   color: white;
   margin:0px;
   padding:0px;
+  background-color: black;
+  opacity: 0.95;
+  overflow: hidden;
+  z-index: 10000;
 }
 div#network-map .popup #address { 
- margin-bottom: 5px;
+  margin-bottom: 5px;
 }
 div#network-map .popup #ip { 
   color: orange;
@@ -48,10 +52,6 @@ div#network-map .popup #neighbours {
 }
 div#network-map .popup #neighbours table, tr, td { 
   font-size: 0.9em;
-  margin: 0px;
-  padding: 0px;
-  padding: 0px;
-  padding-top: 2px;
 }
 
 div#network-map-legend {

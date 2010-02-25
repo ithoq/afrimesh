@@ -121,9 +121,16 @@ div.olControlMousePosition {
     float:left;font-size:1.2em;
 }
 
+.olPopup {
+    background-color: black;
+    opacity: 0.95;
+    z-index: 10000;
+}    
 .olPopupContent {
     padding:5px;
-    overflow: auto;
+    background-color: black;
+    opacity: 0.95;
+    z-index: 10000;
 }    
 .olControlNavToolbar { 
     width:0px;

@@ -79,13 +79,13 @@ var Map = undefined;
       map.addControl(router_hover_selector);
       router_hover_selector.activate();
       
-      var route_hover_selector = new OpenLayers.Control.SelectFeature(map.routes,
+      /*var route_hover_selector = new OpenLayers.Control.SelectFeature(map.routes,
                                                                 { multiple : false,
                                                                   hover    : true });
       route_hover_selector.onSelect = on_select_route;
       route_hover_selector.onUnselect = on_unselect_route;
       map.addControl(route_hover_selector);
-      route_hover_selector.activate();
+      route_hover_selector.activate();*/
       
       return map;
     };
@@ -231,7 +231,7 @@ var Map = undefined;
           if (route.neighbour) { 
             html += (!rowend ? "<tr>" : "");
             html += "<td><span style='color:" + lq_to_color(route.label).rgb + "'>";
-            html += route.neighbour + "&nbsp;" + "(" + route.label + ")";
+            html += route.neighbour + "(" + route.label + ")&nbsp;";
             html += "</span></td>";
             html += (rowend ? "</tr>" : "");
             rowend = !rowend;
@@ -249,8 +249,9 @@ var Map = undefined;
       popup.autoSize = false;
       feature.popup = popup;
       the_map.addPopup(popup);
+      // Stupid Safari fix
+      $(".olPopupContent").css("overflow", "hidden");
       $("#ip").bind("click", function(event) {
-          //evil_display_overlay("http://10.216.144.1/"); 
           evil_display_overlay("http://" + feature.router.address +"/");
         });
     };
