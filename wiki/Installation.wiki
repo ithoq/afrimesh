@@ -12,13 +12,13 @@ need to add the Afrimesh package archive & keys to the system.
 
 To do this, please open up a Terminal and run:
 
-  [http://afrimesh.googlecode.com/svn/wiki/Installation.images/ubuntu-terminal.png]
-
   {{{
   sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 50CFBA3E
   sudo sh -c "echo deb http://ppa.launchpad.net/afrimesh/ppa/ubuntu hardy main >> /etc/apt/sources.list"
   sudo apt-get update
   }}}
+
+[http://afrimesh.googlecode.com/svn/wiki/Installation.images/ubuntu-terminal.png]
 
 You should only ever have to do this once to access all present
 and future Afrimesh releases from your machine.
@@ -29,11 +29,10 @@ Finally, you can install the afrimesh-dashboard package by running:
   sudo apt-get install afrimesh-dashboard
   }}}
 
-Alternatively, afrimesh-dashboard will now also be available for
-installation from Synaptic Package
-Manager:
+Alternatively, afrimesh-dashboard package will now also be available
+for installation from Synaptic Package Manager:
 
-  [http://afrimesh.googlecode.com/svn/wiki/Installation.images/ubuntu-synaptic.png]
+[http://afrimesh.googlecode.com/svn/wiki/Installation.images/ubuntu-synaptic.png]
 
 
 === OpenWRT ===
@@ -73,31 +72,60 @@ access the web interface by opening a browser and going to:
 Assuming everything went according to plan you should now see the
 Network Map display:
 
-  [http://afrimesh.googlecode.com/svn/wiki/Installation.images/network-map.png]
+[http://afrimesh.googlecode.com/svn/wiki/Installation.images/network-map.png]
 
+== Configuration ==
 
 To configure the Afrimesh Dashboard for your network you need to
 open the Utility->Settings menu:
 
-  [http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-menu.png]
+[http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-menu.png]
 
-We will now walk briefly through each section.
 
-=== Mesh ===
+=== IMPORTANT ====
+You will see that all the dashboard service addresses are set to {{{ demo.afrimesh.org }}} by default. 
 
-  [http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-mesh.png]
+You HAVE to set these addresses to the appropriate values for your network in order for the dashboard to function on your network.
 
-=== Internet Gateway ===
-  
-  [http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-internet.png]
+By default it's setup to look at MY network, not yours!!! :-)
+=== IMPORTANT ====
 
-=== Access Control ===
 
-  [http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-radius.png]
+[http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-mesh.png]
 
-=== Map ===
+The *Visualization Server* is responsible for tracking how the nodes in
+your mesh network connect to one another. 
 
-  [http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-map.png]
+All mesh nodes periodically connect to the *Visualization Server* and
+update it with information about their neighbors.
+
+It is recommended that you install the *Visualization Server* for your
+network on the server or mesh node which acts as the mesh gateway
+although, in practice, any system reachable from the mesh network can
+be used.
+
+TODO - how to install vis on each of OpenWRT, FreeBSD, Ubuntu
+
+
+The *Accounting Server* is responsible for tracking the amount of data
+downloaded from the Internet by each mesh node.
+
+You _must_ install it on the server or mesh node acting as the
+Internet Gateway. Installing it elsewhere will provide misleading
+data!
+
+
+
+
+
+[http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-internet.png]
+
+
+
+
+[http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-radius.png]
+
+[http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-map.png]
 
 
 --
