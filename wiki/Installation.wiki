@@ -168,7 +168,7 @@ TODO - manual installation & configuration of pmacct
       routers `/etc/opkg.conf` file:
 
       {{{
-      src packages http://downloads.afrimesh.org/snapshots/atheros/packages
+      src packages http://downloads.afrimesh.org/stable/atheros/packages
       }}}
 
       and running:
