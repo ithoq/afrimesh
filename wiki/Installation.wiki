@@ -1,7 +1,7 @@
 #summary Installation Instructions <- Start Here!
 #labels Phase-Deploy
 
-= Afrimesh Dashboard Installation =
+= Afrimesh Installation =
 
 == Step 1 - Install the afrimesh-dashboard package ==
 
@@ -28,24 +28,136 @@ Finally, you can install the afrimesh-dashboard package by running:
   sudo apt-get install afrimesh-dashboard
   }}}
 
-Alternatively, afrimesh-dashboard should now also be available
-for installation from Synaptic Package
+Alternatively, afrimesh-dashboard will now also be available for
+installation from Synaptic Package
 Manager. (System->Administration->Synaptic Package Manager)
 
 
 === OpenWRT ===
 
-TO COME
+TODO
 
 
 === FreeBSD ===
 
-TO COME
+TODO
+
+  {{{
+  cd /usr/ports/net-mgmt/afrimesh-dashboard
+  make install clean
+  }}}
 
 
 === From Source ===
 
-The latest version of the Afrimesh sources can be obtained from: [http://foo.bar]
+The latest stable version of the Afrimesh sources can always be
+obtained from: [http://code.google.com/p/afrimesh/downloads/list]
+
+  {{{ 
+  make all
+  make install
+  }}}
+  
 
 
-== Step 2 - Configure ? ==
+== Step 2 - Configure the afrimesh-dashboard package ==
+
+Once you have installed the afrimesh dashboard package you can
+access the web interface by opening a browser and going to:
+
+  {{{ http://<your machine's address>/afrimesh/ }}}
+
+Assuming everything went according to plan you should now see the
+Network Map display:
+
+  [network-map.png]
+
+
+To configure the Afrimesh Dashboard for your network you need to
+open the Utility->Settings menu:
+
+  [utility-settings-menu.png]
+
+We will now walk briefly through each section.
+
+=== Mesh ===
+
+  [utility-settings-mesh.png]
+
+=== Internet Gateway ===
+  
+  [utility-settings-internet.png]
+
+=== Access Control ===
+
+  [utility-settings-radius.png]
+
+=== Map ===
+
+  [utility-settings-map.png]
+
+
+--
+
+
+= Mesh Node Installation =
+
+
+== Step 3 - Install Afrimesh on your mesh nodes  ==
+
+You can ignore the instructions below and skip straight to the
+configuration section if you are running Mesh Potato hardware as
+they are already preconfigured to work with the Afrimesh
+Dashboard out of the box.
+
+=== Option 1 - Install Afrimesh on an existing OpenWRT router ===
+
+TODO
+
+=== Option 2 - Reflash router with an OpenWRT firmware image preconfigured with Afrimesh ===
+
+TODO
+
+
+== Step 4 - Configure Afrimesh on mesh nodes ==
+
+TODO
+
+Assuming that Network & Wireless settings are correctly
+configured for your particular network, the only actual mesh node
+configuration step consists of setting the B.A.T.M.A.N. Vis
+Server to the same value you used in the Dashboard configuration.
+
+
+
+
+=== Option 2: TODO Install FreeBSD Port ===
+  # cd /usr/ports/net-mgmt/afrimesh-dashboard
+  # make install clean
+
+=== Option 3: TODO Install From Source ===
+  # Download latest
+  # Unpack: tar xjf afrimesh-0.1.tar.bz2
+  # Compile: make
+  # Install: make install
+
+
+== Mesh Nodes ==
+ 
+NB: [InstallationOpenWRT Manual installation instructions]
+
+We provide binary firmware images and packages for OpenWRT Kamikaze based routers based on:
+  * The Broadcom Chipset (e.g. Linksys)
+  * The Atheros Chipset (e.g. Ubiquity, Open-Mesh, Meraki)
+
+=== TODO Flash Router ===
+  * Linksys Instructions
+  * Meraki Instructions
+  * Ubiquity Instructions
+  * Open Mesh Instructions
+
+=== TODO Configure Router ==
+  # Plug computer into router or join router SSID
+  # Go to http://192.168.1.1
+  # Answer the questions
+  # Reboot router
