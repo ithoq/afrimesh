@@ -34,25 +34,29 @@
 
   /** populate control ---------------------------------------------------- */
   function populate_control() {
-    var s = "<table>";
-    s += "<thead><tr><th>login</th><th>credit</th><th>station</th><th>status</th></tr></thead>";
-    s += "<tbody>";
-    afrimesh.customers.status().map(function(customer) {
-        // for (property in customer) { console.log(property + " : " + customer[property]; }
-        s += "<tr class='" + customer.type + "'>";
-        s += "<td class='name'>" + customer.username + "</td>";
-        s += "<td>unlimited</td>";
-        s += "<td>" + customer.caller_id + "</td>";
-        s += "<td>" + ((customer.type == "login") ? "logged in" : "idle");
-        s += " for " + Math.floor(customer.session_time / 60)  + " minutes</td>";
-        s += "</tr>";
+    afrimesh.customers.status(function(error, customers) {
+        if (error) {
+          return console.error("Could not query customer status: " + error);
+        }
+        var s = "<table>";
+        s += "<thead><tr><th>login</th><th>credit</th><th>station</th><th>status</th></tr></thead>";
+        s += "<tbody>";
+        customers.map(function(customer) {
+            // for (property in customer) { console.log(property + " : " + customer[property]; }
+            s += "<tr class='" + customer.type + "'>";
+            s += "<td class='name'>" + customer.username + "</td>";
+            s += "<td>unlimited</td>";
+            s += "<td>" + customer.caller_id + "</td>";
+            s += "<td>" + ((customer.type == "login") ? "logged in" : "idle");
+            s += " for " + Math.floor(customer.session_time / 60)  + " minutes</td>";
+            s += "</tr>";
+          });
+        s += "</tbody>";
+        s += "</table>";
+        s += "<br/>";
+        $("div#widget-customers-status").html(s);
+        $("div#widget-customers-status table").tablesorter(); 
       });
-    s += "</tbody>";
-    s += "</table>";
-    s += "<br/>";
-
-    $("div#widget-customers-status").html(s);
-    $("div#widget-customers-status table").tablesorter(); 
   };
 
 

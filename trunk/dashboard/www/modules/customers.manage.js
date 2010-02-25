@@ -15,11 +15,15 @@ var populate_control = undefined;
    * Query the villagebus interface to radius for all customers and populate the
    * customer management interface with the result.
    */
-  populate_control = function() {
+  populate_control = function(error, customers) {
+    if (error || !customers) {
+      $("div#widget-customers-manage").html("Could not connect to customer database")
+      return console.error("customers.manage.js - populate_control - " + error);
+    }
     var s = "<table border=0>";
     s += "<thead><tr><th>username</th><th>type</th><th class='command'>command</th></tr></thead>";
     s += "<tbody>";
-    afrimesh.customers.select().map(function(customer) {
+    customers.map(function(customer) {
         s += "<tr>";
         s += "<td><div id='" + customer.username + "' class='edit-username'>" + customer.username + "</div></td>";
         s += "<td><div id='" + customer.username + "' class='edit-type'>" + customer.type + "</div></td>";
@@ -80,9 +84,10 @@ var populate_control = undefined;
   function on_customer_save() {
     var username = $("#widget-customers-manage input#username").val();
     var selected_type = $("#user_type option:selected").val();
-    var ret = afrimesh.customers.generate(username, selected_type, 0);
-    console.debug("Inserted: " + ret);
-    $("ul#menu ul#customers li#manage").click();
+    afrimesh.customers.generate(username, selected_type, 0, function(error, result) {
+        console.debug("Inserted: " + dump_object(result[0]));
+        $("ul#menu ul#customers li#manage").click();
+      });
   };
 
 
@@ -95,9 +100,19 @@ var populate_control = undefined;
       $("#" + username).each(function(e) {  // update all elements to new username - TODO this needs to be tested
           this.id = new_value; 
         });
-      afrimesh.customers.update.username(username, new_value);
+      afrimesh.customers.update.username(username, new_value, function(error, result) {
+          if (error) {
+            return console.error("Could not update customer username: " + username + " - " + error);
+          }
+          console.log("Updated username: " + username + " -> " + result);
+        });
     } else if (settings.name == "type") {
-      afrimesh.customers.update.type(username, new_value);
+      afrimesh.customers.update.type(username, new_value, function(error, result) {
+          if (error) {
+            return console.error("Could not update customer type: " + username + " - " + error);
+          }
+          console.log("Updated type: " + username + " -> " + result);
+        });
     }
     return new_value;
   };
@@ -108,9 +123,13 @@ var populate_control = undefined;
    */
   function on_customer_remove(username) {
     console.debug("Removing: " + username);
-    var ret = afrimesh.customers.remove(username);
-    console.debug("Removed: " + ret);
-    $("ul#menu ul#customers li#manage").click();
+    var ret = afrimesh.customers.remove(username, function(error, result) {
+        if (error) {
+          return console.error("Could not remove customer: " + customer + " - " + error);
+        }
+        console.debug("Removed: " + ret);
+        $("ul#menu ul#customers li#manage").click();
+      });
   };
  
 
