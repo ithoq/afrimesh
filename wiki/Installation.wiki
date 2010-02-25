@@ -5,7 +5,18 @@
 
 == Step 1 - Install the afrimesh-dashboard package ==
 
-=== Option 1 - Ubuntu ===
+=== Option 1 - The WispBox LiveCD ===
+
+The easiest option, WispBox boots your server straight into a fully
+configured Internet gateway and Network management server running
+Afrimesh.
+
+TODO - [http://code.google.com/p/wispinabox/]
+
+
+=== Option 2 - Ubuntu ===
+
+Slightly harder but still pretty easy.
 
 Before you can install the afrimesh-dashboard package you will
 need to add the Afrimesh package archive & keys to the system.
@@ -33,11 +44,6 @@ Alternatively, afrimesh-dashboard package will now also be available
 for installation from Synaptic Package Manager:
 
 [http://afrimesh.googlecode.com/svn/wiki/Installation.images/ubuntu-synaptic.png]
-
-
-=== Option 2 - The WispBox LiveCD ===
-
-TODO - [http://code.google.com/p/wispinabox/]
 
 
 === Option 3 - OpenWRT ===
