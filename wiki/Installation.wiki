@@ -59,7 +59,9 @@ obtained from: [http://code.google.com/p/afrimesh/downloads/list]
   make all
   make install
   }}}
-  
+
+----  
+
 
 
 == Step 2 - Configure the afrimesh-dashboard package ==
@@ -101,9 +103,8 @@ To configure the Afrimesh Dashboard for your network you need to
 open the Utility->Settings menu:
 
 [http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-menu.png]
-
+----
 Let's go through each setting individually:
-
 
 
 [http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-mesh.png]
@@ -142,6 +143,7 @@ If your dashboard server is on the same machine as your gateway you
 can simply set this field to the address of your dashboard server.
 
 TODO - manual installation & configuration of pmacct
+----
 
 
 
@@ -172,14 +174,16 @@ Internet connection.
 
 These settings are in KiloBitsPerSecond. Set them to the capacity of
 your Internet connection.
+----
 
 
 
 [http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-radius.png]
 
-=== Server ===
+=== Radius Server ===
 
-TODO
+TODO - how to install & configure radius 
+----
 
 
 
@@ -204,11 +208,7 @@ provided.
 The map can be zoomed using the controls, dragged by clicking anywhere
 on it with your mouse and the marker can be moved by clicking on it
 and dragging it.
-
-
-
-
---
+----
 
 
 
@@ -231,14 +231,15 @@ TODO
 === Option 2 - Reflash router with an OpenWRT firmware image preconfigured with Afrimesh ===
 
 TODO
+----
 
 
 == Step 4 - Configure your mesh nodes ==
 
 TODO
 
-Assuming that Network & Wireless settings are correctly
-configured for your particular network, the only actual mesh node
-configuration step consists of setting the B.A.T.M.A.N. Vis
-Server to the same value you used in the Dashboard configuration.
+Assuming that Network & Wireless settings are correctly configured for
+your particular network, the only configuration required consists of
+setting the B.A.T.M.A.N. Vis Server to the same value you used in the
+Dashboard configuration above.
 
