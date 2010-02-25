@@ -10,8 +10,9 @@
 Before you can install the afrimesh-dashboard package you will
 need to add the Afrimesh package archive & keys to the system.
 
-To do this, please open up a
-Terminal (Applications->Accessories->Terminal) and run:
+To do this, please open up a Terminal and run:
+
+  [http://afrimesh.googlecode.com/svn/wiki/Installation.images/ubuntu-terminal.png]
 
   {{{
   sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 50CFBA3E
@@ -30,7 +31,9 @@ Finally, you can install the afrimesh-dashboard package by running:
 
 Alternatively, afrimesh-dashboard will now also be available for
 installation from Synaptic Package
-Manager. (System->Administration->Synaptic Package Manager)
+Manager:
+
+  [http://afrimesh.googlecode.com/svn/wiki/Installation.images/ubuntu-synaptic.png]
 
 
 === OpenWRT ===
@@ -70,33 +73,31 @@ access the web interface by opening a browser and going to:
 Assuming everything went according to plan you should now see the
 Network Map display:
 
-  [network-map.png]
+  [http://afrimesh.googlecode.com/svn/wiki/Installation.images/network-map.png]
 
 
 To configure the Afrimesh Dashboard for your network you need to
 open the Utility->Settings menu:
 
   [http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-menu.png]
-  [/svn/wiki/Installation.images/utility-settings-menu.png]
-  [Installation.images/utility-settings-menu.png]
 
 We will now walk briefly through each section.
 
 === Mesh ===
 
-  [utility-settings-mesh.png]
+  [http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-mesh.png]
 
 === Internet Gateway ===
   
-  [utility-settings-internet.png]
+  [http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-internet.png]
 
 === Access Control ===
 
-  [utility-settings-radius.png]
+  [http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-radius.png]
 
 === Map ===
 
-  [utility-settings-map.png]
+  [http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-map.png]
 
 
 --
