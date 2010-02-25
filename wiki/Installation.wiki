@@ -7,11 +7,11 @@
 
 === Ubuntu ===
 
-  Before you can install the afrimesh-dashboard package you will
-  need to add the Afrimesh package archive & keys to the system.
+Before you can install the afrimesh-dashboard package you will
+need to add the Afrimesh package archive & keys to the system.
 
-  To do this, please open up a
-  Terminal (Applications->Accessories->Terminal) and run:
+To do this, please open up a
+Terminal (Applications->Accessories->Terminal) and run:
 
   {{{
   sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 50CFBA3E
@@ -19,22 +19,33 @@
   sudo apt-get update
   }}}
 
-  You should only ever have to do this once to access all present
-  and future Afrimesh releases from your machine.
+You should only ever have to do this once to access all present
+and future Afrimesh releases from your machine.
 
-  Finally, you can install the afrimesh-dashboard package by running:
+Finally, you can install the afrimesh-dashboard package by running:
 
   {{{
   sudo apt-get install afrimesh-dashboard
   }}}
 
-  Alternatively, afrimesh-dashboard should now also be available
-  for installation from Synaptic Package
-  Manager. (System->Administration->Synaptic Package Manager)
+Alternatively, afrimesh-dashboard should now also be available
+for installation from Synaptic Package
+Manager. (System->Administration->Synaptic Package Manager)
 
 
 === OpenWRT ===
 
+TO COME
+
 === FreeBSD ===
 
+TO COME
+
 === From Source ===
+
+  # Download latest
+  # Unpack: tar xjf afrimesh-0.1.tar.bz2
+  # Compile: make
+  # Install: make install
+
+== Step 2 - Configure ? ==
