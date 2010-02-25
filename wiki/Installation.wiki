@@ -46,7 +46,7 @@ available for installation from Synaptic Package Manager:
 
 That's it! 
 
-Now you can go on to Step 2: Configure the Afrimesh Dashboard Server
+Now you can go on to: *Step 2 - Configure the Afrimesh Dashboard Server*
 --------
 
 
@@ -158,6 +158,16 @@ If your dashboard server is on the same machine as your gateway you
 can simply set this field to the address of your dashboard server.
 
 TODO - manual installation & configuration of pmacct
+
+  NOTE: The pmacct packages that ship with OpenWRT are both ancient as
+        well as broken in that pmacct-client requires that the mysql 
+        libraries to be installed on the router(!)
+
+        For now, you can find binary packages for both Kamikaze 8.09.2 &
+        the VillageTelco tree at: 
+
+        
+
 --------
 
 
@@ -231,9 +241,9 @@ and dragging it.
 = Step 3 - Install Afrimesh on your mesh nodes  =
 
 You can ignore the instructions below and skip straight to the
-configuration section if you are running Mesh Potato hardware as
-they are already preconfigured to work with the Afrimesh
-Dashboard out of the box.
+configuration section if you are running Mesh Potato hardware as they
+are already pre-installed to work with the Afrimesh Dashboard out of
+the box.
 
 === Option 1 - Install Afrimesh on an existing OpenWRT router ===
 
