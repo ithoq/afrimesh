@@ -82,13 +82,20 @@ open the Utility->Settings menu:
 [http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-menu.png]
 
 
-=== IMPORTANT ====
-You will see that all the dashboard service addresses are set to {{{ demo.afrimesh.org }}} by default. 
+||=== IMPORTANT ==== 
+You will see that all the dashboard service addresses are set to {{{
+demo.afrimesh.org }}} by default.
 
-You HAVE to set these addresses to the appropriate values for your network in order for the dashboard to function on your network.
+This is so that you can verify that the afrimesh-dashboard
+installation was successful even if your own network is not yet
+properly configured.
 
-By default it's setup to look at MY network, not yours!!! :-)
-=== IMPORTANT ====
+You HAVE to set these addresses to the appropriate values for your
+network in order for the dashboard to function on your network.
+
+By default a fresh installation of afrimesh-dashboard is configured to
+manage MY network and not yours!!! :-) 
+=== IMPORTANT ====||
 
 
 [http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-mesh.png]
