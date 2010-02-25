@@ -217,7 +217,7 @@ your Internet connection.
 
 === Radius Server ===
 
-TODO - how to install & ConfigureFreeRadius
+TODO - how to install & [ConfigureFreeRadius]
 --------
 
 
