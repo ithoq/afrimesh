@@ -107,37 +107,50 @@
       </td>
     </tr>
   </table>
-  
-  <fieldset style="border:0px solid green; font-size: 0.9em;"> 
-    <legend>Map</legend>
-    <div class="label">Map Server</div>
-    <input id="afrimesh|settings|map|server"  type="text" />
-    <div class="tooltip"><h3>map server</h3>
-      <p class="explain">The Network Map gets the terrain data from the server at this address.</p>
-      <p class="typical">If your mesh has internet access you will not need to change this setting.</p>
-      <p class="obstacle">
-        If your mesh does not have internet access you will need to set up your own map server and enter its address here.
-      </p>
-      <p class="learnmore">
-        You can learn how to set up your own map server by reading 
-        <a href="http://code.google.com/p/afrimesh/wiki/HowTo">HowToMapServer</a>
-      </p>
-    </div><br/>
-    <div class="label">
-      Location
-      <p/><br/>
-      <input id="afrimesh|settings|location|longitude" style="width:100px; font-size:0.8em;" /><br/>
-      <input id="afrimesh|settings|location|latitude"  style="width:100px; font-size:0.8em;" /><br/>
-      <button id="geolocator" style="font-size: 0.8em;">
-        update map
-      </button>
-      <p style="font-size: 0.85em; padding-right: 1.0em;">
-        Set your location by adjusting the map controls on the right or entering your co-ordinates above.
-      </p>
-    </div>
-    <div id="location" />
-  </fieldset>
 
+  <fieldset> 
+    <legend>Map</legend>
+    <table border=0>
+      <tr valign=top>
+        <td>  
+          <div class="label" style="clear:both;">Map Server</div>
+        </td>
+        <td>
+          <input id="afrimesh|settings|map|server" type="text"/>
+          <div class="tooltip"><h3>map server</h3>
+            <p class="explain">The Network Map gets the terrain data from the server at this address.</p>
+            <p class="typical">If your mesh has internet access you will not need to change this setting.</p>
+            <p class="obstacle">
+              If your mesh does not have internet access you will need to set up your own map server and enter its address here.
+            </p>
+            <p class="learnmore">
+              You can learn how to set up your own map server by reading 
+              <a href="http://code.google.com/p/afrimesh/wiki/HowTo">HowToMapServer</a>
+            </p>
+          </div><br/>
+        </td>
+      </tr>
+      <tr valign=top>
+        <td>
+          <div class="label" style="clear:both;">
+            Location
+            <p/><br/>
+            <input id="afrimesh|settings|location|longitude" style="width:100px; font-size:0.8em;" /><br/>
+            <input id="afrimesh|settings|location|latitude"  style="width:100px; font-size:0.8em;" /><br/>
+            <button id="geolocator" style="font-size: 0.8em;">
+              update map
+            </button>
+            <p style="font-size: 0.85em; padding-right: 1.0em;">
+              Set your location by adjusting the map controls on the right or entering your co-ordinates above.
+            </p>
+          </div>
+        </td>
+        <td>
+          <div id="location" />
+        </td>
+      </tr>
+    </table>
+  </fieldset>
 </form>
 
 <script type="text/javascript"> //<![CDATA[    
