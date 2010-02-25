@@ -1,9 +1,7 @@
 #summary Installation Instructions <- Start Here!
 #labels Phase-Deploy
 
-= Afrimesh Installation =
-
-== Step 1 - Install the afrimesh-dashboard package ==
+= Step 1 - Install the Afrimesh Dashboard Server =
 --------
 
 === Option 1 - The WispBox LiveCD ===
@@ -77,7 +75,7 @@ obtained from: [http://code.google.com/p/afrimesh/downloads/list]
 --------
 
 
-== Step 2 - Configure the afrimesh-dashboard package ==
+= Step 2 - Configure the afrimesh-dashboard package =
 
 Once you have installed the afrimesh dashboard package you can
 access the web interface by opening a browser and going to:
@@ -226,11 +224,7 @@ and dragging it.
 
 
 
-
-
-= Mesh Node Installation =
-
-== Step 3 - Install Afrimesh on your mesh nodes  ==
+= Step 3 - Install Afrimesh on your mesh nodes  =
 
 You can ignore the instructions below and skip straight to the
 configuration section if you are running Mesh Potato hardware as
@@ -247,7 +241,7 @@ TODO
 --------
 
 
-== Step 4 - Configure your mesh nodes ==
+= Step 4 - Configure your mesh nodes =
 
 TODO
 
