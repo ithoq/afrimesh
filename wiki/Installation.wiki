@@ -185,9 +185,26 @@ TODO
 
 [http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-map.png]
 
-=== Map ===
+=== Map Server ===
 
-TODO
+You can leave this on the default setting if you have an Internet Connection.
+
+If you do not have an Internet Connection on your mesh you will need
+to set up a Map Server on your local network and set this field to the
+address of that server.
+
+Instructions for doing this can be found here: [TODO TODO]
+
+=== Location ===
+
+You can set the location of your dashboard server using either the map
+display or by manually entering your coordinates into the boxes
+provided.
+
+The map can be zoomed using the controls, dragged by clicking anywhere
+on it with your mouse and the marker can be moved by clicking on it
+and dragging it.
+
 
 
 
