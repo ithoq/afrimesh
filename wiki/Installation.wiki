@@ -76,7 +76,9 @@ Network Map display:
 To configure the Afrimesh Dashboard for your network you need to
 open the Utility->Settings menu:
 
-  [utility-settings-menu.png]
+  [http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-menu.png]
+  [/svn/wiki/Installation.images/utility-settings-menu.png]
+  [Installation.images/utility-settings-menu.png]
 
 We will now walk briefly through each section.
 
