@@ -82,7 +82,8 @@ open the Utility->Settings menu:
 [http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-menu.png]
 
 
-||=== IMPORTANT ==== 
+||
+=== IMPORTANT ==== 
 You will see that all the dashboard service addresses are set to {{{
 demo.afrimesh.org }}} by default.
 
@@ -95,7 +96,8 @@ network in order for the dashboard to function on your network.
 
 By default a fresh installation of afrimesh-dashboard is configured to
 manage MY network and not yours!!! :-) 
-=== IMPORTANT ====||
+=== IMPORTANT ====
+||
 
 
 [http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-mesh.png]
