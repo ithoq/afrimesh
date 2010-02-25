@@ -249,30 +249,26 @@ var LocationMap = null;
       ("<option value = '1'>mysql</option> <option value = '2' selected>memcachedb</option>");
     }
     $("input.[id*=afrimesh|settings|radius|server]").css("background", "#FFAAAA");
-    try {
-      // TODO - rewrite to be able to block on return of multiple async dispatches :-)
-      afrimesh.customers.status(cb_status);      
-      function cb_status(error, status) {
-        status_error = (status && isArray(status) && status[0].error) ? status[0].error : undefined;
-        if (error || status_error) { // TODO - only one kind of error
-          $("p.[id*=radius|server|error]").html("RADIUS server unreachable. " + error);
-          return console.error("RADIUS server is unreachable. " + status_error + " - " + error);
-        }
-        afrimesh.customers.select(cb_select);
-      };
-      function cb_select(error, select) {
-        select_error = (select && isArray(select) && select[0].error) ? select[0].error : undefined;
-        if (error || select_error) {
-          $("p.[id*=radius|server|error]").html("mysql database inaccessible. " + error);
-          return console.error("mysql database is inaccessible. " + select_error) + " - " + error;
-        }
-        $("p.[id*=radius|server|error]").html("");
-        $("input.[id*=afrimesh|settings|radius|server]").css("background", "#AAFFAA");
-      };
-    } catch (error) { // TODO - we can probably lose the exception handler
-      console.debug("Unexpected error while contacting RADIUS server: " + error);
-      $("p.[id*=radius|server|error]").html("RADIUS server unreachable. Unknown reason.");
-    }
+
+    // TODO - rewrite to be able to block on return of multiple async dispatches :-)
+    function cb_status(error, status) {
+      status_error = (status && isArray(status) && status[0].error) ? status[0].error : undefined;
+      if (error || status_error) { // TODO - only one kind of error
+        $("p.[id*=radius|server|error]").html("RADIUS server unreachable. " + error);
+        return console.error("RADIUS server is unreachable. " + status_error + " - " + error);
+      }
+      afrimesh.customers.select(cb_select);
+    };
+    function cb_select(error, select) {
+      select_error = (select && isArray(select) && select[0].error) ? select[0].error : undefined;
+      if (error || select_error) {
+        $("p.[id*=radius|server|error]").html("mysql database inaccessible. " + error);
+        return console.error("mysql database is inaccessible. " + select_error) + " - " + error;
+      }
+      $("p.[id*=radius|server|error]").html("");
+      $("input.[id*=afrimesh|settings|radius|server]").css("background", "#AAFFAA");
+    };
+    afrimesh.customers.status(cb_status);
   };
 
   update_location = function() {

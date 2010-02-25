@@ -272,6 +272,10 @@ form.two-column {
   margin: 0px;  
   padding: 0px; 
 }
+form.two-column table,tr,td {
+  margin: 0px;  
+  padding: 0px; 
+}
 form.two-column fieldset {
   /*border:1px solid blue;*/
   padding-bottom: 0.5em;
