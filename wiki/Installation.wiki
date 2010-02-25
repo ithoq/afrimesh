@@ -82,7 +82,7 @@ open the Utility->Settings menu:
 [http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-menu.png]
 
 
-<table><tr><td>
+<table border=1><tr><td>
 === IMPORTANT ==== 
 You will see that all the dashboard service addresses are set to {{{
 demo.afrimesh.org }}} by default.
@@ -142,7 +142,6 @@ data!
 
 = Mesh Node Installation =
 
-
 == Step 3 - Install Afrimesh on your mesh nodes  ==
 
 You can ignore the instructions below and skip straight to the
@@ -159,7 +158,7 @@ TODO
 TODO
 
 
-== Step 4 - Configure Afrimesh on mesh nodes ==
+== Step 4 - Configure your mesh nodes ==
 
 TODO
 
@@ -168,36 +167,3 @@ configured for your particular network, the only actual mesh node
 configuration step consists of setting the B.A.T.M.A.N. Vis
 Server to the same value you used in the Dashboard configuration.
 
-
-
-
-=== Option 2: TODO Install FreeBSD Port ===
-  # cd /usr/ports/net-mgmt/afrimesh-dashboard
-  # make install clean
-
-=== Option 3: TODO Install From Source ===
-  # Download latest
-  # Unpack: tar xjf afrimesh-0.1.tar.bz2
-  # Compile: make
-  # Install: make install
-
-
-== Mesh Nodes ==
- 
-NB: [InstallationOpenWRT Manual installation instructions]
-
-We provide binary firmware images and packages for OpenWRT Kamikaze based routers based on:
-  * The Broadcom Chipset (e.g. Linksys)
-  * The Atheros Chipset (e.g. Ubiquity, Open-Mesh, Meraki)
-
-=== TODO Flash Router ===
-  * Linksys Instructions
-  * Meraki Instructions
-  * Ubiquity Instructions
-  * Open Mesh Instructions
-
-=== TODO Configure Router ==
-  # Plug computer into router or join router SSID
-  # Go to http://192.168.1.1
-  # Answer the questions
-  # Reboot router
