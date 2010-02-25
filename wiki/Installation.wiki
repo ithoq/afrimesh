@@ -67,7 +67,9 @@ obtained from: [http://code.google.com/p/afrimesh/downloads/list]
 Once you have installed the afrimesh dashboard package you can
 access the web interface by opening a browser and going to:
 
-  {{{ http://<your machine's address>/afrimesh/ }}}
+  {{{ 
+  http://<your machine's address>/afrimesh/ 
+  }}}
 
 Assuming everything went according to plan you should now see the
 Network Map display:
@@ -82,25 +84,29 @@ open the Utility->Settings menu:
 [http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-menu.png]
 
 
-<table border=1><tr><td>
-=== IMPORTANT ==== 
-You will see that all the dashboard service addresses are set to {{{
-demo.afrimesh.org }}} by default.
+  {{{ 
+  ==================== IMPORTANT ====================
+ 
+  You will see that all the dashboard service addresses are set to
+ `demo.afrimesh.org` by default.
 
-This is so that you can verify that the afrimesh-dashboard
-installation was successful even if your own network is not yet
-properly configured.
+  This is so that you can verify that the afrimesh-dashboard
+  installation was successful even if your own network is not yet
+  properly configured.
 
-You HAVE to set these addresses to the appropriate values for your
-network in order for the dashboard to function on your network.
+  You HAVE to set these addresses to the appropriate values for your
+  network in order for the dashboard to function on your network.
 
-By default a fresh installation of afrimesh-dashboard is configured to
-manage MY network and not yours!!! :-) 
-=== IMPORTANT ====
-</td></tr></table>
+  By default a fresh installation of afrimesh-dashboard is configured
+  to manage MY network and not yours!!! :-)
+
+  ==================== IMPORTANT ==================== 
+  }}}
 
 
 [http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-mesh.png]
+
+=== Visualization Server ===
 
 The *Visualization Server* is responsible for tracking how the nodes in
 your mesh network connect to one another. 
@@ -115,6 +121,7 @@ be used.
 
 TODO - how to install vis on each of OpenWRT, FreeBSD, Ubuntu
 
+=== Accounting Server ===
 
 The *Accounting Server* is responsible for tracking the amount of data
 downloaded from the Internet by each mesh node.
@@ -124,17 +131,26 @@ Internet Gateway. Installing it elsewhere will provide misleading
 data!
 
 
-
-
-
 [http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-internet.png]
 
+=== Gateway IP Address ===
 
+TODO
 
 
 [http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-radius.png]
 
+=== Server ===
+
+TODO
+
+
 [http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-map.png]
+
+=== Map ===
+
+TODO
+
 
 
 --
