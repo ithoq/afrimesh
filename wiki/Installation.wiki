@@ -60,8 +60,23 @@ obtained from: [http://code.google.com/p/afrimesh/downloads/list]
   make install
   }}}
 
-----  
+------  
 
+
+
+3
+---
+4
+----
+5
+-----
+6
+------
+8
+--------
+hr
+<hr>
+fook
 
 
 == Step 2 - Configure the afrimesh-dashboard package ==
