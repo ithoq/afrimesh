@@ -5,7 +5,7 @@
 
 == Step 1 - Install the afrimesh-dashboard package ==
 
-=== Ubuntu ===
+=== Option 1 - Ubuntu ===
 
 Before you can install the afrimesh-dashboard package you will
 need to add the Afrimesh package archive & keys to the system.
@@ -35,12 +35,17 @@ for installation from Synaptic Package Manager:
 [http://afrimesh.googlecode.com/svn/wiki/Installation.images/ubuntu-synaptic.png]
 
 
-=== OpenWRT ===
+=== Option 2 - The WispBox LiveCD ===
+
+TODO - [http://code.google.com/p/wispinabox/]
+
+
+=== Option 3 - OpenWRT ===
 
 TODO
 
 
-=== FreeBSD ===
+=== Option 4 - FreeBSD ===
 
 TODO
 
@@ -102,8 +107,10 @@ To configure the Afrimesh Dashboard for your network you need to
 open the Utility->Settings menu:
 
 [http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-menu.png]
---------
+
 Let's go through each setting individually:
+--------
+
 
 
 [http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-mesh.png]
