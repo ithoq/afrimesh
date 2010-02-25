@@ -78,12 +78,6 @@ Network Map display:
 
 == Configuration ==
 
-To configure the Afrimesh Dashboard for your network you need to
-open the Utility->Settings menu:
-
-[http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-menu.png]
-
-
   {{{ 
   ==================== IMPORTANT ====================
  
@@ -102,6 +96,14 @@ open the Utility->Settings menu:
 
   ==================== IMPORTANT ==================== 
   }}}
+
+To configure the Afrimesh Dashboard for your network you need to
+open the Utility->Settings menu:
+
+[http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-menu.png]
+
+Let's go through each setting individually:
+
 
 
 [http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-mesh.png]
@@ -130,12 +132,47 @@ You _must_ install it on the server or mesh node acting as the
 Internet Gateway. Installing it elsewhere will provide misleading
 data!
 
+Afrimesh currently supports only the [http://www.pmacct.net/ pmacct]
+service for the collection of traffic data.
+
+It should have been installed by default on your dashboard server when
+you installed the afrimesh-dashboard package.
+
+If your dashboard server is on the same machine as your gateway you
+can simply set this field to the address of your dashboard server.
+
+TODO - manual installation & configuration of pmacct
+
+
 
 [http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-internet.png]
 
-=== Gateway IP Address ===
+=== IP Address ===
 
-TODO
+Set this to the address of your internet router.
+
+=== Community String ===
+
+Afrimesh uses a protocol called SNMP to monitor your internet
+router. 
+
+Usually the default setting of `public` will work just fine. 
+
+In the event that it doesn't, your ISP will know what you should set
+it to.
+
+=== Interface ===
+
+Set this to the correct network interface on your Internet router. If
+you don't know, the easiest is to try each option and check if
+Network->Health is displaying the correct traffic graph for your
+Internet connection.
+
+=== Bandwidth ===
+
+These settings are in KiloBitsPerSecond. Set them to the capacity of
+your Internet connection.
+
 
 
 [http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-radius.png]
@@ -143,6 +180,7 @@ TODO
 === Server ===
 
 TODO
+
 
 
 [http://afrimesh.googlecode.com/svn/wiki/Installation.images/utility-settings-map.png]
@@ -154,6 +192,10 @@ TODO
 
 
 --
+
+
+
+
 
 
 = Mesh Node Installation =
