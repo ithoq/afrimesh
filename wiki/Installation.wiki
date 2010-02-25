@@ -12,6 +12,7 @@ configured Internet gateway and Network management server running
 Afrimesh.
 
 TODO - [http://code.google.com/p/wispinabox/]
+--------
 
 
 === Option 2 - Ubuntu ===
@@ -44,11 +45,13 @@ Alternatively, afrimesh-dashboard package will now also be available
 for installation from Synaptic Package Manager:
 
 [http://afrimesh.googlecode.com/svn/wiki/Installation.images/ubuntu-synaptic.png]
+--------
 
 
 === Option 3 - OpenWRT ===
 
 TODO
+--------
 
 
 === Option 4 - FreeBSD ===
@@ -59,6 +62,7 @@ TODO
   cd /usr/ports/net-mgmt/afrimesh-dashboard
   make install clean
   }}}
+--------
 
 
 === From Source ===
@@ -70,7 +74,6 @@ obtained from: [http://code.google.com/p/afrimesh/downloads/list]
   make all
   make install
   }}}
-
 --------
 
 
@@ -87,8 +90,6 @@ Assuming everything went according to plan you should now see the
 Network Map display:
 
 [http://afrimesh.googlecode.com/svn/wiki/Installation.images/network-map.png]
-
-== Configuration ==
 
   {{{ 
   ==================== IMPORTANT ====================
