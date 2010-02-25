@@ -250,21 +250,26 @@ var LocationMap = null;
     }
     $("input.[id*=afrimesh|settings|radius|server]").css("background", "#FFAAAA");
     try {
-      var status = afrimesh.customers.status();
-      var select = afrimesh.customers.select();
-      if (status[0].error) {
-        console.debug("RADIUS server is unreachable. " + status[0].error);
-        $("p.[id*=radius|server|error]").html("RADIUS server unreachable. " + status[0].error + ".");
-        return;
-      } else if (select[0].error) {
-        console.debug("mysql database is inaccessible. " + select[0].error);
-        $("p.[id*=radius|server|error]").html("mysql database inaccessible. " + select[0].error + ".");
-        return;
-      } else {
+      // TODO - rewrite to be able to block on return of multiple async dispatches :-)
+      afrimesh.customers.status(cb_status);      
+      function cb_status(error, status) {
+        status_error = (status && isArray(status) && status[0].error) ? status[0].error : undefined;
+        if (error || status_error) { // TODO - only one kind of error
+          $("p.[id*=radius|server|error]").html("RADIUS server unreachable. " + error);
+          return console.error("RADIUS server is unreachable. " + status_error + " - " + error);
+        }
+        afrimesh.customers.select(cb_select);
+      };
+      function cb_select(error, select) {
+        select_error = (select && isArray(select) && select[0].error) ? select[0].error : undefined;
+        if (error || select_error) {
+          $("p.[id*=radius|server|error]").html("mysql database inaccessible. " + error);
+          return console.error("mysql database is inaccessible. " + select_error) + " - " + error;
+        }
         $("p.[id*=radius|server|error]").html("");
         $("input.[id*=afrimesh|settings|radius|server]").css("background", "#AAFFAA");
-      }
-    } catch (error) {
+      };
+    } catch (error) { // TODO - we can probably lose the exception handler
       console.debug("Unexpected error while contacting RADIUS server: " + error);
       $("p.[id*=radius|server|error]").html("RADIUS server unreachable. Unknown reason.");
     }

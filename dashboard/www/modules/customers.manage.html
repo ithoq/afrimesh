@@ -43,7 +43,9 @@
 
   /** construction -------------------------------------------------------- */
   ready = function() { // INJ 'ready' should be the only symbol we're exposing to the global namespace
-    populate_control();
+
+    afrimesh.customers.select(populate_control);
+
     console.debug("loaded customers.manage.html");
     return unload;
   };

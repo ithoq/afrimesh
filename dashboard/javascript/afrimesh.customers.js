@@ -10,28 +10,29 @@
 
 function BootCustomers(parent) {
 
-  var customers = function() { return this.customers.status(); };
+  var customers = function(callback) { return this.customers.status(callback); };
 
-  customers.select = function() { 
-    return afrimesh.villagebus.radius.select();
+  // TODO - use fn assignment instead where possible?
+  customers.select = function(callback) {
+    return afrimesh.villagebus.radius.select(callback);
   }
-  customers.generate = function(username, type, seconds) { 
-    return afrimesh.villagebus.radius.insert(username, type, seconds);  // TODO - split insert into generate & insert
+  customers.generate = function(username, type, seconds, callback) { 
+    return afrimesh.villagebus.radius.insert(username, type, seconds, callback);
   };
-  customers.update = function(username, new_username, new_password, new_type) { 
-    return afrimesh.villagebus.radius.update(username, new_username, new_password, new_type); 
+  customers.update = function(username, new_username, new_password, new_type, callback) { 
+    return afrimesh.villagebus.radius.update(username, new_username, new_password, new_type. callback); 
   };
-  customers.update.username = function(username, new_username) { 
-    return afrimesh.villagebus.radius.update(username, new_username, null, null); 
+  customers.update.username = function(username, new_username, callback) { 
+    return afrimesh.villagebus.radius.update(username, new_username, null, null, callback); 
   };
-  customers.update.type = function(username, new_type) { 
-    return afrimesh.villagebus.radius.update(username, null, null, new_type); 
+  customers.update.type = function(username, new_type, callback) { 
+    return afrimesh.villagebus.radius.update(username, null, null, new_type, callback); 
   };
-  customers.remove = function(username) { 
-    return afrimesh.villagebus.radius.remove(username); 
+  customers.remove = function(username, callback) { 
+    return afrimesh.villagebus.radius.remove(username, callback); 
   };
-  customers.status  = function() {
-    return afrimesh.villagebus.radius.who();
+  customers.status  = function(callback) {
+    return afrimesh.villagebus.radius.who(callback);
   };  
 
   return customers;
