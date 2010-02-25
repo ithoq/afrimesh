@@ -159,7 +159,7 @@ can simply set this field to the address of your dashboard server.
 
 TODO - manual installation & configuration of pmacct
 
-==== NOTE ==== 
+==== note ====
 
 The pmacct packages in OpenWRT have a nasty bug that requires the
 mysql libraries be installed on the router (!)
@@ -217,7 +217,7 @@ your Internet connection.
 
 === Radius Server ===
 
-TODO - how to install & configure radius 
+TODO - how to install & ConfigureFreeRadius
 --------
 
 
