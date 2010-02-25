@@ -159,12 +159,25 @@ can simply set this field to the address of your dashboard server.
 
 TODO - manual installation & configuration of pmacct
 
-  NOTE: The pmacct packages that ship with OpenWRT are both ancient as
-        well as broken in that pmacct-client requires that the mysql 
-        libraries to be installed on the router(!)
+  NB: The pmacct packages in OpenWRT are both ancient as well as
+      broken in that pmacct-client requires that the mysql libraries
+      to be installed on the router(!)
 
-        For now, you can find binary packages for both Kamikaze 8.09.2 &
-        the VillageTelco tree at: 
+      I've compiled a fixed version from the latest sources. You can
+      install it by adding the following line to the top of your
+      routers `/etc/opkg.conf` file:
+
+      {{{
+      src packages http://downloads.afrimesh.org/snapshots/atheros/packages
+      }}}
+
+      and running:
+        
+      {{{
+      opkg update
+      opkg install afrimesh-pmacctd afrimesh-pmacct-client
+      }}}
+
 
         
 
