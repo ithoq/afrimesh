@@ -28,7 +28,7 @@
 #
 
 # - configuration ------------------------------------------------------------
-VERSION=0.9-r717
+VERSION=0.9-r720
 RELEASE=1
 
 # Ubuntu Launchpad Personal Package Archive 
