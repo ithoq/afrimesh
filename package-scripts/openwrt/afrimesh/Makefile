@@ -114,6 +114,47 @@ define Package/afrimesh-base/install
 endef
 
 
+# - afrimesh-gateway----------------------------------------------------------
+define Package/afrimesh-gateway
+	SECTION:=admin
+	CATEGORY:=Administration
+	DEPENDS:=+snmpd +batmand +vis +haserl +afrimesh-pmacctd +afrimesh-pmacct-client +afrimesh-base +luci-admin-full +luci-admin-rpc
+	TITLE:=Mesh gateway router configuration
+endef
+
+define Package/afrimesh-gateway/description
+	Mesh gateway router configuration
+endef
+
+define Package/afrimesh-gateway/install
+	$(INSTALL_DIR)  $(1)/etc
+	$(INSTALL_DIR)  $(1)/etc/config
+	$(INSTALL_DIR)  $(1)/etc/init.d
+
+	$(INSTALL_DATA) ./files.gateway/etc/config/network      $(1)/etc/config
+	$(INSTALL_DATA) ./files.gateway/etc/config/wireless     $(1)/etc/config
+	$(INSTALL_BIN)  ./files.gateway/etc/init.d/fallback-ip  $(1)/etc/init.d
+
+	# - runonce --
+	$(INSTALL_DATA) ./files.gateway/etc/pmacctd.conf.runonce    $(1)/etc/pmacctd.conf.afrimesh-gateway
+	$(INSTALL_DATA) ./files.gateway/etc/firewall.user.runonce   $(1)/etc/firewall.user.afrimesh-gateway
+	$(INSTALL_DATA) ./files.gateway/etc/config/firewall.runonce $(1)/etc/config/firewall.afrimesh-gateway
+	$(INSTALL_DATA) ./files.gateway/etc/config/batmand.runonce  $(1)/etc/config/batmand.afrimesh-gateway
+	$(INSTALL_DATA) ./files.gateway/etc/config/vis.runonce      $(1)/etc/config/vis.afrimesh-gateway
+	$(INSTALL_BIN)  ./files.gateway/etc/init.d/vis.runonce      $(1)/etc/init.d/vis.afrimesh-gateway
+	$(INSTALL_BIN)  ./files.gateway/etc/init.d/runonce          $(1)/etc/init.d/runonce.afrimesh-gateway
+endef
+
+define Package/afrimesh-gateway/postinst
+#!/bin/sh
+# # check if we are on the real system
+if [ -z "$${IPKG_INSTROOT}" ]; then
+        touch /etc/afrimesh.postinst.test
+fi
+endef
+
+
+
 # - afrimesh-webif -----------------------------------------------------------
 define Package/afrimesh-webif
 	SECTION:=admin
@@ -331,6 +372,7 @@ endef
 
 
 $(eval $(call BuildPackage,afrimesh-base))
+$(eval $(call BuildPackage,afrimesh-gateway))
 $(eval $(call BuildPackage,afrimesh-portal))
 $(eval $(call BuildPackage,afrimesh-webif))
 $(eval $(call BuildPackage,afrimesh-potato))

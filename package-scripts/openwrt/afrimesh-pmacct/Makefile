@@ -55,7 +55,7 @@ endef
 
 define Package/afrimesh-pmacctd/Default
   $(call Package/afrimesh-pmacct/Default)
-  DEPENDS+= +libpcap
+  DEPENDS+= +libpcap +zlib
   TITLE:=IP pcap-based accounting daemon
 endef
 

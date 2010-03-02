@@ -1,0 +1,2 @@
+config vis general
+       option 'interface' 'ath0'
