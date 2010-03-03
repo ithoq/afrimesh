@@ -1,6 +1,6 @@
 #!/bin/sh /etc/rc.common
 # Copyright (C) 2006 OpenWrt.org
-START=50
+START=95
 
 BIN=pmacctd
 DEFAULT=/etc/default/$BIN

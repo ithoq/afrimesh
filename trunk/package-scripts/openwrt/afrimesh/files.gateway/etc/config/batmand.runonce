@@ -9,5 +9,5 @@ config 'batmand' 'general'
 	option 'disable_aggregation' ''
 	option 'gateway_class' '100mbit'
 	option 'routing_class' ''
-	option 'visualisation_srv' '10.0.0.1'
+	option 'visualisation_srv' '10.130.1.1'
 
