@@ -3,15 +3,15 @@
 !
 ! debug: true
 interface: ath0
-pcap_filter: net 10.0.0.0/8
+pcap_filter: net 10.130.1.0/24
 daemonize: true
 pidfile: /var/run/pmacctd.pid
 aggregate: dst_host,dst_mac
 ! aggregate: src_net,dst_net
 plugins: memory
-imt_buckets: 65537
-imt_mem_pools_size: 8192
-imt_mem_pools_number: 8
+! iimt_buckets: 65537
+! imt_mem_pools_size: 8192
+! imt_mem_pools_number: 8
 ! plugins: mysql
 ! plugins: pgsql
 ! plugins: sqlite3

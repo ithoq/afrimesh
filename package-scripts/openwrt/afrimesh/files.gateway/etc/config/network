@@ -26,6 +26,6 @@ config 'interface' 'lan'
 config 'interface' 'wifi0'
 	option 'ifname'  'ath0'
 	option 'proto'   'static'
-	option 'ipaddr'  '10.0.0.1'
+	option 'ipaddr'  '10.130.1.1'
 	option 'netmask' '255.255.255.0'
 

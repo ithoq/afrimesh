@@ -4,7 +4,7 @@ START=30
 start () {
   # batman
   #uci set batmand.general.gateway_class="100mbit"
-  #uci set batmand.general.visualisation_srv="10.0.0.1"
+  #uci set batmand.general.visualisation_srv="10.130.1.1"
   #uci commit
   mv /etc/config/batmand.afrimesh-gateway /etc/config/batmand
 
@@ -20,6 +20,7 @@ start () {
   
   # pmacct
   mv /etc/pmacctd.conf.afrimesh-gateway /etc/pmacctd.conf
+  /etc/init.d/pmacctd disable
 
   # LuCI
   #uci add_list lucid.luciweb.virtual=/village-bus
