@@ -28,6 +28,9 @@ start () {
   #/etc/init.d/lucid disable
   #/etc/init.d/httpd enable
 
+  # permissions - TODO something a bit less extreme :)
+  chmod 0666 /etc/config/*
+
   # cleanup
   rm -rf /etc/init.d/runonce.afrimesh-gateway 
   rm -rf /etc/rc.d/S30runonce.afrimesh-gateway
