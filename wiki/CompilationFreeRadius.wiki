@@ -1,0 +1,51 @@
+#labels Phase-Implementation
+==Installing freeradius==
+
+==Install the necessary packages==
+
+# sudo apt-get install libssl-dev debhelper libgdbm-dev libiodbc2-dev libkrb5-dev libldap2-#dev libltdl3-dev libmysqlclient15-dev libpam0g-dev libpcap-dev libperl-dev libpq-dev #libsasl2-dev libsnmp-dev python-dev fakeroot snmp libltdl3 libpcap0.8  libperl5.8 #libdb4.5  libsqlite3-0 build-essential autotools-dev libtool dpatch python2.5 python2.5-minimal
+
+==install debhelper/quilt==
+
+edit /etc/apt/sources.list
+  # uncomment deb http://us.archive.ubuntu.com/ubuntu/ hardy-backports main restricted universe multiverse
+  # Save changes and quit
+  # apt-get update
+  # apt-get install debhelper quilt
+
+==download freeradius==
+
+download the following version:
+  # wget ftp://ftp.freeradius.org/pub/freeradius/freeradius-server-2.1.8.tar.gz
+   
+Unpack the source:
+  # tar zxvf freeradius-server-2.1.8.tar.gz
+      
+Edit debian/rules to make few changes
+  # --with-rlm_eap_tls \
+  # --with-rlm_eap_ttls \
+  # --with-rlm_eap_peap \
+  # --without-rlm_eap_tnc \
+  # --with-rlm_otp \
+  # --with-openssl \
+  # --with-snmp \
+        
+Type the following command to build the packages
+  # dpkg-buildpackage -rfakeroot
+
+==Installing freeradius==
+
+Hold the packages you install from over written:
+  # echo "freeradius hold" | dpkg --set-selections
+  # echo "freeradius-mysql hold" | dpkg --set-selections
+  # echo "libfreeradius2 hold" | dpkg --set-selections
+  # echo "freeradius-common hold" | dpkg --set-selections
+
+Install the packages (only the one you need):
+  # dpkg -i freeradius-common_2.1.8+git_all.deb
+  # dpkg -i libfreeradius2_2.1.8+git_i386.deb
+  # dpkg -i freeradius_2.1.4-0_i386.deb
+  # dpkg -i freeradius-mysql_2.1.4-0_i386.deb
+          
+To see if the package actually on hold
+  # dpkg --get-selections freer*
