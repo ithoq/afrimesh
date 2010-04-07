@@ -1,5 +1,9 @@
+#summary Howto compile, install, and configure Freeradius
 #labels Phase-Implementation
+
 ==Installing freeradius==
+
+The followings were tested on ubuntu 8.04.
 
 ==Install the necessary packages==
 
