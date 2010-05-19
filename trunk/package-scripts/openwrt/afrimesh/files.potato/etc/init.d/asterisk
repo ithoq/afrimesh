@@ -62,63 +62,21 @@ configure_sip() {
   local sipextension="$2"
 
   # build & write out potato.sip.conf  
-  echo -e "register => ${sipremote}"     >> /etc/asterisk/sip.conf # TODO - register incoming sip providers for all sip entries
-  echo -e "#include \"potato.sip.conf\"" >> /etc/asterisk/sip.conf
+  [ $(grep -c "#include \"potato\.sip\.conf\"" /etc/asterisk/sip.conf) -eq 0 ] && \
+    echo "#include \"potato.sip.conf\"" >> /etc/asterisk/sip.conf 
   local sipconf=""
   config_foreach append_sip_entry sip
-  echo -e "${sipconf}" > /etc/asterisk/potato.sip.conf
+  echo -e "register => ${sipremote}" > /etc/asterisk/potato.sip.conf # TODO - register incoming sip providers for all sip entries
+  echo -e "${sipconf}" >> /etc/asterisk/potato.sip.conf
 
   # build & write out potato.extensions.conf  
-  echo "#include \"potato.extensions.conf\"" >> /etc/asterisk/extensions.conf # TODO 
+  [ $(grep -c "#include \"potato\.extensions\.conf\"" /etc/asterisk/extensions.conf) -eq 0 ] && \
+    echo "#include \"potato.extensions.conf\"" >> /etc/asterisk/extensions.conf 
   cat > /etc/asterisk/potato.extensions.conf << EOF
 ; new dial rules to support SIP client functionality
 exten => ${sipextension},1,Dial(MP/1)                ; answer incoming SIP calls
 exten => _XXXX,1,Dial(SIP/\${EXTEN}@sippotato,30,r)  ; route 4 digit extensions to SIP provider
 exten => _0.,1,Dial(SIP/\${EXTEN}@sippotato,30,r)    ; trunk everything after '0' through SIP provider
-EOF
-}
-
-
-configure_common() {
-  # build & write out sip.conf  -  TODO don't overwrite sip.conf
-  cat > /etc/asterisk/sip.conf << EOF
-[general]
-context=default
-srvlookup=no
-EOF
-
-  # build & write out extensions.conf  -  TODO don't overwrite extensions.conf
-  cat > /etc/asterisk/extensions.conf << EOF
-[general]
-static=yes
-writeprotect=no
-clearglobalvars=no
-[globals]
-CONSOLE=Console/dsp; Console interface for demo
-[local]
-include => default
-[default]
-; original MP dial rules
-exten => 4000,1,Dial(MP/1)
-exten => 4001,1,Answer
-exten => 4001,2,Echo
-exten => 4002,1,Dial(SIP/sipguest)
-;exten => _XX,1,Dial(SIP/4000@10.130.1.\${EXTEN})
-; 1,2 or 3 digit dialling of last octet
-exten => _X,1,Dial(SIP/4000@10.130.1.\${EXTEN})
-exten => _XX,1,Dial(SIP/4000@10.130.1.\${EXTEN})
-exten => _XXX,1,Dial(SIP/4000@10.130.1.\${EXTEN})
-; full a*b*c*d IP dialling, e.g. 10*130*1*144*
-exten => _X.,1,Set(OCTETS=\${EXTEN})
-exten => _X.,n,Set(IP=\${CUT(OCTETS,*,1)}.\${CUT(OCTETS,*,2)}.\${CUT(OCTETS,*,3)}.\${CUT(OCTETS,*,4)})
-exten => _X.,n,Dial(SIP/4000@\${IP})
-; C-O-N-F -> 2663 to set the IP of this IP04
-exten => 2663,1,Answer
-exten => 2663,2,Background(justwhat)
-exten => 2663,3,Read(newip||15)
-exten => 2663,4,SayDigits(\${newip})
-exten => 2663,5,System(/bin/echo "\${newip}" > /tmp/newip.txt)
-exten => 2663,6,System(/bin/setnewip)
 EOF
 }
 
@@ -131,9 +89,6 @@ configure_asterisk() {
 
   # load asterisk configuration from UCI
   config_load asterisk
-
-  # set up common configuration values
-  configure_common
 
   # clear any existing potato configuration 
   echo > /etc/asterisk/potato.sip.conf
