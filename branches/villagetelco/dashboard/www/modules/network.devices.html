@@ -7,11 +7,19 @@
  * New BSD License. See /LICENSE for more information.
 -->
 
-<h2>Devices</h2>
-
 <!-- /* TODO - use the same caching mechanism as the map */
      /* TODO - write the caching mechanism for the map - at what level? villagebus? higher? */ -->
-<div id="network-devices"></div>
+
+<form class="filter">   
+  <input type="checkbox" id="servers" /> <label for="servers">Servers</label>
+  <input type="checkbox" id="" /> <label for="">Supernodes</label>
+  <input type="checkbox" id="" /> <label for="">Gateways</label>
+  <input type="checkbox" id="" /> <label for="">Potato's</label>
+</form>
+
+<hr/>
+
+<div id="network-devices">foo</div>
 
 
 <script type="text/javascript"> //<![CDATA[    
@@ -41,15 +49,17 @@
     /* clearTimeout(timer); */
 
     /* TODO - afrimesh.network.devices.async(populate_devices); */
-    var routers = afrimesh.network.routers();
-    populate_devices(routers);
+    //var routers = afrimesh.network.routers();
+    //populate_devices(routers);
+
+    /* Add all devices on the network to our list */
 
     /* timer = setTimeout(update, 5000); */
   };
   function populate_devices(routers) {
     /* get accounting info for routers */
     routers = afrimesh.network.accounting.routers(routers);
-    var html = "<table class='network-devices' border=0>"
+    var html = "<table border=1>"
     html += "<thead><th>mac</th><th>address</th><th>packets</th><th>bytes</th><!-- th>version</th><th>uname</th --></thead>";
     html += "<tbody></tbody></table>";
     $("div#network-devices").html(html);

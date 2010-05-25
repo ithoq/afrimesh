@@ -11,7 +11,6 @@
   <head>
     <!-- link rel="stylesheet" type="text/css" href="style/reset.css" --> 
     <link rel="stylesheet" type="text/css" href="style/default.css" /> 
-    <!-- link rel="stylesheet" type="text/css" href="style/menu.css" --> 
     <link rel="stylesheet" type="text/css" href="style/map.default.css"> 
     <link rel="stylesheet" type="text/css" href="style/map.css" /> 
     <link rel="stylesheet" type="text/css" href="style/modules.css"> 
@@ -106,6 +105,9 @@
         /** loading complete, we can now remove our message */
         $("#message-loading").html("");
 
+        /* TODO - debug */
+        $("ul#dock li#mesh").click();
+
         console.debug("$(document).ready() -------------------- end");
       });
 
@@ -118,73 +120,12 @@
          <iframe class="wrap" style="overflow-x: hidden;" width="800" height="600" scrolling="no"></iframe>
     </div -->
     
-    
+    <!-- the network map ------------------------------------------------- -->
     <div style="border:0px solid green;" id="map">
     </div>
     
-    <style>
-        ul#dock {
-          position:absolute; top: 10px; bottom:10px; width:100px;
-          -webkit-box-shadow:rgba(0,0,0,0.5) 0px 0px 10px;    
-          background:rgba(64,64,64,0.8); 
-          color:white;
-          text-align: center;
-        }
-        ul#dock.dockleft {
-          left:0px; 
-          -webkit-border-top-right-radius: 1.5em; 
-          -webkit-border-bottom-right-radius: 1.5em;
-          border: 2px solid white;
-          border-left: 0px;
-        }
-        ul#dock.dockright {
-          right:0px; 
-          -webkit-border-top-left-radius: 1.5em; 
-          -webkit-border-bottom-left-radius: 1.5em;
-          border: 2px solid white;
-          border-right: 0px;
-        }
-        ul#dock.dockmax {
-          /*left: 0px;*/
-        }
-        ul#dock.dockmin {
-          left: -75px;
-        }
-        ul#dock hr {
-          border: 0px;
-          height:1.0em;
-        }
-        ul#dock li {
-          border: 0px solid red;
-          position:relative;
-          line-height: 1.5;
-        }
-        ul#dock li:hover {
-          background: white;
-          color: black;
-        }
-        ul#dock .callout {
-          z-index: 1;
-          position: absolute;
-          top: -2px;
-          right: -22px;
-          font-size: 0px; line-height: 0%; width: 0px;
-          border-top    : 15px solid rgba(255,255,255,0.0);
-          border-right  : 20px solid white;
-          border-bottom : 15px solid rgba(255,255,255,0.0);
-        }
-        ul#dock .callout-border {
-          z-index: 1;
-          position: absolute;
-          top: -2px;
-          right: -21px;
-          font-size: 0px; line-height: 0%; width: 0px;
-          border-top    : 15px solid rgba(255,255,255,0.0);
-          border-right  : 20px solid #bab8b4;
-          border-bottom : 15px solid rgba(255,255,255,0.0);
-        }
-    </style>
-    <ul id="dock" class="dockleft dockmax">
+    <!-- dock ------------------------------------------------------------ -->
+    <ul id="dock" class="round shadow dockleft dockmax">
       <li onclick='
                    if ($("#dock").hasClass("dockleft")) {
                      $("#dock").addClass("dockright").removeClass("dockleft");
@@ -195,7 +136,6 @@
       </li>
       <li onclick='if ($("#dock").hasClass("dockmin")) {
                      $("#dock").addClass("dockmax").removeClass("dockmin");
-                     $("#overlay").addClass("dockmax").removeClass("dockmin");
                      $("#overlay").css("left", "120px");
                    } else {
                      $("#dock").addClass("dockmin").removeClass("dockmax");
@@ -217,21 +157,12 @@
         <li id="help">Help</li>
         <hr/>
         <li id="settings">Settings</li>
-        <!-- img src="images/gear.png" / -->
       </div>
     </ul>
     
-    
-    
+    <!-- content overlay ------------------------------------------------- -->
     <!-- see http://www.schillmania.com/content/entries/2009/css3-and-the-future/ -->
-    <div id="overlay"
-         style="position:absolute; left: 120px; right: 20px; top: 10px; bottom: 10px;
-                background:rgba(255,255,255,0.95);
-                padding: 1em;
-                -webkit-border-radius: 1.0em;
-                /*border: 1px solid rgba(128,128,128,0.1);*/
-                -webkit-box-shadow:rgba(0,0,0,0.5) 0px 0px 10px;
-                visibility:hidden;">
+    <div id="overlay" class="round shadow">
       <div style="position:absolute; right:20px;"
            onClick='$("#overlay").css("visibility", "hidden");
                     $("ul#dock .callout").remove();
@@ -241,12 +172,11 @@
       </div>
       <div id="content">
         please wait a moment...
-      </div> <!-- /content -->
+      </div>
     </div>
     
-    <div id="live-chat" style="padding-left: 1.0em;" >
-    </div> <!-- /live-chat -->
-    
+    <!-- live chat ------------------------------------------------------- -->
+    <div id="live-chat" style="padding-left: 1.0em;" ></div> 
     
   </body>
 </html>

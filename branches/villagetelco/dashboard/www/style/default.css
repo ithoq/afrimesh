@@ -72,35 +72,113 @@ th     { border-bottom: 1px solid lightgray; }*/
 .underline {
   text-decoration: underline;
 }
-
-
-/* - layout --------------------------------------------------------------- */
-/*#container {
-  border: 0px solid blue;
-  margin: 0px;
-  padding: 0px;
+.round {
+  border-radius : 1.0em;
+  -khtml-border-radius  : 1.0em;
+  -moz-border-radius    : 1.0em;
+  -opera-border-radius  : 1.0em;
+  -webkit-border-radius : 1.0em;
+}
+.shadow {
+  box-shadow : rgba(0,0,0,0.5) 0px 0px 10px;
+  -khtml-box-shadow  : rgba(0,0,0,0.5) 0px 0px 10px;
+  -moz-box-shadow    : rgba(0,0,0,0.5) 0px 0px 10px;
+  -opera-box-shadow  : rgba(0,0,0,0.5) 0px 0px 10px;
+  -webkit-box-shadow : rgba(0,0,0,0.5) 0px 0px 10px;
 }
 
-#header {
-  border: 0px solid green;
-  padding-left: .5em;
-  margin-bottom: 1.75em;
-  float:right;
-}*/
 
-/*#content {
-  padding: 0px;
-  padding-left:  0.95em;
-  padding-right: 0.75em;
-  border-left: 1px solid lightgray;       
-}*/
-
-/*#footer {
-  clear: both;
-  padding: 0px;  
-  margin: 0px;
-  color: #333;
-  border: 0px solid green;
-}*/
+/* - content -------------------------------------------------------------- */
+div#overlay {
+  position:absolute; 
+  left: 120px; 
+  right: 20px; 
+  top: 10px; 
+  bottom: 10px;
+  padding : 1em;
+  background : rgba(255,255,255,0.95);
+  visibility:hidden;
+}
+div#overlay #content {
+}
 
 
+/* - dock ----------------------------------------------------------------- */
+ul#dock {
+  position:absolute; 
+  top: 10px; 
+  bottom: 10px; 
+  width: 100px;
+  background: rgba(64,64,64,0.8); 
+  color: white;
+  text-align: center;
+}
+ul#dock.dockleft {
+  left:0px; 
+  border: 2px solid white;
+  border-left: 0px;
+  border-top-left-radius : 0.0em;
+  -khtml-border-top-left-radius  : 0.0em;
+  -moz-border-radius-topleft     : 0.0em;
+  -opera-border-top-left-radius  : 0.0em;
+  -webkit-border-top-left-radius : 0.0em;
+  border-bottom-left-radius : 0.0em;
+  -khtml-border-bottom-left-radius  : 0.0em;
+  -moz-border-radius-bottomleft     : 0.0em;
+  -opera-border-bottom-left-radius  : 0.0em;
+  -webkit-border-bottom-left-radius : 0.0em;
+}
+ul#dock.dockright {
+  right:0px; 
+  border: 2px solid white;
+  border-right: 0px;
+  border-top-right-radius : 0.0em;
+  -khtml-border-top-right-radius  : 0.0em;
+  -moz-border-radius-topright     : 0.0em;
+  -opera-border-top-right-radius  : 0.0em;
+  -webkit-border-top-right-radius : 0.0em;
+  border-bottom-right-radius : 0.0em;
+  -khtml-border-bottom-right-radius  : 0.0em;
+  -moz-border-radius-bottomright     : 0.0em;
+  -opera-border-bottom-right-radius  : 0.0em;
+  -webkit-border-bottom-right-radius : 0.0em;
+}
+ul#dock.dockmax {
+/*left: 0px;*/
+}
+ul#dock.dockmin {
+  left: -75px;
+}
+ul#dock hr {
+  border: 0px;
+  height:1.0em;
+}
+ul#dock li {
+  border: 0px solid red;
+  position:relative;
+  line-height: 1.5;
+}
+ul#dock li:hover {
+  background: white;
+  color: black;
+}
+ul#dock .callout {
+  z-index: 1;
+  position: absolute;
+  top: -2px;
+  right: -22px;
+  font-size: 0px; line-height: 0%; width: 0px;
+  border-top    : 15px solid rgba(255,255,255,0.0);
+  border-right  : 20px solid white;
+  border-bottom : 15px solid rgba(255,255,255,0.0);
+}
+ul#dock .callout-border {
+  z-index: 1;
+  position: absolute;
+  top: -2px;
+  right: -21px;
+  font-size: 0px; line-height: 0%; width: 0px;
+  border-top    : 15px solid rgba(255,255,255,0.0);
+  border-right  : 20px solid #bab8b4;
+  border-bottom : 15px solid rgba(255,255,255,0.0);
+}
