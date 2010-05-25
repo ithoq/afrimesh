@@ -92,7 +92,7 @@
             });
         };
         add_dock_item("people",   "customers.manage");
-        add_dock_item("mesh",     "network.devices");
+        add_dock_item("devices",  "network.devices");
         add_dock_item("gateway",  "network.health");
         add_dock_item("settings", "utility.settings");
 
@@ -106,7 +106,7 @@
         $("#message-loading").html("");
 
         /* TODO - debug */
-        $("ul#dock li#mesh").click();
+        $("ul#dock li#devices").click();
 
         console.debug("$(document).ready() -------------------- end");
       });
@@ -147,10 +147,9 @@
       <li id="login">Login</li>
       <hr/>
       <li id="people">People</li>
-      <li id="mesh">Mesh</li>
+      <li id="devices">Devices</li>
       <li id="gateway">Gateways</li>
       <li id="accounts">$$$</li>
-      <li id="equipment">Equipment</li>
       <li id="logs">Logs</li>
       <hr/>
       <div style="position:absolute; bottom: 20px; width:100%;">

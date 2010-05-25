@@ -92,7 +92,7 @@ th     { border-bottom: 1px solid lightgray; }*/
 div#overlay {
   position:absolute; 
   left: 120px; 
-  right: 20px; 
+  right: 10px; 
   top: 10px; 
   bottom: 10px;
   padding : 1em;

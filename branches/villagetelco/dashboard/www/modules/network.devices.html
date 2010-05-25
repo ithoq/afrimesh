@@ -10,29 +10,87 @@
 <!-- /* TODO - use the same caching mechanism as the map */
      /* TODO - write the caching mechanism for the map - at what level? villagebus? higher? */ -->
 
-<form class="filter">   
-  <input type="checkbox" id="servers" /> <label for="servers">Servers</label>
-  <input type="checkbox" id="" /> <label for="">Supernodes</label>
-  <input type="checkbox" id="" /> <label for="">Gateways</label>
-  <input type="checkbox" id="" /> <label for="">Potato's</label>
-</form>
 
-<hr/>
+<div id="network-devices">
+  <form class="filter">   
+    <input type="checkbox" id="servers" /> <label for="servers">Servers</label>
+    <input type="checkbox" id="supernodes" /> <label for="supernodes">Supernodes</label>
+    <input type="checkbox" id="gateways" /> <label for="gateways">Gateways</label>
+    <input type="checkbox" id="potatos" /> <label for="potatos">Potatos</label>
+  </form>
+  <hr/>
 
-<div id="network-devices">foo</div>
+  <style>
+    div.devices {
+      display: table;
+      padding: 0.5em;
+    }
+    div.entry {
+      display: table-row;
+      vertical-align: middle;
+      border : 1px solid red;
+      height : 2.0em;
+      line-height : 2.0em;
+    }
+    div.entry .name {
+      display: table-cell;
+      color: blue;
+      font-weight: bold;
+      border: 0px solid gray;
+      padding-right: 1.5em;
+    }
+    div.entry .status {
+      display: table-cell;
+      color: green;
+      border: 0px solid gray;
+      padding-right: 1.5em;
+    }
+    div.entry .graph {
+      display: table-cell;
+      border: 1px solid lightgray;
+      background: #eee;
+      -webkit-border-radius : 0.5em;
+      padding-left: 0.25em;
+      padding-right: 0.25em;
+    }
+  </style>
+
+  <div class="devices">
+    <div class="entry">
+      <span class="name">gateway-is-1</span> 
+      <span class="status">healthy</span>
+      <span class="graph"/>
+    </div><br/>
+    <div class="entry">
+      <span class="name">library</span> 
+      <span class="status">healthy</span>
+      <span class="graph"/>
+    </div>
+  </div>
+
+</div>
 
 
 <script type="text/javascript"> //<![CDATA[    
 (function() {
 
   /** includes ------------------------------------------------------------ */
-  /* load includes with: load("path/to/file.js");   */
+  load("javascript/jquery/jquery.sparkline.js");
   /* often a good idea:  load("modules/network.devices.js"); *;/
 
   /** construction -------------------------------------------------------- */
   ready = function() { // INJ 'ready' should be the only symbol we're exposing to the global namespace
     /* often a good place to do this: populate_control(); */
     console.debug("loaded network.devices.html");
+
+    var data = [];
+    for (var i = 0; i < 24 * 10; i++) {
+      data.push(Math.random());
+    }
+
+    //$(".graph").sparkline(data, { });
+    $(".graph").sparkline(data, { height : "2.0em" });
+
     update();
     return unload;
   };
@@ -48,11 +106,26 @@
   function update() {
     /* clearTimeout(timer); */
 
+    /* Setup filter */
+    $("div#network-devices .filter").mousedown(function(event) { return false; });
+    $("div#network-devices .filter input[type=checkbox]").hide().click(function(event) {
+        $(this).toggleClass("active");
+        $(this).next("label").toggleClass("active");
+        //$(this).next("label").toggleClass("shadow");
+        //$(this).attr('checked') ? $(".entry." + this.id).show() : $(".entry." + this.id).hide();
+        $(this).is(':checked') ? $(".entry." + this.id).slideDown(100) : $(".entry." + this.id).slideUp(100);
+      });
+    $("div#network-devices .filter label").addClass("round");
+    //$("div#network-devices .filter label").addClass("shadow");
+    $("div#network-devices .filter input[type=checkbox]").each(function(e) { return $(this).click(); });
+
+
     /* TODO - afrimesh.network.devices.async(populate_devices); */
     //var routers = afrimesh.network.routers();
     //populate_devices(routers);
 
     /* Add all devices on the network to our list */
+
 
     /* timer = setTimeout(update, 5000); */
   };

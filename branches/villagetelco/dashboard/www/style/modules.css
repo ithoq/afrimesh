@@ -195,7 +195,7 @@ td.v-brace {
 }*/
         
 /* - network devices module ------------------------------------------------ */
-div#network-devices {  
+div#network-devices {
 }
 div#network-devices table, thead, tr, th, td {  
   border: 1px solid brown;
@@ -206,7 +206,27 @@ div#network-devices tr {
 }
 div#network-devices th td {
 }
-
+div#network-devices form.filter {
+  /*text-align:right;*/
+  /*display: inline;*/
+  background-color: white;
+  color: #333;
+  padding-top: 1.0em;
+  padding-bottom: 1.0em;
+}
+div#network-devices form.filter label {
+  padding: 5px 10px;
+  margin-left: 0.5em;
+  /*color: white;*/
+  background: #ddd;
+}
+div#network-devices form.filter label:hover {
+}
+div#network-devices form.filter .active {
+  color: white;
+  background: #333;
+  /*text-shadow: 0px -1px 0px black;*/
+}
 
 /* - utility upgrade module ---------------------------------------------- */
 /*.utility-upgrade td { 
