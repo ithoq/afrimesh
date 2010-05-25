@@ -6,7 +6,7 @@ div.overlay-router {
   display:none;
   padding:55px; 
   overflow: hidden;
-  z-index: 200000;
+  /*z-index: 200000;*/
 }
 
 div.overlay-router div.close {

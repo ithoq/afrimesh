@@ -9,7 +9,7 @@
 
 
 /* - funky braces --------------------------------------------------------- */
-td.instructions {
+/*td.instructions {
   text-align: center;
   font-size: 1.5em;
   color: lightgray;
@@ -28,17 +28,17 @@ td.v-brace {
   border-top: 1px solid lightgray;
   border-right: 1px solid lightgray;
   border-bottom: 1px solid lightgray;
-}
+}*/
 
 
 /* - customers-manage module ----------------------------------------------- */
-.customers-manage         { font-size: 1.25em; }
+/*.customers-manage         { font-size: 1.25em; }
 .customers-manage table   {  } 
 .customers-manage th      {  
   background-repeat: no-repeat;
   background-position: center right;
   background-image: url(images/bg.gif); 
-  cursor: hand;  /* TODO firefox */
+  cursor: hand;  
 } 
 .customers-manage th.headerSortUp   { background-image: url(images/asc.gif);  }
 .customers-manage th.headerSortDown { background-image: url(images/desc.gif); }
@@ -51,7 +51,7 @@ td.v-brace {
   background: lightgray;  
   padding: 0.1em 0.4em 0.2em 0.4em; /* top right bottom left */     
   margin-left: 0.3em;
-  cursor: hand;  /* TODO firefox */
+  cursor: hand; w
 } 
 .customers-manage .button.hover {
   background: darkgray;
@@ -61,22 +61,22 @@ td.v-brace {
 }
 .customers-manage .edit-username {  
   width: 15em;
-  cursor: caret;  /* TODO firefox */
+  cursor: caret;
 }
 .customers-manage .edit-type {  
   width: 7.5em;
-  cursor: hand;  /* TODO firefox */
+  cursor: hand; 
 }
-
+*/
 
 /* - customers-status module ----------------------------------------------- */
-.customers-status         { font-size: 1.25em; }
+/*.customers-status         { font-size: 1.25em; }
 .customers-status table   { } 
 .customers-status th      {   
   background-repeat: no-repeat;
   background-position: center right;
   background-image: url(images/bg.gif); 
-  cursor: hand;  /* TODO firefox */
+  cursor: hand; 
   padding:0px; 
   padding-right:1.0em;
 } 
@@ -88,34 +88,27 @@ td.v-brace {
 }
 .customers-status tr.idle { color: lightgray;  }
 .customers-status td      {  } 
-.customers-status td.name { width: 10em; } 
+.customers-status td.name { width: 10em; } */
 
 
 /* - customers-plans ------------------------------------------------------ */
-.customers-plans              { font-size: 1.25em; }
+/*.customers-plans              { font-size: 1.25em; }
 .customers-plans table        {  } 
 .customers-plans th           { padding:0px; padding-right:1.0em;} 
 .customers-plans td           { padding-top: 0.5em; } 
 .customers-plans td.name      { cursor: caret; width: 10em;  }
 .customers-plans td.minutes   { cursor: caret;  }
 .customers-plans td.currency  { cursor: caret;  }
-.customers-plans td.price     { cursor: caret;  }
+.customers-plans td.price     { cursor: caret;  }*/
 
 
 /* - customers-recharge module -------------------------------------------- */
-.customers-recharge      { margin: 1em; }
-
-/*.customers-recharge div { border: 1px solid green; }
-.customers-recharge td  { border: 1px solid red;   }*/
-
+/*.customers-recharge      { margin: 1em; }
 .customers-recharge td.spacer { width: 0em; height: 1em; }
-
 .customers-recharge div.button, div.button-submit {
   background: lightgray;
   margin-left: 10px;
-  /*border: 1px solid green;
-  float: left;*/
-  cursor: hand;  /* TODO firefox */
+  cursor: hand;  
 }
 .customers-recharge div.button-submit {
   background: #B2C3DD;
@@ -148,12 +141,12 @@ td.v-brace {
   background: white;
   border: 1px solid gray;
   width: 30em;
-  cursor: default;  /* TODO firefox */
+  cursor: default;  
 }
-
+*/
 
 /* - network health module ------------------------------------------------ */
-.network-messages thead {
+/*.network-messages thead {
   color: black;
 }
 .network-messages tr {
@@ -199,33 +192,29 @@ td.v-brace {
 }
 .network-messages tr.unknown td {
   color: #202020;
-}
+}*/
         
 /* - network devices module ------------------------------------------------ */
-.network-devices { font-size: 1.25em; }
-.network-devices thead {
-  color: black;
+div#network-devices {  
+  border: 1px solid black;
 }
-.network-devices tr {
-  vertical-align: top;
-  padding: 0px;
+div#network-devices thead {
 }
-.network-devices th td {
-  font-size: 1.0em;
-  padding-left: 0px;
-  padding-right: 20px;
+div#network-devices tr {
+}
+div#network-devices th td {
 }
 
 
 /* - utility upgrade module ---------------------------------------------- */
-.utility-upgrade td { 
+/*.utility-upgrade td { 
   margin:0px; 
   padding:0px; 
 }
-
+*/
 
 /* - internet-configure module -------------------------------------------- */
-.ui-sortable, .ui-sortable-brace, .ui-sortable-instructions { width: 310px; padding: 5px; }
+/*.ui-sortable, .ui-sortable-brace, .ui-sortable-instructions { width: 310px; padding: 5px; }
 .ui-sortable        { border:1px solid gray; min-height: 230px; margin: 5px; }
 .ui-sortable-brace  {   
   border-left: 1px solid lightgray;
@@ -241,7 +230,6 @@ td.v-brace {
 }
 dl.sort { margin: 5px; }
 dl.sort dt { 
-  /*background-color: lightgray; */
   border: 1px solid gray;
   cursor:move; 
   height:1.6em; 
@@ -251,12 +239,12 @@ dl.sort dt {
   width: 300px; 
 }
 dl.sort dd { background-color:red;  }
-
+*/
 
 /* .internet-configure td { background-color: lightgray; border: 4px solid white; padding: 4px;  } */
 
 /* - help module ---------------------------------------------------------- */
-.help li {
+/*.help li {
   margin-left: 2.0em;
   list-style-type: disc;
   list-style-position: outside;
@@ -266,7 +254,7 @@ dl.sort dd { background-color:red;  }
 }
 .help div.navigation {
   background: #f7f7f7;
-}
+}*/
 
 
 /* - setting module ------------------------------------------------------- */
@@ -342,7 +330,7 @@ form.two-column #location.message {
 
 
 div.tooltip {   
-  z-index          : 1000;
+  /*z-index          : 1000;*/
   background-color : black; 
   padding          : 10px;
   margin-right     : 20px;
@@ -363,5 +351,4 @@ div.tooltip p {
 }
 
 div.tooltip p.explain {
-
 }

@@ -7,26 +7,22 @@
  * New BSD License. See /LICENSE for more information.
 -->
 
-<!-- h2>Network Map</h2 -->
-<div style="position:relative; ">
-  <div id="network-map-legend"
-       onmouseover="this.style.opacity=1.0;" 
-       onmouseout="this.style.opacity=0.7;">
-    <!-- this.style.opacity=0.1;this.filters.alpha.opacity=10 -->
-    <img src="images/network-map-legend.png" style="padding:0px; margin:0px;"/>
-  </div>
-  <!-- div id="network-map" style="width: 100%; height:75%;" -->
-  <div id="network-map" style="width: 100%; height: 75%;">
-  </div>
+<div class="network" id="network-map"></div>
+<div class="legend"
+     onmouseover="this.style.opacity=1.0;" 
+     onmouseout="this.style.opacity=0.7;">
+  <img src="images/network-map-legend.png" />
 </div>
+<form class="export" 
+      action="/cgi-bin/mesh-topology.kml" method="POST" target="_blank">
+  <input id="export-map-data" type="hidden" name="data" />
+  <input id="export-map-type" type="hidden" name="type" value="application/vnd.google-earth.kml+xml" />
+  <!-- input type="submit" value="Google Earth"  / -->
+  <input type="image" src="images/google-earth-export.png" value="Submit" alt="Submit" />
+</form>  
+
 
 <!-- see: http://bbs.keyhole.com/ubb/ubbthreads.php?ubb=showflat&Number=283026 -->
-<form class="export-map" action="/cgi-bin/mesh-topology.kml" method="POST" target="_blank">
-<input id="export-map-data" type="hidden" name="data" />
-<input id="export-map-type" type="hidden" name="type" value="application/vnd.google-earth.kml+xml" />
-<input type="submit" style="color: blue" value="Export to Google Earth" />
-</form>
-
 <script type="text/javascript">( //<![CDATA[    
 function() {
 
@@ -35,14 +31,6 @@ function() {
   /** construction -------------------------------------------------------- */
   ready = function() {
     console.debug("loaded network.map.html");
-
-    // we'd like the map to fill the whole window
-    var resize_map = function() { 
-      $("div#network-map").height($(window).height() - $("#header").outerHeight(true) - 30);
-    };
-    resize_map();
-    $(window).bind("resize", resize_map);
-    
 
     $("div#network-map").addClass("message");
     $("div#network-map").html("<p><br/><p>Loading Network Map...</p>");
@@ -74,15 +62,16 @@ function() {
       console.debug("location.latitude -> " + afrimesh.settings.location.latitude);
       console.debug("map.extent -> " + afrimesh.settings.map.extent);
       console.debug("map.zoom -> " + afrimesh.settings.map.zoom);
-      $("form.export-map").submit(function() {
+      $("form#network-map-export").submit(function() {
           console.debug("submitting");
           export_kml(network_map);
           return true;
         });
       update(network_map); 
       $("div[id$=_zoomworld]").click(function () {
-            network_map.zoom(2);
-          });    
+          console.log("Zoooooooooooom");
+          network_map.zoom(2);
+        });    
     };
 
     function load_error(message) {

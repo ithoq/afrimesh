@@ -10,11 +10,15 @@
 
 
 #menu {   
+  position:absolute;
+  right: 0px;
+  float:right;  
   color: white;  
   line-height: 45px; 
   list-style: none; 
   margin: 0px; 
   padding: 0px;
+  z-index:-1;
 } 
 
 #menu .left {            /*  left side of menu */
@@ -67,7 +71,6 @@
 } 
 #menu li:hover ul {                     /* activates & makes visible the menu dropdown */
   display: block;
-  z-index: 10000;
 }
 #menu .dropdown {                        
   /*background:red;*/

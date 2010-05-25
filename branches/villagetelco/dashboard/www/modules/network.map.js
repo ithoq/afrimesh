@@ -25,13 +25,12 @@ var Map = undefined;
         displayProjection : epsg_4326,
         units             : "m",
         numZoomLevels     : 20,
-        //restrictedExtent  : new OpenLayers.Bounds(),
-        theme             : "style/map.default.css"
+        controls          : [ new OpenLayers.Control.Navigation(),
+                              new OpenLayers.Control.PanPanel(),
+                              new OpenLayers.Control.ZoomPanel() ]
+        //theme             : "style/map.default.css"  // TODO
       };
-      //options.restrictedExtent.extend(LonLat(longitude - extent, latitude - extent));
-      //options.restrictedExtent.extend(LonLat(longitude + extent, latitude + extent));
       var map = new OpenLayers.Map(id, options);
-      //var osma = new OpenLayers.Layer.OSM.Osmarender("Osmarender");
       var mapnik = new OpenLayers.Layer.OSM.Mapnik("Street Map");
       var relief = undefined;
       console.debug("map server: " + afrimesh.settings.map.server);
@@ -45,9 +44,9 @@ var Map = undefined;
             type              : YAHOO_MAP_SAT,
             sphericalMercator : true
           });
-        map.addLayers([ relief, /*osma,*/ mapnik, satellite ]);
+        map.addLayers([ relief, mapnik, satellite ]);
       } else {
-        map.addLayers([ relief, /*osma,*/ mapnik ]);
+        map.addLayers([ relief, mapnik ]);
       }
       map.addControl(new OpenLayers.Control.Attribution());
       map.addControl(new OpenLayers.Control.MousePosition());
@@ -73,7 +72,7 @@ var Map = undefined;
       click_selector.activate();*/
       var router_hover_selector = new OpenLayers.Control.SelectFeature(map.routers, 
                                                                 { multiple : false, 
-                                                                  hover    : false });
+                                                                  hover    : true });
       router_hover_selector.onSelect = on_select_router;
       router_hover_selector.onUnselect = on_unselect_router;
       map.addControl(router_hover_selector);

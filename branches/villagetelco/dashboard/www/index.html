@@ -9,17 +9,19 @@
 -->
 <html>
   <head>
-    <link rel="stylesheet" type="text/css" href="style/reset.css"> 
-    <link rel="stylesheet" type="text/css" href="style/default.css"> 
-    <link rel="stylesheet" type="text/css" href="style/menu.css"> 
-    <link rel="stylesheet" type="text/css" href="style/map.css"> 
+    <!-- link rel="stylesheet" type="text/css" href="style/reset.css" --> 
+    <link rel="stylesheet" type="text/css" href="style/default.css" /> 
+    <!-- link rel="stylesheet" type="text/css" href="style/menu.css" --> 
+    <link rel="stylesheet" type="text/css" href="style/map.default.css"> 
+    <link rel="stylesheet" type="text/css" href="style/map.css" /> 
     <link rel="stylesheet" type="text/css" href="style/modules.css"> 
-    <link rel="stylesheet" type="text/css" href="style/overlay-router.css"> 
+    <!-- link rel="stylesheet" type="text/css" href="style/overlay-router.css" --> 
 
     <!-- includes ---------------------------------------------------------- -->
     <!-- script type="text/javascript" src="http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js"></script -->
-    <script type="text/javascript" src="javascript/json.org/json2.min.js"></script>
-    <script type="text/javascript" src="javascript/jquery/jquery.tools.min.js"></script>
+    <script type="text/javascript" src="javascript/json.org/json2.min.js"></script>  <!-- TODO update!!! -->
+    <script type="text/javascript" src="javascript/jquery/jquery.tools.min.js"></script> <!-- TODO deprecate, only using tooltips -->
+    <!-- script type="text/javascript" src="javascript/jquery/jquery.min.js"></script -->
     <script type="text/javascript" src="javascript/jquery/jquery.corner.js"></script> <!-- http://jrc.meerbox.nl/ - TODO deprecate -->
                                                                                       <!-- also look at: http://www.malsup.com/jquery/corner/ -->
                                                                                       <!--               http://www.ruzee.com/files/shadedborder/ -->
@@ -38,10 +40,10 @@
       $(document).ready(function() {
 
         /** round menu item corners */
-        $("#menu .left").corner("bl 13px");
+        /*$("#menu .left").corner("bl 13px");*/
 
         /** init overlay window TODO - should be in network.maps See: http://flowplayer.org/forum/20/21252 */
-        var api = $("#overlay-router").overlay({ 
+        /*var api = $("#overlay-router").overlay({ 
             api:true,
             zIndex:200000
             //top: "0%", // TODO - update to latest jquery.tools
@@ -49,8 +51,7 @@
         evil_display_overlay = function(url) {
            api.getContent().find("iframe.wrap").attr('src', url);
            api.load();
-           $("#overlay-router").css("z-index", "200000");
-        }
+        }*/
 
         /** global error handler for Ajax requests */
         /*$(document).ajaxError(function(ajax, response, request) {
@@ -60,10 +61,10 @@
           });*/
 
         /** populate DOM references to afrimesh.settings */
-        var elements = $("[id*=afrimesh|settings]");
+        /*var elements = $("[id*=afrimesh|settings]");
         elements.each(function(element) {
             $(elements[element]).html(Q(afrimesh, elements[element].id) + "");
-          });
+          });*/
 
         /** attach actions to menu */
         // UDE it looks like we're ending up with multiple instances of modules
@@ -72,33 +73,35 @@
         // UDE as the code currently stands we cannot load a module into the
         //     browser as a standalone
         var unloader = function() {  };
-        function add_menu_item(section, item) {
-          $("ul#menu ul#" + section + " li#" + item).click(function(event) {
+        function add_dock_item(item, module) {
+          $("ul#dock li#" + item).click(function(event) {
+              console.log("Loading menu: " + item);
+              $("ul#dock .callout").remove();
+              $("ul#dock .callout-border").remove();
+              $("ul#dock .underline").removeClass();
+              $(this).addClass("underline");
+              $(this).append('<span class="callout-border"></span>');
+              $(this).append('<span class="callout"></span>');
               unloader(); 
+              $("#overlay").css("visibility", "visible");
               $("div#content").hide();
-              $("div#content").load("modules/" + section + "." + item + ".html", function(page) { 
+              $("div#content").load("modules/" + module + ".html", function(page) { 
                   $("div#content").fadeIn("slow"); 
                   unloader = ready(); // UDE fades mess with load completion and require a ready() method :(
                 });
               return false;
             });
         };
-        add_menu_item("customers", "recharge");
-        add_menu_item("customers", "manage");
-        add_menu_item("customers", "plans");
-        add_menu_item("customers", "status");
-        add_menu_item("network",   "map");
-        add_menu_item("network",   "health");
-        add_menu_item("network",   "devices");
-        add_menu_item("help",      "howto");
-        add_menu_item("help",      "group");
-        add_menu_item("help",      "chat");
-        add_menu_item("utility",   "settings");
-        add_menu_item("utility",   "logout");
+        add_dock_item("people",   "customers.manage");
+        add_dock_item("mesh",     "network.devices");
+        add_dock_item("gateway",  "network.health");
+        add_dock_item("settings", "utility.settings");
 
         /** set default page */
-        //$("ul#menu ul#utility li#settings").click();
-        $("ul#menu ul#network li#map").click();
+        $("div#map").load("modules/network.map.html", function(page) { 
+            $("div#map").fadeIn("slow"); 
+            unloader = ready(); // UDE fades mess with load completion and require a ready() method :(
+          });
 
         /** loading complete, we can now remove our message */
         $("#message-loading").html("");
@@ -111,85 +114,139 @@
   <body>
 
     <!-- TODO - should be in network.maps See: http://flowplayer.org/forum/20/21252 -->
-    <div class="overlay-router" id="overlay-router">
-      <iframe class="wrap" style="overflow-x: hidden;" width="800" height="600" scrolling="no"></iframe>
-      <!-- div id="router-dashboard"></div -->
+    <!-- div class="overlay-router" id="overlay-router">
+         <iframe class="wrap" style="overflow-x: hidden;" width="800" height="600" scrolling="no"></iframe>
+    </div -->
+    
+    
+    <div style="border:0px solid green;" id="map">
     </div>
-
-    <div id="container">
-
-      <div id="header">
-        <ul id="menu">
-          <li class="left">
-            <!-- span id="afrimesh|settings|network_name"></span -->
-            <span>Mesh Dashboard</span>
-          </li> 
-          <li>&nbsp;</li>
-          <li> Customers
-            <ul id="customers"> 
-              <img class="top_left" alt="" src="style/images/top_left.png"/>
-              <li id="recharge">Recharge</li>
-              <img class="top_right" alt="" src="style/images/top_right.png"/>
-              <li id="manage">Manage</li>
-              <li id="plans">Plans</li>
-              <li id="status">Status</li>
-              <li class="last">
-                <img class="bottom_left" alt="" src="style/images/bottom_left.png"/>
-                <span class="middle"></span>
-                <img class="bottom_right" alt="" src="style/images/bottom_right.png"/>
-              </li>
-            </ul> 
-          </li> 
-          <li> Network
-            <ul id="network" class="dropdown"> 
-              <img class="top_left" alt="" src="style/images/top_left.png"/>
-              <li id="map">Map</li>
-              <img class="top_right" alt="" src="style/images/top_right.png"/>
-              <li id="health">Health</li> 
-              <li id="devices">Devices</li> 
-              <li class="last">
-                <img class="bottom_left" alt="" src="style/images/bottom_left.png"/>
-                <span class="middle"></span>
-                <img class="bottom_right" alt="" src="style/images/bottom_right.png"/>
-              </li>
-            </ul> 
-          </li> 
-          <li> Help
-            <ul id="help"> 
-              <img class="top_left" alt="" src="style/images/top_left.png"/>
-              <li id="howto">How to...</li>
-              <img class="top_right" alt="" src="style/images/top_right.png"/>
-              <li id="group">Support group</li>
-              <li id="chat">Live chat</li>
-              <li class="last">
-                <img class="bottom_left" alt="" src="style/images/bottom_left.png"/>
-                <span class="middle"></span>
-                <img class="bottom_right" alt="" src="style/images/bottom_right.png"/>
-              </li>
-            </ul> 
-          </li> 
-          <li>&nbsp;</li>
-          <li class="right"><img src="images/gear.png" />
-            <ul id="utility">
-              <img class="top_left" alt="" src="style/images/top_left.png"/>
-              <li id="settings">Settings</li>
-              <li id="logout">Logout</li>
-              <li class="last">
-                <img class="bottom_left" alt="" src="style/images/bottom_left.png"/>
-                <span class="middle"></span>
-              </li>
-            </ul>
-          </li>
-        </ul> <!-- /menu -->
-      </div> <!-- /header -->
-
+    
+    <style>
+        ul#dock {
+          position:absolute; top: 10px; bottom:10px; width:100px;
+          -webkit-box-shadow:rgba(0,0,0,0.5) 0px 0px 10px;    
+          background:rgba(64,64,64,0.8); 
+          color:white;
+          text-align: center;
+        }
+        ul#dock.dockleft {
+          left:0px; 
+          -webkit-border-top-right-radius: 1.5em; 
+          -webkit-border-bottom-right-radius: 1.5em;
+          border: 2px solid white;
+          border-left: 0px;
+        }
+        ul#dock.dockright {
+          right:0px; 
+          -webkit-border-top-left-radius: 1.5em; 
+          -webkit-border-bottom-left-radius: 1.5em;
+          border: 2px solid white;
+          border-right: 0px;
+        }
+        ul#dock.dockmax {
+          /*left: 0px;*/
+        }
+        ul#dock.dockmin {
+          left: -75px;
+        }
+        ul#dock hr {
+          border: 0px;
+          height:1.0em;
+        }
+        ul#dock li {
+          border: 0px solid red;
+          position:relative;
+          line-height: 1.5;
+        }
+        ul#dock li:hover {
+          background: white;
+          color: black;
+        }
+        ul#dock .callout {
+          z-index: 1;
+          position: absolute;
+          top: -2px;
+          right: -22px;
+          font-size: 0px; line-height: 0%; width: 0px;
+          border-top    : 15px solid rgba(255,255,255,0.0);
+          border-right  : 20px solid white;
+          border-bottom : 15px solid rgba(255,255,255,0.0);
+        }
+        ul#dock .callout-border {
+          z-index: 1;
+          position: absolute;
+          top: -2px;
+          right: -21px;
+          font-size: 0px; line-height: 0%; width: 0px;
+          border-top    : 15px solid rgba(255,255,255,0.0);
+          border-right  : 20px solid #bab8b4;
+          border-bottom : 15px solid rgba(255,255,255,0.0);
+        }
+    </style>
+    <ul id="dock" class="dockleft dockmax">
+      <li onclick='
+                   if ($("#dock").hasClass("dockleft")) {
+                     $("#dock").addClass("dockright").removeClass("dockleft");
+                   } else {
+                     $("#dock").addClass("dockleft").removeClass("dockright");
+                   }'>
+        swap
+      </li>
+      <li onclick='if ($("#dock").hasClass("dockmin")) {
+                     $("#dock").addClass("dockmax").removeClass("dockmin");
+                     $("#overlay").addClass("dockmax").removeClass("dockmin");
+                     $("#overlay").css("left", "120px");
+                   } else {
+                     $("#dock").addClass("dockmin").removeClass("dockmax");
+                     $("#overlay").css("left", "45px");
+                   }'>
+        minimize
+      </li>
+      <hr/>
+      <li id="login">Login</li>
+      <hr/>
+      <li id="people">People</li>
+      <li id="mesh">Mesh</li>
+      <li id="gateway">Gateways</li>
+      <li id="accounts">$$$</li>
+      <li id="equipment">Equipment</li>
+      <li id="logs">Logs</li>
+      <hr/>
+      <div style="position:absolute; bottom: 20px; width:100%;">
+        <li id="help">Help</li>
+        <hr/>
+        <li id="settings">Settings</li>
+        <!-- img src="images/gear.png" / -->
+      </div>
+    </ul>
+    
+    
+    
+    <!-- see http://www.schillmania.com/content/entries/2009/css3-and-the-future/ -->
+    <div id="overlay"
+         style="position:absolute; left: 120px; right: 20px; top: 10px; bottom: 10px;
+                background:rgba(255,255,255,0.95);
+                padding: 1em;
+                -webkit-border-radius: 1.0em;
+                /*border: 1px solid rgba(128,128,128,0.1);*/
+                -webkit-box-shadow:rgba(0,0,0,0.5) 0px 0px 10px;
+                visibility:hidden;">
+      <div style="position:absolute; right:20px;"
+           onClick='$("#overlay").css("visibility", "hidden");
+                    $("ul#dock .callout").remove();
+                    $("ul#dock .callout-border").remove();
+                    $("ul#dock .underline").removeClass();'>
+        hide
+      </div>
       <div id="content">
         please wait a moment...
       </div> <!-- /content -->
-
-      <div id="live-chat" style="padding-left: 1.0em;" >
-      </div> <!-- /live-chat -->
-
-    </div> <!-- /container -->
+    </div>
+    
+    <div id="live-chat" style="padding-left: 1.0em;" >
+    </div> <!-- /live-chat -->
+    
+    
   </body>
 </html>

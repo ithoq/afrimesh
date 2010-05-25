@@ -8,25 +8,26 @@
  */
 
 
-/* - Source: http://developer.yahoo.com/yui/reset/ ------------------------- */
-/* @import url("reset-fonts-grids.css"); */
+/* - reset ----------------------------------------------------------------- */
+/* * {
+  margin: 0px;
+  padding:0px;
+}*/
+@import url("reset.css");
 
 
 /* - global ---------------------------------------------------------------- */
 html {
-  font-size: 62.5%;
+  font-family: "Lucida Grande", "Lucida Sans", "Lucida Sans Unicode", Helvetica, Verdana, Arial, sans-serif;
 }
 
 body {
-  font-family: "Lucida Grande", "Lucida Sans Unicode", Helvetica, Verdana, Arial, sans-serif;
-  text-align: left;
+  overflow:hidden;
+  margin: 0px;
+  padding: 0px;
   color: #333;
 }
 
-/* - Lucida Sans variants look 'orrible - */
-strong, em, b, i {
-  font-family: "Lucida Grande", "Lucida Sans", "Lucida Sans Unicode", Helvetica, Verdana, Arial, sans-serif;   
-}
 
 /* - clean links - */
 a         { text-decoration: none; }
@@ -36,8 +37,9 @@ a:focus   { text-decoration: none; -moz-outline-style: none; }
 a:active  { text-decoration: none; outline: none; }
 a:hover   { text-decoration: none; }
 
+
 /* - styles --------------------------------------------------------------- */
-h1 {
+/*h1 {
   font-size: 1.85em;
   padding-bottom: .75em;
 }
@@ -51,53 +53,54 @@ h2 {
 h3 {
   font-size: 1.25em;
   padding-bottom: .75em;
+}*/
+
+
+/* - better default tables ------------------------------------------------ */
+/*thead  { color:gray; }
+th,td  { padding: 0.3em; }
+th     { border-bottom: 1px solid lightgray; }*/
+
+
+/* - better default inputs ------------------------------------------------ */
+/*input {  
+  border: 1px solid gray;
+}*/
+
+
+/* - visual styles -------------------------------------------------------- */
+.underline {
+  text-decoration: underline;
 }
 
 
 /* - layout --------------------------------------------------------------- */
-#container {
-  background: white;  
-  /*border: 1px solid blue;*/
+/*#container {
+  border: 0px solid blue;
   margin: 0px;
   padding: 0px;
 }
 
 #header {
-  /*border: 1px solid green;*/
+  border: 0px solid green;
   padding-left: .5em;
   margin-bottom: 1.75em;
   float:right;
-}
+}*/
 
-#content {
-  clear:both;
+/*#content {
   padding: 0px;
-  margin-left: 1.0em;
   padding-left:  0.95em;
   padding-right: 0.75em;
   border-left: 1px solid lightgray;       
-  /*border: 1px solid green;*/
+}*/
 
-}
-
-#footer {
+/*#footer {
   clear: both;
   padding: 0px;  
   margin: 0px;
   color: #333;
-  /*border: 1px solid green;*/
-}
-
-
-/* - better default tables ------------------------------------------------ */
-thead  { color:gray; }
-th,td  { padding: 0.3em; }
-th     { border-bottom: 1px solid lightgray; }
-
-
-/* - better default inputs ------------------------------------------------ */
-input {  
-  border: 1px solid gray;
-}
+  border: 0px solid green;
+}*/
 
 
