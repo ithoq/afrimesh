@@ -1,0 +1,211 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!--
+ * Afrimesh: easy management for B.A.T.M.A.N. wireless mesh networks
+ * Copyright (C) 2008-2009 Meraka Institute of the CSIR
+ * All rights reserved.
+ *  
+ * This software is licensed as free software under the terms of the
+ * New BSD License. See /LICENSE for more information.
+-->
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="style/reset.css"> 
+    <link rel="stylesheet" type="text/css" href="style/default.css"> 
+    <link rel="stylesheet" type="text/css" href="style/menu.css"> 
+    <link rel="stylesheet" type="text/css" href="style/map.css"> 
+    <link rel="stylesheet" type="text/css" href="style/modules.css"> 
+    <link rel="stylesheet" type="text/css" href="style/overlay-router.css"> 
+
+    <!-- includes ---------------------------------------------------------- -->
+    <!-- jquery -->
+    <!-- script type="text/javascript" src="http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js"></script -->
+    <script type="text/javascript" src="javascript/jquery/jquery.tools.min.js"></script>  <!-- jquery.tools comes with jquery -->
+    <script type="text/javascript" src="javascript/jquery/jquery.json.js"></script>  <!-- TODO switch to json.org -->
+    <script type="text/javascript" src="javascript/jquery/jquery.corner.js"></script> <!-- http://jrc.meerbox.nl/ - TODO deprecate -->
+                                                                                      <!-- also look at: http://www.malsup.com/jquery/corner/ -->
+                                                                                      <!--               http://www.ruzee.com/files/shadedborder/ -->
+    <!-- afrimesh -->
+    <script type="text/javascript" src="javascript/afrimesh.utilities.js"></script>
+    <script type="text/javascript" src="javascript/afrimesh.platform.js"></script>
+    <script type="text/javascript" src="javascript/afrimesh.villagebus.js"></script>
+    <script type="text/javascript" src="javascript/afrimesh.storage.js"></script>
+    <script type="text/javascript" src="javascript/afrimesh.network.js"></script>
+    <script type="text/javascript" src="javascript/afrimesh.customers.js"></script>
+    <script type="text/javascript" src="javascript/afrimesh.settings.js"></script>
+    <script type="text/javascript" src="javascript/afrimesh.js"></script>
+
+    <!-- One-time initialization/bootstrap ------------------------------- -->
+    <script type="text/javascript">  //<![CDATA[    
+      $(document).ready(function() {
+
+        /*$.ajax({ url: "javascript/afrimesh.platform.js",
+          dataType: "script",
+          async: false,
+          success: function(js) { console.debug("finished loading"); } });*/
+
+        /** round menu item corners */
+        $("#menu .left").corner("bl 13px");
+        //$("#menu .right").corner("br 13px");
+        /*$("#menu li").mouseover(function() {  // UDE - we have to manually round invisible elements
+          $(this).find("ul").corner("bottom 15px");  
+        }); */
+
+        /** init overlay window TODO - should be in network.maps See: http://flowplayer.org/forum/20/21252 */
+        var api = $("#overlay-router").overlay({ api:true }); 
+        evil_display_overlay = function(url) {
+           api.getContent().find("iframe.wrap").attr('src', url);
+           api.load();
+        }
+
+        console.debug("$(document).ready() -------------------- start");
+
+        /** global error handler for Ajax requests */
+        $(document).ajaxError(function(ajax, response, request) {
+            console.error("AJAX: " + ajax.type);
+            console.error("RESPONSE: " + response.status + " " + response.statusText + "\n" + response.responseText);
+            console.error("REQUEST:  " + request.data);
+          });
+
+        /** populate DOM references to afrimesh.settings */
+        var elements = $("[id*=afrimesh|settings]");
+        elements.each(function(element) {
+            //$(elements[element]).html("&lt;" + elements[element].id + "&gt;");
+            //$(elements[element]).html(afrimesh.Q(elements[element].id) + "");
+            $(elements[element]).html(Q(afrimesh, elements[element].id) + "");
+          });
+
+        /** attach actions to menu */
+        // UDE it looks like we're ending up with multiple instances of modules
+        //     need to change the code so it either unloads or only ever loads
+        //     a module once
+        // UDE as the code currently stands we cannot load a module into the
+        //     browser as a standalone
+        var unloader = function() {  };
+        function add_menu_item(section, item) {
+          $("ul#menu ul#" + section + " li#" + item).click(function(event) {
+              unloader(); 
+              $("div#content").hide();
+              $("div#content").load("modules/" + section + "." + item.split("-").join(".") + ".html", function(page) { 
+                  $("div#content").fadeIn("slow"); 
+                  unloader = ready(); // UDE fades mess with load completion and require a ready() method :(
+                });
+              return false;
+            });
+        };
+        add_menu_item("network",   "map");
+        add_menu_item("network",   "health");
+        add_menu_item("help",      "howto");
+        add_menu_item("help",      "group");
+        add_menu_item("help",      "chat");
+        add_menu_item("utility",   "settings-router");
+        add_menu_item("utility",   "logout");
+
+        /** loader for luci webif */
+        $("ul#menu ul#utility li#settings-luci").click(function() {
+            var luci_url = "/index.luci.html";
+            $("div#content").html("<iframe id='luci' src='" + luci_url + "' scrolling='no' frameborder='no' ALLOWTRANSPARENCY='true' width='100%' height='0' />");
+            $("#luci").load(function() {
+                this.style.height = this.contentWindow.document.body.offsetHeight + 'px';
+                console.debug("Resized: " + this.contentWindow.document.body.offsetHeight);
+              });
+          });
+
+        /** set default page */
+        $("ul#menu ul#utility li#settings-router").click();
+        //$("ul#menu ul#network li#map").click();
+
+        /** loading complete, we can now remove our message */
+        $("#message-loading").html("");
+
+        console.debug("$(document).ready() -------------------- end");
+      });
+
+     //]]></script>
+  </head>
+  <body>
+
+    <!-- TODO - should be in network.maps See: http://flowplayer.org/forum/20/21252 -->
+    <div class="overlay-router" id="overlay-router">
+      <iframe class="wrap" style="overflow-x: hidden;" width="780" height="600" scrolling="yes"></iframe>
+      <div id="router-dashboard"></div>
+    </div>
+
+    <!-- div id="message-loading" style="text-align:center;">please wait...</div --> <!-- TODO -->
+
+    <div id="container">
+
+      <div id="header">
+
+        <ul id="menu">
+          <li class="left">
+            <span id="afrimesh|settings|network_name"></span>
+          </li> 
+          <li>&nbsp;</li>
+          <li> Network
+            <ul id="network" class="dropdown"> 
+              <img class="top_left" alt="" src="style/images/top_left.png"/>
+              <li id="map">Map</li>
+              <img class="top_right" alt="" src="style/images/top_right.png"/>
+              <!-- li id="health">Health</li --> 
+              <li class="last">
+                <img class="bottom_left" alt="" src="style/images/bottom_left.png"/>
+                <span class="middle"></span>
+                <img class="bottom_right" alt="" src="style/images/bottom_right.png"/>
+              </li>
+            </ul> 
+          </li> 
+          <li> Help
+            <ul id="help"> 
+              <img class="top_left" alt="" src="style/images/top_left.png"/>
+              <li id="howto">How to...</li>
+              <img class="top_right" alt="" src="style/images/top_right.png"/>
+              <li id="group">Support group</li>
+              <li id="chat">Live chat</li>
+              <li class="last">
+                <img class="bottom_left" alt="" src="style/images/bottom_left.png"/>
+                <span class="middle"></span>
+                <img class="bottom_right" alt="" src="style/images/bottom_right.png"/>
+              </li>
+            </ul> 
+          </li> 
+          <li>&nbsp;</li>
+          <li class="searchContainer"> 
+            <div> 
+              <input type="text" size=16 id="searchField" /> 
+              <img src="style/images/magnifier.png" alt="Search" onclick="alert('You clicked on search button')" /></div> 
+          </li>
+          <li class="right"><img src="images/gear.png" />
+            <ul id="utility">
+              <img class="top_left" alt="" src="style/images/top_left.png"/>
+              <li id="settings-router">Settings</li>
+              <li id="settings-luci">LuCI Advanced</li>
+              <li id="logout">Logout</li>
+              <li class="last">
+                <img class="bottom_left" alt="" src="style/images/bottom_left.png"/>
+                <span class="middle"></span>
+                <!-- img class="bottom_right" alt="" src="style/images/bottom_right.png"/ -->
+              </li>
+            </ul>
+          </li>
+        </ul> 
+      </div> <!-- /header -->
+
+
+      <div id="content">
+        please wait a moment...
+      </div> <!-- /content -->
+
+      <div id="live-chat">
+      </div>
+
+      <!-- div id="footer">
+      </div --> <!-- /footer -->
+
+      <!-- div id="console"></div --> <!-- TODO -->
+
+    </div> <!-- /container -->
+      
+  </body>
+</html>
+
+

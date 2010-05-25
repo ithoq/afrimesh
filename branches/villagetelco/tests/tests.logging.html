@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!--
+ * Afrimesh: easy management for B.A.T.M.A.N. wireless mesh networks
+ * Copyright (C) 2008-2009 Meraka Institute of the CSIR
+ * All rights reserved.
+ *  
+ * This software is licensed as free software under the terms of the
+ * New BSD License. See /LICENSE for more information.
+-->
+<html>
+  <head>
+    <!-- script type='text/javascript' 
+            src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script -->
+    <script type="text/javascript" src="../javascript/afrimesh/util.js"></script>
+    <script type="text/javascript">  //<![CDATA[    
+
+      console.log("this is a log");
+      console.info("this is an info");
+      console.warn("this is a warn");
+      console.error("this is an error");
+      console.debug("this is a debug");
+
+      function f() {
+        console.page("this is the page");
+      };
+      
+
+    //]]></script>
+  </head>
+  <body>
+    <h1>This is my header</h1>
+
+    <button onclick="f();">log</button>
+
+    <div id="console"></div>
+  </body>
+</html>

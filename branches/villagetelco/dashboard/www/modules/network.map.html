@@ -1,0 +1,240 @@
+<!--
+ * Afrimesh: easy management for B.A.T.M.A.N. wireless mesh networks
+ * Copyright (C) 2008-2009 Meraka Institute of the CSIR
+ * All rights reserved.
+ *  
+ * This software is licensed as free software under the terms of the
+ * New BSD License. See /LICENSE for more information.
+-->
+
+<!-- h2>Network Map</h2 -->
+<div style="position:relative; ">
+  <div id="network-map-legend"
+       onmouseover="this.style.opacity=1.0;" 
+       onmouseout="this.style.opacity=0.7;">
+    <!-- this.style.opacity=0.1;this.filters.alpha.opacity=10 -->
+    <img src="images/network-map-legend.png" style="padding:0px; margin:0px;"/>
+  </div>
+  <!-- div id="network-map" style="width: 100%; height:75%;" -->
+  <div id="network-map" style="width: 100%; height: 75%;">
+  </div>
+</div>
+
+<!-- see: http://bbs.keyhole.com/ubb/ubbthreads.php?ubb=showflat&Number=283026 -->
+<form class="export-map" action="/cgi-bin/mesh-topology.kml" method="POST" target="_blank">
+<input id="export-map-data" type="hidden" name="data" />
+<input id="export-map-type" type="hidden" name="type" value="application/vnd.google-earth.kml+xml" />
+<input type="submit" style="color: blue" value="Export to Google Earth" />
+</form>
+
+<script type="text/javascript">( //<![CDATA[    
+function() {
+
+  /** includes ------------------------------------------------------------ */
+
+  /** construction -------------------------------------------------------- */
+  ready = function() {
+    console.debug("loaded network.map.html");
+
+    // we'd like the map to fill the whole window
+    var resize_map = function() { 
+      $("div#network-map").height($(window).height() - $("#header").outerHeight(true) - 30);
+    };
+    resize_map();
+    $(window).bind("resize", resize_map);
+    
+
+    $("div#network-map").addClass("message");
+    $("div#network-map").html("<p><br/><p>Loading Network Map...</p>");
+
+    // Load OpenStreetMap & OpenLayers libraries
+    load.async(afrimesh.settings.map.openlayers_url, function(data, textStatus) {
+        if (typeof OpenLayers == "undefined") {
+          return load_error("The OpenLayers mapping service could not be found.");
+        }
+        load.async(afrimesh.settings.map.osm_url, load_complete);
+      });
+
+    // Create map once libs are loaded
+    function load_complete(data, textStatus) {
+      if (typeof OpenLayers.Layer.OSM == "undefined") {
+        return load_error("The OpenStreetMaps mapping service could not be found.");
+      }
+      load("javascript/afrimesh.maps.js"); 
+      load("modules/network.map.js");
+      $("div#network-map").html("");
+      $("div#network-map").removeClass("message");
+      var network_map = new Map("network-map",  // TODO - consider caching the map :)
+                                parseFloat(afrimesh.settings.location.longitude),
+                                parseFloat(afrimesh.settings.location.latitude),
+                                parseFloat(afrimesh.settings.map.extent),
+                                parseInt(afrimesh.settings.map.zoom),
+                                60.0 * 1000.0);
+      console.debug("location.longitude -> " + afrimesh.settings.location.longitude);
+      console.debug("location.latitude -> " + afrimesh.settings.location.latitude);
+      console.debug("map.extent -> " + afrimesh.settings.map.extent);
+      console.debug("map.zoom -> " + afrimesh.settings.map.zoom);
+      $("form.export-map").submit(function() {
+          console.debug("submitting");
+          export_kml(network_map);
+          return true;
+        });
+      update(network_map); 
+      $("div[id$=_zoomworld]").click(function () {
+            network_map.zoom(2);
+          });    
+    };
+
+    function load_error(message) {
+      var html = "<p><br/><p>Could Not Contact Map Server.</p>";
+      html += "<p><br/><p>" + message + "</p>";
+      $("div#network-map").html(html);
+    };
+
+    //$("div#network-map-legend").corner("10px");
+
+    return unload;
+  };
+
+  function unload() {
+    clearTimeout(timer);
+    console.debug("unloaded network.map.html");
+  };
+  console.debug("loaded network.map.js");
+
+
+  /** export kml ---------------------------------------------------------- */
+  function export_kml(network_map) { 
+    var my_kml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"          +
+                      "<kml xmlns=\"http://www.opengis.net/kml/2.2\""       +
+                      "     xmlns:gx=\"http://www.google.com/kml/ext/2.2\"" +
+                      "     xmlns:kml=\"http://www.opengis.net/kml/2.2\""   +
+                      "     xmlns:atom=\"http://www.w3.org/2005/Atom\">";
+    my_kml_data += "<Document>";
+    my_kml_data += "<name>SimpleAfrimesh.kml</name>";
+    my_kml_data += "<Folder>";
+		my_kml_data += "<name>Afrimesh</name>";
+		my_kml_data += "<open>1</open>";
+
+    network_map.routers.features.map(function(feature) {
+        if (!feature.geometry) { return; }
+        console.debug("feature: " + feature + " -> " + feature.router);
+        var location = new OpenLayers.LonLat(feature.geometry.x, feature.geometry.y).transform(epsg_900913, epsg_4326);
+        my_kml_data += "<Style id=\"blueDot\">" +
+                       "<IconStyle>" +
+                       "<color>ffff5500</color>" +
+                       "<scale>1</scale>" +
+                       "<Icon>" +
+                       "<href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href>" +
+                       "</Icon>" +
+                       "</IconStyle>" +
+                       "</Style>";
+       my_kml_data +=  "<Placemark>" +
+                       "<name>" + feature.id + "</name>" +
+                       "<styleUrl>#blueDot</styleUrl>" +
+                       "<Point>" +
+                       "<coordinates>" + location.lon + "," + location.lat + ",0</coordinates>" +
+                       "</Point>" +
+                       "</Placemark>";
+      });
+
+    network_map.routes.features.map(function(feature) {
+        var origin      = network_map.routers.getFeatureById(feature.route.router);
+        var destination = network_map.routers.getFeatureById(feature.route.neighbour);
+        origin      = new OpenLayers.LonLat(origin.geometry.x, origin.geometry.y).transform(epsg_900913, epsg_4326);
+        destination = new OpenLayers.LonLat(destination.geometry.x, destination.geometry.y).transform(epsg_900913, epsg_4326);
+        my_kml_data += "<Style id=\"yellowLine\">" +
+                       "<LineStyle>";
+        my_kml_data += "<color>" + network_map.lq_to_argb(feature.route.label) + "</color>";
+        my_kml_data += "<width>5</width>" +  // adjusts the width (thickness) of the links 
+                       "</LineStyle>" +
+                       "</Style>";
+        my_kml_data += "<Placemark>" +
+                       "<name>" + feature.route.router + "->" + feature.route.neighbour + "</name>" +
+                       "<styleUrl>#yellowLine</styleUrl>" +
+                       "<LineString>" +
+                       "<coordinates>" + origin.lon + "," + origin.lat + ",0\n" + 
+                                         destination.lon + "," + destination.lat + ",0\n" +
+                       "</coordinates>" +
+                       "</LineString>" +
+                       "</Placemark>"; 
+      });
+
+    my_kml_data += "</Folder>";
+    my_kml_data += "</Document>";
+    my_kml_data += "</kml>";
+    console.debug(my_kml_data);
+    $("#export-map-data").val(my_kml_data); 
+    //window.location = 'data:application/vnd.google-earth.kml+xml,' + escape(my_kml_data);
+    //$.post("/~sprinter/cgi-bin/mesh-topology.kml?Content-type=application/vnd.google-earth.kml+xml", my_kml_data);
+  };
+       
+
+  /** update map ---------------------------------------------------------- */
+  var timer = {};
+  function update(network_map) {
+    clearTimeout(timer);
+    afrimesh.network.mesh.routers.async(function(routers) { 
+        update_complete(network_map, routers); 
+      });
+  };
+
+  function update_complete(network_map, routers) {
+    var now = new Date();
+
+    // Update LQ display, tag all active network elements with last seen time and add new elements to the map
+    routers.map(function(router) { 
+        var feature = network_map.router(router);
+        feature.last_seen = now;
+        router.routes.map(function(route) {
+            var route_feature = network_map.route(route);
+            if (route_feature.style) { // TODO - this should be a network_map method
+              var color = network_map.lq_to_color(route.label);
+              route_feature.style.strokeOpacity   = color.a;
+              route_feature.style.strokeColor     = color.rgb;
+              network_map.routes.drawFeature(route_feature);
+            }
+            route_feature.last_seen = now; 
+          });
+      });
+        
+    // go through all features and set transparency relative to when they were last seen
+    network_map.routers.features.map(function(router_feature) {
+        // TODO - this should also be encapsulated in a network_map method
+        var fade_time = 240.0 * 1000.0;
+        var min_opacity = 0.1;
+        var start_opacity = 1.0;
+        var age = now - router_feature.last_seen;
+        var opacity = Math.max(min_opacity, start_opacity - (age / fade_time));        
+        //console.debug("Router last seen: " + age + " opacity: " + opacity);
+        router_feature.style.fillOpacity = opacity;
+        network_map.routers.drawFeature(router_feature);
+        router_feature.router.routes.map(function(route) {
+            var route_feature = network_map.route(route);
+            if (route_feature.last_seen) {
+               var age = now - route_feature.last_seen;
+               var opacity = Math.max(min_opacity, start_opacity - (age / fade_time));        
+               //console.debug("Route last seen: " + age + " opacity: " + opacity + " update freq: " + network_map.update_frequency);
+               if (age == 0) { 
+                 route_feature.style.strokeDashstyle = "solid";
+               } else {
+                 route_feature.style.strokeOpacity = opacity;
+                 route_feature.style.strokeDashstyle = "dot";
+               }
+               network_map.routes.drawFeature(route_feature);
+            }
+          });
+      });
+
+    //console.debug("updated network map");
+    timer = setTimeout(function() { update(network_map); }, network_map.update_frequency);
+    if (network_map.update_frequency < network_map.update_target) {
+      network_map.update_frequency *= 2.0;
+    }
+  };
+
+})();
+//]]></script>
+
+
+

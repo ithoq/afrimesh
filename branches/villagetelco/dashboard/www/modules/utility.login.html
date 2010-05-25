@@ -1,0 +1,70 @@
+<!--
+ * Afrimesh: easy management for B.A.T.M.A.N. wireless mesh networks
+ * Copyright (C) 2008-2009 Meraka Institute of the CSIR
+ * All rights reserved.
+ *  
+ * This software is licensed as free software under the terms of the
+ * New BSD License. See /LICENSE for more information.
+-->
+
+
+<form id="authorize" class="two-column">
+  <fieldset>
+    <legend>Authorization Required</legend>
+    <p>Please enter your username and password.</p>
+    <div id="message" style="color:red;">&nbsp;</div><br/>
+    <div class="label">Username</div>
+    <input id="username" value="root"/>
+    <div class="label">Password</div>
+    <input id="password" type="password"/>
+    <button>login</button>
+  </fieldset>
+</form>
+
+
+
+
+<script type="text/javascript"> //<![CDATA[    
+//var on_login;
+(function() {
+  /** construction -------------------------------------------------------- */
+  ready = function() { // INJ 'ready' should be the only symbol we're exposing to the global namespace
+    /* often a good place to do this: populate_control(); */
+    console.debug("loaded utility.login.html");
+    $("#authorize").submit(on_login);
+    return unload;
+  };
+
+  function unload() {
+    console.debug("unloaded utility.login.html");
+  };
+
+  /** handle login -------------------------------------------------------- */
+  var on_login = function() {
+    $("#authorize button").html("<img src='images/indicator.gif'/>");
+    afrimesh.villagebus.login(username.value, password.value, 
+      function(session) {
+        console.debug("LOGGED IN: " + session);
+        afrimesh.session = { id : session, username : username.value, password : password.value };
+        $("ul#menu ul#utility li#login").html("Logout");
+        $("ul#menu ul#utility li#settings-potato").show();
+        $("ul#menu ul#utility li#upgrade").show()
+        $("ul#menu ul#utility li#settings-potato").click();
+      },
+      function(error) {
+        console.warn("I could not login: " + error);
+        $("#message").html("Invalid username and/or password! Please try again.");
+        $("#authorize button").html("login");
+      });
+    return false;
+  };
+
+  function on_authorized() {
+    
+  };
+
+ 
+})();
+//]]></script>
+
+
