@@ -91,7 +91,7 @@ th     { border-bottom: 1px solid lightgray; }*/
 /* - content -------------------------------------------------------------- */
 div#overlay {
   position:absolute; 
-  left: 120px; 
+  left: 90px; 
   right: 10px; 
   top: 10px; 
   bottom: 10px;
@@ -108,8 +108,9 @@ ul#dock {
   position:absolute; 
   top: 10px; 
   bottom: 10px; 
-  width: 100px;
+  width: 70px;
   background: rgba(64,64,64,0.8); 
+  /*background: rgba(256,256,256,0.8); */
   color: white;
   text-align: center;
 }
@@ -147,7 +148,7 @@ ul#dock.dockmax {
 /*left: 0px;*/
 }
 ul#dock.dockmin {
-  left: -75px;
+  left: -60px;
 }
 ul#dock hr {
   border: 0px;
@@ -156,29 +157,30 @@ ul#dock hr {
 ul#dock li {
   border: 0px solid red;
   position:relative;
-  line-height: 1.5;
+  /*line-height: 2.5;*/
+  border: 0px solid blue;
 }
 ul#dock li:hover {
-  background: white;
+  opacity:0.5;
   color: black;
 }
 ul#dock .callout {
   z-index: 1;
   position: absolute;
-  top: -2px;
+  top: 10px;
   right: -22px;
   font-size: 0px; line-height: 0%; width: 0px;
   border-top    : 15px solid rgba(255,255,255,0.0);
-  border-right  : 20px solid white;
+  border-right  : 16px solid white;
   border-bottom : 15px solid rgba(255,255,255,0.0);
 }
 ul#dock .callout-border {
   z-index: 1;
   position: absolute;
-  top: -2px;
+  top: 10px;
   right: -21px;
   font-size: 0px; line-height: 0%; width: 0px;
   border-top    : 15px solid rgba(255,255,255,0.0);
-  border-right  : 20px solid #bab8b4;
+  border-right  : 16px solid #bab8b4;
   border-bottom : 15px solid rgba(255,255,255,0.0);
 }

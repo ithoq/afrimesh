@@ -18,34 +18,54 @@
     <input type="checkbox" id="gateways" /> <label for="gateways">Gateways</label>
     <input type="checkbox" id="potatos" /> <label for="potatos">Potatos</label>
   </form>
-  <hr/>
+  <!--hr/-->
 
   <style>
     div.devices {
       display: table;
       padding: 0.5em;
+      text-overflow : ellipsis;
+      white-space   : nowrap;
+      overflow      : hidden; 
+      border : 0px solid black;
+    }
+    div.head {
+      display: table-row;
+      font-weight: bold;
+      font-size: 1.1em;
+    }
+    div.head span {
+      display: table-cell;
+      padding-bottom: 1.0em;
     }
     div.entry {
       display: table-row;
       vertical-align: middle;
-      border : 1px solid red;
       height : 2.0em;
       line-height : 2.0em;
     }
-    div.entry .name {
+    div.entry span.name {
       display: table-cell;
       color: blue;
       font-weight: bold;
-      border: 0px solid gray;
       padding-right: 1.5em;
     }
-    div.entry .status {
+    div.entry span.lastseen {
+      display: table-cell;
+      color: black;
+      padding-left: 1.5em;
+    }
+    div.entry span.status {
       display: table-cell;
       color: green;
-      border: 0px solid gray;
       padding-right: 1.5em;
     }
-    div.entry .graph {
+    div.entry span.traffic {
+      display: table-cell;
+      color: gray;
+      padding-right: 1.5em;
+    }
+    div.entry span.graph {
       display: table-cell;
       border: 1px solid lightgray;
       background: #eee;
@@ -53,17 +73,28 @@
       padding-left: 0.25em;
       padding-right: 0.25em;
     }
+    div.entry br {
+      line-height: 0.5em;
+    }
   </style>
 
   <div class="devices">
+    <!-- div class="head">
+      <span>Name</span>
+      <span>Status</span>
+      <span>Traffic</span>
+      <span>Last 24 Hours</span>
+    </div -->
     <div class="entry">
       <span class="name">gateway-is-1</span> 
       <span class="status">healthy</span>
+      <span class="traffic">123MB</span>
       <span class="graph"/>
     </div><br/>
     <div class="entry">
       <span class="name">library</span> 
       <span class="status">healthy</span>
+      <span class="traffic">523MB</span>
       <span class="graph"/>
     </div>
   </div>
@@ -84,7 +115,7 @@
     console.debug("loaded network.devices.html");
 
     var data = [];
-    for (var i = 0; i < 24 * 10; i++) {
+    for (var i = 0; i < 24 * 6; i++) {
       data.push(Math.random());
     }
 

@@ -56,6 +56,8 @@ struct json_object* jsonrpc_dispatch_snmp(const char* name, struct json_object* 
 struct json_object* jsonrpc_dispatch_uci_show(const char* name, struct json_object* arguments);
 struct json_object* jsonrpc_dispatch_uci_set (const char* name, struct json_object* arguments);
 
+struct json_object* jsonrpc_dispatch_status(const char* name, struct json_object* arguments);
+
 struct json_object* jsonrpc_dispatch_sys_syslog (const char* name, struct json_object* arguments);
 struct json_object* jsonrpc_dispatch_sys_uname  (const char* name, struct json_object* arguments);
 struct json_object* jsonrpc_dispatch_sys_version(const char* name, struct json_object* arguments); /* TODO - all components */

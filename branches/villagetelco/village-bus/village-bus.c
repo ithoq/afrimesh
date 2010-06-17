@@ -396,6 +396,12 @@ struct json_object* jsonrpc_dispatch_voip_sip(const char* name, struct json_obje
 }
 
 
+struct json_object* jsonrpc_dispatch_status(const char* name, struct json_object* arguments)
+{
+  log_message("Dispatching status");
+}
+
+
 /**
  */
 void httpd_out(const char* message, ...)

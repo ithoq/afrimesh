@@ -196,6 +196,7 @@ td.v-brace {
         
 /* - network devices module ------------------------------------------------ */
 div#network-devices {
+  border: 1px solid blue;
 }
 div#network-devices table, thead, tr, th, td {  
   border: 1px solid brown;
@@ -207,6 +208,7 @@ div#network-devices tr {
 div#network-devices th td {
 }
 div#network-devices form.filter {
+  border:0px solid blue;
   /*text-align:right;*/
   /*display: inline;*/
   background-color: white;
