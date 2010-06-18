@@ -51,7 +51,7 @@ LDFLAGS+=-L$(DEPROOT)/lib $(modulelibs) $(DEPROOT)/lib/libjson.a
 ECHO=/bin/echo -n
 
 # objects
-objects=safelib.o util.o object.o fexpression.o cgi.o $(modules) villagebus.o main.o 
+objects=safelib.o util.o object.o fexpression.o cgi.o jsonrpc.o $(modules) villagebus.o main.o 
 
 # build configuration
 ifeq ($(FLAVOR),LINUX)
@@ -85,6 +85,9 @@ fexpression.o : ../common/fexpression.h ../common/fexpression.c
 cgi.o : ../common/cgi.h ../common/cgi.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c ../common/cgi.c
 
+jsonrpc.o : ../common/cgi.h ../common/jsonrpc.c
+	$(CC) $(INCLUDES) $(CFLAGS) -c ../common/jsonrpc.c
+
 mod_db.o : modules/mod_db.h modules/mod_db.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c modules/mod_db.c
 
@@ -103,44 +106,46 @@ clean :
 	rm -f *.o *~ villagebus urldecode
 
 
-# tests
+# - test-http --------------------------------------------------------------
+test-http : villagebus
+	export REQUEST_METHOD="POST" ; \
+	export PATH_INFO=$(path)   ; \
+	export QUERY_STRING="plink=plonk&foo=bar" ; \
+  $(ECHO) $(json_db) | ./villagebus 
+	export REQUEST_METHOD="GET" ; \
+	export PATH_INFO=$(path)   ; \
+  ./villagebus 
+
+
+# - test-db ----------------------------------------------------------------
 version="r133"
-self=192.168.20.105 # TODO uci get mesh address
+# TODO uci get mesh address
+self=192.168.20.105
 gateway=192.168.20.1
 # timestamp="\/Date($(shell date +%s)000)\/"
 timestamp=$(shell date +%s)000
 uname=`uname`
 ping=$(shell ping -c 1 192.168.20.1 | grep from | awk '{ print $$7 }' | cut -d = -f 2)
 path="/root/db/status/$(self)"
-json="{ \
+db_json="{ \
   'timestamp' : $(timestamp),	 \
   'version' : '$(version)',	\
   'uname' : '$(uname)', \
   'gateway' : { '$(gateway)' : $(ping) } }"
 
-
-
-test-http : villagebus
-	export REQUEST_METHOD="POST" ; \
-	export PATH_INFO=$(path)   ; \
-	export QUERY_STRING="plink=plonk&foo=bar" ; \
-  $(ECHO) $(json) | ./villagebus 
-	export REQUEST_METHOD="GET" ; \
-	export PATH_INFO=$(path)   ; \
-  ./villagebus 
-
 test-db :
-	$(ECHO) $(json) | ./villagebus POST "$(path)"
-	./villagebus GET "$(path)"
+	$(ECHO) $(db_json) | ./villagebus POST "$(path)"
+	./villagebus GET $(path)
+
+
+# - test-uci ---------------------------------------------------------------
+uci_json="[ { 'config' : 'network', 'section' : 'wifi0', 'option' : 'ipaddr', 'value' : '1.1.1.1' } ]"
 
 test-uci :
-	./villagebus GET "/root/config/network/wifi0/ipaddr"
+	#$(ECHO) $(uci_json) | ./villagebus POST "/config"
+	#./villagebus GET "/root/config/network/wifi0/ipaddr"
+	./villagebus GET "/root/config"
 
-
-foo:
-	#./villagebus GET "/db/status?foo=bar&ook=ack"
-	#echo "Some Data" | ./villagebus POST "/root/db/status/192.168.20.105"
-	#echo "Some Data" | ./villagebus POST "/status?plink=plonk"
 
 
 # DEPROOT=/Volumes/afrimesh-dev/ext CFLAGS=-m32 make clean villagebus test-http

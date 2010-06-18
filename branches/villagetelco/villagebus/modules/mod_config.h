@@ -46,19 +46,23 @@ extern object* s_config;
 
 void  config_init();
 
-const fexp*  config_evaluate(struct closure* closure, config* self, const fexp* expression);
+const fexp*  config_evaluate(struct closure* closure, config* self, const fexp* message);
 
-const fexp* config_post(struct closure* closure, config* self, const fexp* expression, const unsigned char* data);
-const fexp* config_get (struct closure* closure, config* self, const fexp* expression);
+const fexp* config_post(struct closure* closure, config* self, const fexp* message, const unsigned char* payload);
+const fexp* config_get (struct closure* closure, config* self, const fexp* message);
 
 config* config_print(struct closure* closure, config* self);
 
 
 /* - uci utilities ------------------------------------------------------ */
 int uci_show(struct uci_context* context, const char* package);
-int uci_show_package(struct uci_context* context, const char* package);
-//bool uci_set_config(struct uci_context* context, const char* config, const char* section, const char* option, const char* value);
+//int uci_set(struct uci_context* context, const char* config, const char* section, const char* option, const char* value);
 
+int uci_show_package(struct uci_context* context, const char* package);
+bool uci_set_config(struct uci_context* context, const char* config, const char* section, const char* option, const char* value);
+char* option_to_string(struct uci_option* option);
+//static char* uci_lookup_section_ref(struct uci_section *s);
+static void uci_reset_typelist(void);
 
 
 #endif /* CONFIG_H */

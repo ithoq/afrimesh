@@ -46,7 +46,7 @@ extern object* s_db;
 
 void  db_init();
 
-const fexp*  db_evaluate(struct closure* closure, db* self, const fexp* expression);
+const fexp*  db_evaluate(struct closure* closure, db* self, const fexp* message);
 
 const fexp* db_post(struct closure* closure, db* self, const string* key, const unsigned char* data);
 const fexp* db_get (struct closure* closure, db* self, const string* key);

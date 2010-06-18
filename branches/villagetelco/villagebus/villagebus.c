@@ -32,26 +32,47 @@
 #include "villagebus.h"
 
 
-/* - external wrappers -------------------------------------------------- */
+/* - villagebus --------------------------------------------------------- */
+struct vtable* villagebus_vt = 0;
+object* VillageBus = 0;
+object* s_villagebus_compile  = 0;
+object* s_villagebus_evaluate = 0;
+object* s_villagebus_error    = 0;
+
+void villagebus_init() 
+{
+  s_villagebus_compile  = symbol_intern(0, 0, L"compile");
+  s_villagebus_evaluate = symbol_intern(0, 0, L"evaluate");
+  s_villagebus_error    = symbol_intern(0, 0, L"error");
+  villagebus_vt = (struct vtable*)send(object_vt, s_delegated);
+  send(villagebus_vt, s_addMethod, s_print, villagebus_print);
+  send(villagebus_vt, s_addMethod, s_villagebus_compile,  villagebus_compile);
+  send(villagebus_vt, s_addMethod, s_villagebus_evaluate, villagebus_evaluate);
+  send(villagebus_vt, s_addMethod, s_villagebus_error,    villagebus_error);
+  VillageBus = send(villagebus_vt, s_allocate, 0);
+  ((villagebus*)VillageBus)->modules = fexp_nil;
+}
+
+
 
 /**
  * Compile the parsed HTTP request
  */
-const fexp* compile(const Request* request) 
+const fexp* villagebus_compile(struct closure* closure, villagebus* self, const Request* request)
 {
   if (request == NULL || request->pathname == NULL) {
     return fexp_nil;
   }
   
   // save the request context
-  ((villagebus*)VillageBus)->request = request;
+  self->request = request;
 
   // compile path
   tconc* path = (tconc*)send(Tconc, s_new, fexp_nil);
   size_t index = 0;
   size_t last  = 0;
-  for (index = 0; request->pathname[index] != '\0'; index++) {
-    if (request->pathname[index] == '/') {
+  for (index = 0; request->pathname[index] != L'\0'; index++) {
+    if (request->pathname[index] == L'/') {
       string* entry;
       if (index - last == 0) {
         entry = (string*)send(String, s_new, L"/", 1);
@@ -62,7 +83,7 @@ const fexp* compile(const Request* request)
       last = index + 1;
     }
   }
-  object* entry = send(String, s_new, request->pathname + last, index - last);
+  string* entry = (string*)send(String, s_new, request->pathname + last, index - last);
   path = (tconc*)send(path, s_tconc_append, entry);
   fexp* expression = (fexp*)send(path, s_tconc_tconc);
 
@@ -70,32 +91,10 @@ const fexp* compile(const Request* request)
 }
 
 
+
 /**
- * Dispatch wrapper
- */ 
-const fexp* evaluate(const fexp* expression)
-{
-  return (fexp*)send(VillageBus, s_villagebus_evaluate, expression);  
-}
-
-
-
-/* - villagebus --------------------------------------------------------- */
-struct vtable* villagebus_vt = 0;
-object* VillageBus = 0;
-object* s_villagebus_evaluate = 0;
-
-void villagebus_init() 
-{
-  s_villagebus_evaluate = symbol_intern(0, 0, L"evaluate");
-  villagebus_vt = (struct vtable*)send(object_vt, s_delegated);
-  send(villagebus_vt, s_addMethod, s_print, villagebus_print);
-  send(villagebus_vt, s_addMethod, s_villagebus_evaluate, villagebus_evaluate);
-  VillageBus = send(villagebus_vt, s_allocate, 0);
-  ((villagebus*)VillageBus)->modules = fexp_nil;
-}
-
-
+ *
+ */
 const fexp* villagebus_evaluate(struct closure* closure, villagebus* self, const fexp* expression)
 {
   if (expression == fexp_nil) {
@@ -106,15 +105,15 @@ const fexp* villagebus_evaluate(struct closure* closure, villagebus* self, const
   string* channel = (string*)send(expression, s_fexp_car);
   fexp*   message = (fexp*)send(expression, s_fexp_cdr);
 
-  printf("evaluate:   ");
+  /*printf("evaluate:   ");
   send(channel, s_print);
   printf(" <- ");
   send(message, s_print);
-  printf("\n");
+  printf("\n");*/
   
   // search for name in global context
   object* name = symbol_lookup(0, 0, channel->buffer);
-  if (!name) { // I don't know you. Ignoring you for now.
+  if (name == NULL) { // I don't know you. Ignoring you for now.
     return (fexp*)send(self, s_villagebus_evaluate, message);
   }
 
@@ -125,16 +124,29 @@ const fexp* villagebus_evaluate(struct closure* closure, villagebus* self, const
     object* module = send(entry, s_fexp_car);
     if (name == module) {
       object* target = send(entry, s_fexp_cdr);
-      // return send(target, s_villagebus_evaluate, message);
-      message = (fexp*)send(target, s_villagebus_evaluate, message);
-      printf("Module returned: ");
-      send(message, s_print);
-      printf("\n");
-      return message;
+      // return send(self, s_villagebus_evaluate, message);
+      return (fexp*)send(target, s_villagebus_evaluate, message);
     }
   }
 
   return (fexp*)send(self, s_villagebus_evaluate, message);
+}
+
+
+// TODO - modules should inherit from villagebus, then we can do a: send(self, s_error, "foo message");
+//        which will allow for custom cleanup rather than a: send(VillageBus, s_error, "foo message");
+const fexp* villagebus_error(struct closure* closure, villagebus* self, const wchar_t* format, ...)
+{
+  static wchar_t buffer[512];
+  va_list args;
+  va_start(args, format);
+  size_t length = vswprintf(buffer, 512, format, args);
+  va_end(args);
+  object* message = send(String, s_new, buffer, length);
+  object* error = (object*)fexp_nil;
+  error = send(error, s_fexp_cons, message);
+  error = send(error, s_fexp_cons, s_villagebus_error);
+  return (fexp*)error;
 }
 
 

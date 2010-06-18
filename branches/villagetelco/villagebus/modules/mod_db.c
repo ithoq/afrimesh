@@ -38,8 +38,7 @@ struct vtable* db_vt = 0;
 object* DB = 0;
 object* s_db = 0;
 
-
-void db_init() 
+void db_init()
 {
   db_vt = (struct vtable*)send(object_vt, s_delegated); // TODO - inherit from VillageBus ?
   send(db_vt, s_addMethod, s_print, db_print);
@@ -57,14 +56,18 @@ void db_init()
 }
 
 
-const fexp* db_evaluate(struct closure* closure, db* self, const fexp* expression)
+
+/**
+ *
+ */
+const fexp* db_evaluate(struct closure* closure, db* self, const fexp* message)
 {
   // TODO - VillageBus->request context should be coming in via the closure
 
   // debug
-  printf("db_evaluate: ");
-  send(expression, s_print);
-  printf("\n");
+  /*printf("db_evaluate: ");
+  send(message, s_print);
+  printf("\n");*/
 
   // lazily initialize redis connection
   if ((self->handle == NULL) || (credis_ping(self->handle) != 0)) {
@@ -74,33 +77,25 @@ const fexp* db_evaluate(struct closure* closure, db* self, const fexp* expressio
   // check connection
   if ((self->handle == NULL) || (credis_ping(self->handle) != 0)) {
     // TODO - try to start up redis server
-    // TODO - http error handling
-    printf("Could not connect to redis server\n");
-    return fexp_nil;
+    return (fexp*)send(VillageBus, s_villagebus_error, L"Could not connect to redis server");
   }
 
   // evaluate request 
   const Request* request = ((villagebus*)VillageBus)->request;
-  string* key  = (string*)send(expression, s_fexp_join, self->delimiter);  // generate a key from expression
+  string* key  = (string*)send(message, s_fexp_join, self->delimiter);  // generate a key from message
   switch (request->method) {
   case POST:
-    expression = db_post(closure, self, key, request->data);
+    message = db_post(closure, self, key, request->data);
     break;
   case GET:
-    expression = db_get(closure, self, key);
+    message = db_get(closure, self, key);
     break;
   default:
-    printf("Redis has no registered handler for request method: %d\n", request->method);
-    return fexp_nil;
+    message = (fexp*)send(VillageBus, 
+                          s_villagebus_error, 
+                          L"mod_db has no registered handler for request method: %d", 
+                          request->method);  // TODO method_to_string 
   }
-
-  /*char** valuev;
-  int i;
-  int n;
-  n = credis_keys(self->handle, "*", &valuev);
-  printf("keys returned: %d\n", n);
-  for (i = 0; i < n; i++)
-  printf(" % 2d: %s\n", i, valuev[i]);*/
 
   // close server connection & release resources
   if (self->handle != NULL) {
@@ -108,49 +103,59 @@ const fexp* db_evaluate(struct closure* closure, db* self, const fexp* expressio
     self->handle = NULL;
   }
 
-  return expression;
+  return message;
 }
 
 
+
+/**
+ *
+ */
 const fexp* db_post(struct closure* closure, db* self, const string* key, const unsigned char* data)
 {
+  fexp* message = fexp_nil;
+
+  wprintl(L"POST /db/%S %s\n", key->buffer, data);
+
   char* keyc = (char*)send(key, s_string_tochar); // TODO - redis not support UNICODE so much
-  printf("POST %s %s\n", keyc, data);
-  int n = 0;
-  if ((n = credis_lpush(self->handle, keyc, data)) != 0) {
-    // TODO - http error handling
-    printf("Could not set %s: %s \n", keyc, data);
+  if (credis_lpush(self->handle, keyc, data) != 0) {
+    message = (fexp*)send(VillageBus, s_villagebus_error, L"lpush failed %s: %s", keyc, data);
   }
-  printf("List has %d elements\n", n);
-  // TODO - make number class to take 'n'
-  // TODO free keyc
-  return fexp_nil;
+  free(keyc);
+
+  return message;
 }
 
 
+
+/**
+ *
+ */
 const fexp* db_get (struct closure* closure, db* self, const string* key)
 {
+  fexp* message = fexp_nil;
+
+  wprintl(L"GET /db/%S\n", key->buffer);
+
   char* keyc = (char*)send(key, s_string_tochar); // TODO - redis not support UNICODE so much
-  printf("GET %s\n", keyc);
-  char* buffer;
   char** bufferv;
-  //if (credis_get(self->handle, key, &buffer) != 0 || buffer == NULL) {
   int n = credis_lrange(self->handle, keyc, 0, -1, &bufferv); 
   if (bufferv == NULL) {
-    // TODO - http error handling
-    printf("Could not get %s \n", keyc);
-    return fexp_nil;
+    message = (fexp*)send(VillageBus, s_villagebus_error, L"lrange failed for %s", keyc);
+    free(keyc);
+    return message;
   }
-  printf("keys returned: %d\n", n);
-  int i;
-  for (i = 0; i < n; i++)
-    printf(" % 2d: %s\n", i, bufferv[i]);  
-  return fexp_nil;
 
-  object* value = send(String, s_string_fromchar, buffer, strlen(buffer));
-  // TODO free keyc
-  return (fexp*)send(fexp_nil, s_fexp_cons, value);
+  int i;
+  for (i = 0; i < n; i++) {
+    string* item = (string*)send(String, s_string_fromchar, bufferv[i], strlen(bufferv[i]));
+    message = (fexp*)send(message, s_fexp_cons, item);
+  }
+  free(keyc);
+
+  return message;
 }
+
 
 
 db* db_print(struct closure* closure, db* self)

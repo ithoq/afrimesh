@@ -58,45 +58,107 @@ void config_init()
 }
 
 
-const fexp* config_evaluate(struct closure* closure, config* self, const fexp* expression)
+const fexp* config_evaluate(struct closure* closure, config* self, const fexp* message)
 {
   // TODO - VillageBus->request context should be coming in via the closure
-  // debug
-  printf("config_evaluate: ");
-  send(expression, s_print);
-  printf("\n");
+
+  // lazily initialize uci context
+  self->context = uci_alloc_context();
+  if (self->context == NULL) {
+    return (fexp*)send(VillageBus, s_villagebus_error, L"uci: out of memory"); 
+  }
 
   // evaluate request 
   const Request* request = ((villagebus*)VillageBus)->request;
   switch (request->method) {
   case POST:
-    expression = config_post(closure, self, expression, request->data);
+    message = config_post(closure, self, message, request->data);
     break;
   case GET:
-    expression = config_get(closure, self, expression);
+    message = config_get(closure, self, message);
     break;
   default:
-    printf("Config module has no registered handler for request method: %d\n", request->method);
-    return fexp_nil;
+    message = (fexp*)send(VillageBus, 
+                          s_villagebus_error, 
+                          L"mod_config has no registered handler for request method: %d", 
+                          request->method);  // TODO method_to_string 
   }
 
-  return fexp_nil;
+  // clean up UCI 
+  if (self->context) {
+    uci_free_context(self->context);
+  }
+
+  return message;
 }
 
 
-const fexp* config_post(struct closure* closure, config* self, const fexp* expression, const unsigned char* data)
+const fexp* config_post(struct closure* closure, config* self, const fexp* message, const unsigned char* payload)
 {
-  //printf("POST %s %s\n", key, value);
-  return fexp_nil;
+  struct json_object* items = json_tokener_parse(payload); 
+  if (items == NULL) {
+    return (fexp*)send(VillageBus, 
+                       s_villagebus_error, 
+                       L"POST /config could not parse: %s",
+                       payload);
+  }
+
+  message = fexp_nil;
+  int i;
+  for (i = 0; i < json_object_array_length(items); i++) {
+    struct json_object* item = json_object_array_get_idx(items, i);
+    struct json_object* config  = json_object_object_get(item, "config");
+    struct json_object* section = json_object_object_get(item, "section");
+    struct json_object* option  = json_object_object_get(item, "option");
+    struct json_object* value   = json_object_object_get(item, "value");
+    if (!json_typecheck(item,    json_type_object)  ||
+        !json_typecheck(config,  json_type_string)  ||
+        !json_typecheck(section, json_type_string)  ||
+        !json_typecheck(option,  json_type_string)  ||
+        !json_typecheck(value,   json_type_string)) {
+      return (fexp*)send(VillageBus, 
+                         s_villagebus_error, 
+                         L"POST /config expected [{config:String, section:String, option:String, value:String}, {..}] got %s",
+                         payload);
+    }
+    if (!uci_set_config(self->context, 
+                        json_object_get_string(config), 
+                        json_object_get_string(section), 
+                        json_object_get_string(option), 
+                        json_object_get_string(value))) {
+      return (fexp*)send(VillageBus, 
+                         s_villagebus_error,
+                         L"POST /config could not set: %s.%s.%s=%s", 
+                         json_object_get_string(config), 
+                         json_object_get_string(section), 
+                         json_object_get_string(option), 
+                         json_object_get_string(value)); 
+    } 
+    object* result = send(String, 
+                          s_string_fromwchar, 
+                          L"{ \"%s\" : \"%s\" }", 
+                          json_object_get_string(option), 
+                          json_object_get_string(value));
+    message = (fexp*)send(message, s_fexp_cons, result);
+  }
+  
+  return (fexp*)message;
 }
 
 
-const fexp* config_get (struct closure* closure, config* self, const fexp* expression)
+const fexp* config_get (struct closure* closure, config* self, const fexp* message)
 {
-  string* key  = (string*)send(expression, s_fexp_join, self->delimiter);  // generate a key from expression
-  char*   keyc = (char*)send(key, s_string_tochar); // TODO - uci not support UNICODE so much
-  printf("GET %s\n", keyc);
-  //self->context 
+  string* s     = (string*)send(message, s_fexp_join, self->delimiter);  // generate a key from message
+  char*   query = (char*)send(s, s_string_tochar); // TODO - uci not support UNICODE so much
+
+  whttpd_out(L"jsonp(null, ");  // TODO - This may be memory efficient, but it's not particularly pretty.
+                                //        Being profoundly and fundamentally document-orientated 
+                                //        HTTP error handling does not support streamed data. 
+                                //        Which kinda sucks totally.
+  int n = uci_show(self->context, query); // TODO - I have no idea if this is going to work either
+  whttpd_out(L")\n");
+  free(query);
+  
   return fexp_nil;
 }
 
@@ -108,13 +170,15 @@ config* config_print(struct closure* closure, config* self)
 }
 
 
-
-
 /* - uci utilities ------------------------------------------------------ */
 int uci_show(struct uci_context* context, const char* package)
 {
+  printf("["); 
+  printf("\t{");
+
+  int num_sections;
   if (package && strcasecmp(package, "") != 0) {
-    int num_sections = uci_show_package(context, package);
+    num_sections = uci_show_package(context, package);
   } else {      
     char** packages = NULL;
     if ((uci_list_configs(context, &packages) != UCI_OK) || !packages) {
@@ -126,22 +190,159 @@ int uci_show(struct uci_context* context, const char* package)
     char** p;      
     for (p = packages; *p; p++) {
       printf("%s\n", (first_package ? "" : ",")); 
-      int num_sections = uci_show_package(context, *p);
+      num_sections = uci_show_package(context, *p);
       if (first_package && (num_sections == 0)) { 
         first_package = true;
       } else {
         first_package = false;
       }
-      printf("Queried package: %s -> %d\n", *p, num_sections);
     }
   }
-  return 0;
+  printf("\t}");
+  printf(" ]");
+
+  return num_sections;
 }
 
+
+
+/**
+ *
+ */
+static char *typestr = NULL;
+static const char *cur_section_ref = NULL;
+struct uci_type_list {
+  unsigned int idx;
+  const char *name;
+  struct uci_type_list *next;
+};
+static struct uci_type_list* type_list = NULL;
 
 int uci_show_package(struct uci_context* context, const char* package)
 {
+  int num_sections = 0;
+  struct uci_ptr ptr;
+  if (uci_lookup_ptr(context, &ptr, (char*)package, true) != UCI_OK) {
+    printl("uci_show: could not lookup package\n");
+    uci_perror(context, "village-bus-uci");
+  }
 
-  return 0;
+  /* (PACKAGE) -> SECTION -> OPTION -> VALUE */
+  bool first_section = true;
+  struct uci_element* element_section;
+  uci_reset_typelist();
+  uci_foreach_element(&ptr.p->sections, element_section) { /* for each section */
+    num_sections++;
+    struct uci_section* section;
+    section = uci_to_section(element_section);
+    //cur_section_ref = uci_lookup_section_ref(section);  // TODO - better handling for lists
+    if (first_section) {
+      printf("  %s\t: { ", section->package->e.name);
+      first_section = false;
+    } else {
+      printf(",\n\t\t    ");
+    }
+    printf("%s\t: { _sectiontype\t: \"%s\"", (cur_section_ref ? cur_section_ref : section->e.name), section->type);
+    struct uci_element* element_option;
+    uci_foreach_element(&section->options, element_option) { /* for each option */
+      struct uci_option* option;
+      option = uci_to_option(element_option);
+      printf(",\n");
+      printf("\t\t\t\t    %s\t: ", option->e.name);
+      printf("\"%s\"", option_to_string(option));
+    } /* end for each option */
+    printf(" }"); /* end options */
+  } /* end for each section */
+  uci_reset_typelist();
+  if (num_sections > 0) printf("\n\t\t  }"); /* end sections */
+
+  uci_unload(context, ptr.p);
+
+  return num_sections;
 }
 
+
+/**
+ *
+ */
+bool uci_set_config(struct uci_context* context, const char* config, const char* section, const char* option, const char* value)
+{
+  char* msg;
+  char buf[1024];
+  sprintf(buf, "%s.%s.%s=%s", config, section, option, value);
+
+  struct uci_ptr ptr;
+  if (uci_lookup_ptr(context, &ptr, buf, true) != UCI_OK) {
+    uci_get_errorstr(context, &msg, "uci_set_config");
+    printl("Could not lookup config %s - %s\n", buf, msg);
+    free(msg);
+    return false;
+  }
+
+  if (uci_set(context, &ptr) != UCI_OK) {
+    uci_get_errorstr(context, &msg, "uci_set_config");
+    printl("Could not set config %s - %s\n", buf, msg);
+    free(msg);
+    return false;
+  }
+
+  if (uci_commit(context, &ptr.p, false) != UCI_OK) {
+    uci_get_errorstr(context, &msg, "uci_set_config");
+    printl("Could not commit config %s - %s\n", buf, msg);
+    free(msg);
+    return false;
+  }
+
+  //log_message("{ message: \"set: %s.%s.%s=%s\" }\n", config, section, option, value, ptr);
+  return true;
+}
+
+
+
+/**
+ * Convert an uci_option to a string
+ *
+ * Manages it's own memory
+ */
+char* option_to_string(struct uci_option* option) 
+{
+  static char* ret = NULL;
+  if (!ret) {
+    ret = malloc(1024);
+  }
+  switch (option->type) {
+  case UCI_TYPE_STRING:
+    sprintf(ret, "%s", option->v.string);
+    break;
+  case UCI_TYPE_LIST:
+    sprintf(ret, "<list>");
+    struct uci_element* element_value;
+    uci_foreach_element(&option->v.list, element_value) {
+      //sprintf(ret, "%s%s", (sep ? "<sep>" : ""), element_value->name);
+      //sep = true;
+    }
+    break;
+  default:
+    sprintf(ret, "<unknown>");
+  }
+  return ret;
+}
+
+
+/**
+ *
+ */
+static void uci_reset_typelist(void)
+{
+  struct uci_type_list *type;
+  while (type_list != NULL) {
+    type = type_list;
+    type_list = type_list->next;
+    free(type);
+  }
+  if (typestr) {
+    free(typestr);
+    typestr = NULL;
+  }
+  cur_section_ref = NULL;
+}

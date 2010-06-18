@@ -38,11 +38,6 @@
 #include <cgi.h>
 
 
-/* - external wrappers -------------------------------------------------- */
-const fexp* compile(const Request* request);
-const fexp* evaluate(const fexp* expression);
-
-
 /* - villagebus --------------------------------------------------------- */
 typedef struct _villagebus {
   struct vtable* _vt[0];
@@ -52,10 +47,14 @@ typedef struct _villagebus {
 extern struct vtable* villagebus_vt;
 extern object* VillageBus;
 extern object* s_villagebus_evaluate;
+extern object* s_villagebus_compile;
+extern object* s_villagebus_error;
 
 void  villagebus_init();
 
+const fexp* villagebus_compile (struct closure* closure, villagebus* self, const Request* request);
 const fexp* villagebus_evaluate(struct closure* closure, villagebus* self, const fexp* expression);
+const fexp* villagebus_error   (struct closure* closure, villagebus* self, const wchar_t* format, ...);
 villagebus* villagebus_print   (struct closure* closure, villagebus* self);
 
 #endif /* VILLAGEBUS_H */

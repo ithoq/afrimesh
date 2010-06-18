@@ -58,8 +58,7 @@ int main(int argc, char** argv)
 {
   /** - output HTTP header ------------------------------------------------ */
   //httpd_out("Content-type: application/json\n\n");
-  //whttpd_out(L"Content-type: text/plain\n\n");
-  printf("\n");
+  whttpd_out(L"Content-type: text/plain\n\n");
 
   /** - parse request ----------------------------------------------------- */
   const Request* request = cgi_request(argc, argv);
@@ -85,15 +84,29 @@ int main(int argc, char** argv)
   printf("\n");*/
 
   /** - compile request --------------------------------------------------- */
-  const fexp* expression = compile(request);
+  const fexp* message = (fexp*)send(VillageBus, s_villagebus_compile, request);
 
-  /** - evaluate request -------------------------------------------------- */
-  expression = evaluate(expression);
+  /** - evaluate message -------------------------------------------------- */
+  message = (fexp*)send(VillageBus, s_villagebus_evaluate, message);
 
+  /** - print eval result (if any) ---------------------------------------- */
+  if (message == fexp_nil) {
+    //whttpd_out(L"jsonp(null, {})\n");
+  } else if (send(message, s_fexp_car) == s_villagebus_error) {
+      whttpd_out(L"jsonp(");
+      send(message, s_print);
+      whttpd_out(L", null)\n");
+  } else {
+    whttpd_out(L"jsonp(null, ");
+    send(message, s_print);
+    whttpd_out(L")\n");
+  }
+
+  
   /** - release resources ------------------------------------------------- */
   cgi_release();
 
-  printf("-----------------------------------------------------\n");
+  //printf("-----------------------------------------------------\n");
 
   return exit_success();
 }
