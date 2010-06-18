@@ -47,9 +47,8 @@ typedef struct _number {
 extern struct vtable* number_vt;
 extern object* Number;
 
-object*  number_new     (struct closure* closure, number* self, const wchar_t* s, size_t length);
-//size_t   number_length  (struct closure* closure, number* self);
-number* number_print   (struct closure* closure, number* self);
+object* number_new  (struct closure* closure, number* self, const wchar_t* s, size_t length);
+number* number_print(struct closure* closure, number* self);
 
 
 /* - string ------------------------------------------------------------- */
@@ -60,17 +59,19 @@ typedef struct _string {
 } string;
 extern struct vtable* string_vt;
 extern object* String;
+extern object* s_string_fromwchar;
 extern object* s_string_fromchar;
 extern object* s_string_tochar;
 extern object* s_string_add;
 
-object* string_fromchar(struct closure* closure, string* self, const char* s, size_t length);
-char*   string_tochar(struct closure* closure, string* self);
-string* string_add(struct closure* closure, string* self, const string* s);
+object* string_fromwchar(struct closure* closure, string* self, const wchar_t* format, ...);
+object* string_fromchar (struct closure* closure, string* self, const char* s, size_t length);
+char*   string_tochar  (struct closure* closure, string* self);
+string* string_add     (struct closure* closure, string* self, const string* s);
 
-object* string_new     (struct closure* closure, string* self, const wchar_t* s, size_t length);
-size_t  string_length  (struct closure* closure, string* self);
-string* string_print   (struct closure* closure, string* self);
+object* string_new   (struct closure* closure, string* self, const wchar_t* s, size_t length);
+size_t  string_length(struct closure* closure, string* self);
+string* string_print (struct closure* closure, string* self);
 
 
 /* - fexp --------------------------------------------------------------- */

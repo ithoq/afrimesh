@@ -299,10 +299,12 @@ const Request* cgi_request(int argc, char** argv)
     request->search   = wcsdupchar(query_string);
   } else if (argc >= 2 && argv[2]) {                     // command line
     request->href     = wcsdupchar(argv[2]);
-    size_t buffer_size = (strlen(argv[2])+1) * sizeof(char);
+    size_t length = strlen(argv[2]);
+    size_t buffer_size = sizeof(char) * (length + 1);
     char* buffer = (char*)malloc(buffer_size);
     memset(buffer, 0, buffer_size);
     snprintf(buffer, buffer_size, "%s", argv[2]);
+    buffer[length] = '\0';
     char* state;
     request->pathname = wcsdupchar(strtok_r(buffer, "?", &state));
     request->search   = wcsdupchar(strtok_r(NULL, "?", &state));

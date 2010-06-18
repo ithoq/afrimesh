@@ -132,11 +132,43 @@ wchar_t* wcsdupchar(const char* string)
 {
   if (string == NULL) return NULL;
   size_t length = strlen(string);
-  wchar_t* buffer = malloc(sizeof(wchar_t)*length);
+  size_t buffer_size = sizeof(wchar_t) * (length + 1);
+  wchar_t* buffer = malloc(buffer_size);
+  memset(buffer, 0, buffer_size);
   if (mbstowcs(buffer, string, length) != length) {
     return NULL; 
   }
+  buffer[length] = L'\0';
   return buffer;
+}
+
+int vaswprintf(wchar_t** result, const wchar_t* format, va_list args)
+{
+  va_list ap;
+  va_copy(ap, args);
+  FILE* devnull = fopen("/dev/null", "w");
+  int length = vfwprintf(devnull, format, ap);  // TODO - this is mildly evil
+  fclose(devnull);
+  va_end(ap);
+  if (length == -1) {
+    return -1;
+  }
+
+  wchar_t *buffer = (wchar_t*)malloc((length + 1) * sizeof(wchar_t));
+  if (buffer == NULL) {
+    return -1;
+  }
+  
+  va_list aq;
+  va_copy(aq, args);
+  length = vswprintf(buffer, length + 1, format, aq);
+  va_end (aq);
+  if (length == -1) {
+    return -1;
+  }
+  *result = buffer;
+
+  return length;
 }
 
 

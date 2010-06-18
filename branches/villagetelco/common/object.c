@@ -165,7 +165,14 @@ struct _object* symbol_lookup(struct closure* closure, struct _object* self, con
   int i;
   for (i = 0;  i < SymbolList->tally;  ++i) {
     symbol = SymbolList->keys[i];
-    if (!wcscmp(string, ((struct symbol*)symbol)->string)) {
+    /*wprintf(L"COMPARE: '%S'(%d) ? '%S'(%d)  =  %d\n", 
+            string, 
+            wcslen(string),
+            ((struct symbol*)symbol)->string, 
+            wcslen(((struct symbol*)symbol)->string),
+            wcscmp(string, ((struct symbol*)symbol)->string));*/
+    if (wcscmp(string, ((struct symbol*)symbol)->string) == 0) {
+      //printf("FOUND IT!\n");
       return symbol;
     }
   }

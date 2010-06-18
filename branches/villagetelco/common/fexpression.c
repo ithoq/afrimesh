@@ -37,16 +37,18 @@ void fexp_init()
   send(symbol_vt, s_addMethod, s_print, symbol_print);
 
   // string
-  s_string_fromchar = symbol_intern(0, 0, L"fromchar");
-  s_string_tochar   = symbol_intern(0, 0, L"tochar");
-  s_string_add      = symbol_intern(0, 0, L"add");
+  s_string_fromwchar = symbol_intern(0, 0, L"fromwchar");
+  s_string_fromchar  = symbol_intern(0, 0, L"fromchar");
+  s_string_tochar    = symbol_intern(0, 0, L"tochar");
+  s_string_add       = symbol_intern(0, 0, L"add");
   string_vt = (struct vtable*)send(object_vt, s_delegated);
   send(string_vt, s_addMethod, s_new,    string_new);
   send(string_vt, s_addMethod, s_length, string_length);
   send(string_vt, s_addMethod, s_print,  string_print);
-  send(string_vt, s_addMethod, s_string_fromchar, string_fromchar);
-  send(string_vt, s_addMethod, s_string_tochar,   string_tochar);
-  send(string_vt, s_addMethod, s_string_add,      string_add);
+  send(string_vt, s_addMethod, s_string_fromwchar, string_fromwchar);
+  send(string_vt, s_addMethod, s_string_fromchar,  string_fromchar);
+  send(string_vt, s_addMethod, s_string_tochar,    string_tochar);
+  send(string_vt, s_addMethod, s_string_add,       string_add);
   String = send(string_vt, s_allocate, 0);
 
   // fexp
@@ -96,6 +98,7 @@ struct symbol* symbol_print(struct closure* closure, struct symbol* self)
 /* - string ------------------------------------------------------------- */
 struct vtable* string_vt = 0;
 object* String = 0;
+object *s_string_fromwchar = 0;
 object *s_string_fromchar  = 0;
 object *s_string_tochar    = 0;
 object *s_string_add       = 0;
@@ -116,7 +119,33 @@ object* string_new(struct closure* closure, string* self, const wchar_t* s, size
   return (object*)clone;
 }
 
+
+object* string_fromwchar(struct closure* closure, string* self, const wchar_t* format, ...)
+{
+  wchar_t* buffer;
+  int length;
+  va_list args;
+  va_start(args, format);
+  if ((length = vaswprintf(&buffer, format, args)) == -1 || buffer == NULL) {
+    return (object*)fexp_nil;
+  }
+  va_end(args);
+  string *clone = (string*)send(self->_vt[-1], s_allocate, sizeof(string));
+  clone->length = length;
+  clone->buffer = buffer;
+  return (object*)clone;
+}
+
+// TODO - make it take a format string as above and onstruct using vasprintf
 object* string_fromchar(struct closure *closure, string *self, const char* s, size_t length) {
+  /*  va_list args;
+  va_start(args, query);
+  char* final_query;
+  if ((vasprintf(&final_query, query, args) == -1) || final_query == NULL) {
+      printf("\t{\n\t\terror : \"Could not build query '%s'\"\n\t}\n", query);
+      return -1;    
+  }
+  va_end(args);  */
   if (length > strlen(s)) return (object*)fexp_nil; 
   string *clone = (string*)send(self->_vt[-1], s_allocate, sizeof(string));
   clone->length = length;
@@ -129,6 +158,8 @@ object* string_fromchar(struct closure *closure, string *self, const char* s, si
   clone->buffer[length] = L'\0';
   return (object*)clone;
 }
+
+
 
 char* string_tochar(struct closure* closure, string* self)
 {

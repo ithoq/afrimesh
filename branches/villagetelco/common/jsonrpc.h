@@ -28,45 +28,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UTIL
-#define UTIL
+#ifndef JSON_RPC
+#define JSON_RPC
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
 
-/* logging */
-static const int log_level = 1;
-static const char* log_filename = "/tmp/village-bus.log";
-static FILE* log_file = NULL;
-void printl(const char* message, ...);
-void vprintl(const char* message, va_list ap);
-void wprintl(const wchar_t* message, ...);
-void vwprintl(const wchar_t* message, va_list ap);
-void log_release();
+#include <json/json.h>
 
-/* string utilities */
-char* triml(char* s);
-char* trimr(char* s);
-char* trim(char *s);
-char* substring(char *s, size_t start, size_t count);
 
-/* wide string utilities */
-wchar_t* wcsdupchar(const char* string);
-//wchar_t* wcsdup(const wchar_t* string);
-int vaswprintf(wchar_t** result, const wchar_t* format, va_list args);
+/* TODO */
+/* jsonrpc_register(const char* module, const char* name, const char** arguments, void* function); */
 
-/* parser utilities */
-struct Symbol {
-  int    symbol;
-  size_t length;
-  const  char* string;
-  char* (*lambda) ();
+/* method dispatch */
+struct MethodDispatch {
+  const char* module;
+  const char* method;
+  enum json_type signature[8];
+  int numargs;
+  struct json_object* (*dispatchp) (const char*, struct json_object*);
 };
-typedef struct Symbol SymbolTable [];
-static const int SYMBOL_UNKNOWN = -1;
-int string_to_symbol(const char* string, const SymbolTable symbols);
+struct json_object* jsonrpc_dispatch(struct MethodDispatch* dispatch, 
+                                     const char* module, 
+                                     const char* method, 
+                                     struct json_object* params);
+struct json_object* jsonrpc_error(const char* message, ...);
+
+/* simple type checker */
+int json_typecheck(struct json_object* object, enum json_type type);
+int json_typecheck_array(struct json_object* array, enum json_type type);
+
+/* utilities */
+const char* json_type_tostring(enum json_type type);
+const char* signature_tostring(const enum json_type* signature);
+const char* params_tostring(struct json_object* params);
 
 
-#endif /* UTIL */
+#endif /* JSON_RPC */
+
