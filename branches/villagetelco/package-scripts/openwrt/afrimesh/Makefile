@@ -69,23 +69,25 @@ PKG_EXTRA_CFLAGS= \
 	-include endian.h             \
 	-DDISABLE_SNMP                \
 
+TARGET_CFLAGS += $(FPIC)
+
 MAKE_VILLAGEBUS_ARGS += \
 	CC='$(TARGET_CC) $(PKG_EXTRA_CFLAGS) $(TARGET_CFLAGS_EXTRA) ' \
-	CFLAGS='$(TARGET_CFLAGS) ' \
-	LDFLAGS='$(TARGET_LDFLAGS) -ljson -luci' \
+	CFLAGS='$(TARGET_CFLAGS)' \
+	LDFLAGS='$(TARGET_LDFLAGS) -ljson -luci -lcredis' \
 	FLAVOR='LINUX' \
 	DISABLE_SNMP=1
 
-
+#PKG_BUILD_DEPENDS=+credis
 
 # - afrimesh-base ------------------------------------------------------------
-#+mini-httpd
+#+mini-httpd +libnetsnmp
 include $(INCLUDE_DIR)/package.mk
 
 define Package/afrimesh-base
 	SECTION:=admin
 	CATEGORY:=Administration
-	DEPENDS:=+busybox +libuci +libjson +batmand +libnetsnmp
+	DEPENDS:=+busybox +libuci +libjson +batmand +credis 
 	TITLE:=Easy management for B.A.T.M.A.N. wireless mesh networks
 	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
 	#$(call Config,afrimesh.location.latitude,string,-25.7481182,Router Latitude)
@@ -103,14 +105,22 @@ define Package/afrimesh-base/description
 endef
 
 define Package/afrimesh-base/install
-	mkdir -p $(1)/CONTROL
 	$(INSTALL_DIR)  $(1)/etc
-	#$(INSTALL_BIN)  ./files/etc/firewall.afrimesh $(1)/etc/firewall.afrimesh  # TODO - this must go into gateway
 	$(INSTALL_DIR)  $(1)/etc/config
-	$(INSTALL_CONF) ./files/etc/config/afrimesh $(1)/etc/config
-	echo "/etc/config/afrimesh" >> $(1)/CONTROL/conffiles
+	$(INSTALL_DIR)  $(1)/etc/crontabs
+	$(INSTALL_DIR)  $(1)/etc/init.d
 	$(INSTALL_DIR)  $(1)/www/cgi-bin
-	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/village-bus/village-bus $(1)/www/cgi-bin/village-bus
+
+	mkdir -p $(1)/CONTROL
+	echo "/etc/config/afrimesh" >> $(1)/CONTROL/conffiles
+	$(INSTALL_CONF) ./files/etc/config/afrimesh  $(1)/etc/config
+	$(INSTALL_BIN) ./files/etc/crontabs/afrimesh $(1)/etc/crontabs/root
+
+	$(INSTALL_BIN)  ./files/www/cgi-bin/status.sh          $(1)/www/cgi-bin/status
+	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/villagebus/villagebus $(1)/www/cgi-bin/villagebus
+
+	# - runonce --
+	$(INSTALL_BIN)  ./files/etc/init.d/runonce  $(1)/etc/init.d/runonce.afrimesh-base
 endef
 
 
@@ -367,7 +377,8 @@ define Build/Configure
 endef
 
 define Build/Compile
-	cd $(PKG_BUILD_DIR)/village-bus ; VERSION=$(PKG_VERSION) make $(MAKE_VILLAGEBUS_ARGS) 
+	#cd $(PKG_BUILD_DIR)/village-bus ; VERSION=$(PKG_VERSION) make $(MAKE_VILLAGEBUS_ARGS) 
+	cd $(PKG_BUILD_DIR)/villagebus ; VERSION=$(PKG_VERSION) make $(MAKE_VILLAGEBUS_ARGS) 
 endef
 
 
