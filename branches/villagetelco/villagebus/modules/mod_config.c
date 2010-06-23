@@ -71,8 +71,8 @@ const fexp* config_evaluate(struct closure* closure, config* self, const fexp* m
   // evaluate request 
   const Request* request = ((villagebus*)VillageBus)->request;
   switch (request->method) {
-  case POST:
-    message = config_post(closure, self, message, request->data);
+  case PUT:
+    message = config_put(closure, self, message, request->data);
     break;
   case GET:
     message = config_get(closure, self, message);
@@ -93,13 +93,13 @@ const fexp* config_evaluate(struct closure* closure, config* self, const fexp* m
 }
 
 
-const fexp* config_post(struct closure* closure, config* self, const fexp* message, const unsigned char* payload)
+const fexp* config_put(struct closure* closure, config* self, const fexp* message, const unsigned char* payload)
 {
   struct json_object* items = json_tokener_parse(payload); 
   if (items == NULL) {
     return (fexp*)send(VillageBus, 
                        s_villagebus_error, 
-                       L"POST /config could not parse: %s",
+                       L"PUT /config could not parse: %s",
                        payload);
   }
 
@@ -118,7 +118,7 @@ const fexp* config_post(struct closure* closure, config* self, const fexp* messa
         !json_typecheck(value,   json_type_string)) {
       return (fexp*)send(VillageBus, 
                          s_villagebus_error, 
-                         L"POST /config expected [{config:String, section:String, option:String, value:String}, {..}] got %s",
+                         L"PUT /config expected [{config:String, section:String, option:String, value:String}, {..}] got %s",
                          payload);
     }
     if (!uci_set_config(self->context, 
@@ -128,7 +128,7 @@ const fexp* config_post(struct closure* closure, config* self, const fexp* messa
                         json_object_get_string(value))) {
       return (fexp*)send(VillageBus, 
                          s_villagebus_error,
-                         L"POST /config could not set: %s.%s.%s=%s", 
+                         L"PUT /config could not set: %s.%s.%s=%s", 
                          json_object_get_string(config), 
                          json_object_get_string(section), 
                          json_object_get_string(option), 
@@ -146,7 +146,7 @@ const fexp* config_post(struct closure* closure, config* self, const fexp* messa
 }
 
 
-const fexp* config_get (struct closure* closure, config* self, const fexp* message)
+const fexp* config_get(struct closure* closure, config* self, const fexp* message)
 {
   string* s     = (string*)send(message, s_fexp_join, self->delimiter);  // generate a key from message
   char*   query = (char*)send(s, s_string_tochar); // TODO - uci not support UNICODE so much

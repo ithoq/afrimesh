@@ -20,6 +20,7 @@
 #define FEXP_H
 
 #include <stdlib.h>
+#include <stdarg.h>
 #include <string.h>
 #include <wchar.h>
 

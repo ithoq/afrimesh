@@ -76,11 +76,22 @@ MAKE=gmake
 FLAVOR=BSD
 endif
 
+ifeq ($(UNAME),Darwin)
+WWW_ROOT=$(DESTDIR)/Library/WebServer/share/httpd
+DASHBOARD_WWW=$(WWW_ROOT)/afrimesh
+DASHBOARD_CGI=$(DESTDIR)/Library/WebServer/CGI-Executables
+#DEPROOT=/opt/local
+DEPROOT=/Volumes/afrimesh-dev/ext
+MAKE=make
+FLAVOR=BSD
+endif
+
 
 # - common -------------------------------------------------------------------
 all: 
-	export DEPROOT=$(DEPROOT); cd village-bus-radius ; $(MAKE)
-	export DEPROOT=$(DEPROOT); cd village-bus        ; VERSION=$(VERSION) FLAVOR=$(FLAVOR) $(MAKE)
+	#export DEPROOT=$(DEPROOT); cd village-bus-radius ; $(MAKE)
+	#export DEPROOT=$(DEPROOT); cd village-bus        ; VERSION=$(VERSION) FLAVOR=$(FLAVOR) $(MAKE)
+	export DEPROOT=$(DEPROOT); cd villagebus         ; VERSION=$(VERSION) FLAVOR=$(FLAVOR) $(MAKE)
 
 install: install-www install-config
 
@@ -126,6 +137,7 @@ clean : # clean-www
 	cd village-bus-snmp   ; $(MAKE) clean
 	cd village-bus-uci    ; $(MAKE) clean
 	cd village-bus        ; $(MAKE) clean
+	cd villagebus         ; $(MAKE) clean
 
 clean-www: 
 	@echo "Cleaning"

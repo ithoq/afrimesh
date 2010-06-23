@@ -138,12 +138,12 @@ test-db :
 	./villagebus GET $(path)
 
 
-# - test-uci ---------------------------------------------------------------
-uci_json="[ { 'config' : 'network', 'section' : 'wifi0', 'option' : 'ipaddr', 'value' : '1.1.1.1' } ]"
+# - test-config ------------------------------------------------------------
+config_json="[ { 'config' : 'network', 'section' : 'wifi0', 'option' : 'ipaddr', 'value' : '1.1.1.2' } ]"
 
-test-uci :
-	#$(ECHO) $(uci_json) | ./villagebus POST "/config"
-	#./villagebus GET "/root/config/network/wifi0/ipaddr"
+test-config :
+	$(ECHO) $(config_json) | ./villagebus PUT "/config"
+	@#./villagebus GET "/root/config/network/wifi0/ipaddr"
 	./villagebus GET "/root/config"
 
 
