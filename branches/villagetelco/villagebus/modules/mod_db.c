@@ -37,6 +37,7 @@
 struct vtable* db_vt = 0;
 object* DB = 0;
 object* s_db = 0;
+struct symbol* s_db_keys = 0;
 
 void db_init()
 {
@@ -45,8 +46,12 @@ void db_init()
   send(db_vt, s_addMethod, s_villagebus_evaluate, db_evaluate);
   DB = send(db_vt, s_allocate, 0);
   ((db*)DB)->handle = NULL;
+
+  // register some local symbols
+  s_db_keys = (struct symbol*)symbol_intern(0, DB, L"keys");
+  send(db_vt, s_addMethod, s_db_keys, db_keys);
   
-  // register module with VillageBus
+  // register module with VillageBus - TODO lose vb->modules & register directly in vtable perhaps?
   s_db = symbol_intern(0, 0, L"db");
   fexp* module = (fexp*)send(Fexp, s_new, s_db, DB);
   ((villagebus*)VillageBus)->modules = (fexp*)send(((villagebus*)VillageBus)->modules, s_fexp_cons, module);
@@ -60,7 +65,7 @@ void db_init()
 /**
  *
  */
-const fexp* db_evaluate(struct closure* closure, db* self, const fexp* message)
+const fexp* db_evaluate(struct closure* closure, db* self, const fexp* expression)
 {
   // TODO - VillageBus->request context should be coming in via the closure
 
@@ -80,21 +85,29 @@ const fexp* db_evaluate(struct closure* closure, db* self, const fexp* message)
     return (fexp*)send(VillageBus, s_villagebus_error, L"Could not connect to redis server");
   }
 
-  // evaluate request 
+  // search for name in local context
+  string* name    = (string*)send(expression, s_fexp_car);
+  fexp*   message = (fexp*)send(expression, s_fexp_cdr);
+  object* channel = symbol_lookup(0, DB, name->buffer);
+  if (channel) {
+    return (fexp*)send(self, channel, message);
+  } 
+
+  // evaluate expression w/ default handlers
   const Request* request = ((villagebus*)VillageBus)->request;
-  string* key  = (string*)send(message, s_fexp_join, self->delimiter);  // generate a key from message
+  const fexp* reply = fexp_nil;
   switch (request->method) {
   case POST:
-    message = db_post(closure, self, key, request->data);
+    reply = db_post(closure, self, expression, request->data);
     break;
   case GET:
-    message = db_get(closure, self, key);
+    reply = db_get(closure, self, expression);
     break;
   default:
-    message = (fexp*)send(VillageBus, 
-                          s_villagebus_error, 
-                          L"mod_db has no registered handler for request method: %d", 
-                          request->method);  // TODO method_to_string 
+    reply = (fexp*)send(VillageBus, 
+                        s_villagebus_error, 
+                        L"mod_db has no registered handler for request method: %d", 
+                        request->method);  // TODO method_to_string 
   }
 
   // close server connection & release resources
@@ -103,7 +116,7 @@ const fexp* db_evaluate(struct closure* closure, db* self, const fexp* message)
     self->handle = NULL;
   }
 
-  return message;
+  return reply;
 }
 
 
@@ -111,19 +124,20 @@ const fexp* db_evaluate(struct closure* closure, db* self, const fexp* message)
 /**
  *
  */
-const fexp* db_post(struct closure* closure, db* self, const string* key, const unsigned char* data)
+const fexp* db_post(struct closure* closure, db* self, const fexp* message, const unsigned char* data)
 {
-  fexp* message = fexp_nil;
+  fexp* reply = fexp_nil;
 
+  string* key  = (string*)send(message, s_fexp_join, self->delimiter);  // generate a key from message
   wprintl(L"POST /db/%S %s\n", key->buffer, data);
 
   char* keyc = (char*)send(key, s_string_tochar); // TODO - redis not support UNICODE so much
   if (credis_lpush(self->handle, keyc, data) != 0) {
-    message = (fexp*)send(VillageBus, s_villagebus_error, L"lpush failed %s: %s", keyc, data);
+    reply = (fexp*)send(VillageBus, s_villagebus_error, L"lpush failed %s: %s", keyc, data);
   }
   free(keyc);
 
-  return message;
+  return reply;
 }
 
 
@@ -131,29 +145,54 @@ const fexp* db_post(struct closure* closure, db* self, const string* key, const 
 /**
  *
  */
-const fexp* db_get (struct closure* closure, db* self, const string* key)
+const fexp* db_get(struct closure* closure, db* self, const fexp* message)
 {
-  fexp* message = fexp_nil;
+  fexp* reply = fexp_nil;
 
+  // default handling - lrange
+  string* key  = (string*)send(message, s_fexp_join, self->delimiter);  // generate a key from message
   wprintl(L"GET /db/%S\n", key->buffer);
-
-  char* keyc = (char*)send(key, s_string_tochar); // TODO - redis not support UNICODE so much
+  char*  keyc = (char*)send(key, s_string_tochar); // TODO - redis not support UNICODE so much
   char** bufferv;
   int n = credis_lrange(self->handle, keyc, 0, -1, &bufferv); 
   if (bufferv == NULL) {
-    message = (fexp*)send(VillageBus, s_villagebus_error, L"lrange failed for %s", keyc);
+    reply = (fexp*)send(VillageBus, s_villagebus_error, L"lrange failed for %s", keyc);
     free(keyc);
-    return message;
+    return reply;
   }
 
   int i;
   for (i = 0; i < n; i++) {
     string* item = (string*)send(String, s_string_fromchar, bufferv[i], strlen(bufferv[i]));
-    message = (fexp*)send(message, s_fexp_cons, item);
+    reply = (fexp*)send(reply, s_fexp_cons, item);
   }
   free(keyc);
 
-  return message;
+  return reply;
+}
+
+
+
+/**
+ *
+ */
+const fexp* db_keys(struct closure* closure, db* self, const fexp* message)
+{
+  fexp* reply = fexp_nil;
+
+  string* key  = (string*)send(message, s_fexp_join, self->delimiter);  // generate a key from message
+  wprintl(L"GET /db/keys/%S\n", key->buffer);
+  char*  keyc = (char*)send(key, s_string_tochar); // TODO - redis not support UNICODE so much
+
+  char** bufferv;
+  int i;
+  for (i = 0; i < credis_keys(self->handle, keyc, &bufferv); i++) {
+    string* item = (string*)send(String, s_string_fromchar, bufferv[i], strlen(bufferv[i]));
+    reply = (fexp*)send(reply, s_fexp_cons, item);
+  }
+  free(keyc);
+
+  return reply;
 }
 
 

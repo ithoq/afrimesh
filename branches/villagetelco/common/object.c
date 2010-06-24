@@ -45,7 +45,9 @@ struct _object *symbol_new(const wchar_t *string)
   struct symbol *symbol = (struct symbol *)alloc(sizeof(struct symbol));
   symbol->_vt[-1] = symbol_vt;
   size_t length = wcslen(string);
-  symbol->string = (wchar_t*)malloc(sizeof(wchar_t) * length);
+  size_t buffer_size = sizeof(wchar_t) * (length + 1);
+  symbol->string = (wchar_t*)malloc(buffer_size);
+  memset(symbol->string, 0, buffer_size);
   /*symbol->string =*/ wcsncpy(symbol->string, string, length); // TODO - pointer from int without cast WTF!?
   return (struct _object *)symbol;
 }
@@ -162,9 +164,10 @@ struct _object *vtable_lookup(struct closure *closure, struct vtable *self, stru
 struct _object* symbol_lookup(struct closure* closure, struct _object* self, const wchar_t *string)
 {
   struct _object* symbol;
+  struct vtable* vt = self ? self->_vt[-1] : SymbolList;
   int i;
-  for (i = 0;  i < SymbolList->tally;  ++i) {
-    symbol = SymbolList->keys[i];
+  for (i = 0;  i < vt->tally;  ++i) {
+    symbol = vt->keys[i];
     /*wprintf(L"COMPARE: '%S'(%d) ? '%S'(%d)  =  %d\n", 
             string, 
             wcslen(string),
@@ -176,18 +179,18 @@ struct _object* symbol_lookup(struct closure* closure, struct _object* self, con
       return symbol;
     }
   }
-  return NULL;
+  return 0;
 }
 
 
 struct _object *symbol_intern(struct closure *closure, struct _object *self, const wchar_t *string)
 {
   struct _object *symbol;
-  int i;
   symbol = symbol_lookup(closure, self, string);
   if (!symbol) {
+    struct vtable* vt = self ? self->_vt[-1] : SymbolList;
     symbol = symbol_new(string);
-    vtable_addMethod(0, SymbolList, symbol, 0);
+    vtable_addMethod(0, vt, symbol, 0);
   }
   return symbol;
 }

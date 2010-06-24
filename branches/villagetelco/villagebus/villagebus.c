@@ -91,7 +91,6 @@ const fexp* villagebus_compile(struct closure* closure, villagebus* self, const 
 }
 
 
-
 /**
  *
  */
@@ -101,28 +100,20 @@ const fexp* villagebus_evaluate(struct closure* closure, villagebus* self, const
     return expression;
   } 
 
-  // evaluate expression
-  string* channel = (string*)send(expression, s_fexp_car);
-  fexp*   message = (fexp*)send(expression, s_fexp_cdr);
-
-  /*printf("evaluate:   ");
-  send(channel, s_print);
-  printf(" <- ");
-  send(message, s_print);
-  printf("\n");*/
-  
   // search for name in global context
-  object* name = symbol_lookup(0, 0, channel->buffer);
-  if (name == NULL) { // I don't know you. Ignoring you for now.
+  string* name    = (string*)send(expression, s_fexp_car);
+  fexp*   message = (fexp*)send(expression, s_fexp_cdr);
+  object* channel = symbol_lookup(0, 0, name->buffer);
+  if (channel == NULL) { // I don't know you. Ignoring you for now.
     return (fexp*)send(self, s_villagebus_evaluate, message);
   }
 
-  // search for name in registered modules
+  // search for channel in registered modules
   fexp* iter; 
   for (iter = self->modules; iter != fexp_nil; iter = (fexp*)send(self->modules, s_fexp_cdr)) {
     object* entry  = send(iter,  s_fexp_car);
     object* module = send(entry, s_fexp_car);
-    if (name == module) {
+    if (channel == module) {
       object* target = send(entry, s_fexp_cdr);
       // return send(self, s_villagebus_evaluate, message);
       return (fexp*)send(target, s_villagebus_evaluate, message);

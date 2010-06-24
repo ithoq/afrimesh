@@ -43,13 +43,16 @@ typedef struct _db {
 extern struct vtable* db_vt;
 extern object* DB;
 extern object* s_db;
+extern struct symbol* s_db_keys;
 
 void  db_init();
 
-const fexp*  db_evaluate(struct closure* closure, db* self, const fexp* message);
+const fexp*  db_evaluate(struct closure* closure, db* self, const fexp* expression);
 
-const fexp* db_post(struct closure* closure, db* self, const string* key, const unsigned char* data);
-const fexp* db_get (struct closure* closure, db* self, const string* key);
+const fexp* db_post(struct closure* closure, db* self, const fexp* message, const unsigned char* data);
+const fexp* db_get (struct closure* closure, db* self, const fexp* message);
+
+const fexp* db_keys(struct closure* closure, db* self, const fexp* message);
 
 db* db_print(struct closure* closure, db* self);
 

@@ -67,8 +67,8 @@ extern object* s_string_add;
 
 object* string_fromwchar(struct closure* closure, string* self, const wchar_t* format, ...);
 object* string_fromchar (struct closure* closure, string* self, const char* s, size_t length);
-char*   string_tochar  (struct closure* closure, string* self);
-string* string_add     (struct closure* closure, string* self, const string* s);
+char*   string_tochar   (struct closure* closure, string* self);
+string* string_add      (struct closure* closure, string* self, const string* s);
 
 object* string_new   (struct closure* closure, string* self, const wchar_t* s, size_t length);
 size_t  string_length(struct closure* closure, string* self);
