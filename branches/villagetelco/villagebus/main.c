@@ -91,7 +91,7 @@ int main(int argc, char** argv)
 
   /** - print eval result (if any) ---------------------------------------- */
   if (message == fexp_nil) {
-    //whttpd_out(L"jsonp(null, {})\n");
+    whttpd_out(L"jsonp(null, null)\n");
   } else if (send(message, s_fexp_car) == s_villagebus_error) {
       whttpd_out(L"jsonp(");
       send(message, s_print);
@@ -117,6 +117,3 @@ int main(int argc, char** argv)
 
   return exit_success();
 }
-
-
-

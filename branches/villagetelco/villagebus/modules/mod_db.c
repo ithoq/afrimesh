@@ -168,7 +168,9 @@ const fexp* db_get(struct closure* closure, db* self, const fexp* message)
     reply = (fexp*)send(reply, s_fexp_cons, item);
   }
   free(keyc);
-  reply = send(reply, s_fexp_cons, s_villagebus_json);  // tag reply as JSON
+  if (n) {
+    reply = (fexp*)send(reply, s_fexp_cons, s_villagebus_json);  // tag reply as JSON
+  }
 
   return reply;
 }
@@ -189,6 +191,7 @@ const fexp* db_keys(struct closure* closure, db* self, const fexp* message)
   char** bufferv;
   int i;
   for (i = 0; i < credis_keys(self->handle, keyc, &bufferv); i++) {
+    if (strcmp(bufferv[i], "") == 0) continue; // getting an empty key on zero match result :-/
     string* item = (string*)send(String, s_string_fromchar, bufferv[i], strlen(bufferv[i]));
     reply = (fexp*)send(reply, s_fexp_cons, item);
   }
