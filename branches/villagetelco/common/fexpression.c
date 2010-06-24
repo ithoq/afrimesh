@@ -112,7 +112,7 @@ object* string_new(struct closure* closure, string* self, const wchar_t* s, size
   string* clone = (string*)send(self->_vt[-1], s_allocate, sizeof(string));
   clone->length = length;
   if (length != 0) {
-    size_t buffer_size = sizeof(wchar_t) * (length+1);
+    size_t buffer_size = sizeof(wchar_t) * (length + 1);
     clone->buffer = (wchar_t*)malloc(buffer_size);
     memset(clone->buffer, 0, buffer_size);
     clone->buffer = wcsncpy(clone->buffer, s, length);
@@ -183,7 +183,7 @@ object* string_fromchar(struct closure *closure, string *self, const char* s, si
 
 char* string_tochar(struct closure* closure, string* self)
 {
-  size_t buffer_size = sizeof(char) + (self->length+1);
+  size_t buffer_size = sizeof(char) + (self->length + 1);
   char* buffer = (char*)malloc(buffer_size);
   memset(buffer, 0, buffer_size);
   if (wcstombs(buffer, self->buffer, self->length) != self->length) {

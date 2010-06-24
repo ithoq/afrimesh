@@ -152,19 +152,17 @@ const char* cgi_decode(const char* request, size_t length)
  * Converts path such as /status/self to a JSON formatted string 
  * e.g. [ "/", "status", "self" ]
  */
-const wchar_t* path_to_json(const wchar_t* request, size_t length)
+wchar_t* path_to_json(const wchar_t* request, size_t length)
 {
   if (request == NULL) {
     return NULL;
   }
 
-  size_t buffer_size = length * 2 * sizeof(wchar_t);
-  cgi_parse_buffer = (wchar_t*)malloc(buffer_size);
-  memset(cgi_parse_buffer, 0, buffer_size);
-  wchar_t* buffer = cgi_parse_buffer;
-  // TODO
+  size_t buffer_size = sizeof(wchar_t) * (length + 1) * 2;
+  wchar_t* buffer = (wchar_t*)malloc(buffer_size);
+  memset(buffer, 0, buffer_size);
 
-  return NULL;
+  return buffer;
 }
 
 
@@ -173,7 +171,7 @@ const wchar_t* path_to_json(const wchar_t* request, size_t length)
  * Converts a URL search string such as foo=bar&plink=plonk to a JSON formatted string
  * e.g. { "foo" : "bar", "plink" : "plonk" }
  */
-const wchar_t* search_to_json(const wchar_t* search, size_t length) 
+wchar_t* search_to_json(const wchar_t* search, size_t length) 
 {
   if (search == NULL) {
     return NULL;
@@ -181,21 +179,14 @@ const wchar_t* search_to_json(const wchar_t* search, size_t length)
 
   wchar_t c;
   size_t index = 0;
-  size_t buffer_size = length * 2 * sizeof(wchar_t);
+  size_t buffer_size = sizeof(wchar_t) * (length + 1) * 3;
+  wchar_t* buffer = malloc(buffer_size);
+  memset(buffer, 0, buffer_size);
+
   int first = 0;
   int code = 0;
-  
-  if (cgi_parse_buffer != NULL) {
-    free(cgi_parse_buffer);
-    cgi_parse_buffer = NULL;
-  }
-  
-  cgi_parse_buffer = malloc(buffer_size);
-  memset(cgi_parse_buffer, 0, buffer_size);
-  wchar_t * iter = cgi_parse_buffer;
-
+  wchar_t * iter = buffer;
   iter += swprintf(iter, buffer_size, L"{ '");
-
   for (index = 0; search[index] != L'\0' && index < length; index++) {
     c = search[index];
     switch (c) {
@@ -224,7 +215,7 @@ const wchar_t* search_to_json(const wchar_t* search, size_t length)
   iter += swprintf(iter, buffer_size, L"' }");
 
   //printl("CONVERTED SEARCH TO: %s\n\n", cgi_parse_buffer);
-  return cgi_parse_buffer;
+  return buffer;
 }
 
 
@@ -341,6 +332,16 @@ const Request* cgi_request(int argc, char** argv)
 }
 
 
+/**
+ *
+ */
+void cgi_init() 
+{
+  cgi_href_buffer = NULL;
+  cgi_post_buffer = NULL;
+}
+
+
 
 /**
  *
@@ -351,16 +352,8 @@ void cgi_release()
     free(cgi_post_buffer);
     cgi_post_buffer = NULL;
   }
-  if (cgi_parse_buffer != NULL) {
-    free(cgi_parse_buffer);
-    cgi_parse_buffer = NULL;
-  }
   if (cgi_href_buffer != NULL) {
-    /* TODO - Utterly bizarre gcc bug giving: 
-         villagebus(96815) malloc: *** error for object 0x100140: pointer being freed was not allocated
-         *** set a breakpoint in malloc_error_break to debug  
-       Early investigations say it may be only latest XCode release that sufferes from this */
-    //free(cgi_href_buffer);  
+    free(cgi_href_buffer);  
   }
 }
 

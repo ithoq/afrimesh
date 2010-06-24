@@ -116,6 +116,7 @@ const fexp* config_put(struct closure* closure, config* self, const fexp* messag
         !json_typecheck(section, json_type_string)  ||
         !json_typecheck(option,  json_type_string)  ||
         !json_typecheck(value,   json_type_string)) {
+      json_object_put(items);
       return (fexp*)send(VillageBus, 
                          s_villagebus_error, 
                          L"PUT /config expected [{config:String, section:String, option:String, value:String}, {..}] got %s",
@@ -126,6 +127,7 @@ const fexp* config_put(struct closure* closure, config* self, const fexp* messag
                         json_object_get_string(section), 
                         json_object_get_string(option), 
                         json_object_get_string(value))) {
+      json_object_put(items);
       return (fexp*)send(VillageBus, 
                          s_villagebus_error,
                          L"PUT /config could not set: %s.%s.%s=%s", 
@@ -142,6 +144,9 @@ const fexp* config_put(struct closure* closure, config* self, const fexp* messag
     message = (fexp*)send(message, s_fexp_cons, result);
   }
   
+  // clean up
+  json_object_put(items);
+
   return (fexp*)message;
 }
 

@@ -37,7 +37,8 @@
 struct vtable* db_vt = 0;
 object* DB = 0;
 object* s_db = 0;
-struct symbol* s_db_keys = 0;
+struct symbol* s_db_keys   = 0;
+object* s_db_lrange = 0;
 
 void db_init()
 {
@@ -48,8 +49,10 @@ void db_init()
   ((db*)DB)->handle = NULL;
 
   // register some local symbols
-  s_db_keys = (struct symbol*)symbol_intern(0, DB, L"keys");
-  send(db_vt, s_addMethod, s_db_keys, db_keys);
+  s_db_keys   = (struct symbol*)symbol_intern(0, DB, L"keys");
+  s_db_lrange = symbol_intern(0, DB, L"lrange");
+  send(db_vt, s_addMethod, s_db_keys,   db_keys);
+  send(db_vt, s_addMethod, s_db_lrange, db_lrange);
   
   // register module with VillageBus - TODO lose vb->modules & register directly in vtable perhaps?
   s_db = symbol_intern(0, 0, L"db");
@@ -147,32 +150,8 @@ const fexp* db_post(struct closure* closure, db* self, const fexp* message, cons
  */
 const fexp* db_get(struct closure* closure, db* self, const fexp* message)
 {
-  fexp* reply = fexp_nil;
-
   // default handling - lrange
-  string* key  = (string*)send(message, s_fexp_join, self->delimiter);  // generate a key from message
-  wprintl(L"GET /db/%S\n", key->buffer);
-  char*  keyc = (char*)send(key, s_string_tochar); // TODO - redis not support UNICODE so much
-  char** bufferv;
-  int n = credis_lrange(self->handle, keyc, 0, -1, &bufferv); 
-  if (bufferv == NULL) {
-    reply = (fexp*)send(VillageBus, s_villagebus_error, L"lrange failed for %s", keyc);
-    free(keyc);
-    return reply;
-  }
-
-  // IMPORTANT - all values stored in redis are well-formed JSON please
-  int i;
-  for (i = 0; i < n; i++) {
-    string* item = (string*)send(String, s_string_fromchar, bufferv[i], strlen(bufferv[i]));
-    reply = (fexp*)send(reply, s_fexp_cons, item);
-  }
-  free(keyc);
-  if (n) {
-    reply = (fexp*)send(reply, s_fexp_cons, s_villagebus_json);  // tag reply as JSON
-  }
-
-  return reply;
+  return (fexp*)send(self, s_db_lrange, message);
 }
 
 
@@ -196,6 +175,67 @@ const fexp* db_keys(struct closure* closure, db* self, const fexp* message)
     reply = (fexp*)send(reply, s_fexp_cons, item);
   }
   free(keyc);
+
+  return reply;
+}
+
+// TODO - debug info for error messages
+#define DMSG L"%s:%d %s() - "L""
+#define DARG __FILE__, __LINE__, __FUNCTION__
+
+/**
+ *
+ */
+const fexp* db_lrange(struct closure* closure, db* self, const fexp* message)
+{
+  const Request* request = ((villagebus*)VillageBus)->request;
+  fexp* reply = fexp_nil;
+
+  // get any parameters
+  int begin = 0;
+  int end = -1;
+  if (request->search) {
+    wchar_t* wjson = search_to_json(request->search, wcslen(request->search));
+    if (!wjson) {
+      return (fexp*)send(VillageBus, s_villagebus_error, DMSG"could not parse parameters", DARG);
+    }
+    string* sjson = (string*)send(String, s_new, wjson, wcslen(wjson));
+    free(wjson);
+    char*   json  = (char*)send(sjson, s_string_tochar);
+    struct json_object* search = json_tokener_parse(json);
+    free(json);
+    if (!search) {
+      return (fexp*)send(VillageBus, s_villagebus_error, DMSG"could not parse parameters", DARG);    
+    }
+    begin = json_object_get_int(json_object_object_get(search, "start"));
+    end   = json_object_get_int(json_object_object_get(search, "end"));
+    json_object_put(search);
+  }
+
+  // build key
+  string* skey = (string*)send(message, s_fexp_join, self->delimiter);  // generate a key from message
+  char*   key  = (char*)send(skey, s_string_tochar); // TODO - redis not support UNICODE so much
+
+  // make query
+  wprintl(L"GET /db/lrange/%S %d %d\n", skey->buffer, begin, end);
+  char** bufferv;
+  int n = credis_lrange(self->handle, key, begin, end, &bufferv); 
+  if (bufferv == NULL) {
+    reply = (fexp*)send(VillageBus, s_villagebus_error, DMSG"query failed for %s", key);
+    free(key);
+    return reply;
+  }
+
+  // TODO IMPORTANT - all values stored in redis to be well-formed JSON please :)
+  int i;
+  for (i = 0; i < n; i++) {
+    string* item = (string*)send(String, s_string_fromchar, bufferv[i], strlen(bufferv[i]));
+    reply = (fexp*)send(reply, s_fexp_cons, item);
+  }
+  free(key);
+  if (n) {
+    reply = (fexp*)send(reply, s_fexp_cons, s_villagebus_json);  // tag reply as JSON
+  }
 
   return reply;
 }

@@ -50,7 +50,6 @@ typedef struct {
 } Request;
 
 static wchar_t* cgi_href_buffer  = NULL;
-static wchar_t* cgi_parse_buffer = NULL;
 static char*    cgi_post_buffer  = NULL;
 
 void httpd_out(const char* message, ...);
@@ -59,10 +58,11 @@ void whttpd_out(const wchar_t* message, ...);
 void whttpd_error(const wchar_t* message, ...);
 
 
+void cgi_init();
 const Request* cgi_request(int argc, char** argv);
 const char* cgi_decode(const char* request, size_t length);
 void cgi_release();
 
-const wchar_t* search_to_json(const wchar_t* search, size_t length);
+wchar_t* search_to_json(const wchar_t* search, size_t length);
 
 #endif /* CGI */

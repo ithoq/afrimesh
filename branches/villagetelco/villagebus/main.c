@@ -61,6 +61,7 @@ int main(int argc, char** argv)
   whttpd_out(L"Content-type: text/plain\n\n");
 
   /** - parse request ----------------------------------------------------- */
+  cgi_init();
   const Request* request = cgi_request(argc, argv);
   /*whttpd_out(L"request->method   : %d\n", request->method);
   whttpd_out(L"request->href     : %S\n", request->href);
