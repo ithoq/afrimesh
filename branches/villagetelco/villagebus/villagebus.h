@@ -49,6 +49,7 @@ extern object* VillageBus;
 extern object* s_villagebus_evaluate;
 extern object* s_villagebus_compile;
 extern object* s_villagebus_error;
+extern object* s_villagebus_json;
 
 void  villagebus_init();
 

@@ -161,12 +161,14 @@ const fexp* db_get(struct closure* closure, db* self, const fexp* message)
     return reply;
   }
 
+  // IMPORTANT - all values stored in redis are well-formed JSON please
   int i;
   for (i = 0; i < n; i++) {
     string* item = (string*)send(String, s_string_fromchar, bufferv[i], strlen(bufferv[i]));
     reply = (fexp*)send(reply, s_fexp_cons, item);
   }
   free(keyc);
+  reply = send(reply, s_fexp_cons, s_villagebus_json);  // tag reply as JSON
 
   return reply;
 }

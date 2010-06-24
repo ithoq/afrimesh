@@ -96,9 +96,15 @@ int main(int argc, char** argv)
       whttpd_out(L"jsonp(");
       send(message, s_print);
       whttpd_out(L", null)\n");
+  } else if (send(message, s_fexp_car) == s_villagebus_json) { /* encapsulated json - usually from mod_db */
+    message = (fexp*)send(message, s_fexp_cdr);
+    whttpd_out(L"jsonp(null, ");
+    string* json = (string*)send(message, s_tojson, true);
+    whttpd_out(L"%S", json->buffer);
+    whttpd_out(L")\n");
   } else {
     whttpd_out(L"jsonp(null, ");
-    string* json = (string*)send(message, s_tojson);
+    string* json = (string*)send(message, s_tojson, false);
     whttpd_out(L"%S", json->buffer);
     whttpd_out(L")\n");
   }

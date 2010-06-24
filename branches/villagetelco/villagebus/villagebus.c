@@ -38,12 +38,14 @@ object* VillageBus = 0;
 object* s_villagebus_compile  = 0;
 object* s_villagebus_evaluate = 0;
 object* s_villagebus_error    = 0;
+object* s_villagebus_json     = 0;
 
 void villagebus_init() 
 {
   s_villagebus_compile  = symbol_intern(0, 0, L"compile");
   s_villagebus_evaluate = symbol_intern(0, 0, L"evaluate");
   s_villagebus_error    = symbol_intern(0, 0, L"error");
+  s_villagebus_json     = symbol_intern(0, 0, L"json");
   villagebus_vt = (struct vtable*)send(object_vt, s_delegated);
   send(villagebus_vt, s_addMethod, s_print, villagebus_print);
   send(villagebus_vt, s_addMethod, s_villagebus_compile,  villagebus_compile);

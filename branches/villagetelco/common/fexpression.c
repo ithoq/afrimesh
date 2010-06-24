@@ -134,10 +134,12 @@ string* string_print(struct closure *closure, string *self)
   return self;
 }
 
-string* string_tojson(struct closure* closure, string* self)
+string* string_tojson(struct closure* closure, string* self, bool quoted)
 {
-  string* json = (string*)send(String, s_string_fromwchar, L"\"%S\"", self->buffer);
-  return json;
+  if (quoted) {
+    return self;
+  } 
+  return (string*)send(String, s_string_fromwchar, L"\"%S\"", self->buffer);
 }
 
 object* string_fromwchar(struct closure* closure, string* self, const wchar_t* format, ...)
@@ -244,7 +246,7 @@ fexp* fexp_print(struct closure* closure, fexp* self)
   object* iter; 
   for (iter = (object*)self; iter != (object*)fexp_nil; iter = send(iter, s_fexp_cdr)) {
     printf(" ");
-    if (iter->_vt[-1] != Fexp->_vt[-1]) { // Is not a Fexp - TODO is this the best way?
+    if (iter->_vt[-1] != Fexp->_vt[-1]) { // Is not a Fexp - TODO is this the best way? 
       printf(". ");
       send(iter, s_print);
       break;
@@ -256,14 +258,14 @@ fexp* fexp_print(struct closure* closure, fexp* self)
   return self;
 }
 
-string* fexp_tojson(struct closure* closure, fexp* self)
+string* fexp_tojson(struct closure* closure, fexp* self, bool quoted)
 {
   string* json = (string*)send(String, s_string_fromwchar, L"[ ");
   object* iter;
   bool first = true;
   for (iter = (object*)self; iter != (object*)fexp_nil; iter = send(iter, s_fexp_cdr)) {
     object* car = send(iter, s_fexp_car);
-    string* json_car = (string*)send(car, s_tojson);
+    string* json_car = (string*)send(car, s_tojson, quoted);
     if (first) {
       first = false;
     } else {
