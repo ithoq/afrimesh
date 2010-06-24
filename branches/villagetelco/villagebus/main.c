@@ -98,7 +98,8 @@ int main(int argc, char** argv)
       whttpd_out(L", null)\n");
   } else {
     whttpd_out(L"jsonp(null, ");
-    send(message, s_print);
+    string* json = (string*)send(message, s_tojson);
+    whttpd_out(L"%S", json->buffer);
     whttpd_out(L")\n");
   }
 

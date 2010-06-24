@@ -35,6 +35,8 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
+#include <stdbool.h>
+
 
 /* logging */
 static const int log_level = 1;

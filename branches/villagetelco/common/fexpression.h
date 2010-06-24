@@ -23,6 +23,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include <wchar.h>
+#include <stdbool.h>
 
 #include <object.h>
 typedef struct _object object;
@@ -38,19 +39,7 @@ void fexp_init();
 extern object* s_new;
 extern object* s_length;
 extern object* s_print;
-
-
-/* - number ------------------------------------------------------------- */
-typedef struct _number {
-  struct vtable* _vt[0];
-  int integer;
-} number;
-extern struct vtable* number_vt;
-extern object* Number;
-
-object* number_new  (struct closure* closure, number* self, const wchar_t* s, size_t length);
-number* number_print(struct closure* closure, number* self);
-
+extern object* s_tojson;
 
 /* - string ------------------------------------------------------------- */
 typedef struct _string {
@@ -73,6 +62,21 @@ string* string_add      (struct closure* closure, string* self, const string* s)
 object* string_new   (struct closure* closure, string* self, const wchar_t* s, size_t length);
 size_t  string_length(struct closure* closure, string* self);
 string* string_print (struct closure* closure, string* self);
+string* string_tojson(struct closure* closure, string* self);
+
+
+/* - number ------------------------------------------------------------- */
+// TODO - implementation - surprising how far one can get without numbers these days :)
+typedef struct _number {
+  struct vtable* _vt[0];
+  int integer;
+} number;
+extern struct vtable* number_vt;
+extern object* Number;
+
+object* number_new   (struct closure* closure, number* self, const wchar_t* s, size_t length);
+number* number_print (struct closure* closure, number* self);
+string* number_tojson(struct closure* closure, number* self);
 
 
 /* - fexp --------------------------------------------------------------- */
@@ -101,6 +105,7 @@ string* fexp_join(struct closure* closure, fexp* self, const string* delimiter);
 object* fexp_new   (struct closure* closure, fexp* self, object* car, object* cdr);
 size_t  fexp_length(struct closure* closure, fexp* self);
 fexp*   fexp_print (struct closure* closure, fexp* self);
+string* fexp_tojson(struct closure* closure, fexp* self);
 
 
 /* - tconc -------------------------------------------------------------- */

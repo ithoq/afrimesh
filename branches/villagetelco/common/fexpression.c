@@ -23,6 +23,7 @@
 object *s_new    = 0;
 object *s_length = 0;
 object *s_print  = 0;
+object *s_tojson = 0;
 
 
 /* - library initialization --------------------------------------------- */
@@ -32,6 +33,7 @@ void fexp_init()
   s_new    = symbol_intern(0, 0, L"new");
   s_length = symbol_intern(0, 0, L"length");
   s_print  = symbol_intern(0, 0, L"print");
+  s_tojson = symbol_intern(0, 0, L"tojson");
 
   // extend base object model
   send(symbol_vt, s_addMethod, s_print, symbol_print);
@@ -45,6 +47,7 @@ void fexp_init()
   send(string_vt, s_addMethod, s_new,    string_new);
   send(string_vt, s_addMethod, s_length, string_length);
   send(string_vt, s_addMethod, s_print,  string_print);
+  send(string_vt, s_addMethod, s_tojson, string_tojson);
   send(string_vt, s_addMethod, s_string_fromwchar, string_fromwchar);
   send(string_vt, s_addMethod, s_string_fromchar,  string_fromchar);
   send(string_vt, s_addMethod, s_string_tochar,    string_tochar);
@@ -61,6 +64,7 @@ void fexp_init()
   send(fexp_vt, s_addMethod, s_new,    fexp_new);
   send(fexp_vt, s_addMethod, s_length, fexp_length);
   send(fexp_vt, s_addMethod, s_print,  fexp_print);
+  send(fexp_vt, s_addMethod, s_tojson, fexp_tojson);
   send(fexp_vt, s_addMethod, s_fexp_car,  fexp_car);
   send(fexp_vt, s_addMethod, s_fexp_cdr,  fexp_cdr);
   send(fexp_vt, s_addMethod, s_fexp_cons, fexp_cons);
@@ -119,6 +123,22 @@ object* string_new(struct closure* closure, string* self, const wchar_t* s, size
   return (object*)clone;
 }
 
+size_t string_length(struct closure *closure, string *self)
+{
+  return self->length;
+}
+
+string* string_print(struct closure *closure, string *self)
+{
+  wprintf(L"\"%ls\"", self->buffer ? self->buffer : L"null.string");
+  return self;
+}
+
+string* string_tojson(struct closure* closure, string* self)
+{
+  string* json = (string*)send(String, s_string_fromwchar, L"\"%S\"", self->buffer);
+  return json;
+}
 
 object* string_fromwchar(struct closure* closure, string* self, const wchar_t* format, ...)
 {
@@ -159,8 +179,6 @@ object* string_fromchar(struct closure *closure, string *self, const char* s, si
   return (object*)clone;
 }
 
-
-
 char* string_tochar(struct closure* closure, string* self)
 {
   size_t buffer_size = sizeof(char) + (self->length+1);
@@ -191,17 +209,6 @@ string* string_add(struct closure *closure, string *self, const string *s)
   }
   self->buffer = buffer;
   self->length = length;
-  return self;
-}
-
-size_t string_length(struct closure *closure, string *self)
-{
-  return self->length;
-}
-
-string* string_print(struct closure *closure, string *self)
-{
-  wprintf(L"\"%ls\"", self->buffer ? self->buffer : L"null.string");
   return self;
 }
 
@@ -247,6 +254,25 @@ fexp* fexp_print(struct closure* closure, fexp* self)
   }
   printf(" )");
   return self;
+}
+
+string* fexp_tojson(struct closure* closure, fexp* self)
+{
+  string* json = (string*)send(String, s_string_fromwchar, L"[ ");
+  object* iter;
+  bool first = true;
+  for (iter = (object*)self; iter != (object*)fexp_nil; iter = send(iter, s_fexp_cdr)) {
+    object* car = send(iter, s_fexp_car);
+    string* json_car = (string*)send(car, s_tojson);
+    if (first) {
+      first = false;
+    } else {
+      json_car = (string*)send(String, s_string_fromwchar, L", %S", json_car->buffer);
+    }
+    json = (string*)send(json, s_string_add, json_car);
+  }  
+  json = (string*)send(json, s_string_fromwchar, L"%S ]", json->buffer);
+  return json;
 }
 
 object* fexp_car(struct closure *closure, fexp *self)
