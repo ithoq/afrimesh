@@ -162,27 +162,90 @@ wchar_t* path_to_json(const wchar_t* request, size_t length)
   wchar_t* buffer = (wchar_t*)malloc(buffer_size);
   memset(buffer, 0, buffer_size);
 
+  // TODO - implementation
+
   return buffer;
 }
 
+
+
+struct json_object* search_to_json(const char* search, size_t length)
+{
+  if (search == NULL) {
+    return NULL;
+  }
+  char* s = search_to_json_string(search, length);
+  struct json_object* json = json_tokener_parse(s);
+  free(s);
+  if (!json) {
+    return NULL;
+  }
+  return json;
+}
 
 
 /**
  * Converts a URL search string such as foo=bar&plink=plonk to a JSON formatted string
  * e.g. { "foo" : "bar", "plink" : "plonk" }
  */
-wchar_t* search_to_json(const wchar_t* search, size_t length) 
+char* search_to_json_string(const char* search, size_t length) 
 {
   if (search == NULL) {
     return NULL;
   }
+  char c;
+  size_t index = 0;
+  size_t buffer_size = sizeof(char) * (length + 1) * 3;
+  char* buffer = (char*)malloc(buffer_size);
+  memset(buffer, 0, buffer_size);
+  int first = 0;
+  int code = 0;
+  char* iter = buffer;
+  iter += snprintf(iter, buffer_size, "{ '");
+  for (index = 0; search[index] != '\0' && index < length; index++) {
+    c = search[index];
+    switch (c) {
+    case '=':
+      iter += snprintf(iter, buffer_size, "' : '");
+      break;
+    case '+':
+      iter += snprintf(iter, buffer_size, " ");
+      break;
+    case '%':
+      if(sscanf((search + index + 1), "%2x", &code) != 1) code = '?';
+      index += 2;
+      iter += snprintf(iter, buffer_size, "%c", code);
+      break;
+    case '?':
+      break;
+    case '&':
+      iter += snprintf(iter, buffer_size, "', '");
+      break;
+    default:
+      iter += snprintf(iter, buffer_size, "%c", c);
+      break;
+    }
+  }
+  iter += snprintf(iter, buffer_size, "' }");
 
+  return buffer;
+}
+
+
+/**
+ * Converts a URL search string such as foo=bar&plink=plonk to a JSON formatted string
+ * e.g. { "foo" : "bar", "plink" : "plonk" }
+ */
+wchar_t* wsearch_to_json_string(const wchar_t* search, size_t length) 
+{
+  if (search == NULL) {
+    return NULL;
+  }
   wchar_t c;
   size_t index = 0;
   size_t buffer_size = sizeof(wchar_t) * (length + 1) * 3;
-  wchar_t* buffer = malloc(buffer_size);
+  wchar_t* buffer = (wchar_t*)malloc(buffer_size);
   memset(buffer, 0, buffer_size);
-
   int first = 0;
   int code = 0;
   wchar_t * iter = buffer;
@@ -197,7 +260,7 @@ wchar_t* search_to_json(const wchar_t* search, size_t length)
       iter += swprintf(iter, buffer_size, L" ");
       break;
     case L'%':
-      if(swscanf((search + index + 1), L"%2x", &code) != 1) code = '?';
+      if(swscanf((search + index + 1), L"%2x", &code) != 1) code = L'?';
       index += 2;
       iter += swprintf(iter, buffer_size, L"%c", code);
       break;
@@ -211,10 +274,8 @@ wchar_t* search_to_json(const wchar_t* search, size_t length)
       break;
     }
   }
-
   iter += swprintf(iter, buffer_size, L"' }");
 
-  //printl("CONVERTED SEARCH TO: %s\n\n", cgi_parse_buffer);
   return buffer;
 }
 
@@ -287,7 +348,8 @@ const Request* cgi_request(int argc, char** argv)
     swprintf(cgi_href_buffer, buffer_size, L"%s%s%s", path_info, (query_string ? "?" : ""), (query_string ? query_string : ""));
     request->href     = cgi_href_buffer;
     request->pathname = wcsdupchar(path_info);
-    request->search   = wcsdupchar(query_string);
+    request->search   = query_string ? wcsdupchar(query_string) : NULL;
+    request->json     = query_string ? search_to_json(query_string, strlen(query_string)) : NULL;
   } else if (argc >= 2 && argv[2]) {                     // command line
     request->href     = wcsdupchar(argv[2]);
     size_t length = strlen(argv[2]);
@@ -297,10 +359,19 @@ const Request* cgi_request(int argc, char** argv)
     snprintf(buffer, buffer_size, "%s", argv[2]);
     buffer[length] = '\0';
     char* state;
-    request->pathname = wcsdupchar(strtok_r(buffer, "?", &state));
-    request->search   = wcsdupchar(strtok_r(NULL, "?", &state));
-  }
+    path_info         = strtok_r(buffer, "?", &state);
+    query_string      = strtok_r(NULL, "?", &state);
+    request->pathname = wcsdupchar(path_info);
+    request->search   = query_string ? wcsdupchar(query_string) : NULL;
+    request->json     = query_string ? search_to_json(query_string, strlen(query_string)) : NULL;
+  }  
 
+  /* parse request - jsonp Callback */
+  request->callback = L"jsonp"; // TODO - make optional ?
+  if (request->json) {
+    const char* callback = json_object_get_string(json_object_object_get(request->json, "callback"));
+    request->callback = callback ? wcsdupchar(callback) : request->callback;
+  }
 
   /* parse request - Data */
   if (cgi_post_buffer != NULL) {

@@ -19,8 +19,8 @@
     <!-- includes ---------------------------------------------------------- -->
     <!-- script type="text/javascript" src="http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js"></script -->
     <script type="text/javascript" src="javascript/json.org/json2.min.js"></script>  <!-- TODO update!!! -->
-    <script type="text/javascript" src="javascript/jquery/jquery.tools.min.js"></script> <!-- TODO deprecate, only using tooltips -->
-    <!-- script type="text/javascript" src="javascript/jquery/jquery.min.js"></script -->
+    <!-- script type="text/javascript" src="javascript/jquery/jquery.tools.min.js"></script --> <!-- TODO deprecate, only using tooltips -->
+    <script type="text/javascript" src="javascript/jquery/jquery.min.js"></script>
     <script type="text/javascript" src="javascript/jquery/jquery.corner.js"></script> <!-- http://jrc.meerbox.nl/ - TODO deprecate -->
                                                                                       <!-- also look at: http://www.malsup.com/jquery/corner/ -->
                                                                                       <!--               http://www.ruzee.com/files/shadedborder/ -->
@@ -85,7 +85,8 @@
               $("#overlay").css("visibility", "visible");
               $("div#content").hide();
               $("div#content").load("modules/" + module + ".html", function(page) { 
-                  $("div#content").fadeIn("slow"); 
+                  //$("div#content").fadeIn("slow"); 
+                  $("div#content").show(); 
                   unloader = ready(); // UDE fades mess with load completion and require a ready() method :(
                 });
               return false;

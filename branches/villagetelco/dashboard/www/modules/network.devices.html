@@ -112,7 +112,6 @@
 
 </div>
 
-
 <script type="text/javascript"> //<![CDATA[    
 (function() {
 
@@ -126,13 +125,34 @@
     /* often a good place to do this: populate_control(); */
     console.debug("loaded network.devices.html");
 
+    
+    var channel = afrimesh.network.devices(function(error, devices) {
+        if (error) {
+          console.log("Error1: " + error);
+          return error;
+        }
+        var channel = afrimesh.network.devices.status(devices, function(error, device) {
+            if (error) {
+              console.log("Error2: " + error);
+              return error;
+            }
+          });
+        console.log("CHANNEL2: " + channel);
+      });
+    console.log("CHANNEL1: " + channel);
+
+    // poll channel for request completion
+    
 
     // query db for available status queues
     var items = $.ajax({ 
         type    : "GET",
-        url     : "http://192.168.20.105/cgi-bin/villagebus/root/db/status/10.0.0.3",
+        url     : "http://192.168.20.105/cgi-bin/villagebus/root/db/keys/status/*",
+        contentType : "application/json",
+        dataType    : "jsonp",
+        context: document.body,
         success : function(data) {
-          console.log(data);
+          console.log("GREAT SUCCESS: " + data[0]);
         },
         error   : function(data) {
           console.log("Error: ");

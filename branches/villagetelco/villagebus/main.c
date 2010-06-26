@@ -92,19 +92,19 @@ int main(int argc, char** argv)
 
   /** - print eval result (if any) ---------------------------------------- */
   if (message == fexp_nil) {
-    whttpd_out(L"jsonp(null, null)\n");
-  } else if (send(message, s_fexp_car) == s_villagebus_error) {
-      whttpd_out(L"jsonp(");
-      send(message, s_print);
-      whttpd_out(L", null)\n");
+    // do nothing - this allows handlers to manage their own output
+  } else if (send(message, s_fexp_car) == s_villagebus_error) { /* TODO - how to feed error messages to jQuery ? */
+    whttpd_out(L"%S(", request->callback);
+    send(message, s_print);
+    whttpd_out(L", null)\n");
   } else if (send(message, s_fexp_car) == s_villagebus_json) { /* encapsulated json - usually from mod_db */
     message = (fexp*)send(message, s_fexp_cdr);
-    whttpd_out(L"jsonp(null, ");
+    whttpd_out(L"%S(null, ", request->callback);
     string* json = (string*)send(message, s_tojson, true);
     whttpd_out(L"%S", json->buffer);
     whttpd_out(L")\n");
   } else {
-    whttpd_out(L"jsonp(null, ");
+    whttpd_out(L"%S(", request->callback);
     string* json = (string*)send(message, s_tojson, false);
     whttpd_out(L"%S", json->buffer);
     whttpd_out(L")\n");

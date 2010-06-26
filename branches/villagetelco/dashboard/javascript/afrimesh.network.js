@@ -12,6 +12,23 @@ function BootNetwork(parent) {
 
   var network = function() { return this.network.routes(); };
 
+
+  /* - network devices -------------------------------------------------- */
+
+  /**
+   * 
+   */
+  network.devices = function(continuation) {
+
+  };
+
+  network.devices.status = function(continuation) {
+    
+  };
+
+
+  /* - network accounting ----------------------------------------------- */
+
   /** 
    * decorates a router with network accounting information 
    */

@@ -192,24 +192,11 @@ const fexp* db_lrange(struct closure* closure, db* self, const fexp* message)
   fexp* reply = fexp_nil;
 
   // get any parameters
-  int begin = 0;
+  int start = 0;
   int end = -1;
-  if (request->search) {
-    wchar_t* wjson = search_to_json(request->search, wcslen(request->search));
-    if (!wjson) {
-      return (fexp*)send(VillageBus, s_villagebus_error, DMSG"could not parse parameters", DARG);
-    }
-    string* sjson = (string*)send(String, s_new, wjson, wcslen(wjson));
-    free(wjson);
-    char*   json  = (char*)send(sjson, s_string_tochar);
-    struct json_object* search = json_tokener_parse(json);
-    free(json);
-    if (!search) {
-      return (fexp*)send(VillageBus, s_villagebus_error, DMSG"could not parse parameters", DARG);    
-    }
-    begin = json_object_get_int(json_object_object_get(search, "start"));
-    end   = json_object_get_int(json_object_object_get(search, "end"));
-    json_object_put(search);
+  if (request->json) {
+    start = json_object_get_int(json_object_object_get(request->json, "start"));
+    end   = json_object_get_int(json_object_object_get(request->json, "end"));
   }
 
   // build key
@@ -217,9 +204,9 @@ const fexp* db_lrange(struct closure* closure, db* self, const fexp* message)
   char*   key  = (char*)send(skey, s_string_tochar); // TODO - redis not support UNICODE so much
 
   // make query
-  wprintl(L"GET /db/lrange/%S %d %d\n", skey->buffer, begin, end);
+  wprintl(L"GET /db/lrange/%S %d %d\n", skey->buffer, start, end);
   char** bufferv;
-  int n = credis_lrange(self->handle, key, begin, end, &bufferv); 
+  int n = credis_lrange(self->handle, key, start, end, &bufferv); 
   if (bufferv == NULL) {
     reply = (fexp*)send(VillageBus, s_villagebus_error, DMSG"query failed for %s", key);
     free(key);

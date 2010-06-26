@@ -37,16 +37,20 @@
 #include <string.h>
 #include <wchar.h>
 
+#include <json/json.h> // TODO - deprecate in favor of fexpressions
+
 #include <util.h>
 
 
 typedef enum { OPTIONS, GET, HEAD, POST, PUT, DELETE,  PATCH, CONNECT, TRACE } Method;
 typedef struct {
-  Method method;        // POST
-  wchar_t* href;        // /status/self?foo=bar&plink=plonk
-  wchar_t* pathname;    // /status/self
-  wchar_t* search;      // foo=bar&plink=plonk
-  unsigned char* data;  // { some string }
+  Method method;            // POST
+  wchar_t* href;            // /status/self?foo=bar&plink=plonk
+  wchar_t* pathname;        // /status/self
+  wchar_t* search;          // foo=bar&plink=plonk
+  struct json_object* json; // { 'foo' : 'bar', 'plink' : 'plonk' }
+  wchar_t* callback;        // jsonp1277450195457
+  unsigned char* data;      // { some raw data }
 } Request;
 
 static wchar_t* cgi_href_buffer  = NULL;
@@ -63,6 +67,10 @@ const Request* cgi_request(int argc, char** argv);
 const char* cgi_decode(const char* request, size_t length);
 void cgi_release();
 
-wchar_t* search_to_json(const wchar_t* search, size_t length);
+
+struct json_object* search_to_json(const char* search, size_t length);
+char*    search_to_json_string(const char* search, size_t length);
+wchar_t* wsearch_to_json_string(const wchar_t* search, size_t length);
+
 
 #endif /* CGI */
