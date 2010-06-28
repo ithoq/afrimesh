@@ -20,13 +20,12 @@
 
 = 3. Setup OpenWRT =
 
-  * Edit feeds.conf.default:
+  * Add this line to the top of feeds.conf.default in the kamikaze directory:
   {{{
-  cd kamikaze
   src-cpy afrimesh ../afrimesh/package-scripts/openwrt
   }}}
 
-  * Run:
+  * Run from kamikaze directory:
   {{{
   ./scripts/feeds update -a
   }}}
@@ -34,9 +33,8 @@
 
 = 4. Activate Packages =
 
- * Run:
+ * Run from kamikaze directory:
   {{{
-   cd kamikaze
   ./scripts/feeds install batmand 
   ./scripts/feeds install libjson 
   ./scripts/feeds install afrimesh-dashboard
