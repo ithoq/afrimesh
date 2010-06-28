@@ -1,17 +1,29 @@
-= Checkout OpenWRT =
+= Overview =
+
+  To build Afrimesh nodes you will be maintaining two buckets of source: openwrt and afrimesh.  You will then wire up the afrimesh source into the openwrt toolchain.  Organizationally, you'll probably want to maintain a source directory with one folder for openwrt and one for afrimesh.  *All commands below are run from the perspective of the top level source directory*
+
+= 1. Checkout OpenWRT =
 
   * Run:
   {{{
   svn co svn://svn.openwrt.org/openwrt/branches/8.09 kamikaze
-  cd kamikaze
   }}}
+  This will create the kamikaze directory
 
+= 2. Checkout Afrimesh = 
 
-= Setup OpenWRT =
+  * Run:
+  {{{ 
+  svn checkout http://afrimesh.googlecode.com/svn/trunk/ afrimesh
+  }}}
+  this will create the afrimesh directory
+
+= 3. Setup OpenWRT =
 
   * Edit feeds.conf.default:
   {{{
-  src-cpy afrimesh afrimesh-source-dir/package-scripts/openwrt
+  cd kamikaze
+  src-cpy afrimesh ../afrimesh/package-scripts/openwrt
   }}}
 
   * Run:
@@ -20,10 +32,11 @@
   }}}
 
 
-= Activate Packages =
+= 4. Activate Packages =
 
  * Run:
   {{{
+   cd kamikaze
   ./scripts/feeds install batmand 
   ./scripts/feeds install libjson 
   ./scripts/feeds install afrimesh-dashboard
@@ -31,7 +44,6 @@
 
   * Run:
   {{{
-  cd openwrt-source-dir
   make menuconfig
   # select afrimesh under the Administration heading
   }}}
