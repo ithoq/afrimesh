@@ -12,19 +12,44 @@ function BootNetwork(parent) {
 
   var network = function() { return this.network.routes(); };
 
-
   /* - network devices -------------------------------------------------- */
+  network.devices = function(continuation) {
+  };
+
+  /* - network status --------------------------------------------------- */
 
   /**
    * 
    */
-  network.devices = function(continuation) {
+  network.status = function(continuation) {
+    var name = afrimesh.villagebus.Name("/root/db/keys/status/*");
+    name = afrimesh.villagebus.Bind(name, continuation);
+    channel = afrimesh.villagebus.Send(name /*, args*/);
+    return channel;
 
+    // query db for available status queues
+    /*var xhr = $.ajax({ 
+        type    : "GET",
+        url     : "http://192.168.20.105/cgi-bin/villagebus/root/db/keys/status/*",
+        contentType : "application/json",
+        dataType    : "jsonp",
+        context: document.body,
+        success : function(data) {
+          console.log("GREAT SUCCESS: ");
+          console.log(data);
+          data.map(function(device) {
+            continuation(null, device);
+          });
+        },
+        error   : function(data) {
+          console.log("Error: ");
+          console.log(data);
+          continuation(data, null);
+        }
+      });  */
   };
 
-  network.devices.status = function(continuation) {
-    
-  };
+  //network.device.status = function(continuation) {  };
 
 
   /* - network accounting ----------------------------------------------- */

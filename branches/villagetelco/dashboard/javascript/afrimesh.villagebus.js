@@ -29,7 +29,84 @@ var BootVillageBus = function (afrimesh) {
     return "http://" + afrimesh.settings.address + afrimesh.settings.ajax_proxy; 
   };
 
-  /** - villagebus.login --------------------------------------------------------- */
+  /** - villagebus.api -------------------------------------------------- */
+
+
+  /* Either this:
+  var name     = afrimesh.villagebus.Name("/root/db/keys/status");
+  var channel  = afrimesh.villagebus.Send(name, "*");
+  var response = afrimesh.villagebus.Read(channel);
+  if (afrimesh.villagebus.Error(response)) {
+    console.log(response.error);
+    return;
+  }
+  for (key in response) {
+    // dadadada
+  }
+
+  // Or this:
+  var name = afrimesh.villagebus.Name("/root/db/keys/status");
+  name = Bind(name, function(error, response) {
+    if (error) {
+      console.log(error);
+      return error;
+    }
+    for (key in response) {
+      // dadadadada
+    }
+    return response;
+  });
+  var channel = afrimesh.villagebus.Send(name, "*");
+  var response = Read(channel); */ // Optional - will block until call returns
+
+
+  villagebus.Name = function(name) {
+    var name = {
+      type        : "GET"
+      url         : "http://192.168.20.105/cgi-bin/villagebus" + name, // TODO - parse name string properly for IP's, proxies etc.
+      contentType : "application/json",
+      dataType    : "jsonp",
+      context     : document.body,
+      success     : function(response) {
+      },
+      error       : function(response) {
+      }
+    };
+  };
+  
+  villagebus.Bind = function(name, continuation) { // TODO -> Bind(name1, name2)
+  };
+
+  villagebus.Send = function(channel, args) {
+  };
+  
+  villagebus.Read = function(channel) {
+  };
+  
+
+
+  /*var xhr = $.ajax({ 
+        type    : "GET",
+        url     : "http://192.168.20.105/cgi-bin/villagebus/root/db/keys/status/*",
+        contentType : "application/json",
+        dataType    : "jsonp",
+        context: document.body,
+        success : function(data) {
+          console.log("GREAT SUCCESS: ");
+          console.log(data);
+          data.map(function(device) {
+            continuation(null, device);
+          });
+        },
+        error   : function(data) {
+          console.log("Error: ");
+          console.log(data);
+          continuation(data, null);
+        }
+      });  */
+
+
+  /** - villagebus.login ------------------------------------------------ */
   // TODO - support multiple authentication mechanisms e.g.  luci, htaccess, cert, ldap etc.
   villagebus.login = function(username, password, continuation, error) {
     return this.login.async(username, password, continuation, error);
@@ -50,7 +127,7 @@ var BootVillageBus = function (afrimesh) {
       }, error); 
   };
   
-  /** - villagebus.mesh_topology ------------------------------------------------- */
+  /** - villagebus.mesh_topology ---------------------------------------- */
   villagebus.mesh_topology       = function()  { return this.mesh_topology.vis();};
   villagebus.mesh_topology.vis   = function()  { 
     return this.vis.sync(); 

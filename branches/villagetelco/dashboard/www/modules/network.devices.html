@@ -45,37 +45,37 @@
       display: table-cell;
       padding-bottom: 1.0em;
     }
-    div.entry {
+    div.device {
       display: table-row;
       vertical-align: middle;
       height : 2.0em;
       line-height : 2.0em;
     }
-    div.entry span {
+    div.device span {
       border: 0px solid blue;
     }
-    div.entry span.name {
+    div.device span.name {
       display: table-cell;
       color: blue;
       font-weight: bold;
       padding-right: 1.5em;
     }
-    div.entry span.lastseen {
+    div.device span.lastseen {
       display: table-cell;
       color: black;
       padding-left: 1.5em;
     }
-    div.entry span.status {
+    div.device span.status {
       display: table-cell;
       color: green;
       padding-right: 1.5em;
     }
-    div.entry span.traffic {
+    div.device span.traffic {
       display: table-cell;
       color: gray;
       padding-right: 1.5em;
     }
-    div.entry span.graph {
+    div.device span.graph {
       display: table-cell;
       margin: 0px; padding: 0px;
       border: 1px solid lightgray;
@@ -84,29 +84,23 @@
       padding-left: 0.25em;
       padding-right: 0.25em;
     }
-    div.entry br {
+    div.device br {
       /*line-height: 0.5em;*/
     }
   </style>
 
-  <div class="devices">
+  <div id="devicelist" class="devices">
     <!-- div class="head">
       <span>Name</span>
       <span>Status</span>
       <span>Traffic</span>
       <span>Last 24 Hours</span>
     </div -->
-    <div class="entry">
+    <div id="device-template" class="device">
       <span class="name">gateway-is-1</span> 
       <span class="status">healthy</span>
       <span class="traffic">123MB</span>
       <span class="graph"><div style="font-size: 0.5em; width:80.0em; height:4.0em;" id="graph_10_0_0_6"></div></span>
-    </div><br/>
-    <div class="entry">
-      <span class="name">10.0.0.3</span> 
-      <span class="status">healthy</span>
-      <span class="traffic">523MB</span>
-      <span class="graph"><div style="font-size: 0.5em; width:80.0em; height:4.0em;" id="graph_10_0_0_3"></div></span>
     </div>
   </div>
 
@@ -125,57 +119,49 @@
     /* often a good place to do this: populate_control(); */
     console.debug("loaded network.devices.html");
 
-    
-    var channel = afrimesh.network.devices(function(error, devices) {
+    /* Setup filter */
+    $("div#network-devices .filter").mousedown(function(event) { return false; });
+    $("div#network-devices .filter input[type=checkbox]").hide().click(function(event) {
+        $(this).toggleClass("active");
+        $(this).next("label").toggleClass("active");
+        //$(this).next("label").toggleClass("shadow");
+        //$(this).attr('checked') ? $(".device." + this.id).show() : $(".device." + this.id).hide();
+        $(this).is(':checked') ? $(".device." + this.id).slideDown(100) : $(".device." + this.id).slideUp(100);
+      });
+    $("div#network-devices .filter label").addClass("round");
+    //$("div#network-devices .filter label").addClass("shadow");
+    $("div#network-devices .filter input[type=checkbox]").each(function(e) { return $(this).click(); });
+
+    /* load data */   
+    $("#device-template").hide(); // TODO - No comment. File jquery bug.
+    var channel = afrimesh.network.status(function(error, device) {
         if (error) {
-          console.log("Error1: " + error);
+          console.log("error: " + error);
           return error;
         }
-        var channel = afrimesh.network.devices.status(devices, function(error, device) {
-            if (error) {
-              console.log("Error2: " + error);
-              return error;
-            }
-          });
-        console.log("CHANNEL2: " + channel);
+        console.log("device: " + device);
+        device="foo"; //
+        $("#device-template").show(); // TODO - No comment. File jquery bug.
+        $("#device-template").clone().attr("id", "device-" + device).appendTo("#devicelist");
+        $("#device-template").hide(); // TODO - No comment. File jquery bug.
       });
-    console.log("CHANNEL1: " + channel);
+    console.log("channel: " + channel);
 
-    // poll channel for request completion
-    
-
-    // query db for available status queues
-    var items = $.ajax({ 
-        type    : "GET",
-        url     : "http://192.168.20.105/cgi-bin/villagebus/root/db/keys/status/*",
-        contentType : "application/json",
-        dataType    : "jsonp",
-        context: document.body,
-        success : function(data) {
-          console.log("GREAT SUCCESS: " + data[0]);
-        },
-        error   : function(data) {
-          console.log("Error: ");
-          console.log(data);
-        }
-      });  
+    // poll channel for request completion?
 
 
-    var gateway = [];
+    /*var gateway = [];
     var nexthop = [];
     for (var i = 0; i < 24 * 6; i++) {
       gateway.push([i, Math.random()]);
       nexthop.push([i, Math.random()]);
     }
-
     //$(".graph").sparkline(data, { });
     //$(".graph").sparkline(data, { height : "2.0em" });
-
     $.plot($("#graph_10_0_0_6"), [ { label: "gateway", data : gateway }, { label: "nexthop", data : nexthop } ], { 
         series : { lines : { show : true }, points : { show : false } },
         grid   : { show : false } 
       });
-
     gateway = [];
     nexthop = [];
     for (var i = 0; i < 24 * 6; i++) {
@@ -186,8 +172,9 @@
         series : { lines : { show : true }, points : { show : false } },
         grid   : { show : false } 
       });
-
     update();
+    */
+
     return unload;
   };
 
@@ -202,26 +189,11 @@
   function update() {
     /* clearTimeout(timer); */
 
-    /* Setup filter */
-    $("div#network-devices .filter").mousedown(function(event) { return false; });
-    $("div#network-devices .filter input[type=checkbox]").hide().click(function(event) {
-        $(this).toggleClass("active");
-        $(this).next("label").toggleClass("active");
-        //$(this).next("label").toggleClass("shadow");
-        //$(this).attr('checked') ? $(".entry." + this.id).show() : $(".entry." + this.id).hide();
-        $(this).is(':checked') ? $(".entry." + this.id).slideDown(100) : $(".entry." + this.id).slideUp(100);
-      });
-    $("div#network-devices .filter label").addClass("round");
-    //$("div#network-devices .filter label").addClass("shadow");
-    $("div#network-devices .filter input[type=checkbox]").each(function(e) { return $(this).click(); });
-
-
     /* TODO - afrimesh.network.devices.async(populate_devices); */
     //var routers = afrimesh.network.routers();
     //populate_devices(routers);
 
     /* Add all devices on the network to our list */
-
 
     /* timer = setTimeout(update, 5000); */
   };
