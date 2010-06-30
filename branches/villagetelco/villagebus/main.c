@@ -99,7 +99,8 @@ int main(int argc, char** argv)
     whttpd_out(L", null)\n");
   } else if (send(message, s_fexp_car) == s_villagebus_json) { /* encapsulated json - usually from mod_db */
     message = (fexp*)send(message, s_fexp_cdr);
-    whttpd_out(L"%S(null, ", request->callback);
+    // TODO - make a call on conventions - whttpd_out(L"%S(null, ", request->callback);
+    whttpd_out(L"%S(", request->callback);
     string* json = (string*)send(message, s_tojson, true);
     whttpd_out(L"%S", json->buffer);
     whttpd_out(L")\n");

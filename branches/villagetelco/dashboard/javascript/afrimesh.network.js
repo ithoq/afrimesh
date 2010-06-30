@@ -23,32 +23,19 @@ function BootNetwork(parent) {
    */
   network.status = function(continuation) {
     var name = afrimesh.villagebus.Name("/root/db/keys/status/*");
-    name = afrimesh.villagebus.Bind(name, continuation);
+    name = afrimesh.villagebus.Bind(name, function(error, response) {
+        if (error) { return continuation(error, null); } // TODO - return Fail(error, continuation) maybe ?
+        response.map(function(key) {
+            return afrimesh.villagebus.Send(afrimesh.villagebus.Bind("/root/db/lrange/" + key, function(error, response) {
+                response = { "key" : key, "status" : response };
+                return continuation(error, response);
+              }), { start : 0, end : 2 });
+          });
+      });
     channel = afrimesh.villagebus.Send(name /*, args*/);
     return channel;
-
-    // query db for available status queues
-    /*var xhr = $.ajax({ 
-        type    : "GET",
-        url     : "http://192.168.20.105/cgi-bin/villagebus/root/db/keys/status/*",
-        contentType : "application/json",
-        dataType    : "jsonp",
-        context: document.body,
-        success : function(data) {
-          console.log("GREAT SUCCESS: ");
-          console.log(data);
-          data.map(function(device) {
-            continuation(null, device);
-          });
-        },
-        error   : function(data) {
-          console.log("Error: ");
-          console.log(data);
-          continuation(data, null);
-        }
-      });  */
   };
-
+  
   //network.device.status = function(continuation) {  };
 
 

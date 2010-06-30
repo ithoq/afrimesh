@@ -54,7 +54,6 @@ static const SymbolTable Methods = {
  */
 void httpd_out(const char* message, ...)
 {
-  printl("<- ");
   va_list args;
   va_start(args, message);
   vprintf(message, args);
@@ -85,7 +84,6 @@ void httpd_error(const char* message, ...)
  */
 void whttpd_out(const wchar_t* message, ...)
 {
-  wprintl(L"<- ");
   va_list args;
   va_start(args, message);
   vwprintf(message, args);

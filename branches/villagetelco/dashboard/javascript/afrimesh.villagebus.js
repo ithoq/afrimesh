@@ -31,7 +31,6 @@ var BootVillageBus = function (afrimesh) {
 
   /** - villagebus.api -------------------------------------------------- */
 
-
   /* Either this:
   var name     = afrimesh.villagebus.Name("/root/db/keys/status");
   var channel  = afrimesh.villagebus.Send(name, "*");
@@ -59,10 +58,9 @@ var BootVillageBus = function (afrimesh) {
   var channel = afrimesh.villagebus.Send(name, "*");
   var response = Read(channel); */ // Optional - will block until call returns
 
-
   villagebus.Name = function(name) {
     var name = {
-      type        : "GET"
+      type        : "GET",
       url         : "http://192.168.20.105/cgi-bin/villagebus" + name, // TODO - parse name string properly for IP's, proxies etc.
       contentType : "application/json",
       dataType    : "jsonp",
@@ -72,38 +70,47 @@ var BootVillageBus = function (afrimesh) {
       error       : function(response) {
       }
     };
+    return name;
   };
   
   villagebus.Bind = function(name, continuation) { // TODO -> Bind(name1, name2)
+    if (isString(name)) {
+      name = villagebus.Name(name);
+    }
+    name.success = function(response) {
+      //console.log("SUCCESS: " + name.url + " - " + response);
+      if (villagebus.Fail(response)) {
+        return continuation(response, null);
+      }
+      return continuation(null, response);
+    };
+    name.error   = function(response) {
+      return continuation(response, null);
+    };
+    return name;
   };
 
   villagebus.Send = function(channel, args) {
+    if (args) {
+      var search = "?";
+      for (var arg in args) {
+        if (search.length > 1) {
+          search += "&";
+        }
+        search += arg + "=" + args[arg];
+      }
+      channel.url += search;
+    }
+    channel.xhr = $.ajax(channel);
+    return channel;
   };
   
   villagebus.Read = function(channel) {
   };
   
-
-
-  /*var xhr = $.ajax({ 
-        type    : "GET",
-        url     : "http://192.168.20.105/cgi-bin/villagebus/root/db/keys/status/*",
-        contentType : "application/json",
-        dataType    : "jsonp",
-        context: document.body,
-        success : function(data) {
-          console.log("GREAT SUCCESS: ");
-          console.log(data);
-          data.map(function(device) {
-            continuation(null, device);
-          });
-        },
-        error   : function(data) {
-          console.log("Error: ");
-          console.log(data);
-          continuation(data, null);
-        }
-      });  */
+  villagebus.Fail = function(response) { // TODO - Check for a response of type: { 'error' : 'some message' }
+    return false;
+  };
 
 
   /** - villagebus.login ------------------------------------------------ */
