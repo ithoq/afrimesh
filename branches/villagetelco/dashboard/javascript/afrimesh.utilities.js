@@ -35,7 +35,6 @@
   function isObject(object) {
     return typeof object === "object";
   };
-
   // See: http://thinkweb2.com/projects/prototype/instanceof-considered-harmful-or-how-to-write-a-robust-isarray/
   //      http://ajaxian.com/archives/isarray-why-is-it-so-bloody-hard-to-get-right
   //      http://erik.eae.net/archives/2005/06/06/22.13.54/
@@ -259,29 +258,10 @@
     }
     return s;
   }
-  function typeOf(obj) { 
-    //console.error("TYPE: " + obj + " -> " + (typeof obj));
-    if (isArray(obj)) {
-      return "array";
-    } else if (typeof obj == 'function') {
-      return "function";
-    } else if (typeof obj == 'string') {
-      return "string";
-    } else if (typeof obj == 'number') {
-      return "number";
-    } else if (typeof obj == 'boolean') {
-      return "boolean";
-    } else if (typeof obj == 'undefined') {
-      return "undefined";
-    } else if (obj == null) {
-      return "null";
-    }
-    return "object";
-  }
   function rshow(item) {
     var s = "";
     for (var property in item) {
-      if (typeOf(item[property]) == 'object') {
+      if (isObject(item[property])) {
         s += property + " : { " + rshow(item[property]) + " } \n";
       } else {
         s += property + " : |" + item[property] + "|\t";
