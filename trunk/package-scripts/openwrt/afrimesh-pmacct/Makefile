@@ -129,7 +129,7 @@ endef
 
 endef
 
-ifneq ($(SDK)$(CONFIG_PACKAGE_nfacctd)$(CONFIG_PACKAGE_pmacctd),)
+ifneq ($(SDK)$(CONFIG_PACKAGE_afrimesh-nfacctd)$(CONFIG_PACKAGE_afrimesh-pmacctd),)
   define Compile/pmacct/basic
     $(call Compile/Template,, \
 	--disable-mysql \
@@ -142,7 +142,7 @@ ifneq ($(SDK)$(CONFIG_PACKAGE_nfacctd)$(CONFIG_PACKAGE_pmacctd),)
 endif
 $(eval $(Compile/pmacct/basic))
 
-ifneq ($(SDK)$(CONFIG_PACKAGE_nfacctd-mysql)$(CONFIG_PACKAGE_pmacctd-mysql),)
+ifneq ($(SDK)$(CONFIG_PACKAGE_afrimesh-nfacctd-mysql)$(CONFIG_PACKAGE_afrimesh-pmacctd-mysql),)
   define Compile/pmacct/mysql
     $(call Compile/Template,-mysql, \
 	--enable-mysql \
@@ -155,7 +155,7 @@ ifneq ($(SDK)$(CONFIG_PACKAGE_nfacctd-mysql)$(CONFIG_PACKAGE_pmacctd-mysql),)
 endif
 $(eval $(Compile/pmacct/mysql))
 
-ifneq ($(SDK)$(CONFIG_PACKAGE_nfacctd-pgsql)$(CONFIG_PACKAGE_pmacctd-pgsql),)
+ifneq ($(SDK)$(CONFIG_PACKAGE_afrimesh-nfacctd-pgsql)$(CONFIG_PACKAGE_afrimesh-pmacctd-pgsql),)
   define Compile/pmacct/pgsql
     $(call Compile/Template,-pgsql, \
 	--enable-pgsql \
@@ -168,7 +168,7 @@ ifneq ($(SDK)$(CONFIG_PACKAGE_nfacctd-pgsql)$(CONFIG_PACKAGE_pmacctd-pgsql),)
 endif
 $(eval $(Compile/pmacct/pgsql))
 
-ifneq ($(SDK)$(CONFIG_PACKAGE_nfacctd-sqlite)$(CONFIG_PACKAGE_pmacctd-sqlite),)
+ifneq ($(SDK)$(CONFIG_PACKAGE_afrimesh-nfacctd-sqlite)$(CONFIG_PACKAGE_afrimesh-pmacctd-sqlite),)
   define Compile/pmacct/sqlite
     $(call Compile/Template,-sqlite, \
 	--enable-sqlite3 \
@@ -192,7 +192,7 @@ define Package/afrimesh-pmacct-client/install
 	$(CP) $(PKG_BUILD_DIR)/src/pmacct $(1)/usr/sbin/
 endef
 
-#$(eval $(call BuildPackage,afrimesh-nfacctd))
+$(eval $(call BuildPackage,afrimesh-nfacctd))
 #$(eval $(call BuildPackage,afrimesh-nfacctd-mysql))
 #$(eval $(call BuildPackage,afrimesh-nfacctd-pgsql))
 #$(eval $(call BuildPackage,afrimesh-nfacctd-sqlite))
