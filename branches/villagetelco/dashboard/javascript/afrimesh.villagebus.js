@@ -56,19 +56,27 @@ var BootVillageBus = function (afrimesh) {
     return response;
   });
   var channel = afrimesh.villagebus.Send(name, "*");
-  var response = Read(channel); */ // Optional - will block until call returns
-
+  var response = Read(channel); */ 
   villagebus.Name = function(name) {
-    var name = {
+    name = name.split('/').map(function(node) {   // perform path transformations
+      if (node == "root") {
+        return "/" + afrimesh.settings.root + "/cgi-bin/villagebus";
+      } else if (node == "self") {
+        return "/" + afrimesh.settings.address + "/cgi-bin/villagebus"; 
+      }
+      return node;
+    }).join('/');
+    name = {
+      async       : true,
       type        : "GET",
-      url         : "http://192.168.20.105/cgi-bin/villagebus" + name, // TODO - parse name string properly for IP's, proxies etc.
+      url         : "http:" + name, 
       contentType : "application/json",
       dataType    : "jsonp",
       context     : document.body,
-      success     : function(response) {
-      },
-      error       : function(response) {
-      }
+      success     : function(response) { }, // TODO - default sync handler
+      error       : function(response) { }, // TODO - default sync handler
+      complete    : function() { },
+      beforeSend  : function() { }
     };
     return name;
   };
@@ -78,7 +86,6 @@ var BootVillageBus = function (afrimesh) {
       name = villagebus.Name(name);
     }
     name.success = function(response) {
-      //console.log("SUCCESS: " + name.url + " - " + response);
       if (villagebus.Fail(response)) {
         return continuation(response, null);
       }
@@ -90,7 +97,9 @@ var BootVillageBus = function (afrimesh) {
     return name;
   };
 
-  villagebus.Send = function(channel, args) {
+  villagebus.Send = function(name, args) {
+    // TODO - if there is no continuation bound to name configure a
+    //        sync JSON request via ajax-proxy.cgi
     if (args) {
       var search = "?";
       for (var arg in args) {
@@ -99,17 +108,38 @@ var BootVillageBus = function (afrimesh) {
         }
         search += arg + "=" + args[arg];
       }
-      channel.url += search;
+      name.url += search;
     }
-    channel.xhr = $.ajax(channel);
-    return channel;
+    name.beforeSend(); // Grf. jQuery does not trigger beforeSend for jsonp calls
+    name._xhr_ = $.ajax(name);
+    return name;
   };
   
-  villagebus.Read = function(channel) {
+  /**
+   * Intended semantics is that calling Read() on an async request will 
+   * block until call returns. In practice, there's no way to block on 
+   * an async request w/ Browser JS. :-/
+   * Best bet would prob. be to use Web Workers to manage XHR execution. 
+   * WebKit and Gecko both support so mayhap 'tis time to just do it.
+   *
+   *   See: http://caniuse.com/#feat=webworkers
+   *        http://html5test.com
+   *
+   * For sync requests, just fire the request & return response
+   */
+  villagebus.Read = function(name) {
+    console.log("IS DONE IS: " + name.isDone);
+    if (!name.async) {
+      return $.ajax(name); // or somesuch
+    }
+    return name;
   };
   
-  villagebus.Fail = function(response) { // TODO - Check for a response of type: { 'error' : 'some message' }
-    return false;
+  /**
+   * Check for a response of type: { 'error' : 'some message' }
+   */
+  villagebus.Fail = function(response) { 
+    return response.hasOwnProperty("error");
   };
 
 

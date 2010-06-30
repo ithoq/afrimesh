@@ -15,6 +15,12 @@
  * @arg address  - override default settings object with the config settings from the network node at this address
  */
 function BootSettings(parent, address) {
+
+  // Network roots are nodes with some level of savvy about the network. 
+  // Generally, if they can't process a message they should be able to tell you who can
+  var roots = [ "192.168.20.105", "10.0.0.1" ];
+  var default_root = roots[0];
+
   /**
    * Map our afrimesh.settings object to UCI for persistent storage
    *
@@ -33,6 +39,8 @@ function BootSettings(parent, address) {
    *  . set the value of the node at that position
    */
   var afrimesh2uci = { 
+    "afrimesh|settings|root"         : { remote : "afrimesh|settings|root",          init : default_root },
+
     "afrimesh|settings|network_name" : { remote : "afrimesh|dashboard|network_name", init : "mesh testbed" },
     "afrimesh|settings|locale"       : { remote : "afrimesh|settings|locale",        init : "en_US.UTF-8"  },
     "afrimesh|settings|ajax_proxy"   : { remote : "afrimesh|settings|ajax_proxy",    init : "/cgi-bin/ajax-proxy.cgi?url=" },

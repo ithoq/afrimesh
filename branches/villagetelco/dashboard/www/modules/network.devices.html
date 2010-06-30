@@ -144,10 +144,12 @@
         $("#device-template").clone().attr("id", "device-" + device).appendTo("#devicelist");
         $("#device-template").hide(); // TODO - No comment. File jquery bug.*/
       });
-    console.log("channel: " + channel);
-    // var response = afrimesh.villagebus.Read(channel);
-    // if (afrimesh.villagebus.Fail(response)) { dadada };
-    // console.log("response: " + response);
+    /*var response = afrimesh.villagebus.Read(channel);
+    if (afrimesh.villagebus.Fail(response)) { 
+      console.log("ERROR READING CHANNEL: " + response);
+    } else {
+      console.log("RESPONSE IS: " + response);
+    }*/
 
 
 

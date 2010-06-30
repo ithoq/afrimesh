@@ -32,11 +32,9 @@ function BootNetwork(parent) {
               }), { start : 0, end : 2 });
           });
       });
-    channel = afrimesh.villagebus.Send(name /*, args*/);
-    return channel;
+    name = afrimesh.villagebus.Send(name /*, args*/);
+    return name;
   };
-  
-  //network.device.status = function(continuation) {  };
 
 
   /* - network accounting ----------------------------------------------- */
