@@ -32,6 +32,10 @@
 
 
   /** - Make Javascript a better Javascript ------------------------------- */
+  function isObject(object) {
+    return typeof object === "object";
+  };
+
   // See: http://thinkweb2.com/projects/prototype/instanceof-considered-harmful-or-how-to-write-a-robust-isarray/
   //      http://ajaxian.com/archives/isarray-why-is-it-so-bloody-hard-to-get-right
   //      http://erik.eae.net/archives/2005/06/06/22.13.54/
@@ -51,8 +55,32 @@
     return object instanceof Date;
   };
   function isString(object) {
-    return object instanceof Date;
+    return typeof object === "string";
   };
+  function isStringURL(object) {
+    return isString(object) && 
+        ((object.indexOf("http://") === 0) ||
+         (object.indexOf("https://") === 0));
+  };
+  function type(object) {
+    if (isArray(object)) {
+      return "Array";
+    } else if (isFunction(object)) {
+      return "Function";
+    } else if (isNumber(object)) {
+      return "Number";
+    } else if (isDate(object)) {
+      return "Date";
+    } else if (isStringURL(object)) {
+      return "URL";
+    } else if (isString(object)) {
+      return "String";
+    } else if (isObject(object)) {
+      return "Object";
+    }
+    return "Unknown";
+  };
+  
 
   String.prototype.trim = function() {
     return this.replace(/^\s+|\s+$/g,"");
