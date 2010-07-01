@@ -35,14 +35,14 @@
 
 
 /* - config ----------------------------------------------------------------- */
-struct vtable* config_vt = 0;
+vtable* config_vt = 0;
 object* Config = 0;
 object* s_config = 0;
 
 
 void config_init() 
 {
-  config_vt = (struct vtable*)send(object_vt, s_delegated); // TODO - inherit from VillageBus ?
+  config_vt = (vtable*)send(object_vt, s_delegated); // TODO - inherit from VillageBus ?
   send(config_vt, s_addMethod, s_print, config_print);
   send(config_vt, s_addMethod, s_villagebus_evaluate, config_evaluate);
   Config = send(config_vt, s_allocate, 0);

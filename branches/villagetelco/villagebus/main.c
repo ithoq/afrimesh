@@ -91,8 +91,10 @@ int main(int argc, char** argv)
   message = (fexp*)send(VillageBus, s_villagebus_evaluate, message);
 
   /** - print eval result (if any) ---------------------------------------- */
+  wprintl(L"\n<-");
   if (message == fexp_nil) {
     // do nothing - this allows handlers to manage their own output
+    //} else if () { // strings are printed verbatim
   } else if (send(message, s_fexp_car) == s_villagebus_error) { /* TODO - how to feed error messages to jQuery ? */
     whttpd_out(L"%S(", request->callback);
     send(message, s_print);

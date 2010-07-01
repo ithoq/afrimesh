@@ -21,12 +21,12 @@
 #include "object.h"
 
 
-struct vtable *SymbolList= 0;
+struct _vtable *SymbolList= 0;
 
-struct vtable *vtable_vt;
-struct vtable *object_vt;
-struct vtable *symbol_vt;
-struct vtable *closure_vt;
+struct _vtable *vtable_vt;
+struct _vtable *object_vt;
+struct _vtable *symbol_vt;
+struct _vtable *closure_vt;
 
 struct _object *s_addMethod = 0;
 struct _object *s_allocate  = 0;
@@ -36,7 +36,7 @@ struct _object *s_lookup    = 0;
 
 /*extern*/ inline void *alloc(size_t size)
 {
-  struct vtable **ppvt= (struct vtable **)calloc(1, sizeof(struct vtable *) + size);
+  struct _vtable **ppvt= (struct _vtable **)calloc(1, sizeof(struct _vtable *) + size);
   return (void *)(ppvt + 1);
 }
 
@@ -61,14 +61,14 @@ struct _object *closure_new(imp_t method, struct _object *data)
   return (struct _object *)closure;
 }
 
-//struct _object *vtable_lookup(struct closure *closure, struct vtable *self, struct _object *key);
+//struct _object *vtable_lookup(struct closure *closure, struct _vtable *self, struct _object *key);
 /*
 #if ICACHE
 # define send(RCV, MSG, ARGS...) ({				\
       struct        object   *r = (struct _object *)(RCV);	\
-      static struct vtable   *prevVT  = 0;			\
+      static struct _vtable   *prevVT  = 0;			\
       static struct closure  *closure = 0;			\
-      register struct vtable *thisVT  = r->_vt[-1];		\
+      register struct _vtable *thisVT  = r->_vt[-1];		\
       thisVT == prevVT						\
 	?  closure						\
 	: (prevVT  = thisVT,					\
@@ -86,7 +86,7 @@ struct _object *closure_new(imp_t method, struct _object *data)
 
 #if MCACHE
 struct entry {
-  struct vtable  *vtable;
+  struct _vtable  *vtable;
   struct _object *selector;
   struct closure *closure;
 } MethodCache[8192];
@@ -96,7 +96,7 @@ struct entry {
 struct closure *bind(struct _object *rcv, struct _object *msg)
 {
   struct closure *c;
-  struct vtable  *vt = rcv->_vt[-1];
+  struct _vtable  *vt = rcv->_vt[-1];
 #if MCACHE
   struct entry   *cl = MethodCache + ((((unsigned)vt << 2) ^ ((unsigned)msg >> 3)) & ((sizeof(MethodCache) / sizeof(struct entry)) - 1));
   if (cl->vtable == vt && cl->selector == msg)
@@ -113,9 +113,9 @@ struct closure *bind(struct _object *rcv, struct _object *msg)
   return c;
 }
 
-struct vtable *vtable_delegated(struct closure *closure, struct vtable *self)
+struct _vtable *vtable_delegated(struct closure *closure, struct _vtable *self)
 {
-  struct vtable *child= (struct vtable *)alloc(sizeof(struct vtable));
+  struct _vtable *child= (struct _vtable *)alloc(sizeof(struct _vtable));
   child->_vt[-1] = self ? self->_vt[-1] : 0;
   child->size    = 2;
   child->tally   = 0;
@@ -125,14 +125,14 @@ struct vtable *vtable_delegated(struct closure *closure, struct vtable *self)
   return child;
 }
 
-struct _object *vtable_allocate(struct closure *closure, struct vtable *self, int payloadSize)
+struct _object *vtable_allocate(struct closure *closure, struct _vtable *self, int payloadSize)
 {
   struct _object *obj = (struct _object *)alloc(payloadSize);
   obj->_vt[-1] = self;
   return obj;
 }
 
-imp_t vtable_addMethod(struct closure *closure, struct vtable *self, struct _object *key, imp_t method)
+imp_t vtable_addMethod(struct closure *closure, struct _vtable *self, struct _object *key, imp_t method)
 {
   int i;
   for (i = 0;  i < self->tally;  ++i)
@@ -148,7 +148,7 @@ imp_t vtable_addMethod(struct closure *closure, struct vtable *self, struct _obj
   return method;
 }
 
-struct _object *vtable_lookup(struct closure *closure, struct vtable *self, struct _object *key)
+struct _object *vtable_lookup(struct closure *closure, struct _vtable *self, struct _object *key)
 {
   int i;
   for (i = 0;  i < self->tally;  ++i)
@@ -164,7 +164,7 @@ struct _object *vtable_lookup(struct closure *closure, struct vtable *self, stru
 struct _object* symbol_lookup(struct closure* closure, struct _object* self, const wchar_t *string)
 {
   struct _object* symbol;
-  struct vtable* vt = self ? self->_vt[-1] : SymbolList;
+  struct _vtable* vt = self ? self->_vt[-1] : SymbolList;
   int i;
   for (i = 0;  i < vt->tally;  ++i) {
     symbol = vt->keys[i];
@@ -188,7 +188,7 @@ struct _object *symbol_intern(struct closure *closure, struct _object *self, con
   struct _object *symbol;
   symbol = symbol_lookup(closure, self, string);
   if (!symbol) {
-    struct vtable* vt = self ? self->_vt[-1] : SymbolList;
+    struct _vtable* vt = self ? self->_vt[-1] : SymbolList;
     symbol = symbol_new(string);
     vtable_addMethod(0, vt, symbol, 0);
   }

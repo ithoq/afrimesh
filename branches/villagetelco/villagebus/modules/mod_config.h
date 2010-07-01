@@ -36,11 +36,11 @@
 
 /* - config ------------------------------------------------------------- */
 typedef struct _config {
-  struct vtable* _vt[0];
+  vtable* _vt[0];
   struct uci_context* context;
   string* delimiter;
 } config;
-extern struct vtable* config_vt;
+extern vtable* config_vt;
 extern object* Config;
 extern object* s_config;
 

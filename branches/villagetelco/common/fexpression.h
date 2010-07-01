@@ -26,6 +26,7 @@
 #include <stdbool.h>
 
 #include <object.h>
+typedef struct _vtable vtable;
 typedef struct _object object;
 
 
@@ -34,7 +35,7 @@ void fexp_init();
 
 
 /* - global selectors --------------------------------------------------- */
-// extern object* s_type;           TODO  a symbol representing the 'type'
+extern object* s_type;           
 // extern object* s_selectors;      TODO  list of all methods that can operate on this 'type'
 extern object* s_new;
 extern object* s_length;
@@ -43,11 +44,11 @@ extern object* s_tojson;
 
 /* - string ------------------------------------------------------------- */
 typedef struct _string {
-  struct vtable* _vt[0];
+  vtable* _vt[0];
   size_t   length;
   wchar_t* buffer;
 } string;
-extern struct vtable* string_vt;
+extern vtable* string_vt;
 extern object* String;
 extern object* s_string_fromwchar;
 extern object* s_string_fromchar;
@@ -68,10 +69,10 @@ string* string_tojson(struct closure* closure, string* self, bool quoted);
 /* - number ------------------------------------------------------------- */
 // TODO - implementation - surprising how far one can get without numbers these days :)
 typedef struct _number {
-  struct vtable* _vt[0];
+  vtable* _vt[0];
   int integer;
 } number;
-extern struct vtable* number_vt;
+extern vtable* number_vt;
 extern object* Number;
 
 object* number_new   (struct closure* closure, number* self, const wchar_t* s, size_t length);
@@ -81,11 +82,11 @@ string* number_tojson(struct closure* closure, number* self, bool quoted);
 
 /* - fexp --------------------------------------------------------------- */
 typedef struct _fexp {
-  struct vtable* _vt[0];
+  vtable* _vt[0];
   object* car;
   object* cdr; 
 } fexp;
-extern struct vtable* fexp_vt;
+extern vtable* fexp_vt;
 extern object* Fexp;
 extern object* s_fexp_car;
 extern object* s_fexp_cdr;
@@ -110,11 +111,11 @@ string* fexp_tojson(struct closure* closure, fexp* self, bool quoted);
 
 /* - tconc -------------------------------------------------------------- */
 typedef struct _tconc {
-  struct vtable* _vt[0];
+  vtable* _vt[0];
   fexp* head;
   fexp* tail;
 } tconc;
-extern struct vtable* tconc_vt;
+extern vtable* tconc_vt;
 extern object* Tconc;
 extern object* s_tconc_tconc;
 extern object* s_tconc_append;
@@ -127,7 +128,7 @@ tconc* tconc_append(struct closure* closure, tconc* self, object* item);
 
 
 /* - obj extensions ----------------------------------------------------- */
+vtable* object_type  (struct closure* closure, struct symbol* self);
 struct symbol* symbol_print (struct closure* closure, struct symbol* self);
-
 
 #endif /* FEXP_H */

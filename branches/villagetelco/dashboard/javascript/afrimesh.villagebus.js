@@ -128,7 +128,6 @@ var BootVillageBus = function (afrimesh) {
    * For sync requests, just fire the request & return response
    */
   villagebus.Read = function(name) {
-    console.log("IS DONE IS: " + name.isDone);
     if (!name.async) {
       return $.ajax(name); // or somesuch
     }

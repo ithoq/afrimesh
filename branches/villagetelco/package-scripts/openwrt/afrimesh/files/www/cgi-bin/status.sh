@@ -12,7 +12,8 @@ interface=`uci get network.$device.ifname`
 self=`uci get network.$device.ipaddr`
 root=`uci get system.@system[0].log_ip`
 mac=`ifconfig $interface | grep HWaddr | awk '{ print $5 }'`
-path="$root/db/status/$self"
+path_info="$root/db/deviceinfo/$self"
+path_stat="$root/db/devicestat/$self"
 
 # misc information
 timestamp=`date +%s`000
@@ -25,19 +26,17 @@ idle=`cat /proc/uptime | awk '{ print $2 }'`
 buffer=`cat /proc/net/dev|grep $interface`
 bytes_tx=`echo $buffer | awk '{ print $2 }'`
 bytes_rx=`echo $buffer | awk '{ print $10 }'`
-bytes="{ \
-  'tx' : $bytes_tx, \
-  'rx' : $bytes_rx }"
+bytes="{ 'tx' : $bytes_tx, \
+         'rx' : $bytes_rx }"
 
 # query radio signal levels
 levels=`iwconfig $interface |grep Quality`
 link_quality=`echo $levels | cut -d = -f 2 | awk '{ print $1 }'`
 signal_level=`echo $levels | cut -d = -f 3 | awk '{ print $1 " " $2 }'`
 noise_level=`echo $levels | cut -d = -f 4 | awk '{ print $1 " " $2 }'`
-radio="{ \
-  'rssi'   : '$link_quality', \
-  'signal' : '$signal_level', \
-  'noise'  : '$noise_level' }"
+radio="{ 'rssi'   : '$link_quality', \
+         'signal' : '$signal_level', \
+         'noise'  : '$noise_level' }"
 
 # ping gateways - TODO mark default gw
 gateways=$(batmand -cbd2 | grep gateway |{
@@ -58,40 +57,40 @@ gateways=$(batmand -cbd2 | grep gateway |{
         radio_rate=`echo $radio | awk '{ print $4 }'`
         radio_rssi=`echo $radio | awk '{ print $5 }'`
         radio_signal=`echo $radio | awk '{ print $5 }'`
-        entry="{ 'gateway'  : '$gateway_address', \
-                 'score'    : $score, \
+        entry="{ 'address'  : '$gateway_address', \
                  'nexthop'  : '$nexthop_address', \
-                 'failures' : $failures, \
+                 'score'    : $score, \
                  'ping'     : { 'gateway' : $gateway_ping, 'nexthop' : $nexthop_ping }, \
                  'radio'    : { 'rate' : '$radio_rate', 'rssi' : '$radio_rssi/70', 'signal' : '$radio_signal dBm'  } }"
+        fails="{ 'address'  : '$gateway_address', \
+                 'failures' : $failures }"
         if [ "$gateways" != "" ]; then
             gateways="$gateways, $entry"
+            failures="$failures, $fails"
         else 
             gateways="$entry"
+            failures="$fails"
         fi
     done
-    echo $gateways
+    echo "$gateways|$failures"
 })
+failures=${gateways#*|}
+gateways=${gateways%|*}
 
 # TODO - neighbors
 
-# assemble final message
-json="{ \
-  'timestamp' : $timestamp, \
-  'mac'       : '$mac', \
-  'self'      : '$self', \
-  'root'      : '$root', \
-  'version'   : '$version', \
-  'uname'     : '$uname', \
-  'uptime'    : $uptime, \
-  'idle'      : $idle, \
-  'radio'     : $radio, \
-  'gateways'  : [ $gateways ],
-  'bytes'     : $bytes \
-}"
-
-# construct HTTP request
-HTTP="POST $villagebus/$path HTTP/1.0\n"
+# construct & send HTTP request for instantaneous data
+json="{ 'timestamp' : $timestamp, \
+        'mac'       : '$mac', \
+        'self'      : '$self', \
+        'root'      : '$root', \
+        'version'   : '$version', \
+        'uname'     : '$uname', \
+        'uptime'    : $uptime, \
+        'idle'      : $idle, \
+        'bytes'     : $bytes, \
+        'gateways'  : [ $failures ] }"
+HTTP="PUT $villagebus/$path_info HTTP/1.0\n"
 CONTENT_TYPE="Content-Type: text/plain\n"
 CONTENT_LENGTH="Content-Length: ${#json}\n"
 REQUEST="\
@@ -100,11 +99,29 @@ $CONTENT_TYPE\
 $CONTENT_LENGTH\
 \n\
 $json"
+echo -n -e $REQUEST | nc $root 80 >& /dev/null
+
+exit
+
+# construct & send HTTP request for temporal data
+json="{ 'timestamp' : $timestamp, \
+        'radio'     : $radio, \
+        'gateways'  : [ $gateways ] }"
+HTTP="POST $villagebus/$path_stat HTTP/1.0\n"
+CONTENT_TYPE="Content-Type: text/plain\n"
+CONTENT_LENGTH="Content-Length: ${#json}\n"
+REQUEST="\
+$HTTP\
+$CONTENT_TYPE\
+$CONTENT_LENGTH\
+\n\
+$json"
+echo -n -e $REQUEST | nc $root 80 >& /dev/null
+
 
 # TODO - eventually we want _this_:
 #
 #   */5 * * * * /www/cgi-bin/status 2> /dev/null | /www/cgi-bin/villagebus POST /root/db/status/self
-echo -n -e $REQUEST | nc $root 80 >& /dev/null
 
 # TODO - print header if being called from Web, else just echo json
 #echo "Content-type: application/json"

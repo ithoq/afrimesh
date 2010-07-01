@@ -36,6 +36,9 @@ REVISION=$(shell svnversion . -n)
 	VERSION=$(REVISION)-i-think
 endif
 
+# core
+core=safelib.o util.o object.o fexpression.o
+
 # modules
 modules=mod_db.o mod_config.o
 modulelibs=$(DEPROOT)/lib/libcredis.a $(DEPROOT)/lib/libuci.a 
@@ -51,7 +54,7 @@ LDFLAGS+=-L$(DEPROOT)/lib $(modulelibs) $(DEPROOT)/lib/libjson.a
 ECHO=/bin/echo -n
 
 # objects
-objects=safelib.o util.o object.o fexpression.o cgi.o jsonrpc.o $(modules) villagebus.o main.o 
+objects=$(core) cgi.o jsonrpc.o $(modules) villagebus.o main.o 
 
 # build configuration
 ifeq ($(FLAVOR),LINUX)
@@ -65,6 +68,8 @@ all : villagebus
 villagebus : $(objects)
 	$(CC) $(CFLAGS) -o villagebus $(objects) $(LDFLAGS) 
 
+examples : $(core) examples/types.c
+	$(CC) $(INCLUDES) $(CFLAGS) -o examples/types examples/types.c $(core) $(LDFLAGS)
 
 # objects
 safelib.o : ../common/safelib.c ../common/safelib.h

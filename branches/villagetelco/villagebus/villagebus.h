@@ -40,11 +40,11 @@
 
 /* - villagebus --------------------------------------------------------- */
 typedef struct _villagebus {
-  struct vtable* _vt[0];
+  vtable* _vt[0];
   fexp* modules;
   const Request* request;
 } villagebus;
-extern struct vtable* villagebus_vt;
+extern vtable* villagebus_vt;
 extern object* VillageBus;
 extern object* s_villagebus_evaluate;
 extern object* s_villagebus_compile;

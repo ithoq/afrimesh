@@ -34,15 +34,19 @@
 
 
 /* - db ----------------------------------------------------------------- */
-struct vtable* db_vt = 0;
+vtable* db_vt = 0;
 object* DB = 0;
 object* s_db = 0;
-struct symbol* s_db_keys   = 0;
-object* s_db_lrange = 0;
+struct symbol* s_db_keys = 0;
+object* s_db_get    = 0;
+object* s_db_lrange = 0; 
+object* s_db_getset = 0; 
+object* s_db_lpush  = 0;
+
 
 void db_init()
 {
-  db_vt = (struct vtable*)send(object_vt, s_delegated); // TODO - inherit from VillageBus ?
+  db_vt = (vtable*)send(object_vt, s_delegated); // TODO - inherit from VillageBus ?
   send(db_vt, s_addMethod, s_print, db_print);
   send(db_vt, s_addMethod, s_villagebus_evaluate, db_evaluate);
   DB = send(db_vt, s_allocate, 0);
@@ -50,9 +54,15 @@ void db_init()
 
   // register some local symbols
   s_db_keys   = (struct symbol*)symbol_intern(0, DB, L"keys");
+  s_db_get    = symbol_intern(0, DB, L"get");
   s_db_lrange = symbol_intern(0, DB, L"lrange");
+  s_db_getset = symbol_intern(0, DB, L"set");
+  s_db_lpush  = symbol_intern(0, DB, L"lpush");
   send(db_vt, s_addMethod, s_db_keys,   db_keys);
+  send(db_vt, s_addMethod, s_db_get,    db_get);
   send(db_vt, s_addMethod, s_db_lrange, db_lrange);
+  send(db_vt, s_addMethod, s_db_getset, db_getset);
+  send(db_vt, s_addMethod, s_db_lpush,  db_lpush);
   
   // register module with VillageBus - TODO lose vb->modules & register directly in vtable perhaps?
   s_db = symbol_intern(0, 0, L"db");
@@ -100,11 +110,14 @@ const fexp* db_evaluate(struct closure* closure, db* self, const fexp* expressio
   const Request* request = ((villagebus*)VillageBus)->request;
   const fexp* reply = fexp_nil;
   switch (request->method) {
+  case PUT:
+    reply = (fexp*)send(self, s_db_getset, expression, request->data);
+    break;
   case POST:
-    reply = db_post(closure, self, expression, request->data);
+    reply = (fexp*)send(self, s_db_lpush, expression, request->data);
     break;
   case GET:
-    reply = db_get(closure, self, expression);
+    reply = (fexp*)send(self, s_db_get, expression, request->data);
     break;
   default:
     reply = (fexp*)send(VillageBus, 
@@ -123,38 +136,7 @@ const fexp* db_evaluate(struct closure* closure, db* self, const fexp* expressio
 }
 
 
-
-/**
- *
- */
-const fexp* db_post(struct closure* closure, db* self, const fexp* message, const unsigned char* data)
-{
-  fexp* reply = fexp_nil;
-
-  string* key  = (string*)send(message, s_fexp_join, self->delimiter);  // generate a key from message
-  wprintl(L"POST /db/%S %s\n", key->buffer, data);
-
-  char* keyc = (char*)send(key, s_string_tochar); // TODO - redis not support UNICODE so much
-  if (credis_lpush(self->handle, keyc, data) != 0) {
-    reply = (fexp*)send(VillageBus, s_villagebus_error, L"lpush failed %s: %s", keyc, data);
-  }
-  free(keyc);
-
-  return reply;
-}
-
-
-
-/**
- *
- */
-const fexp* db_get(struct closure* closure, db* self, const fexp* message)
-{
-  // default handling - lrange
-  return (fexp*)send(self, s_db_lrange, message);
-}
-
-
+/* - GET ---------------------------------------------------------------- */
 
 /**
  *
@@ -179,6 +161,29 @@ const fexp* db_keys(struct closure* closure, db* self, const fexp* message)
   return reply;
 }
 
+
+/**
+ *
+ */
+const fexp* db_get(struct closure* closure, db* self, const fexp* message)
+{
+  fexp* reply = fexp_nil;
+
+  string* key  = (string*)send(message, s_fexp_join, self->delimiter);  // generate a key from message
+  wprintl(L"GET /db/get/%S\n", key->buffer);
+
+  char* keyc = (char*)send(key, s_string_tochar); // TODO - redis not support UNICODE so much
+  char* val;
+  if (credis_get(self->handle, keyc, &val) != 0) {
+    reply = (fexp*)send(VillageBus, s_villagebus_error, L"get failed %s", keyc);
+  }
+  free(keyc);
+  reply = (fexp*)send(String, s_string_fromchar, val, strlen(val));
+  
+  return reply;
+}
+
+
 // TODO - debug info for error messages
 #define DMSG L"%s:%d %s() - "L""
 #define DARG __FILE__, __LINE__, __FUNCTION__
@@ -193,7 +198,7 @@ const fexp* db_lrange(struct closure* closure, db* self, const fexp* message)
 
   // get any parameters
   int start = 0;
-  int end = -1;
+  int end   = -1;
   if (request->json) {
     start = json_object_get_int(json_object_object_get(request->json, "start"));
     end   = json_object_get_int(json_object_object_get(request->json, "end"));
@@ -226,6 +231,56 @@ const fexp* db_lrange(struct closure* closure, db* self, const fexp* message)
 
   return reply;
 }
+
+
+/* - PUT ---------------------------------------------------------------- */
+
+/**
+ *
+ */
+const fexp* db_getset(struct closure* closure, db* self, const fexp* message, const unsigned char* data)
+{
+  fexp* reply = fexp_nil;
+
+  string* key  = (string*)send(message, s_fexp_join, self->delimiter);  // generate a key from message
+  wprintl(L"PUT /db/getset/%S %s\n", key->buffer, data);
+
+  char* keyc = (char*)send(key, s_string_tochar); // TODO - redis not support UNICODE so much
+  char* val;
+  if (credis_getset(self->handle, keyc, data, &val) != 0) {
+    reply = (fexp*)send(VillageBus, s_villagebus_error, L"getset failed %s: %s", keyc, data);
+  }
+  free(keyc);
+  object* s = send(String, s_string_fromchar, val, strlen(val));
+  reply = (fexp*)send(reply, s_fexp_cons, s);
+  reply = (fexp*)send(reply, s_fexp_cons, s_villagebus_json);
+
+  return reply;
+}
+
+
+/* - POST --------------------------------------------------------------- */
+
+/**
+ *
+ */
+const fexp* db_lpush(struct closure* closure, db* self, const fexp* message, const unsigned char* data)
+{
+  fexp* reply = fexp_nil;
+
+  string* key  = (string*)send(message, s_fexp_join, self->delimiter);  // generate a key from message
+  wprintl(L"POST /db/lpush/%S %s\n", key->buffer, data);
+
+  char* keyc = (char*)send(key, s_string_tochar); // TODO - redis not support UNICODE so much
+  if (credis_lpush(self->handle, keyc, data) != 0) {
+    reply = (fexp*)send(VillageBus, s_villagebus_error, L"lpush failed %s: %s", keyc, data);
+  }
+  free(keyc);
+
+  return reply;
+}
+
+
 
 
 

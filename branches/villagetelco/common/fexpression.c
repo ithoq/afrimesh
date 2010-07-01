@@ -20,6 +20,7 @@
 #include <fexpression.h>
 
 /* - global selectors --------------------------------------------------- */
+object *s_type   = 0;
 object *s_new    = 0;
 object *s_length = 0;
 object *s_print  = 0;
@@ -30,12 +31,14 @@ object *s_tojson = 0;
 void fexp_init()
 {
   // global
+  s_type   = symbol_intern(0, 0, L"type");
   s_new    = symbol_intern(0, 0, L"new");
   s_length = symbol_intern(0, 0, L"length");
   s_print  = symbol_intern(0, 0, L"print");
   s_tojson = symbol_intern(0, 0, L"tojson");
 
   // extend base object model
+  send(object_vt, s_addMethod, s_type,  object_type);
   send(symbol_vt, s_addMethod, s_print, symbol_print);
 
   // string
@@ -43,7 +46,7 @@ void fexp_init()
   s_string_fromchar  = symbol_intern(0, 0, L"fromchar");
   s_string_tochar    = symbol_intern(0, 0, L"tochar");
   s_string_add       = symbol_intern(0, 0, L"add");
-  string_vt = (struct vtable*)send(object_vt, s_delegated);
+  string_vt = (vtable*)send(object_vt, s_delegated);
   send(string_vt, s_addMethod, s_new,    string_new);
   send(string_vt, s_addMethod, s_length, string_length);
   send(string_vt, s_addMethod, s_print,  string_print);
@@ -60,7 +63,7 @@ void fexp_init()
   s_fexp_cons = symbol_intern(0, 0, L"cons");
   s_fexp_last = symbol_intern(0, 0, L"last");
   s_fexp_join = symbol_intern(0, 0, L"join");
-  fexp_vt = (struct vtable*)send(object_vt, s_delegated);
+  fexp_vt = (vtable*)send(object_vt, s_delegated);
   send(fexp_vt, s_addMethod, s_new,    fexp_new);
   send(fexp_vt, s_addMethod, s_length, fexp_length);
   send(fexp_vt, s_addMethod, s_print,  fexp_print);
@@ -81,7 +84,7 @@ void fexp_init()
   // tconc
   s_tconc_tconc  = symbol_intern(0, 0, L"tconc");
   s_tconc_append = symbol_intern(0, 0, L"append");
-  tconc_vt = (struct vtable*)send(object_vt, s_delegated);
+  tconc_vt = (vtable*)send(object_vt, s_delegated);
   send(tconc_vt, s_addMethod, s_new,    tconc_new);
   send(tconc_vt, s_addMethod, s_length, tconc_length);
   send(tconc_vt, s_addMethod, s_print,  tconc_print);
@@ -92,6 +95,12 @@ void fexp_init()
 
 
 /* - obj extensions ----------------------------------------------------- */
+vtable* object_type  (struct closure* closure, struct symbol* self)
+{
+  return self->_vt[-1];
+}
+
+
 struct symbol* symbol_print(struct closure* closure, struct symbol* self)
 {
   wprintf(L"#%ls", self->string);
@@ -100,7 +109,7 @@ struct symbol* symbol_print(struct closure* closure, struct symbol* self)
 
 
 /* - string ------------------------------------------------------------- */
-struct vtable* string_vt = 0;
+vtable* string_vt = 0;
 object* String = 0;
 object *s_string_fromwchar = 0;
 object *s_string_fromchar  = 0;
@@ -216,7 +225,7 @@ string* string_add(struct closure *closure, string *self, const string *s)
 
 
 /* - fexp --------------------------------------------------------------- */
-struct vtable* fexp_vt = 0;
+vtable* fexp_vt = 0;
 object* Fexp = 0;
 object* s_fexp_car    = 0;
 object* s_fexp_cdr    = 0;
@@ -246,7 +255,8 @@ fexp* fexp_print(struct closure* closure, fexp* self)
   object* iter; 
   for (iter = (object*)self; iter != (object*)fexp_nil; iter = send(iter, s_fexp_cdr)) {
     printf(" ");
-    if (iter->_vt[-1] != Fexp->_vt[-1]) { // Is not a Fexp - TODO is this the best way? 
+    //if (iter->_vt[-1] != Fexp->_vt[-1]) { // Is not a Fexp - TODO is this the best way? 
+    if ((vtable*)send(iter, s_type) != fexp_vt) {
       printf(". ");
       send(iter, s_print);
       break;
@@ -317,7 +327,7 @@ string* fexp_join(struct closure* closure, fexp* self, const string* delimiter)
 
 
 /* - tconc -------------------------------------------------------------- */
-struct vtable* tconc_vt = 0;
+vtable* tconc_vt = 0;
 object* Tconc = 0;
 object *s_tconc_tconc  = 0;
 object *s_tconc_append = 0;
