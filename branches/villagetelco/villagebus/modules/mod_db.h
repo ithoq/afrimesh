@@ -55,12 +55,12 @@ db*  db_print(closure* c, db* self);
 const fexp* db_evaluate(closure* c, db* self, const fexp* expression);
 
 // GET 
-const fexp* db_keys  (closure* c, db* self, const fexp* message); // any
-const fexp* db_get   (closure* c, db* self, const fexp* message); // string
-const fexp* db_lrange(closure* c, db* self, const fexp* message); // list
+const fexp*   db_keys  (closure* c, db* self, const fexp* message); // any
+const string* db_get   (closure* c, db* self, const fexp* message); // string
+const fexp*   db_lrange(closure* c, db* self, const fexp* message); // list
 
 // PUT
-const fexp* db_getset(closure* c, db* self, const fexp* message, const unsigned char* data); // string
+const string* db_getset(closure* c, db* self, const fexp* message, const unsigned char* data); // string
 
 // POST
 const fexp* db_lpush (closure* c, db* self, const fexp* message, const unsigned char* data);  // list

@@ -91,22 +91,25 @@ int main(int argc, char** argv)
   message = (fexp*)send(VillageBus, s_villagebus_evaluate, message);
 
   /** - print eval result (if any) ---------------------------------------- */
-  wprintl(L"\n<-");
-  if (message == fexp_nil) {
-    // do nothing - this allows handlers to manage their own output
-    //} else if () { // strings are printed verbatim
-  } else if (send(message, s_fexp_car) == s_villagebus_error) { /* TODO - how to feed error messages to jQuery ? */
+  if (message == fexp_nil) {  // do nothing & allow handlers to manage their own output
+
+  } else if ((vtable*)send(message, s_type) == string_vt) {  // strings are printed verbatim
+    whttpd_out(L"%S(%S)\n", request->callback, ((string*)message)->buffer);
+
+  } else if (send(message, s_fexp_car) == s_villagebus_error) { // TODO - handle error messages in jQuery 
     whttpd_out(L"%S(", request->callback);
     send(message, s_print);
     whttpd_out(L", null)\n");
-  } else if (send(message, s_fexp_car) == s_villagebus_json) { /* encapsulated json - usually from mod_db */
+
+  } else if (send(message, s_fexp_car) == s_villagebus_json) { // encapsulated json - usually from mod_db 
     message = (fexp*)send(message, s_fexp_cdr);
     // TODO - make a call on conventions - whttpd_out(L"%S(null, ", request->callback);
     whttpd_out(L"%S(", request->callback);
     string* json = (string*)send(message, s_tojson, true);
     whttpd_out(L"%S", json->buffer);
     whttpd_out(L")\n");
-  } else {
+
+  } else {                                                     // everything else treated as plain json
     whttpd_out(L"%S(", request->callback);
     string* json = (string*)send(message, s_tojson, false);
     whttpd_out(L"%S", json->buffer);

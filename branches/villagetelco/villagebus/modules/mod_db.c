@@ -165,9 +165,9 @@ const fexp* db_keys(closure* c, db* self, const fexp* message)
 /**
  *
  */
-const fexp* db_get(closure* c, db* self, const fexp* message)
+const string* db_get(closure* c, db* self, const fexp* message)
 {
-  fexp* reply = fexp_nil;
+  object* reply = (object*)fexp_nil;
 
   string* key  = (string*)send(message, s_fexp_join, self->delimiter);  // generate a key from message
   wprintl(L"GET /db/get/%S\n", key->buffer);
@@ -175,12 +175,12 @@ const fexp* db_get(closure* c, db* self, const fexp* message)
   char* keyc = (char*)send(key, s_string_tochar); // TODO - redis not support UNICODE so much
   char* val;
   if (credis_get(self->handle, keyc, &val) != 0) {
-    reply = (fexp*)send(VillageBus, s_villagebus_error, L"get failed %s", keyc);
+    reply = send(VillageBus, s_villagebus_error, L"get failed %s", keyc);
   }
   free(keyc);
-  reply = (fexp*)send(String, s_string_fromchar, val, strlen(val));
+  reply = send(String, s_string_fromchar, val, strlen(val));
   
-  return reply;
+  return (string*)reply;
 }
 
 
@@ -238,9 +238,9 @@ const fexp* db_lrange(closure* c, db* self, const fexp* message)
 /**
  *
  */
-const fexp* db_getset(closure* c, db* self, const fexp* message, const unsigned char* data)
+const string* db_getset(closure* c, db* self, const fexp* message, const unsigned char* data)
 {
-  fexp* reply = fexp_nil;
+  object* reply = (object*)fexp_nil;
 
   string* key  = (string*)send(message, s_fexp_join, self->delimiter);  // generate a key from message
   wprintl(L"PUT /db/getset/%S %s\n", key->buffer, data);
@@ -248,14 +248,12 @@ const fexp* db_getset(closure* c, db* self, const fexp* message, const unsigned 
   char* keyc = (char*)send(key, s_string_tochar); // TODO - redis not support UNICODE so much
   char* val;
   if (credis_getset(self->handle, keyc, data, &val) != 0) {
-    reply = (fexp*)send(VillageBus, s_villagebus_error, L"getset failed %s: %s", keyc, data);
+    reply = send(VillageBus, s_villagebus_error, L"getset failed %s: %s", keyc, data);
   }
   free(keyc);
-  object* s = send(String, s_string_fromchar, val, strlen(val));
-  reply = (fexp*)send(reply, s_fexp_cons, s);
-  reply = (fexp*)send(reply, s_fexp_cons, s_villagebus_json);
+  reply = send(String, s_string_fromchar, val, strlen(val));
 
-  return reply;
+  return (string*)reply;
 }
 
 

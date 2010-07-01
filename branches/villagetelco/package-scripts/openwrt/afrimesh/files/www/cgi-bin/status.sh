@@ -101,7 +101,6 @@ $CONTENT_LENGTH\
 $json"
 echo -n -e $REQUEST | nc $root 80 >& /dev/null
 
-exit
 
 # construct & send HTTP request for temporal data
 json="{ 'timestamp' : $timestamp, \
