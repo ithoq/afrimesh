@@ -58,7 +58,7 @@ void config_init()
 }
 
 
-const fexp* config_evaluate(struct closure* closure, config* self, const fexp* message)
+const fexp* config_evaluate(closure* c, config* self, const fexp* message)
 {
   // TODO - VillageBus->request context should be coming in via the closure
 
@@ -72,10 +72,10 @@ const fexp* config_evaluate(struct closure* closure, config* self, const fexp* m
   const Request* request = ((villagebus*)VillageBus)->request;
   switch (request->method) {
   case PUT:
-    message = config_put(closure, self, message, request->data);
+    message = config_put(c, self, message, request->data);
     break;
   case GET:
-    message = config_get(closure, self, message);
+    message = config_get(c, self, message);
     break;
   default:
     message = (fexp*)send(VillageBus, 
@@ -93,7 +93,7 @@ const fexp* config_evaluate(struct closure* closure, config* self, const fexp* m
 }
 
 
-const fexp* config_put(struct closure* closure, config* self, const fexp* message, const unsigned char* payload)
+const fexp* config_put(closure* c, config* self, const fexp* message, const unsigned char* payload)
 {
   struct json_object* items = json_tokener_parse(payload); 
   if (items == NULL) {
@@ -151,7 +151,7 @@ const fexp* config_put(struct closure* closure, config* self, const fexp* messag
 }
 
 
-const fexp* config_get(struct closure* closure, config* self, const fexp* message)
+const fexp* config_get(closure* c, config* self, const fexp* message)
 {
   string* s     = (string*)send(message, s_fexp_join, self->delimiter);  // generate a key from message
   char*   query = (char*)send(s, s_string_tochar); // TODO - uci not support UNICODE so much
@@ -168,7 +168,7 @@ const fexp* config_get(struct closure* closure, config* self, const fexp* messag
 }
 
 
-config* config_print(struct closure* closure, config* self)
+config* config_print(closure* c, config* self)
 {
   wprintf(L"#<CONFIG.%p>", self);
   return self;

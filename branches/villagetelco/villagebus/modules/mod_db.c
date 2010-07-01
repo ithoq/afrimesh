@@ -37,7 +37,7 @@
 vtable* db_vt = 0;
 object* DB = 0;
 object* s_db = 0;
-struct symbol* s_db_keys = 0;
+symbol* s_db_keys = 0;
 object* s_db_get    = 0;
 object* s_db_lrange = 0; 
 object* s_db_getset = 0; 
@@ -53,7 +53,7 @@ void db_init()
   ((db*)DB)->handle = NULL;
 
   // register some local symbols
-  s_db_keys   = (struct symbol*)symbol_intern(0, DB, L"keys");
+  s_db_keys   = (symbol*)symbol_intern(0, DB, L"keys"); // TODO - symbol_intern should return symbol*
   s_db_get    = symbol_intern(0, DB, L"get");
   s_db_lrange = symbol_intern(0, DB, L"lrange");
   s_db_getset = symbol_intern(0, DB, L"set");
@@ -78,7 +78,7 @@ void db_init()
 /**
  *
  */
-const fexp* db_evaluate(struct closure* closure, db* self, const fexp* expression)
+const fexp* db_evaluate(closure* c, db* self, const fexp* expression)
 {
   // TODO - VillageBus->request context should be coming in via the closure
 
@@ -141,7 +141,7 @@ const fexp* db_evaluate(struct closure* closure, db* self, const fexp* expressio
 /**
  *
  */
-const fexp* db_keys(struct closure* closure, db* self, const fexp* message)
+const fexp* db_keys(closure* c, db* self, const fexp* message)
 {
   fexp* reply = fexp_nil;
 
@@ -165,7 +165,7 @@ const fexp* db_keys(struct closure* closure, db* self, const fexp* message)
 /**
  *
  */
-const fexp* db_get(struct closure* closure, db* self, const fexp* message)
+const fexp* db_get(closure* c, db* self, const fexp* message)
 {
   fexp* reply = fexp_nil;
 
@@ -191,7 +191,7 @@ const fexp* db_get(struct closure* closure, db* self, const fexp* message)
 /**
  *
  */
-const fexp* db_lrange(struct closure* closure, db* self, const fexp* message)
+const fexp* db_lrange(closure* c, db* self, const fexp* message)
 {
   const Request* request = ((villagebus*)VillageBus)->request;
   fexp* reply = fexp_nil;
@@ -238,7 +238,7 @@ const fexp* db_lrange(struct closure* closure, db* self, const fexp* message)
 /**
  *
  */
-const fexp* db_getset(struct closure* closure, db* self, const fexp* message, const unsigned char* data)
+const fexp* db_getset(closure* c, db* self, const fexp* message, const unsigned char* data)
 {
   fexp* reply = fexp_nil;
 
@@ -264,7 +264,7 @@ const fexp* db_getset(struct closure* closure, db* self, const fexp* message, co
 /**
  *
  */
-const fexp* db_lpush(struct closure* closure, db* self, const fexp* message, const unsigned char* data)
+const fexp* db_lpush(closure* c, db* self, const fexp* message, const unsigned char* data)
 {
   fexp* reply = fexp_nil;
 
@@ -281,10 +281,12 @@ const fexp* db_lpush(struct closure* closure, db* self, const fexp* message, con
 }
 
 
+/* - Global Handlers ---------------------------------------------------- */
 
-
-
-db* db_print(struct closure* closure, db* self)
+/**
+ *
+ */
+db* db_print(closure* c, db* self)
 {
   wprintf(L"#<DB.%p>", self);
   return self;

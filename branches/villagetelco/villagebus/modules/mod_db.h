@@ -43,27 +43,27 @@ typedef struct _db {
 extern vtable* db_vt;
 extern object* DB;
 extern object* s_db;
-extern struct symbol* s_db_keys;
+extern symbol* s_db_keys;
 extern object* s_db_get;   // these guys need to be symbols
 extern object* s_db_lrange; 
 extern object* s_db_getset; 
 extern object* s_db_lpush;   
 
 void db_init();
-db*  db_print(struct closure* closure, db* self);
+db*  db_print(closure* c, db* self);
 
-const fexp* db_evaluate(struct closure* closure, db* self, const fexp* expression);
+const fexp* db_evaluate(closure* c, db* self, const fexp* expression);
 
 // GET 
-const fexp* db_keys  (struct closure* closure, db* self, const fexp* message); // any
-const fexp* db_get   (struct closure* closure, db* self, const fexp* message); // string
-const fexp* db_lrange(struct closure* closure, db* self, const fexp* message); // list
+const fexp* db_keys  (closure* c, db* self, const fexp* message); // any
+const fexp* db_get   (closure* c, db* self, const fexp* message); // string
+const fexp* db_lrange(closure* c, db* self, const fexp* message); // list
 
 // PUT
-const fexp* db_getset(struct closure* closure, db* self, const fexp* message, const unsigned char* data); // string
+const fexp* db_getset(closure* c, db* self, const fexp* message, const unsigned char* data); // string
 
 // POST
-const fexp* db_lpush(struct closure* closure, db* self, const fexp* message, const unsigned char* data);  // list
+const fexp* db_lpush (closure* c, db* self, const fexp* message, const unsigned char* data);  // list
 
 
 #endif /* DB_H */

@@ -26,8 +26,10 @@
 #include <stdbool.h>
 
 #include <object.h>
-typedef struct _vtable vtable;
-typedef struct _object object;
+typedef struct _vtable  vtable;
+typedef struct _object  object;
+typedef struct _closure closure;
+typedef struct _symbol  symbol;
 
 
 /* - initialization ----------------------------------------------------- */
@@ -55,15 +57,15 @@ extern object* s_string_fromchar;
 extern object* s_string_tochar;
 extern object* s_string_add;
 
-object* string_fromwchar(struct closure* closure, string* self, const wchar_t* format, ...);
-object* string_fromchar (struct closure* closure, string* self, const char* s, size_t length);
-char*   string_tochar   (struct closure* closure, string* self);
-string* string_add      (struct closure* closure, string* self, const string* s);
+object* string_fromwchar(closure* c, string* self, const wchar_t* format, ...);
+object* string_fromchar (closure* c, string* self, const char* s, size_t length);
+char*   string_tochar   (closure* c, string* self);
+string* string_add      (closure* c, string* self, const string* s);
 
-object* string_new   (struct closure* closure, string* self, const wchar_t* s, size_t length);
-size_t  string_length(struct closure* closure, string* self);
-string* string_print (struct closure* closure, string* self);
-string* string_tojson(struct closure* closure, string* self, bool quoted);
+object* string_new   (closure* c, string* self, const wchar_t* s, size_t length);
+size_t  string_length(closure* c, string* self);
+string* string_print (closure* c, string* self);
+string* string_tojson(closure* c, string* self, bool quoted);
 
 
 /* - number ------------------------------------------------------------- */
@@ -75,9 +77,9 @@ typedef struct _number {
 extern vtable* number_vt;
 extern object* Number;
 
-object* number_new   (struct closure* closure, number* self, const wchar_t* s, size_t length);
-number* number_print (struct closure* closure, number* self);
-string* number_tojson(struct closure* closure, number* self, bool quoted);
+object* number_new   (closure* c, number* self, const wchar_t* s, size_t length);
+number* number_print (closure* c, number* self);
+string* number_tojson(closure* c, number* self, bool quoted);
 
 
 /* - fexp --------------------------------------------------------------- */
@@ -97,16 +99,16 @@ extern fexp*   fexp_environment;
 extern fexp*   fexp_nil;
 extern object* fexp_t;
 
-object* fexp_car (struct closure* closure, fexp* self);
-object* fexp_cdr (struct closure* closure, fexp* self);
-fexp*   fexp_cons(struct closure* closure, fexp* self, object* car);
-fexp*   fexp_last(struct closure* closure, fexp* self);
-string* fexp_join(struct closure* closure, fexp* self, const string* delimiter);
+object* fexp_car (closure* c, fexp* self);
+object* fexp_cdr (closure* c, fexp* self);
+fexp*   fexp_cons(closure* c, fexp* self, object* car);
+fexp*   fexp_last(closure* c, fexp* self);
+string* fexp_join(closure* c, fexp* self, const string* delimiter);
 
-object* fexp_new   (struct closure* closure, fexp* self, object* car, object* cdr);
-size_t  fexp_length(struct closure* closure, fexp* self);
-fexp*   fexp_print (struct closure* closure, fexp* self);
-string* fexp_tojson(struct closure* closure, fexp* self, bool quoted);
+object* fexp_new   (closure* c, fexp* self, object* car, object* cdr);
+size_t  fexp_length(closure* c, fexp* self);
+fexp*   fexp_print (closure* c, fexp* self);
+string* fexp_tojson(closure* c, fexp* self, bool quoted);
 
 
 /* - tconc -------------------------------------------------------------- */
@@ -119,16 +121,16 @@ extern vtable* tconc_vt;
 extern object* Tconc;
 extern object* s_tconc_tconc;
 extern object* s_tconc_append;
-tconc* tconc_new   (struct closure* closure, tconc* self, fexp* list);
-size_t tconc_length(struct closure* closure, tconc* self);
-tconc* tconc_print (struct closure* closure, tconc* self);
+tconc* tconc_new   (closure* c, tconc* self, fexp* list);
+size_t tconc_length(closure* c, tconc* self);
+tconc* tconc_print (closure* c, tconc* self);
 
-fexp*  tconc_tconc (struct closure* closure, tconc* self);
-tconc* tconc_append(struct closure* closure, tconc* self, object* item);
+fexp*  tconc_tconc (closure* c, tconc* self);
+tconc* tconc_append(closure* c, tconc* self, object* item);
 
 
 /* - obj extensions ----------------------------------------------------- */
-vtable* object_type  (struct closure* closure, struct symbol* self);
-struct symbol* symbol_print (struct closure* closure, struct symbol* self);
+vtable* object_type (closure* c, object* self);
+symbol* symbol_print(closure* c, symbol* self);
 
 #endif /* FEXP_H */

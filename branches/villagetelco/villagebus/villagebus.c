@@ -60,7 +60,7 @@ void villagebus_init()
 /**
  * Compile the parsed HTTP request
  */
-const fexp* villagebus_compile(struct closure* closure, villagebus* self, const Request* request)
+const fexp* villagebus_compile(closure* c, villagebus* self, const Request* request)
 {
   if (request == NULL || request->pathname == NULL) {
     return fexp_nil;
@@ -96,7 +96,7 @@ const fexp* villagebus_compile(struct closure* closure, villagebus* self, const 
 /**
  *
  */
-const fexp* villagebus_evaluate(struct closure* closure, villagebus* self, const fexp* expression)
+const fexp* villagebus_evaluate(closure* c, villagebus* self, const fexp* expression)
 {
   if (expression == fexp_nil) {
     return expression;
@@ -128,7 +128,7 @@ const fexp* villagebus_evaluate(struct closure* closure, villagebus* self, const
 
 // TODO - modules should inherit from villagebus, then we can do a: send(self, s_error, "foo message");
 //        which will allow for custom cleanup rather than a: send(VillageBus, s_error, "foo message");
-const fexp* villagebus_error(struct closure* closure, villagebus* self, const wchar_t* format, ...)
+const fexp* villagebus_error(closure* c, villagebus* self, const wchar_t* format, ...)
 {
   static wchar_t buffer[512];
   va_list args;
@@ -143,7 +143,7 @@ const fexp* villagebus_error(struct closure* closure, villagebus* self, const wc
 }
 
 
-villagebus* villagebus_print(struct closure* closure, villagebus* self)
+villagebus* villagebus_print(closure* c, villagebus* self)
 {
   wprintf(L"[#<VILLAGEBUS.%p> ", self);
   send(self->modules, s_print);

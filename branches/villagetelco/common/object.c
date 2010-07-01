@@ -42,7 +42,7 @@ struct _object *s_lookup    = 0;
 
 struct _object *symbol_new(const wchar_t *string)
 {
-  struct symbol *symbol = (struct symbol *)alloc(sizeof(struct symbol));
+  struct _symbol *symbol = (struct _symbol *)alloc(sizeof(struct _symbol));
   symbol->_vt[-1] = symbol_vt;
   size_t length = wcslen(string);
   size_t buffer_size = sizeof(wchar_t) * (length + 1);
@@ -54,20 +54,20 @@ struct _object *symbol_new(const wchar_t *string)
 
 struct _object *closure_new(imp_t method, struct _object *data)
 {
-  struct closure *closure = (struct closure *)alloc(sizeof(struct closure));
+  struct _closure *closure = (struct _closure *)alloc(sizeof(struct _closure));
   closure->_vt[-1] = closure_vt;
   closure->method  = method;
   closure->data    = data;
   return (struct _object *)closure;
 }
 
-//struct _object *vtable_lookup(struct closure *closure, struct _vtable *self, struct _object *key);
+//struct _object *vtable_lookup(struct _closure *closure, struct _vtable *self, struct _object *key);
 /*
 #if ICACHE
 # define send(RCV, MSG, ARGS...) ({				\
       struct        object   *r = (struct _object *)(RCV);	\
       static struct _vtable   *prevVT  = 0;			\
-      static struct closure  *closure = 0;			\
+      static struct _closure  *closure = 0;			\
       register struct _vtable *thisVT  = r->_vt[-1];		\
       thisVT == prevVT						\
 	?  closure						\
@@ -78,7 +78,7 @@ struct _object *closure_new(imp_t method, struct _object *data)
 #else
 # define send(RCV, MSG, ARGS...) ({				\
       struct _object  *r = (struct _object *)(RCV);		\
-      struct closure *c = bind(r, (MSG));			\
+      struct _closure *c = bind(r, (MSG));			\
       c->method(c, r, ##ARGS);					\
     })
 #endif
@@ -88,14 +88,14 @@ struct _object *closure_new(imp_t method, struct _object *data)
 struct entry {
   struct _vtable  *vtable;
   struct _object *selector;
-  struct closure *closure;
+  struct _closure *closure;
 } MethodCache[8192];
 #endif
 
 
-struct closure *bind(struct _object *rcv, struct _object *msg)
+struct _closure *bind(struct _object *rcv, struct _object *msg)
 {
-  struct closure *c;
+  struct _closure *c;
   struct _vtable  *vt = rcv->_vt[-1];
 #if MCACHE
   struct entry   *cl = MethodCache + ((((unsigned)vt << 2) ^ ((unsigned)msg >> 3)) & ((sizeof(MethodCache) / sizeof(struct entry)) - 1));
@@ -103,8 +103,8 @@ struct closure *bind(struct _object *rcv, struct _object *msg)
     return cl->closure;
 #endif
   c = ((msg == s_lookup) && (rcv == (struct _object *)vtable_vt))
-    ? (struct closure *)vtable_lookup(0, vt, msg)
-    : (struct closure *)send(vt, s_lookup, msg);
+    ? (struct _closure *)vtable_lookup(0, vt, msg)
+    : (struct _closure *)send(vt, s_lookup, msg);
 #if MCACHE
   cl->vtable   = vt;
   cl->selector = msg;
@@ -113,7 +113,7 @@ struct closure *bind(struct _object *rcv, struct _object *msg)
   return c;
 }
 
-struct _vtable *vtable_delegated(struct closure *closure, struct _vtable *self)
+struct _vtable *vtable_delegated(struct _closure *closure, struct _vtable *self)
 {
   struct _vtable *child= (struct _vtable *)alloc(sizeof(struct _vtable));
   child->_vt[-1] = self ? self->_vt[-1] : 0;
@@ -125,19 +125,19 @@ struct _vtable *vtable_delegated(struct closure *closure, struct _vtable *self)
   return child;
 }
 
-struct _object *vtable_allocate(struct closure *closure, struct _vtable *self, int payloadSize)
+struct _object *vtable_allocate(struct _closure *closure, struct _vtable *self, int payloadSize)
 {
   struct _object *obj = (struct _object *)alloc(payloadSize);
   obj->_vt[-1] = self;
   return obj;
 }
 
-imp_t vtable_addMethod(struct closure *closure, struct _vtable *self, struct _object *key, imp_t method)
+imp_t vtable_addMethod(struct _closure *closure, struct _vtable *self, struct _object *key, imp_t method)
 {
   int i;
   for (i = 0;  i < self->tally;  ++i)
     if (key == self->keys[i])
-      return ((struct closure *)self->values[i])->method = method;
+      return ((struct _closure *)self->values[i])->method = method;
   if (self->tally == self->size) {
     self->size  *= 2;
     self->keys   = (struct _object **)realloc(self->keys,   sizeof(struct _object *) * self->size);
@@ -148,7 +148,7 @@ imp_t vtable_addMethod(struct closure *closure, struct _vtable *self, struct _ob
   return method;
 }
 
-struct _object *vtable_lookup(struct closure *closure, struct _vtable *self, struct _object *key)
+struct _object *vtable_lookup(struct _closure *closure, struct _vtable *self, struct _object *key)
 {
   int i;
   for (i = 0;  i < self->tally;  ++i)
@@ -156,12 +156,12 @@ struct _object *vtable_lookup(struct closure *closure, struct _vtable *self, str
       return self->values[i];
   if (self->parent)
     return send(self->parent, s_lookup, key);
-  fwprintf(stderr, L"lookup failed %p %S\n", self, ((struct symbol *)key)->string);
+  fwprintf(stderr, L"lookup failed %p %S\n", self, ((struct _symbol *)key)->string);
   return 0;
 }
 
 
-struct _object* symbol_lookup(struct closure* closure, struct _object* self, const wchar_t *string)
+struct _object* symbol_lookup(struct _closure* closure, struct _object* self, const wchar_t *string)
 {
   struct _object* symbol;
   struct _vtable* vt = self ? self->_vt[-1] : SymbolList;
@@ -171,10 +171,10 @@ struct _object* symbol_lookup(struct closure* closure, struct _object* self, con
     /*wprintf(L"COMPARE: '%S'(%d) ? '%S'(%d)  =  %d\n", 
             string, 
             wcslen(string),
-            ((struct symbol*)symbol)->string, 
-            wcslen(((struct symbol*)symbol)->string),
-            wcscmp(string, ((struct symbol*)symbol)->string));*/
-    if (wcscmp(string, ((struct symbol*)symbol)->string) == 0) {
+            ((struct _symbol*)symbol)->string, 
+            wcslen(((struct _symbol*)symbol)->string),
+            wcscmp(string, ((struct _symbol*)symbol)->string));*/
+    if (wcscmp(string, ((struct _symbol*)symbol)->string) == 0) {
       //printf("FOUND IT!\n");
       return symbol;
     }
@@ -183,7 +183,7 @@ struct _object* symbol_lookup(struct closure* closure, struct _object* self, con
 }
 
 
-struct _object *symbol_intern(struct closure *closure, struct _object *self, const wchar_t *string)
+struct _object *symbol_intern(struct _closure *closure, struct _object *self, const wchar_t *string)
 {
   struct _object *symbol;
   symbol = symbol_lookup(closure, self, string);

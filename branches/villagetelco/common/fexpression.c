@@ -95,13 +95,13 @@ void fexp_init()
 
 
 /* - obj extensions ----------------------------------------------------- */
-vtable* object_type  (struct closure* closure, struct symbol* self)
+vtable* object_type(closure* c, object* self)
 {
   return self->_vt[-1];
 }
 
 
-struct symbol* symbol_print(struct closure* closure, struct symbol* self)
+symbol* symbol_print(closure* c, symbol* self)
 {
   wprintf(L"#%ls", self->string);
   return self;
@@ -116,7 +116,7 @@ object *s_string_fromchar  = 0;
 object *s_string_tochar    = 0;
 object *s_string_add       = 0;
 
-object* string_new(struct closure* closure, string* self, const wchar_t* s, size_t length) {
+object* string_new(closure* c, string* self, const wchar_t* s, size_t length) {
   if (length > wcslen(s)) return (object*)fexp_nil; 
   string* clone = (string*)send(self->_vt[-1], s_allocate, sizeof(string));
   clone->length = length;
@@ -132,18 +132,18 @@ object* string_new(struct closure* closure, string* self, const wchar_t* s, size
   return (object*)clone;
 }
 
-size_t string_length(struct closure *closure, string *self)
+size_t string_length(closure* c, string *self)
 {
   return self->length;
 }
 
-string* string_print(struct closure *closure, string *self)
+string* string_print(closure* c, string *self)
 {
   wprintf(L"\"%ls\"", self->buffer ? self->buffer : L"null.string");
   return self;
 }
 
-string* string_tojson(struct closure* closure, string* self, bool quoted)
+string* string_tojson(closure* c, string* self, bool quoted)
 {
   if (quoted) {
     return self;
@@ -151,7 +151,7 @@ string* string_tojson(struct closure* closure, string* self, bool quoted)
   return (string*)send(String, s_string_fromwchar, L"\"%S\"", self->buffer);
 }
 
-object* string_fromwchar(struct closure* closure, string* self, const wchar_t* format, ...)
+object* string_fromwchar(closure* c, string* self, const wchar_t* format, ...)
 {
   wchar_t* buffer;
   int length;
@@ -168,7 +168,7 @@ object* string_fromwchar(struct closure* closure, string* self, const wchar_t* f
 }
 
 // TODO - make it take a format string as above and onstruct using vasprintf
-object* string_fromchar(struct closure *closure, string *self, const char* s, size_t length) {
+object* string_fromchar(closure* c, string *self, const char* s, size_t length) {
   /*  va_list args;
   va_start(args, query);
   char* final_query;
@@ -190,7 +190,7 @@ object* string_fromchar(struct closure *closure, string *self, const char* s, si
   return (object*)clone;
 }
 
-char* string_tochar(struct closure* closure, string* self)
+char* string_tochar(closure* c, string* self)
 {
   size_t buffer_size = sizeof(char) + (self->length + 1);
   char* buffer = (char*)malloc(buffer_size);
@@ -202,7 +202,7 @@ char* string_tochar(struct closure* closure, string* self)
   return buffer;
 }
 
-string* string_add(struct closure *closure, string *self, const string *s)
+string* string_add(closure* c, string *self, const string *s)
 {
   size_t   length = self->length + s->length;
   size_t   buffer_size = sizeof(wchar_t) * (length+1);
@@ -236,7 +236,7 @@ fexp*   fexp_environment = 0;
 fexp*   fexp_nil         = 0;
 object* fexp_t           = 0;
 
-object* fexp_new(struct closure* closure, fexp* self, object* car, object* cdr)
+object* fexp_new(closure* c, fexp* self, object* car, object* cdr)
 {
   fexp *clone = (fexp*)send(self->_vt[-1], s_allocate, sizeof(fexp));
   clone->car = car;
@@ -244,12 +244,12 @@ object* fexp_new(struct closure* closure, fexp* self, object* car, object* cdr)
   return (object*)clone;
 }
 
-size_t fexp_length(struct closure *closure, fexp *self)
+size_t fexp_length(closure* c, fexp *self)
 {
   return ((fexp*)self->cdr != fexp_nil) ? 1 + (size_t)send(self->cdr, s_length) : 0;
 }
 
-fexp* fexp_print(struct closure* closure, fexp* self)
+fexp* fexp_print(closure* c, fexp* self)
 {
   printf("(");
   object* iter; 
@@ -268,7 +268,7 @@ fexp* fexp_print(struct closure* closure, fexp* self)
   return self;
 }
 
-string* fexp_tojson(struct closure* closure, fexp* self, bool quoted)
+string* fexp_tojson(closure* c, fexp* self, bool quoted)
 {
   string* json = (string*)send(String, s_string_fromwchar, L"[ ");
   object* iter;
@@ -287,30 +287,30 @@ string* fexp_tojson(struct closure* closure, fexp* self, bool quoted)
   return json;
 }
 
-object* fexp_car(struct closure *closure, fexp *self)
+object* fexp_car(closure* c, fexp *self)
 {
   return self->car;
 }
 
-object* fexp_cdr(struct closure *closure, fexp* self)
+object* fexp_cdr(closure* c, fexp* self)
 {
   return self->cdr;
 }
 
-fexp* fexp_cons(struct closure *closure, fexp *self, object* car)
+fexp* fexp_cons(closure* c, fexp *self, object* car)
 {
   fexp *x = (fexp*)send(Fexp, s_new, car, self);
   return x;
 }
 
-fexp* fexp_last(struct closure *closure, fexp *self)
+fexp* fexp_last(closure* c, fexp *self)
 {
   //return (self->cdr == fexp_nil) ? self->car : fexp_last(closure, self->cdr);
   //printf("nil(%p) - self(%p) - self->cdr(%p)\n", fexp_nil, self, self->cdr);
   return ((fexp*)self->cdr == fexp_nil) ? self : (fexp*)send(self->cdr, s_fexp_last);
 }
 
-string* fexp_join(struct closure* closure, fexp* self, const string* delimiter)
+string* fexp_join(closure* c, fexp* self, const string* delimiter)
 {
   size_t length = (size_t)send(self, s_length);
   string* ret = (string*)send(String, s_new, L"", 0);
@@ -332,7 +332,7 @@ object* Tconc = 0;
 object *s_tconc_tconc  = 0;
 object *s_tconc_append = 0;
 
-tconc* tconc_new(struct closure* closure, tconc* self, fexp* list)
+tconc* tconc_new(closure* c, tconc* self, fexp* list)
 {
   tconc* clone = (tconc*)send(self->_vt[-1], s_allocate, sizeof(tconc));
   clone->head = list;
@@ -340,25 +340,25 @@ tconc* tconc_new(struct closure* closure, tconc* self, fexp* list)
   return clone;
 }
 
-size_t tconc_length(struct closure* closure, tconc* self)
+size_t tconc_length(closure* c, tconc* self)
 {
   fexp* list = self->head;
   return ((fexp*)list->cdr != fexp_nil) ? 1 + (size_t)send(list->cdr, s_length) : 0;
 }
 
-tconc* tconc_print(struct closure* closure, tconc* self)
+tconc* tconc_print(closure* c, tconc* self)
 {
   fexp* list = self->head;
   send(list, s_print);
   return self;
 }
 
-fexp* tconc_tconc(struct closure* closure, tconc* self)
+fexp* tconc_tconc(closure* c, tconc* self)
 {
   return self->head;
 }
 
-tconc* tconc_append(struct closure* closure, tconc* self, object* item)
+tconc* tconc_append(closure* c, tconc* self, object* item)
 {
   fexp* tail = (fexp*)send(fexp_nil, s_fexp_cons, item);
   if (self->head == fexp_nil) { /* we're the TCONC of the empty list */

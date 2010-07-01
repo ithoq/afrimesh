@@ -23,10 +23,10 @@
 
 struct _vtable;
 struct _object;
-struct closure;
-struct symbol;
+struct _closure;
+struct _symbol;
 
-typedef struct _object *(*imp_t)(struct closure *closure, struct _object *receiver, ...);
+typedef struct _object *(*imp_t)(struct _closure *closure, struct _object *receiver, ...);
 
 struct _vtable
 {
@@ -42,14 +42,14 @@ struct _object {
   struct _vtable *_vt[0];
 };
 
-struct closure
+struct _closure
 {
   struct _vtable *_vt[0];
   imp_t	 method;
   struct _object *data;
 };
 
-struct symbol
+struct _symbol
 {
   struct _vtable *_vt[0];
   wchar_t       *string;
@@ -72,7 +72,7 @@ extern struct _object *s_lookup;
 # define send(RCV, MSG, ARGS...) ({                       \
       struct        _object   *r = (struct _object *)(RCV);	\
       static struct _vtable   *prevVT  = 0;                \
-      static struct closure   *closure = 0;                \
+      static struct _closure   *closure = 0;                \
       register struct _vtable *thisVT  = r->_vt[-1];       \
       thisVT == prevVT                                    \
         ?  closure                                        \
@@ -83,7 +83,7 @@ extern struct _object *s_lookup;
 #else
 # define send(RCV, MSG, ARGS...) ({                 \
       struct _object  *r = (struct _object *)(RCV);		\
-      struct closure *c = bind(r, (MSG));           \
+      struct _closure *c = bind(r, (MSG));           \
       c->method(c, r, ##ARGS);                      \
     })
 #endif
@@ -93,13 +93,13 @@ extern struct _object *s_lookup;
 void *alloc(size_t size);
 struct _object *symbol_new(const wchar_t *string);
 struct _object *closure_new(imp_t method, struct _object *data);
-struct _object *vtable_lookup(struct closure *closure, struct _vtable *self, struct _object *key);
-struct closure *bind(struct _object *rcv, struct _object *msg);
-struct _vtable *vtable_delegated(struct closure *closure, struct _vtable *self);
-struct _object *vtable_allocate(struct closure *closure, struct _vtable *self, int payloadSize);
-struct _object *vtable_lookup(struct closure *closure, struct _vtable *self, struct _object *key);
-struct _object *symbol_intern(struct closure *closure, struct _object *self, const wchar_t *string);
-struct _object* symbol_lookup(struct closure* closure, struct _object* self, const wchar_t *string);
+struct _object *vtable_lookup(struct _closure *closure, struct _vtable *self, struct _object *key);
+struct _closure *bind(struct _object *rcv, struct _object *msg);
+struct _vtable *vtable_delegated(struct _closure *closure, struct _vtable *self);
+struct _object *vtable_allocate(struct _closure *closure, struct _vtable *self, int payloadSize);
+struct _object *vtable_lookup(struct _closure *closure, struct _vtable *self, struct _object *key);
+struct _object *symbol_intern(struct _closure *closure, struct _object *self, const wchar_t *string);
+struct _object* symbol_lookup(struct _closure* closure, struct _object* self, const wchar_t *string);
 void obj_init(void);
 
 
