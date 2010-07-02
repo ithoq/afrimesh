@@ -21,14 +21,13 @@ function BootNetwork(parent) {
   /**
    * 
    */
-  network.status = function(continuation) {
-    var name = afrimesh.villagebus.Name("/root/db/keys/status/*");
+  network.stat = function(continuation) {
+    var name = afrimesh.villagebus.Name("/root/db/keys/devicestat/*");
     name = afrimesh.villagebus.Bind(name, function(error, response) {
         if (error) { return continuation(error, null); } // TODO - return Fail(error, continuation) maybe ?
         response.map(function(key) {
             return afrimesh.villagebus.Send(afrimesh.villagebus.Bind("/root/db/lrange/" + key, function(error, response) {
-                response = { "key" : key, "status" : response };
-                return continuation(error, response);
+                return continuation(error, key, response);
               }), { start : 0, end : 2 });
           });
       });

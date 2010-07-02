@@ -19,14 +19,14 @@
 
 
   /** - Make Javascript a better Lisp ------------------------------------- */
-  Array.prototype.car = function() { return (this.length > 0) ? this[0]       : []; };
+  function car(array) { return (array.length > 0) ? array[0]       : []; };
+  function cdr(array) { return (array.length > 1) ? array.slice(1) : []; };
   //Array.prototype.rac = function() { return (this.length > 0) ? this[this.length() - 1] : [] };
-  Array.prototype.cdr = function() { return (this.length > 1) ? this.slice(1) : []; };
   //Array.prototype.rdc = function() { return (this.length > 1) ? this.slice(0, this.length() - 2) : [] };
-  Array.prototype.first = Array.prototype.car;
-  Array.prototype.rest  = Array.prototype.cdr;
-  Array.prototype.head  = Array.prototype.car;
-  Array.prototype.tail  = Array.prototype.cdr;
+  //Array.prototype.first = Array.prototype.car;
+  //Array.prototype.rest  = Array.prototype.cdr;
+  //Array.prototype.head  = Array.prototype.car;
+  //Array.prototype.tail  = Array.prototype.cdr;
   //Array.prototype.init  = Array.prototype.rdc;
   //Array.prototype.last  = Array.prototype.rac;
 
@@ -126,8 +126,8 @@
   };
 
   function Qsugar(selector, root) {     // SUGAR drop the first selector element if it is the same as the object name:
-    if (selector.car().toLowerCase() == (root ? root : "afrimesh")) { // TODO UDE we don't have an automagic way to get root object names
-      selector = selector.cdr();
+    if (car(selector).toLowerCase() == (root ? root : "afrimesh")) { // TODO UDE we don't have an automagic way to get root object names
+      selector = cdr(selector);
     };
     return selector;
   };
@@ -152,7 +152,7 @@
     } else if (selector.length == 0) {
       return this_object;
     } 
-    var head = selector.car();
+    var head = car(selector);
     if (regex_array_selector.test(head)) {               // test for @some-name[0]
       head = resolve_array_selector(this_object, head); 
     } 
@@ -160,7 +160,7 @@
       console.warn("__q(" + this_object.valueOf() + "): Invalid selector - " + selector.join("|"));
       return undefined;
     } 
-    return __q(this_object[head], selector.cdr());
+    return __q(this_object[head], cdr(selector));
   };
 
   function resolve_array_selector(this_object, selector) {

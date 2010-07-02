@@ -114,7 +114,7 @@ define Package/afrimesh-base/install
 	mkdir -p $(1)/CONTROL
 	echo "/etc/config/afrimesh" >> $(1)/CONTROL/conffiles
 	$(INSTALL_CONF) ./files/etc/config/afrimesh  $(1)/etc/config
-	$(INSTALL_BIN) ./files/etc/crontabs/afrimesh $(1)/etc/crontabs/root
+	$(INSTALL_BIN)  ./files/etc/crontabs/afrimesh $(1)/etc/crontabs/root
 
 	$(INSTALL_BIN)  ./files/www/cgi-bin/status.sh          $(1)/www/cgi-bin/status
 	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/villagebus/villagebus $(1)/www/cgi-bin/villagebus

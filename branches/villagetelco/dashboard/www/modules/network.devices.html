@@ -134,12 +134,18 @@
 
     /* load data */   
     $("#device-template").hide(); // TODO - No comment. File jquery bug.
-    var channel = afrimesh.network.status(function(error, device) {
+    var channel = afrimesh.network.stat(function(error, key, stats) {
         if (error) {
           console.log("error: " + error);
           return error;
         }
-        console.log("device: " + device.key + " status: " + device.status);
+        console.log("DEVICE: " + key + " " + stats[0].self);
+        for (var stat in stats) {
+          stat = stats[stat];
+          console.log("time: " + stat.timestamp);
+          console.log("radio: " + show(stat.radio));
+          console.log("gateway: " + show(stat.gateways[0]));
+        }
         /*$("#device-template").show(); // TODO - No comment. File jquery bug.
         $("#device-template").clone().attr("id", "device-" + device).appendTo("#devicelist");
         $("#device-template").hide(); // TODO - No comment. File jquery bug.*/

@@ -21,7 +21,6 @@ uname=`uname`
 uptime=`cat /proc/uptime | awk '{ print $1 }'`
 idle=`cat /proc/uptime | awk '{ print $2 }'`
 
-
 # traffic stats - TODO wifi0 as well
 buffer=`cat /proc/net/dev|grep $interface`
 bytes_tx=`echo $buffer | awk '{ print $2 }'`
@@ -45,14 +44,12 @@ gateways=$(batmand -cbd2 | grep gateway |{
         nexthop_address=`echo $line | awk '{print \$4 }`
         score=`echo $line | awk 'BEGIN{FS="(";RS=")"}/\(/{print $2}'`
         failures=`echo $line | awk '{print \$13 }`
-
         #gateway_reply=`arping -f -w 2 -I $interface $gateway_address | grep reply`
         gateway_ping=`ping -w $timeout -c 1 $gateway_address 2> /dev/null | grep from | awk '{ print \$7 }' | cut -d = -f 2`
         [ -z $gateway_ping ] && gateway_ping="-1.0"
         nexthop_ping=`ping -w $timeout -c 1 $nexthop_address 2> /dev/null | grep from | awk '{ print \$7 }' | cut -d = -f 2`
         [ -z $nexthop_ping ] && nexthop_ping="-1.0"
         nexthop_arp=`cat /proc/net/arp |grep $nexthop_address | awk '{ print $4 }'`
-
         radio=`wlanconfig $interface list|grep $nexthop_arp`
         radio_rate=`echo $radio | awk '{ print $4 }'`
         radio_rssi=`echo $radio | awk '{ print $5 }'`
@@ -103,7 +100,8 @@ echo -n -e $REQUEST | nc $root 80 >& /dev/null
 
 
 # construct & send HTTP request for temporal data
-json="{ 'timestamp' : $timestamp, \
+json="{ 'self'      : '$self', \
+        'timestamp' : $timestamp, \
         'radio'     : $radio, \
         'gateways'  : [ $gateways ] }"
 HTTP="POST $villagebus/$path_stat HTTP/1.0\n"
