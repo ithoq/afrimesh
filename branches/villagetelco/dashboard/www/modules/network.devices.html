@@ -134,22 +134,25 @@
 
     /* load data */   
     $("#device-template").hide(); // TODO - No comment. File jquery bug.
-    var channel = afrimesh.network.stat(function(error, key, stats) {
+    afrimesh.network.info(function(error, address, device) {
         if (error) {
-          console.log("error: " + error);
-          return error;
+          return console.log("error: " + error); // TODO - Fail handler
         }
-        console.log("DEVICE: " + key + " " + stats[0].self);
-        for (var stat in stats) {
-          stat = stats[stat];
-          console.log("time: " + stat.timestamp);
-          console.log("radio: " + show(stat.radio));
-          console.log("gateway: " + show(stat.gateways[0]));
-        }
-        /*$("#device-template").show(); // TODO - No comment. File jquery bug.
-        $("#device-template").clone().attr("id", "device-" + device).appendTo("#devicelist");
-        $("#device-template").hide(); // TODO - No comment. File jquery bug.*/
+        console.log("DEVICE: " + address + " " + show(device));
+        $("#device-template").show(); // TODO - No comment. File jquery bug.
+        //$("#device-template").clone().attr("id", "device-" + address).appendTo("#devicelist");
+        var clone = $("#device-template").clone().attr("id", "device-" + address);
+        $("#device-template").hide(); // TODO - No comment. File jquery bug.
+        clone.appendTo("#devicelist");
+        clone.find(".name").html(address);
+
+        afrimesh.device.stat(address, function(error, data) {
+            console.log("  STATS FOR " + address + ": " + data);
+          });
       });
+
+
+
 
     /*var gateway = [];
     var nexthop = [];

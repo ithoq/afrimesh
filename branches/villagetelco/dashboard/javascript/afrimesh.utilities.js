@@ -157,7 +157,7 @@
       head = resolve_array_selector(this_object, head); 
     } 
     if (this_object[head] == undefined) {
-      console.warn("__q(" + this_object.valueOf() + "): Invalid selector - " + selector.join("|"));
+      //console.warn("__q(" + this_object.valueOf() + "): Invalid selector - " + selector.join("|"));
       return undefined;
     } 
     return __q(this_object[head], cdr(selector));
@@ -376,12 +376,12 @@
     }
   };
   
-  window.console.log = function() {
-    var message = "";// timestamp(true);
+  window.console.log = function(message) {
+    /*message = "";// timestamp(true);
     message += "[log]\t";
     for (var arg = 0; arg < arguments.length; arg++) {
       message += arguments[arg];
-    }
+    }*/
     return window.console.native_log(message);
   };
   

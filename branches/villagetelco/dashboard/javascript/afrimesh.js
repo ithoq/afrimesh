@@ -24,6 +24,7 @@ var afrimesh = undefined;
 
     this.storage    = BootStorage(this);
     this.network    = BootNetwork(this);
+    this.device     = BootDevice(this);        
     this.customers  = BootCustomers(this);
     this.villagebus = BootVillageBus(this);
 

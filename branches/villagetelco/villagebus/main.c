@@ -57,8 +57,9 @@ int exit_success()
 int main(int argc, char** argv)
 {
   /** - output HTTP header ------------------------------------------------ */
-  //httpd_out("Content-type: application/json\n\n");
-  whttpd_out(L"Content-type: text/plain\n\n");
+  //whttpd_out(L"Content-type: application/json\n\n");  
+  whttpd_out(L"Content-type: application/x-javascript\n\n"); // Grrf
+  //whttpd_out(L"Content-type: text/plain\n\n");
 
   /** - parse request ----------------------------------------------------- */
   cgi_init();

@@ -131,7 +131,7 @@ function BootSettings(parent, address) {
   var load_remote = function() {
     var config = parent.villagebus.uci.get.sync(address, "");
     parent.settings.uci_config = config;
-    console.debug("REMOTE CONFIG: \n" + rshow(config));
+    //console.debug("REMOTE CONFIG: \n" + rshow(config));
     for (var local in afrimesh2uci) {
       var value = "";
       try { 
@@ -143,7 +143,7 @@ function BootSettings(parent, address) {
         Qset(parent, local, value);
       } else {
         Qset(parent, local, afrimesh2uci[local].init);
-        console.debug ("Missing configuration entry '" + local + "'; reverting to default: " + afrimesh2uci[local].init);
+        //console.debug ("Missing configuration entry '" + local + "'; reverting to default: " + afrimesh2uci[local].init);
       }
     }
     for (var setting in parent.settings) {

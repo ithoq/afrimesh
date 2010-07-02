@@ -17,7 +17,7 @@ path_stat="$root/db/devicestat/$self"
 
 # misc information
 timestamp=`date +%s`000
-uname=`uname`
+uname=`uname -a`
 uptime=`cat /proc/uptime | awk '{ print $1 }'`
 idle=`cat /proc/uptime | awk '{ print $2 }'`
 

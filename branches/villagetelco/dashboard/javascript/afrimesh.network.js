@@ -12,26 +12,23 @@ function BootNetwork(parent) {
 
   var network = function() { return this.network.routes(); };
 
-  /* - network devices -------------------------------------------------- */
-  network.devices = function(continuation) {
-  };
 
-  /* - network status --------------------------------------------------- */
+  /* - network device info ---------------------------------------------- */
 
   /**
-   * 
+   * Returns a list of all devices on the network annotated w/ instantaneous device information
    */
-  network.stat = function(continuation) {
-    var name = afrimesh.villagebus.Name("/root/db/keys/devicestat/*");
+  network.info = function(continuation) {
+    var name = afrimesh.villagebus.Name("/root/db/keys/deviceinfo/*");
     name = afrimesh.villagebus.Bind(name, function(error, response) {
-        if (error) { return continuation(error, null); } // TODO - return Fail(error, continuation) maybe ?
+        if (error) return continuation(error, null);  // TODO - return Fail(error, continuation) maybe ?
         response.map(function(key) {
-            return afrimesh.villagebus.Send(afrimesh.villagebus.Bind("/root/db/lrange/" + key, function(error, response) {
-                return continuation(error, key, response);
-              }), { start : 0, end : 2 });
+            return afrimesh.villagebus.Send(afrimesh.villagebus.Bind("/root/db/" + key, function(error, response) {
+                return continuation(error, response.self, response);
+              }));
           });
       });
-    name = afrimesh.villagebus.Send(name /*, args*/);
+    name = afrimesh.villagebus.Send(name);
     return name;
   };
 
