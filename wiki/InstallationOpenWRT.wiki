@@ -1,5 +1,34 @@
 #summary TODO - replace with afrimesh-config package
 #labels Phase-Deploy
+#KB-TODO do this in real detail for newbies (when we've got something rock solid)
+
+Afrimesh requires an out-of-the-box Openwrt install plush the afrimesh-base package and its dependencies (libuci, libjson, batmand, libnetsnmp).  The overall proceess is:
+* Install openwrt
+* update opkg source file
+* edit afrimesh config script with your values
+* run afrimesh config script
+
+= Flash router with Openwrt = 
+
+Afrimesh currently uses Kamikaze - 8.09.2
+
+* Get the correct openwrt image for your platform from here http://downloads.openwrt.org/kamikaze/8.09.2/
+* Flash your router...
+
+= Download Config Files and Scripts =
+
+* telnet to your router (192.168.1.1)
+{{{
+cd /etc
+rm opkg.conf
+wget http://afrimesh.googlecode.com/files/opkg.conf
+wget http://afrimesh.googlecode.com/files/amcfg-node.sh
+wget http://afrimesh.googlecode.com/files/amcfg-gw.sh
+}}}
+
+= Customize Your Configuration =
+
+
 
 = Configuration Parameters =
 || *parameter* || *description* || *example* || *actual* . . . . . . . . . . . . . . . . . . . . ||
