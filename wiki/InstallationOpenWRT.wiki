@@ -3,21 +3,21 @@
 #KB-TODO do this in real detail for newbies (when we've got something rock solid)
 
 Afrimesh requires an out-of-the-box Openwrt install plush the afrimesh-base package and its dependencies (libuci, libjson, batmand, libnetsnmp).  The overall proceess is:
-* Install openwrt
-* update opkg source file
-* edit afrimesh config script with your values
-* run afrimesh config script
+  * Install openwrt
+  * update opkg source file
+  * edit afrimesh config script with your values
+  * run afrimesh config script
 
 = Flash router with Openwrt = 
 
 Afrimesh currently uses Kamikaze - 8.09.2
 
-* Get the correct openwrt image for your platform from here http://downloads.openwrt.org/kamikaze/8.09.2/
-* Flash your router...
+  * Get the correct openwrt image for your platform from here http://downloads.openwrt.org/kamikaze/8.09.2/
+  * Flash your router...
 
 = Download Config Files and Scripts =
 
-* telnet to your router (192.168.1.1)
+telnet to your router (192.168.1.1) and run:
 {{{
 cd /etc
 rm opkg.conf
@@ -28,7 +28,17 @@ wget http://afrimesh.googlecode.com/files/amcfg-gw.sh
 
 = Customize Your Configuration =
 
+This is the tricky part, since every router is different.  Key things to remember are:
+  * Batman creates a separate virtual interface that mesh traffic routes through 
+  * Gateway nodes and regular mesh nodes have different batman configurations
+  * Gateway nodes determine their default route based on the other interface on the device with the statically configured gateway.  
+  * The routing created by batman doesn't show up in your main routing table.  If you're like, "Whhhhhaaaat?" go here: http://www.open-mesh.net/wiki/RoutingVodoo
+  * Debug outputs are helpful (batmand -cd[1-3]) you can run them in parallel with another batman instance.  
+  * batman man page: http://downloads.open-mesh.net/batman/development/sources/batmand_0.4-alpha-current_sources/man/batmand.8.html
 
+== Make a gateway node ==
+
+To be continued later today 7/2...
 
 = Configuration Parameters =
 || *parameter* || *description* || *example* || *actual* . . . . . . . . . . . . . . . . . . . . ||
