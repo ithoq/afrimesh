@@ -28,7 +28,7 @@ wget http://afrimesh.googlecode.com/files/amcfg-gw.sh
 
 = Customize Your Configuration =
 
-This is the tricky part, since every router is different.  These scripts might not work as is.  In order to help you modify the scripts if they don't work for you, here are some key things to remember are:
+This is the tricky part. Since every router is different, hese scripts might not work as is for your hardware.  In order to help you modify the scripts if they don't work for you, here are some key things to remember:
   * Batman creates a separate virtual interface that mesh traffic routes through 
   * Gateway nodes and regular mesh nodes have different batman configurations
   * Gateway nodes determine their default route based on which of its networks is advertising a gateway (this can include one gotten through DHCP).  
