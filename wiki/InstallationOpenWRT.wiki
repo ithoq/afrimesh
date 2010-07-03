@@ -2,7 +2,7 @@
 #labels Phase-Deploy
 TODO do this in real detail for newbies (when we've got something rock solid)
 
-Afrimesh requires an out-of-the-box Openwrt install plush the afrimesh-base package and its dependencies (libuci, libjson, batmand, libnetsnmp).  The overall proceess is:
+Afrimesh requires an out-of-the-box Openwrt install plus the afrimesh-base package and its dependencies (libuci, libjson, batmand, libnetsnmp).  The overall proceess is:
   * Install openwrt
   * update opkg source file
   * edit afrimesh config script with your values
