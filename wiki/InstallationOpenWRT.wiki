@@ -1,6 +1,8 @@
 #summary TODO - replace with afrimesh-config package
 #labels Phase-Deploy
-#KB-TODO do this in real detail for newbies (when we've got something rock solid)
+TODO do this in real detail for newbies (when we've got something rock solid)
+
+WARNING.  UNDER CONSTRUCTION (old page begins at "configuration parameters")
 
 Afrimesh requires an out-of-the-box Openwrt install plush the afrimesh-base package and its dependencies (libuci, libjson, batmand, libnetsnmp).  The overall proceess is:
   * Install openwrt
