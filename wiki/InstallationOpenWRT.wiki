@@ -31,7 +31,7 @@ wget http://afrimesh.googlecode.com/files/amcfg-gw.sh
 This is the tricky part, since every router is different.  Key things to remember are:
   * Batman creates a separate virtual interface that mesh traffic routes through 
   * Gateway nodes and regular mesh nodes have different batman configurations
-  * Gateway nodes determine their default route based on the network device advertising a gateway (this can include one gotten through DHCP).  
+  * Gateway nodes determine their default route based on which of its networks is advertising a gateway (this can include one gotten through DHCP).  
   * The routing created by batman doesn't show up in your main routing table.  If you're like, "Whhhhhaaaat?" go here: http://www.open-mesh.net/wiki/RoutingVodoo
   * Debug outputs are helpful (`batmand -cd[1-3]`) you can run them in parallel with another batman instance.  
   * batman man page: http://downloads.open-mesh.net/batman/development/sources/batmand_0.4-alpha-current_sources/man/batmand.8.html
