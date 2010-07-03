@@ -2,8 +2,6 @@
 #labels Phase-Deploy
 TODO do this in real detail for newbies (when we've got something rock solid)
 
-WARNING.  UNDER CONSTRUCTION (old page begins at "configuration parameters")
-
 Afrimesh requires an out-of-the-box Openwrt install plush the afrimesh-base package and its dependencies (libuci, libjson, batmand, libnetsnmp).  The overall proceess is:
   * Install openwrt
   * update opkg source file
@@ -33,34 +31,60 @@ wget http://afrimesh.googlecode.com/files/amcfg-gw.sh
 This is the tricky part, since every router is different.  Key things to remember are:
   * Batman creates a separate virtual interface that mesh traffic routes through 
   * Gateway nodes and regular mesh nodes have different batman configurations
-  * Gateway nodes determine their default route based on the other interface on the device with the statically configured gateway.  
+  * Gateway nodes determine their default route based on the network device advertising a gateway (this can include one gotten through DHCP).  
   * The routing created by batman doesn't show up in your main routing table.  If you're like, "Whhhhhaaaat?" go here: http://www.open-mesh.net/wiki/RoutingVodoo
-  * Debug outputs are helpful (batmand -cd[1-3]) you can run them in parallel with another batman instance.  
+  * Debug outputs are helpful (`batmand -cd[1-3]`) you can run them in parallel with another batman instance.  
   * batman man page: http://downloads.open-mesh.net/batman/development/sources/batmand_0.4-alpha-current_sources/man/batmand.8.html
+
+Here goes...
 
 == Make a gateway node ==
 
-To be continued later today 7/2...
+Edit the `amcfg-gw.sh` script as follows:
 
-= Configuration Parameters =
-|| *parameter* || *description* || *example* || *actual* . . . . . . . . . . . . . . . . . . . . ||
-|| ifname || Your wireless interface || wl0 on broadcom & ath0 on atheros ||  ||
-|| channel || The channel your mesh is running on || e.g. 5 ||  ||
-|| ssid || The SSID your mesh is using || e.g. batman ||  ||
-|| bssid || The BSSID your mesh is using || e.g. "BB:BB:BB:BB:BB:BB" ||  ||
-|| ipaddr || The ip address your router will have on the mesh || e.g. 10.0.0.6 || ||
-|| netmask || The netmask your mesh uses || e.g. 255.0.0.0 || ||
-|| visualisation_srv || The ip address of the B.A.T.M.A.N. vis server || e.g. 192.168.20.225 || ||
-|| dns || The ip address of your dns server || e.g. 192.168.20.5 || ||
+{{{
+# Settings for the internet gateway, assuming upstream DHCP
+WANIF=wan # software defined interface for the wan.  probably doesn't need to be changed
+WANDEVICE=eth0.1 # physical device name for gateway
+WANRATE=100mbit # expected data rate
+
+# Mesh Parameters 
+MESHIP=10.16.1.1 # unique for each node
+MESHMASK=255.0.0.0 # same for all nodes. don't change me
+MESHIF=mesh # software defined interface for the mesh don't change me
+MESHDEVICE=wl0  # physical device name for radio. meraki potato = ath0, linksys = wl0
+MESHCHANNEL=5 # wireless channel, same for all nodes
+MESHBSSID=BB:BB:BB:BB:BB:BB # same for all nodes
+MESHSSID=batman # same for all nodes
+
+# dashboard connection parameters
+VIS=8.9.7.4 # IP of vis server
+SYSLOG=8.9.7.4 # IP of remote syslog capture
+LONGITUDE=28.280891 # Location of your node
+LATITUDE=-25.743542
+
+# LAN Settings
+LANIP=172.16.1.1 # lan ip address
+LANMASK=255.255.255.0 # lan gateway
+LANDEVICE=eth0.0  # physical device name for gateway
+LANIF=lan  # software defined interface for the wan.  probably doesn't need to be changed
+
+# Other useful stuff
+HNAME=bat1 # system name so you know who you are in the shell
+}}}
+
+then run the script and you're done.
+
+== Make a (non-gateway) Mesh Node ==
+
+  * Edit the `amcfg-node.sh`  script.  The parameters are a subset of those for the gateway as explained above
+  * run the script
 
 
-= Flashing The Router =
 
-  * FlashMerakiMini
-  * FlashLinksysWRT54GL
+= Old Stuff That's not Quite Ripe for Deletion...=
 
-
-= Basic Router Configuration =
+== Basic Router Configuration ==
   # Plug computer into router ethernet
   # Set computer IP to 192.168.1.9
   # Telnet into router
@@ -92,7 +116,7 @@ To be continued later today 7/2...
   }}}  
 
 
-= afrimesh-portal (Optional) = 
+== afrimesh-portal (Optional) ==
 afrimesh-portal provides the configuration files to run a [http://coova.org CoovaChilli] captive portal on each mesh router.
 
 The captive portal software is used to control access to the mesh&internet as well as enforcing bandwidth allocation.
