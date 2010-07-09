@@ -41,7 +41,8 @@ typedef struct _config {
   string* delimiter;
 } config;
 extern vtable* config_vt;
-extern object* Config;
+extern object* _Config;
+extern config* Config;
 extern object* s_config;
 
 void config_init();

@@ -41,7 +41,8 @@ typedef struct _db {
   string* delimiter;
 } db;
 extern vtable* db_vt;
-extern object* DB;
+extern object* _DB;
+extern db*     DB;
 extern object* s_db;
 extern symbol* s_db_keys;
 extern object* s_db_get;   // these guys need to be symbols

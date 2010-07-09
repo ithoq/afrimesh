@@ -79,7 +79,7 @@ void fexp_init()
   fexp_nil = (fexp*)send(Fexp, s_new, nil, fexp_nil);
   fexp_nil->cdr = (object*)fexp_nil; // need to set manually because fexp_nil is undefined at construction time
   //fexp_nil = (fexp*)send(Fexp, s_fexp_cons, nil, fexp_nil);
-  fexp_environment = (fexp*)send(fexp_nil, s_fexp_cons, fexp_nil); // TODO ???
+  //fexp_environment = (fexp*)send(fexp_nil, s_fexp_cons, fexp_nil); // TODO ???
 
   // tconc
   s_tconc_tconc  = symbol_intern(0, 0, L"tconc");
@@ -196,7 +196,7 @@ char* string_tochar(closure* c, string* self)
   char* buffer = (char*)malloc(buffer_size);
   memset(buffer, 0, buffer_size);
   if (wcstombs(buffer, self->buffer, self->length) != self->length) {
-    printf("conversion failed: %s\n", buffer);
+    wprintf(L"conversion failed: %S\n", self->buffer);
   }
   buffer[self->length] = '\0';
   return buffer;
@@ -251,20 +251,20 @@ size_t fexp_length(closure* c, fexp *self)
 
 fexp* fexp_print(closure* c, fexp* self)
 {
-  printf("(");
+  wprintf(L"(");
   object* iter; 
   for (iter = (object*)self; iter != (object*)fexp_nil; iter = send(iter, s_fexp_cdr)) {
-    printf(" ");
+    wprintf(L" ");
     //if (iter->_vt[-1] != Fexp->_vt[-1]) { // Is not a Fexp - TODO is this the best way? 
     if ((vtable*)send(iter, s_type) != fexp_vt) {
-      printf(". ");
+      wprintf(L". ");
       send(iter, s_print);
       break;
     }
     object* car = send(iter, s_fexp_car);
     send(car, s_print);
   }
-  printf(" )");
+  wprintf(L" )");
   return self;
 }
 

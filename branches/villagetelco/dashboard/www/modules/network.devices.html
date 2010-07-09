@@ -21,20 +21,32 @@
       </form></td>
       <td><div style="width: 100px;"></div></td>
       <td><form class="filter">   
-          <input type="checkbox" id="ping" /> <label for="ping">ping</label>
-          <input type="checkbox" id="rssi" /> <label for="rssi">rssi</label>
-          <input type="checkbox" id="traffic" /> <label for="traffic">traffic</label>
+          <input type="checkbox" id="score"  /> <label for="score">score</label>
+          <input type="checkbox" id="nexthop"/> <label for="nexthop">nexthop</label>
+          <input type="checkbox" id="gateway"/> <label for="gateway">gateway</label>
       </form></td>
   </tr></table>
-  <!--hr/-->
+  <hr/>
 
   <style>
+    div.scrollview {
+      border: 0px solid red;
+      overflow: auto;
+      position: absolute;
+      top: 5em;
+      bottom: 1.0em;
+      right: 1.0em;
+      left: 1.0em;
+      padding-right: 2.0em; /* make space for the scrollbar */
+    }
     div.devices {
       display: table;
-      padding: 0.5em;
-      text-overflow : ellipsis;
+      /*padding: 0.5em;*/
+      /*text-overflow : ellipsis;
       white-space   : nowrap;
-      overflow      : hidden; 
+      overflow      : hidden; */
+      border: 0px solid green;
+      border-spacing: 0.5em;
     }
     div.head {
       display: table-row;
@@ -43,16 +55,14 @@
     }
     div.head span {
       display: table-cell;
-      padding-bottom: 1.0em;
     }
     div.device {
       display: table-row;
-      vertical-align: middle;
-      height : 2.0em;
-      line-height : 2.0em;
     }
     div.device span {
+      display: table-cell;
       border: 0px solid blue;
+      vertical-align: middle;
     }
     div.device span.name {
       display: table-cell;
@@ -60,20 +70,21 @@
       font-weight: bold;
       padding-right: 1.5em;
     }
+    div.device span.uptime {
+      display: table-cell;
+      color: black;
+    }
     div.device span.lastseen {
       display: table-cell;
       color: black;
-      padding-left: 1.5em;
     }
     div.device span.status {
       display: table-cell;
       color: green;
-      padding-right: 1.5em;
     }
     div.device span.traffic {
       display: table-cell;
       color: gray;
-      padding-right: 1.5em;
     }
     div.device span.graph {
       display: table-cell;
@@ -83,24 +94,28 @@
       -webkit-border-radius : 0.5em;
       padding-left: 0.25em;
       padding-right: 0.25em;
-    }
-    div.device br {
-      /*line-height: 0.5em;*/
+      width: 100%;
     }
   </style>
 
-  <div id="devicelist" class="devices">
-    <!-- div class="head">
-      <span>Name</span>
-      <span>Status</span>
-      <span>Traffic</span>
-      <span>Last 24 Hours</span>
-    </div -->
-    <div id="device-template" class="device">
-      <span class="name">gateway-is-1</span> 
-      <span class="status">healthy</span>
-      <span class="traffic">123MB</span>
-      <span class="graph"><div style="font-size: 0.5em; width:80.0em; height:4.0em;" id="graph_10_0_0_6"></div></span>
+  <div class="scrollview">
+    <div id="devicelist" class="devices">
+      <div class="head">
+        <span>Name</span>
+        <span>Uptime</span>
+        <!-- span>Last Seen</span -->
+        <span>Usage</span>
+        <span>Stats</span>
+      </div>
+      <div id="device-template" class="device">
+        <span class="name"></span> 
+        <span class="uptime"></span>
+        <!-- span class="lastseen"></span -->
+        <span class="traffic"></span>
+        <span class="graph">
+          <div style="font-size: 0.5em; width:inherit; height:20.0em; border:0px solid red;" id="graph"></div>
+        </span>
+      </div>
     </div>
   </div>
 
@@ -119,7 +134,7 @@
     /* often a good place to do this: populate_control(); */
     console.debug("loaded network.devices.html");
 
-    /* Setup filter */
+    /* Setup display filter */
     $("div#network-devices .filter").mousedown(function(event) { return false; });
     $("div#network-devices .filter input[type=checkbox]").hide().click(function(event) {
         $(this).toggleClass("active");
@@ -138,45 +153,66 @@
         if (error) {
           return console.log("error: " + error); // TODO - Fail handler
         }
+
+        // clone device template
         console.log("DEVICE: " + address + " " + show(device));
         $("#device-template").show(); // TODO - No comment. File jquery bug.
-        //$("#device-template").clone().attr("id", "device-" + address).appendTo("#devicelist");
-        var clone = $("#device-template").clone().attr("id", "device-" + address);
+        var clone = $("#device-template").clone().attr("id", "device-" + address).appendTo("#devicelist");
         $("#device-template").hide(); // TODO - No comment. File jquery bug.
-        clone.appendTo("#devicelist");
+
+        // add data for device
         clone.find(".name").html(address);
+        //clone.find(".lastseen").html("");
+        clone.find(".uptime").html(pretty_seconds(device.uptime));
+        clone.find(".traffic").html(pretty_bytes(device.bytes.tx + device.bytes.rx));
 
+        // add data series for plots - TODO move legend to outside div
         afrimesh.device.stat(address, function(error, data) {
-            console.log("  STATS FOR " + address + ": " + data);
-          });
+            var rssi = data.map(function(entry) {
+                //return [ entry.timestamp, eval(entry.radio.rssi) ];
+                return [ entry.timestamp, eval(entry.gateways[0].radio.rssi) ];
+              });
+            var score = data.map(function(entry) {
+                return [ entry.timestamp, entry.gateways[0].score ];
+              });
+            var ping = data.map(function(entry) {
+                return [ entry.timestamp, -entry.gateways[0].ping.gateway ];
+              });
+            var ping_nh = data.map(function(entry) {
+                return [ entry.timestamp, -entry.gateways[0].ping.nexthop ];
+              });
+
+            console.log(address + " has " + rssi.length + " entries");
+            $.plot(clone.find("#graph"),                                 // - element --
+                   [ { label : "score",                                  // - data -----
+                       data  : score,   
+                       yaxis : 1,      
+                       bars  : { show : true, fill : true }, 
+                       lines : { show : false } },    
+                     { label : "nexthop", data : ping_nh, yaxis: 2 },
+                     { label : "gateway", data : ping,    yaxis: 2 },
+                   /*{ label : "rssi",    data : rssi,    yaxis: 3 }*/ ],
+                   { xaxis  : { mode       : "time"                      // - options --
+                                /*ticks      : 10,
+                                labelWidth : 10*/ },
+                     yaxis  : { max : 255 },
+                     y2axis : { max : 0,
+                                tickFormatter : function(v, axis) { 
+                                    return Math.abs(v.toFixed(axis.tickDecimals)); } },
+                     y3axis : { },
+                     legend : { show     : true,
+                                position : "sw" },
+                     series : { lines  : { show      : true,
+                                           lineWidth : 1.0 }, 
+                                points : { show      : false },
+                                shadowSize : 0 },
+                     grid   : { show        : true,
+                                borderWidth : 1.0,
+                                labelMargin : 0.0,
+                                axisMargin  : 0.0  } });
+          }, { start : 0, end : 12 });
       });
 
-
-
-
-    /*var gateway = [];
-    var nexthop = [];
-    for (var i = 0; i < 24 * 6; i++) {
-      gateway.push([i, Math.random()]);
-      nexthop.push([i, Math.random()]);
-    }
-    //$(".graph").sparkline(data, { });
-    //$(".graph").sparkline(data, { height : "2.0em" });
-    $.plot($("#graph_10_0_0_6"), [ { label: "gateway", data : gateway }, { label: "nexthop", data : nexthop } ], { 
-        series : { lines : { show : true }, points : { show : false } },
-        grid   : { show : false } 
-      });
-    gateway = [];
-    nexthop = [];
-    for (var i = 0; i < 24 * 6; i++) {
-      gateway.push([i, Math.random() - 0.5]);
-      nexthop.push([i, Math.random() - 0.5]);
-    }
-    $.plot($("#graph_10_0_0_3"), [ { label: "gateway", data : gateway }, { label: "nexthop", data : nexthop } ], { 
-        series : { lines : { show : true }, points : { show : false } },
-        grid   : { show : false } 
-      });
-    update(); */
 
     return unload;
   };

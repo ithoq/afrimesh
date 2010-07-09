@@ -45,7 +45,8 @@ typedef struct _villagebus {
   const Request* request;
 } villagebus;
 extern vtable* villagebus_vt;
-extern object* VillageBus;
+extern object* _VillageBus;
+extern villagebus* VillageBus;
 extern object* s_villagebus_evaluate;
 extern object* s_villagebus_compile;
 extern object* s_villagebus_error;

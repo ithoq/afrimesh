@@ -47,7 +47,8 @@ modulelibs=$(DEPROOT)/lib/libcredis.a $(DEPROOT)/lib/libuci.a
 CC=gcc 
 INCLUDES+=-I. -I.. -I../common -I modules -I$(DEPROOT)/include 
 DEFINES+=
-CFLAGS+=-g $(DEFINES) -DAFRIMESH_VERSION="\"$(VERSION)\""
+CFLAGS+=-O0 -g $(DEFINES) -DAFRIMESH_VERSION="\"$(VERSION)\""
+# -std=c99
 LDFLAGS+=-L$(DEPROOT)/lib $(modulelibs) $(DEPROOT)/lib/libjson.a
 
 # tools
@@ -147,12 +148,15 @@ test-db :
 config_json="[ { 'config' : 'network', 'section' : 'wifi0', 'option' : 'ipaddr', 'value' : '1.1.1.2' } ]"
 
 test-config :
-	$(ECHO) $(config_json) | ./villagebus PUT "/config"
+	#$(ECHO) $(config_json) | ./villagebus PUT "/config"
 	@#./villagebus GET "/root/config/network/wifi0/ipaddr"
 	./villagebus GET "/root/config"
 
 
 
-# DEPROOT=/Volumes/afrimesh-dev/ext CFLAGS=-m32 make clean villagebus test-http
-# DEPROOT=/usr/local gmake clean villagebus test-jsonrpc-acct
+# DEPROOT=/Volumes/afrimesh-dev/ext CFLAGS=-m32 make clean villagebus test-config
+# DEPROOT=/usr/local gmake clean villagebus test-config
+# DEPROOT=/usr gmake clean villagebus test-config
+
+
 

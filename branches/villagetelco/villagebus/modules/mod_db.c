@@ -35,7 +35,8 @@
 
 /* - db ----------------------------------------------------------------- */
 vtable* db_vt = 0;
-object* DB = 0;
+object* _DB = 0;
+db*     DB  = 0;
 object* s_db = 0;
 symbol* s_db_keys = 0;
 object* s_db_get    = 0;
@@ -49,28 +50,29 @@ void db_init()
   db_vt = (vtable*)send(object_vt, s_delegated); // TODO - inherit from VillageBus ?
   send(db_vt, s_addMethod, s_print, db_print);
   send(db_vt, s_addMethod, s_villagebus_evaluate, db_evaluate);
-  DB = send(db_vt, s_allocate, 0);
-  ((db*)DB)->handle = NULL;
+  _DB = send(db_vt, s_allocate, 0);
 
   // register some local symbols
-  s_db_keys   = (symbol*)symbol_intern(0, DB, L"keys"); // TODO - symbol_intern should return symbol*
-  s_db_get    = symbol_intern(0, DB, L"get");
-  s_db_lrange = symbol_intern(0, DB, L"lrange");
-  s_db_getset = symbol_intern(0, DB, L"set");
-  s_db_lpush  = symbol_intern(0, DB, L"lpush");
+  s_db_keys   = (symbol*)symbol_intern(0, _DB, L"keys"); // TODO - symbol_intern should return symbol*
+  s_db_get    = symbol_intern(0, _DB, L"get");
+  s_db_lrange = symbol_intern(0, _DB, L"lrange");
+  s_db_getset = symbol_intern(0, _DB, L"set");
+  s_db_lpush  = symbol_intern(0, _DB, L"lpush");
   send(db_vt, s_addMethod, s_db_keys,   db_keys);
   send(db_vt, s_addMethod, s_db_get,    db_get);
   send(db_vt, s_addMethod, s_db_lrange, db_lrange);
   send(db_vt, s_addMethod, s_db_getset, db_getset);
   send(db_vt, s_addMethod, s_db_lpush,  db_lpush);
-  
+
+  // global module instance vars
+  DB = (db*)send(_DB->_vt[-1], s_allocate, sizeof(db));
+  DB->handle = NULL;
+  DB->delimiter = (string*)send(String, s_new, L":", 1); // delimiter used for composing redis key names
+
   // register module with VillageBus - TODO lose vb->modules & register directly in vtable perhaps?
   s_db = symbol_intern(0, 0, L"db");
   fexp* module = (fexp*)send(Fexp, s_new, s_db, DB);
   ((villagebus*)VillageBus)->modules = (fexp*)send(((villagebus*)VillageBus)->modules, s_fexp_cons, module);
-
-  // delimiter used for composing redis key names
-  ((db*)DB)->delimiter = (string*)send(String, s_new, L":", 1);
 }
 
 
@@ -101,7 +103,7 @@ const fexp* db_evaluate(closure* c, db* self, const fexp* expression)
   // search for name in local context
   string* name    = (string*)send(expression, s_fexp_car);
   fexp*   message = (fexp*)send(expression, s_fexp_cdr);
-  object* channel = symbol_lookup(0, DB, name->buffer);
+  object* channel = symbol_lookup(0, _DB, name->buffer);
   if (channel) {
     return (fexp*)send(self, channel, message);
   } 

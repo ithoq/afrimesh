@@ -115,7 +115,7 @@ struct _closure *bind(struct _object *rcv, struct _object *msg)
 
 struct _vtable *vtable_delegated(struct _closure *closure, struct _vtable *self)
 {
-  struct _vtable *child= (struct _vtable *)alloc(sizeof(struct _vtable));
+  struct _vtable *child = (struct _vtable *)alloc(sizeof(struct _vtable));
   child->_vt[-1] = self ? self->_vt[-1] : 0;
   child->size    = 2;
   child->tally   = 0;
@@ -152,6 +152,8 @@ struct _object *vtable_lookup(struct _closure *closure, struct _vtable *self, st
 {
   int i;
   for (i = 0;  i < self->tally;  ++i)
+    //wprintf(L"%d  examining: %S - %S\n", self->tally, ((struct _symbol *)key)->string, ((struct _symbol *)self->keys[i])->string);
+    //wprintf(".\n");
     if (key == self->keys[i])
       return self->values[i];
   if (self->parent)
@@ -218,6 +220,6 @@ void obj_init(void)
   vtable_addMethod(0, vtable_vt, s_lookup,    (imp_t)vtable_lookup);
   vtable_addMethod(0, vtable_vt, s_addMethod, (imp_t)vtable_addMethod);
 
-  send(vtable_vt, s_addMethod, s_allocate,    vtable_allocate);
-  send(vtable_vt, s_addMethod, s_delegated,   vtable_delegated);
+  send(vtable_vt, s_addMethod, s_allocate,  vtable_allocate);
+  send(vtable_vt, s_addMethod, s_delegated, vtable_delegated);
 }

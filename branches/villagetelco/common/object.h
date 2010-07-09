@@ -18,8 +18,8 @@
 #ifndef OBJ_H
 #define OBJ_H
 
-#define ICACHE 1	/* nonzero to enable point-of-send inline cache */
-#define MCACHE 1	/* nonzero to enable global method cache        */
+#define ICACHE 0	/* nonzero to enable point-of-send inline cache */
+#define MCACHE 0	/* nonzero to enable global method cache        */
 
 struct _vtable;
 struct _object;

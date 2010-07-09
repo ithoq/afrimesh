@@ -36,7 +36,8 @@
 
 /* - config ----------------------------------------------------------------- */
 vtable* config_vt = 0;
-object* Config = 0;
+object* _Config = 0;
+config* Config = 0;
 object* s_config = 0;
 
 
@@ -45,16 +46,17 @@ void config_init()
   config_vt = (vtable*)send(object_vt, s_delegated); // TODO - inherit from VillageBus ?
   send(config_vt, s_addMethod, s_print, config_print);
   send(config_vt, s_addMethod, s_villagebus_evaluate, config_evaluate);
-  Config = send(config_vt, s_allocate, 0);
-  ((config*)Config)->context = NULL;
-  
+  _Config = send(config_vt, s_allocate, 0);
+
+  // global module instance vars
+  Config = (config*)send(_Config->_vt[-1], s_allocate, sizeof(config));
+  Config->context = NULL;
+  Config->delimiter = (string*)send(String, s_new, L".", 1); // delimiter used for composing uci key names
+
   // register module with VillageBus
   s_config = symbol_intern(0, 0, L"config");
   fexp* module = (fexp*)send(Fexp, s_new, s_config, Config);
   ((villagebus*)VillageBus)->modules = (fexp*)send(((villagebus*)VillageBus)->modules, s_fexp_cons, module);
-
-  // delimiter used for composing uci key names
-  ((config*)Config)->delimiter = (string*)send(String, s_new, L".", 1);
 }
 
 
@@ -95,7 +97,7 @@ const fexp* config_evaluate(closure* c, config* self, const fexp* message)
 
 const fexp* config_put(closure* c, config* self, const fexp* message, const unsigned char* payload)
 {
-  struct json_object* items = json_tokener_parse(payload); 
+  struct json_object* items = json_tokener_parse((unsigned char*)payload); 
   if (items == NULL) {
     return (fexp*)send(VillageBus, 
                        s_villagebus_error, 
@@ -156,10 +158,10 @@ const fexp* config_get(closure* c, config* self, const fexp* message)
   string* s     = (string*)send(message, s_fexp_join, self->delimiter);  // generate a key from message
   char*   query = (char*)send(s, s_string_tochar); // TODO - uci not support UNICODE so much
 
-  whttpd_out(L"jsonp(null, ");  // TODO - This may be memory efficient, but it's not particularly pretty.
-                                //        Being profoundly and fundamentally document-orientated 
-                                //        HTTP error handling does not support streamed data. 
-                                //        Which kinda sucks totally.
+  whttpd_out(L"jsonp(");  // TODO - This may be memory efficient, but it's not particularly pretty.
+                          //        Being profoundly and fundamentally document-orientated 
+                          //        HTTP error handling does not support streamed data so much. 
+                          //        Which kinda sucks totally.
   int n = uci_show(self->context, query); // TODO - I have no idea if this is going to work either
   whttpd_out(L")\n");
   free(query);
@@ -178,8 +180,8 @@ config* config_print(closure* c, config* self)
 /* - uci utilities ------------------------------------------------------ */
 int uci_show(struct uci_context* context, const char* package)
 {
-  printf("["); 
-  printf("\t{");
+  wprintf(L"["); 
+  wprintf(L"\t{");
 
   int num_sections;
   if (package && strcasecmp(package, "") != 0) {
@@ -194,7 +196,7 @@ int uci_show(struct uci_context* context, const char* package)
     bool first_package = true;      
     char** p;      
     for (p = packages; *p; p++) {
-      printf("%s\n", (first_package ? "" : ",")); 
+      wprintf(L"%s\n", (first_package ? "" : ",")); 
       num_sections = uci_show_package(context, *p);
       if (first_package && (num_sections == 0)) { 
         first_package = true;
@@ -203,8 +205,8 @@ int uci_show(struct uci_context* context, const char* package)
       }
     }
   }
-  printf("\t}");
-  printf(" ]");
+  wprintf(L"\t}");
+  wprintf(L" ]");
 
   return num_sections;
 }
@@ -242,24 +244,24 @@ int uci_show_package(struct uci_context* context, const char* package)
     section = uci_to_section(element_section);
     //cur_section_ref = uci_lookup_section_ref(section);  // TODO - better handling for lists
     if (first_section) {
-      printf("  %s\t: { ", section->package->e.name);
+      wprintf(L"  %s\t: { ", section->package->e.name);
       first_section = false;
     } else {
-      printf(",\n\t\t    ");
+      wprintf(L",\n\t\t    ");
     }
-    printf("%s\t: { _sectiontype\t: \"%s\"", (cur_section_ref ? cur_section_ref : section->e.name), section->type);
+    wprintf(L"%s\t: { _sectiontype\t: \"%s\"", (cur_section_ref ? cur_section_ref : section->e.name), section->type);
     struct uci_element* element_option;
     uci_foreach_element(&section->options, element_option) { /* for each option */
       struct uci_option* option;
       option = uci_to_option(element_option);
-      printf(",\n");
-      printf("\t\t\t\t    %s\t: ", option->e.name);
-      printf("\"%s\"", option_to_string(option));
+      wprintf(L",\n");
+      wprintf(L"\t\t\t\t    %s\t: ", option->e.name);
+      wprintf(L"\"%s\"", option_to_string(option));
     } /* end for each option */
-    printf(" }"); /* end options */
+    wprintf(L" }"); /* end options */
   } /* end for each section */
   uci_reset_typelist();
-  if (num_sections > 0) printf("\n\t\t  }"); /* end sections */
+  if (num_sections > 0) wprintf(L"\n\t\t  }"); /* end sections */
 
   uci_unload(context, ptr.p);
 

@@ -34,7 +34,8 @@
 
 /* - villagebus --------------------------------------------------------- */
 vtable* villagebus_vt = 0;
-object* VillageBus = 0;
+object* _VillageBus = 0;
+villagebus* VillageBus = 0;
 object* s_villagebus_compile  = 0;
 object* s_villagebus_evaluate = 0;
 object* s_villagebus_error    = 0;
@@ -51,8 +52,12 @@ void villagebus_init()
   send(villagebus_vt, s_addMethod, s_villagebus_compile,  villagebus_compile);
   send(villagebus_vt, s_addMethod, s_villagebus_evaluate, villagebus_evaluate);
   send(villagebus_vt, s_addMethod, s_villagebus_error,    villagebus_error);
-  VillageBus = send(villagebus_vt, s_allocate, 0);
-  ((villagebus*)VillageBus)->modules = fexp_nil;
+  _VillageBus = send(villagebus_vt, s_allocate, 0);
+  //VillageBus = send(villagebus_vt, s_allocate, sizeof(villagebus));
+
+  // global module instance vars
+  VillageBus = (villagebus*)send(_VillageBus->_vt[-1], s_allocate, sizeof(villagebus));
+  VillageBus->modules = fexp_nil;
 }
 
 
