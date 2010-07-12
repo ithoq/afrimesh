@@ -192,3 +192,15 @@ ul#dock .callout-border {
 
 
 /* - tooltips ------------------------------------------------------------- */
+.tooltip {
+  border-radius : 0.5em;
+  -khtml-border-radius  : 0.5em;
+  -moz-border-radius    : 0.5em;
+  -opera-border-radius  : 0.5em;
+  -webkit-border-radius : 0.5em;
+  border-top-left-radius : 0.0em;
+  -khtml-border-top-left-radius  : 0.0em;
+  -moz-border-radius-topleft     : 0.0em;
+  -opera-border-top-left-radius  : 0.0em;
+  -webkit-border-top-left-radius : 0.0em;
+}

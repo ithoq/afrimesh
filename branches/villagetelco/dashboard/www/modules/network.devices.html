@@ -12,6 +12,8 @@
 
 
 <div id="network-devices">
+
+  <!-- filter control -->
   <table><tr>
       <td><form class="filter">   
           <input type="checkbox" id="servers" /> <label for="servers">Servers</label>
@@ -28,75 +30,7 @@
   </tr></table>
   <hr/>
 
-  <style>
-    div.scrollview {
-      border: 0px solid red;
-      overflow: auto;
-      position: absolute;
-      top: 5em;
-      bottom: 1.0em;
-      right: 1.0em;
-      left: 1.0em;
-      padding-right: 2.0em; /* make space for the scrollbar */
-    }
-    div.devices {
-      display: table;
-      /*padding: 0.5em;*/
-      /*text-overflow : ellipsis;
-      white-space   : nowrap;
-      overflow      : hidden; */
-      border: 0px solid green;
-      border-spacing: 0.5em;
-    }
-    div.head {
-      display: table-row;
-      font-weight: bold;
-      font-size: 1.1em;
-    }
-    div.head span {
-      display: table-cell;
-    }
-    div.device {
-      display: table-row;
-    }
-    div.device span {
-      display: table-cell;
-      border: 0px solid blue;
-      vertical-align: middle;
-    }
-    div.device span.name {
-      display: table-cell;
-      color: blue;
-      font-weight: bold;
-      padding-right: 1.5em;
-    }
-    div.device span.uptime {
-      display: table-cell;
-      color: black;
-    }
-    div.device span.lastseen {
-      display: table-cell;
-      color: black;
-    }
-    div.device span.status {
-      display: table-cell;
-      color: green;
-    }
-    div.device span.traffic {
-      display: table-cell;
-      color: gray;
-    }
-    div.device span.graph {
-      display: table-cell;
-      margin: 0px; padding: 0px;
-      border: 1px solid lightgray;
-      background: #eee;
-      padding-left: 0.25em;
-      padding-right: 0.25em;
-      width: 100%;
-    }
-  </style>
-
+  <!-- device list -->
   <div class="scrollview">
     <div id="devicelist" class="devices">
       <div class="head">
@@ -119,6 +53,7 @@
   </div>
 
 </div>
+
 
 <script type="text/javascript"> //<![CDATA[    
 (function() {

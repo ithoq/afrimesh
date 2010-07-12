@@ -229,6 +229,74 @@ div#network-devices form.filter .active {
   background: #333;
   /*text-shadow: 0px -1px 0px black;*/
 }
+div#network-devices div.scrollview {
+    border: 0px solid red;
+    overflow: auto;
+    position: absolute;
+    top: 5em;
+    bottom: 1.0em;
+    right: 1.0em;
+    left: 1.0em;
+    padding-right: 2.0em; /* make space for the scrollbar */
+}
+div#network-devices div.devices {
+    display: table;
+    /*padding: 0.5em;*/
+    /*text-overflow : ellipsis;
+      white-space   : nowrap;
+      overflow      : hidden; */
+    border: 0px solid green;
+    border-spacing: 0.5em;
+}
+div#network-devices div.head {
+    display: table-row;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+div#network-devices div.head span {
+    display: table-cell;
+}
+div#network-devices div.device {
+    display: table-row;
+}
+div#network-devices div.device span {
+    display: table-cell;
+    border: 0px solid blue;
+    vertical-align: middle;
+}
+div#network-devices div.device span.name {
+    display: table-cell;
+    color: blue;
+    font-weight: bold;
+    padding-right: 1.5em;
+}
+div#network-devices div.device span.uptime {
+    display: table-cell;
+    color: black;
+}
+div#network-devices div.device span.lastseen {
+    display: table-cell;
+    color: black;
+}
+div#network-devices div.device span.status {
+    display: table-cell;
+    color: green;
+}
+div#network-devices div.device span.traffic {
+    display: table-cell;
+    color: gray;
+}
+div#network-devices div.device span.graph {
+    display: table-cell;
+    margin: 0px; padding: 0px;
+    border: 1px solid lightgray;
+    background: #eee;
+    padding-left: 0.25em;
+    padding-right: 0.25em;
+    width: 100%;
+}
+
+
 
 /* - utility upgrade module ---------------------------------------------- */
 /*.utility-upgrade td { 
