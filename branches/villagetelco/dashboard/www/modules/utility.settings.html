@@ -135,12 +135,12 @@
           <div class="label" style="clear:both;">
             Location
             <p/><br/>
-            <input id="afrimesh|settings|location|longitude" style="width:100px; font-size:0.8em;" /><br/>
-            <input id="afrimesh|settings|location|latitude"  style="width:100px; font-size:0.8em;" /><br/>
-            <button id="geolocator" style="font-size: 0.8em;">
+            <input id="afrimesh|settings|location|longitude" style="width:100px; font-size:0.8em;" type="text" /><br/>
+            <input id="afrimesh|settings|location|latitude"  style="width:100px; font-size:0.8em;" type="text" /><br/>
+            <button id="geolocator">
               update map
             </button>
-            <p style="font-size: 0.85em; padding-right: 1.0em;">
+            <p style="padding-right: 1.0em;">
               Set your location by adjusting the map controls on the right or entering your co-ordinates above.
             </p>
           </div>
@@ -177,9 +177,6 @@
         effect   : 'toggle',              // use a simple show/hide effect 
         opacity  : 0.8                    // custom opacity setting 
       });
-
-    /** round corners ------------------------------------------------------ */
-    //$(".tooltip").corner("tr 8px bl 8px br 8px");
 
     /** style controls ----------------------------------------------------- */
     //$('form.two-column :checkbox').slider(); // TODO

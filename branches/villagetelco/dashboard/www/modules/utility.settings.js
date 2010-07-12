@@ -294,6 +294,9 @@ var LocationMap = null;
           displayProjection : epsg_4326,
           units             : "m",
           transitionEffect  : "resize",
+          controls          : [ new OpenLayers.Control.Navigation(),
+                                new OpenLayers.Control.PanPanel(),
+                                new OpenLayers.Control.ZoomPanel() ],
           //numZoomLevels     : 20,
           //theme             : "style/map.default.css"
           theme             : "style/map.css"

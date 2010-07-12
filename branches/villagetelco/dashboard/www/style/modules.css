@@ -381,21 +381,19 @@ form.two-column button {
 }
 form.two-column legend {
   /*border: 1px solid red;*/
-  font-size: 1.85em;
+  font-size: 1.5em;
   padding-top: 0px;
   padding-bottom: .25em;
 }
 form.two-column .label {
   /*border:1px solid green;*/
   color: darkgray; 
-  font-size: 1.25em;
   width: 180px; /* 120 for potato */
   float: left;
 }
 form.two-column#potato .label  {
   /*border:1px solid purple;*/
   color: darkgray; 
-  font-size: 1.25em;
   width: 120px; 
   float: left;
 }
@@ -404,7 +402,6 @@ form.two-column .iax_trunk, .sip_trunk, .gateway_class, .routing_class {
 }
 form.two-column input, select {
   /*border:1px solid green;*/
-  font-size: 1.25em;
   margin-bottom: .5em;
 }
 form.two-column input[type=checkbox] {  /* aaaaaaaaaargh */
@@ -414,33 +411,7 @@ form.two-column #location {
   height: 300px;
 }
 form.two-column #location.message {
-  font-size: 1.25em;
   /*border: 1px dashed gray;*/
   text-align: center;
   float: left;
-}
-
-
-div.tooltip {   
-  /*z-index          : 1000;*/
-  background-color : black; 
-  padding          : 10px;
-  margin-right     : 20px;
-  display          : none; 
-  max-width        : 300px;
-  font-size        : 1.1em; 
-  /* outline radius for mozilla/firefox only */ 
-  /*outline-radius : 8px; 
-  -moz-outline-radius    : 8px; 
-  -webkit-outline-radius : 8px; */
-}
-
-div.tooltip h3 {   
-}
-
-div.tooltip p {   
-  color : orange; 
-}
-
-div.tooltip p.explain {
 }

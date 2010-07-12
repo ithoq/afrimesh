@@ -37,21 +37,21 @@ a:hover   { text-decoration: none; }
 
 
 /* - styles --------------------------------------------------------------- */
-/*h1 {
+h1 {
   font-size: 1.85em;
-  padding-bottom: .75em;
+  /*padding-bottom: .75em;*/
 }
 
 h2 {
-  font-size: 2.5em;
+  font-size: 1.5em;
   font-weight: bold;
-  padding-bottom: .75em;
+  /*padding-bottom: .75em;*/
 }
 
 h3 {
   font-size: 1.25em;
-  padding-bottom: .75em;
-}*/
+  /*padding-bottom: .75em;*/
+}
 
 
 /* - better default tables ------------------------------------------------ */
@@ -61,9 +61,10 @@ th     { border-bottom: 1px solid lightgray; }*/
 
 
 /* - better default inputs ------------------------------------------------ */
-/*input {  
+input[type=text], input[type=password] {  
   border: 1px solid gray;
-}*/
+  font-size: 1.0em;
+}
 
 
 /* - visual styles -------------------------------------------------------- */
@@ -192,74 +193,53 @@ ul#dock .callout-border {
 
 
 /* - tooltips ------------------------------------------------------------- */
-/* Courtesy of: http://www.frequency-decoder.com/demo/css-tooltips/ */
+/* Toolbar tooltips - Courtesy of: http://www.frequency-decoder.com/demo/css-tooltips/ */
 ul#dock [tooltip] {
   position:relative;
-  /*z-index: 10;*/
 }
 ul#dock [tooltip]:after,
 ul#dock [tooltip]:before {
   content: "";
   opacity: 0;
 }
-/* tooltip arrow */
-/*ul#dock [tooltip]:hover:before,
-ul#dock [tooltip]:focus:before { 
-  opacity:0.94;
-  outline:none;
-  content:"";  
-  display:block;        
-  position:absolute;
-  top:20px;
-  left:50%;
-  margin:0 0 0 -5px;
-  width:0;
-  height:0;
-  line-height:0px; 
-  font-size:0px;       
-  border-bottom:5px solid #33acfc;
-  border-left:5px solid transparent;
-  border-right:5px solid transparent;        
-  border-top:transparent;
-}*/
 ul#dock [tooltip]:hover:after,
-ul#dock [tooltip]:focus:after { /* tooltip body */
+ul#dock [tooltip]:focus:after { 
   z-index: 10;
   opacity:1.0;
   display:block;
   content:attr(tooltip);
-  /* Position the tooltip body under the arrow and in the middle of the text */
   position:absolute;
   top:12px;
   left:48px;
   margin:0 0 0 30px; /* top, right, bottom, left  */
-  /*width:290px;*/
   white-space:nowrap;
   padding:5px;
   padding-left:10px;
   padding-right:10px;
-  /* Style the tooltip */
   line-height:12px;
   min-height:12px; 
   color: white;
-  /*font-size:1.0em;*/
   font-weight: bold;
   background:rgba(0, 0, 0, 0.8); 
   text-align:center;        
   outline:none;        
-  /* Moz doesn't recognise the following... */
   text-decoration:none !important;                  
-  /* Round the corners */
+  text-shadow:#000000 0 1px 0px; 
   border-radius : 0.5em;
   -khtml-border-radius  : 1.0em;
   -moz-border-radius    : 1.0em;
   -opera-border-radius  : 1.0em;
   -webkit-border-radius : 1.0em;
-  /* Add a Text shadow */
-  text-shadow:#000000 0 1px 0px; 
 }  
 
-.tooltip {
+/* Utility->Settings tooltips - TODO replace w/ Toolbar tooltips */
+div.tooltip {
+  background-color : black; 
+  padding          : 10px;
+  margin-right     : 20px;
+  display          : none; 
+  max-width        : 300px;
+
   border-radius : 0.5em;
   -khtml-border-radius  : 0.5em;
   -moz-border-radius    : 0.5em;
@@ -271,4 +251,10 @@ ul#dock [tooltip]:focus:after { /* tooltip body */
   -opera-border-top-left-radius  : 0.0em;
   -webkit-border-top-left-radius : 0.0em;
 }
-
+div.tooltip h3 {   
+}
+div.tooltip p {   
+  color : orange; 
+}
+div.tooltip p.explain {
+}
