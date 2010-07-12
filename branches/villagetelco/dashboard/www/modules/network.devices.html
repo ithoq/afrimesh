@@ -17,16 +17,16 @@
   <table><tr>
       <td><form class="filter">   
           <input type="checkbox" id="servers" /> <label for="servers">Servers</label>
-          <input type="checkbox" id="supernodes" /> <label for="supernodes">Supernodes</label>
+          <!-- input type="checkbox" id="supernodes" /> <label for="supernodes">Supernodes</label -->
           <input type="checkbox" id="gateways" /> <label for="gateways">Gateways</label>
-          <input type="checkbox" id="potatos" /> <label for="potatos">Potatos</label>
+          <input type="checkbox" id="nodes" /> <label for="nodes">Nodes</label>
       </form></td>
-      <td><div style="width: 100px;"></div></td>
+      <!--td><div style="width: 100px;"></div></td>
       <td><form class="filter">   
           <input type="checkbox" id="score"  /> <label for="score">score</label>
           <input type="checkbox" id="nexthop"/> <label for="nexthop">nexthop</label>
           <input type="checkbox" id="gateway"/> <label for="gateway">gateway</label>
-      </form></td>
+      </form></td -->
   </tr></table>
   <hr/>
 
@@ -36,14 +36,12 @@
       <div class="head">
         <span>Name</span>
         <span>Uptime</span>
-        <!-- span>Last Seen</span -->
         <span>Usage</span>
         <span>Stats</span>
       </div>
       <div id="device-template" class="device">
         <span class="name"></span> 
         <span class="uptime"></span>
-        <!-- span class="lastseen"></span -->
         <span class="traffic"></span>
         <span class="graph round-small">
           <div style="font-size: 0.5em; width:inherit; height:20.0em; border:0px solid red;" id="graph"></div>
@@ -52,14 +50,13 @@
     </div>
   </div>
 
-</div>
+</div> <!-- #network-devices -->
 
 
 <script type="text/javascript"> //<![CDATA[    
 (function() {
 
   /** includes ------------------------------------------------------------ */
-  //load("javascript/jquery/jquery.sparkline.js");
   load("javascript/jquery/jquery.flot.min.js");
   /* often a good idea:  load("modules/network.devices.js"); *;/
 
@@ -89,46 +86,36 @@
         }
 
         // clone device template
-        console.log("DEVICE: " + address + " " + show(device));
         $("#device-template").show(); // TODO - No comment. File jquery bug.
         var clone = $("#device-template").clone().attr("id", "device-" + address).appendTo("#devicelist");
         $("#device-template").hide(); // TODO - No comment. File jquery bug.
 
         // add data for device
         clone.find(".name").html(address);
-        //clone.find(".lastseen").html("");
         clone.find(".uptime").html(pretty_seconds(device.uptime));
         clone.find(".traffic").html(pretty_bytes(device.bytes.tx + device.bytes.rx));
 
         // add data series for plots - TODO move legend to outside div
         afrimesh.device.stat(address, function(error, data) {
-            var rssi = data.map(function(entry) {
-                //return [ entry.timestamp, eval(entry.radio.rssi) ];
-                return [ entry.timestamp, eval(entry.gateways[0].radio.rssi) ];
-              });
             var score = data.map(function(entry) {
                 return [ entry.timestamp, entry.gateways[0].score ];
               });
-            var ping = data.map(function(entry) {
+            var gateway = data.map(function(entry) {
                 return [ entry.timestamp, -entry.gateways[0].ping.gateway ];
               });
-            var ping_nh = data.map(function(entry) {
+            var nexthop = data.map(function(entry) {
                 return [ entry.timestamp, -entry.gateways[0].ping.nexthop ];
               });
-
-            console.log(address + " has " + rssi.length + " entries");
+            console.log(address + " has " + score.length + " entries");
             $.plot(clone.find("#graph"),                                 // - element --
                    [ { label : "score",                                  // - data -----
                        data  : score,   
                        yaxis : 1,      
                        bars  : { show : true, fill : true }, 
                        lines : { show : false } },    
-                     { label : "nexthop", data : ping_nh, yaxis: 2 },
-                     { label : "gateway", data : ping,    yaxis: 2 },
-                   /*{ label : "rssi",    data : rssi,    yaxis: 3 }*/ ],
-                   { xaxis  : { mode       : "time"                      // - options --
-                                /*ticks      : 10,
-                                labelWidth : 10*/ },
+                     { label : "nexthop", data : nexthop, yaxis: 2 },
+                     { label : "gateway", data : gateway, yaxis: 2 } ],
+                   { xaxis  : { mode       : "time" },                   // - options --
                      yaxis  : { max : 255 },
                      y2axis : { max : 0,
                                 tickFormatter : function(v, axis) { 
@@ -147,7 +134,6 @@
           }, { start : 0, end : 47 });
       });
 
-
     return unload;
   };
 
@@ -159,6 +145,7 @@
 
   /** populate control ---------------------------------------------------- */
   var timer = {};
+
   function update() {
     /* clearTimeout(timer); */
 
@@ -166,34 +153,10 @@
     //var routers = afrimesh.network.routers();
     //populate_devices(routers);
 
-    /* Add all devices on the network to our list */
-
     /* timer = setTimeout(update, 5000); */
   };
+
   function populate_devices(routers) {
-    /* get accounting info for routers */
-    routers = afrimesh.network.accounting.routers(routers);
-    var html = "<table border=1>"
-    html += "<thead><th>mac</th><th>address</th><th>packets</th><th>bytes</th><!-- th>version</th><th>uname</th --></thead>";
-    html += "<tbody></tbody></table>";
-    $("div#network-devices").html(html);
-    var table = $("#network-devices table > tbody:last");
-    var rows = "";
-    routers.map(function(router) {
-        var packets = (router.traffic.packets ? router.traffic.packets : "-");
-        var bytes   = (router.traffic.bytes   ? pretty_bytes(router.traffic.bytes) : "-");
-        rows += "<tr>";
-        rows += "<td id='mac'>"     + (router.mac ? router.mac : "-")  + "</td>";
-        rows += "<td id='address'>" + router.address + "</td>";
-        rows += "<td id='traffic'>" + packets + "</td>";
-        rows += "<td id='traffic'>" + bytes   + "</td>";
-        //rows += "<td id='version'>" + "" /*afrimesh.villagebus.sys.version(router.address)*/ + "</td>";
-        //rows += "<td id='uname'>uname</td>";
-        // TODO - this should be cached, async & wrapped around the router like accounting above
-        //rows += "<td id='uname'>"   + "" /*afrimesh.villagebus.sys.uname(router.address)*/ + "</td>";
-        rows += "</tr>";
-      });
-    table.append(rows);
   };
 
 

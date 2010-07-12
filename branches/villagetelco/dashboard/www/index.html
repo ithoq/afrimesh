@@ -79,8 +79,6 @@
               console.log("Loading menu: " + item);
               $("ul#dock .callout").remove();
               $("ul#dock .callout-border").remove();
-              $("ul#dock .underline").removeClass();
-              $(this).addClass("underline");
               $(this).append('<span class="callout-border"></span>');
               $(this).append('<span class="callout"></span>');
               unloader(); 
@@ -149,18 +147,18 @@
       <hr/>
 
       <!-- http://iconverticons.com/ -->
-      <li id="customers"><img src="icons/users.png" width="48" height="48" /></li>
-      <li id="calls"><img src="icons/calls.png" width="48" height="48" /></li>
+      <li id="customers" tooltip="Manage Customers"><img src="icons/users.png" width="48" height="48" /></li>
+      <li id="calls" tooltip="Manage Calls"><img src="icons/calls.png" width="48" height="48" /></li>
       <hr/>
-      <li id="devices"><img src="icons/devices.png" width="48" height="48" /></li>
+      <li id="devices" tooltip="Manage Devices"><img src="icons/devices.png" width="48" height="48" /></li>
       <!-- li id="links"><img src="icons/links.png" width="48px" height="48px"/></li -->
-      <li id="gateway"><img src="icons/gateway.png" width="48" height="48" /></li>
+      <li id="gateway" tooltip="Monitor Gateways"><img src="icons/gateway.png" width="48" height="48" /></li>
       <!-- li id="logs"><img src="icons/terminal.png" width="48" height="48" /></li -->
       <div style="position:absolute; bottom: 20px; width:100%;">
-        <li id="help"><img src="icons/help.png" width="48" height="48" /></li>
-        <li id="settings"><img src="icons/settings.png" width="48" height="48" /></li>
+        <li id="help" tooltip="Help"><img src="icons/help.png" width="48" height="48" /></li>
+        <li id="settings" tooltip="Settings"><img src="icons/settings.png" width="48" height="48" /></li>
         <hr/>
-        <li id="login"><img src="icons/login.png" width="48" height="48" /></li>
+        <li id="login" tooltip="Logout"><img src="icons/login.png" width="48" height="48" /></li>
       </div>
 
     </ul>
@@ -171,8 +169,7 @@
       <div style="position:absolute; right:20px;"
            onClick='$("#overlay").css("visibility", "hidden");
                     $("ul#dock .callout").remove();
-                    $("ul#dock .callout-border").remove();
-                    $("ul#dock .underline").removeClass();'>
+                    $("ul#dock .callout-border").remove();'>
         hide
       </div>
       <div id="content">
