@@ -295,7 +295,8 @@ var LocationMap = null;
           units             : "m",
           transitionEffect  : "resize",
           //numZoomLevels     : 20,
-          theme             : "style/map.default.css"
+          //theme             : "style/map.default.css"
+          theme             : "style/map.css"
         };
         var map = new OpenLayers.Map(id, options);
         if (afrimesh.settings.map.server == "openstreetmap.org") { // TODO afrimesh.settings.map.server == afrimesh.settings.map.server.default

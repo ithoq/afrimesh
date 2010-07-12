@@ -27,8 +27,9 @@ var Map = undefined;
         numZoomLevels     : 20,
         controls          : [ new OpenLayers.Control.Navigation(),
                               new OpenLayers.Control.PanPanel(),
-                              new OpenLayers.Control.ZoomPanel() ]
-        //theme             : "style/map.default.css"  // TODO
+                              new OpenLayers.Control.ZoomPanel() ],
+        //theme             : "style/map.default.css"  
+        theme             : "style/map.css"  
       };
       var map = new OpenLayers.Map(id, options);
       var mapnik = new OpenLayers.Layer.OSM.Mapnik("Street Map");

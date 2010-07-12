@@ -23,8 +23,6 @@ html {
 
 body {
   overflow:hidden;
-  margin: 0px;
-  padding: 0px;
   color: #333;
 }
 
@@ -78,6 +76,13 @@ th     { border-bottom: 1px solid lightgray; }*/
   -moz-border-radius    : 1.0em;
   -opera-border-radius  : 1.0em;
   -webkit-border-radius : 1.0em;
+}
+.round-small {
+  border-radius : 0.5em;
+  -khtml-border-radius  : 0.5em;
+  -moz-border-radius    : 0.5em;
+  -opera-border-radius  : 0.5em;
+  -webkit-border-radius : 0.5em;
 }
 .shadow {
   box-shadow : rgba(0,0,0,0.5) 0px 0px 10px;
@@ -184,3 +189,6 @@ ul#dock .callout-border {
   border-right  : 16px solid #bab8b4;
   border-bottom : 15px solid rgba(255,255,255,0.0);
 }
+
+
+/* - tooltips ------------------------------------------------------------- */

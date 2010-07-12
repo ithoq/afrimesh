@@ -25,7 +25,6 @@ div#map .olPopup {
   /*z-index: 100;*/
 }    
 
-
 div#map form.export {
   position : absolute; 
   top      : 134px;
@@ -49,10 +48,11 @@ div#map .legend {
   filter         : alpha(opacity=60);
   -moz-opacity   : 0.7;
   -khtml-opacity : 0.7;
-  border-radius  : 10px;
-  -webkit-border-radius : 10px;
-  -moz-border-radius    : 10px;
-  -opera-border-radius  : 10px;
+  border-radius : 0.5em;
+  -khtml-border-radius  : 0.5em;
+  -moz-border-radius    : 0.5em;
+  -opera-border-radius  : 0.5em;
+  -webkit-border-radius : 0.5em;
 }
 
 div#map a { color: orange; }

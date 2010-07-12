@@ -12,16 +12,17 @@
     <!-- link rel="stylesheet" type="text/css" href="style/reset.css" --> 
     <link rel="stylesheet" type="text/css" href="style/default.css" /> 
     <link rel="stylesheet" type="text/css" href="style/map.default.css"> 
-    <link rel="stylesheet" type="text/css" href="style/map.css" /> 
+    <!-- link rel="stylesheet" type="text/css" href="style/map.css" / --> 
     <link rel="stylesheet" type="text/css" href="style/modules.css"> 
     <!-- link rel="stylesheet" type="text/css" href="style/overlay-router.css" --> 
 
     <!-- includes ---------------------------------------------------------- -->
+    <script type="text/javascript" src="javascript/jquery/jquery.min.js"></script>
     <!-- script type="text/javascript" src="http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js"></script -->
     <script type="text/javascript" src="javascript/json.org/json2.min.js"></script>  <!-- TODO update!!! -->
+    <script type="text/javascript" src="javascript/jquery/jquery.tooltip.min.js"></script>
     <!-- script type="text/javascript" src="javascript/jquery/jquery.tools.min.js"></script --> <!-- TODO deprecate, only using tooltips -->
-    <script type="text/javascript" src="javascript/jquery/jquery.min.js"></script>
-    <script type="text/javascript" src="javascript/jquery/jquery.corner.js"></script> <!-- http://jrc.meerbox.nl/ - TODO deprecate -->
+    <!-- script type="text/javascript" src="javascript/jquery/jquery.corner.js"></script --> <!-- http://jrc.meerbox.nl/ - TODO deprecate -->
                                                                                       <!-- also look at: http://www.malsup.com/jquery/corner/ -->
                                                                                       <!--               http://www.ruzee.com/files/shadedborder/ -->
     <!-- afrimesh -->
@@ -93,10 +94,10 @@
               return false;
             });
         };
-        add_dock_item("people",   "customers.manage");
-        add_dock_item("devices",  "network.devices");
-        add_dock_item("gateway",  "network.health");
-        add_dock_item("settings", "utility.settings");
+        add_dock_item("customers", "customers.manage");
+        add_dock_item("devices",   "network.devices");
+        add_dock_item("gateway",   "network.health");
+        add_dock_item("settings",  "utility.settings");
 
         /** set default page */
         $("div#map").load("modules/network.map.html", function(page) { 
@@ -148,13 +149,13 @@
       <hr/>
 
       <!-- http://iconverticons.com/ -->
-      <li id="users"><img src="icons/users.png" width="48" height="48" /></li>
+      <li id="customers"><img src="icons/users.png" width="48" height="48" /></li>
       <li id="calls"><img src="icons/calls.png" width="48" height="48" /></li>
       <hr/>
       <li id="devices"><img src="icons/devices.png" width="48" height="48" /></li>
-      <li id="links"><img src="icons/links.png" width="48px" height="48px"/></li>
+      <!-- li id="links"><img src="icons/links.png" width="48px" height="48px"/></li -->
       <li id="gateway"><img src="icons/gateway.png" width="48" height="48" /></li>
-      <li id="logs"><img src="icons/terminal.png" width="48" height="48" /></li>
+      <!-- li id="logs"><img src="icons/terminal.png" width="48" height="48" /></li -->
       <div style="position:absolute; bottom: 20px; width:100%;">
         <li id="help"><img src="icons/help.png" width="48" height="48" /></li>
         <li id="settings"><img src="icons/settings.png" width="48" height="48" /></li>

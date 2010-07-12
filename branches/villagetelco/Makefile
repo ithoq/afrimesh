@@ -54,7 +54,6 @@ MAKE=make
 # - platform detection -------------------------------------------------------
 DEPROOT=/usr
 WWW_ROOT=$(DESTDIR)/www
-DASHBOARD_WWW=$(WWW_ROOT)/afrimesh
 DASHBOARD_CGI=$(DESTDIR)/www/cgi-bin
 DASHBOARD_ETC=$(DESTDIR)/etc
 FLAVOR=BSD
@@ -69,7 +68,6 @@ endif
 
 ifeq ($(UNAME),FreeBSD)
 WWW_ROOT=$(DESTDIR)/usr/local/www/apache22/data
-DASHBOARD_WWW=$(WWW_ROOT)/afrimesh
 DASHBOARD_CGI=$(DESTDIR)/usr/local/www/apache22/cgi-bin
 DEPROOT=/usr/local
 MAKE=gmake
@@ -78,7 +76,6 @@ endif
 
 ifeq ($(UNAME),Darwin)
 WWW_ROOT=$(DESTDIR)/Library/WebServer/share/httpd
-DASHBOARD_WWW=$(WWW_ROOT)/afrimesh
 DASHBOARD_CGI=$(DESTDIR)/Library/WebServer/CGI-Executables
 #DEPROOT=/opt/local
 DEPROOT=/Volumes/afrimesh-dev/ext
@@ -86,6 +83,7 @@ MAKE=make
 FLAVOR=BSD
 endif
 
+DASHBOARD_WWW=$(WWW_ROOT)/afrimesh.vt
 
 # - common -------------------------------------------------------------------
 all: 
@@ -99,6 +97,7 @@ install-www:
 	@echo "Installing dashboard web interface in: $(DASHBOARD_WWW)"
 	@if ! test -d $(DASHBOARD_WWW) ; then mkdir -p $(DASHBOARD_WWW) ; fi
 	$(INSTALL) dashboard/www/index.html $(DASHBOARD_WWW)
+	$(INSTALL) dashboard/www/icons      $(DASHBOARD_WWW)
 	$(INSTALL) dashboard/www/images     $(DASHBOARD_WWW)
 	$(INSTALL) dashboard/www/style      $(DASHBOARD_WWW)
 	$(INSTALL) dashboard/www/modules    $(DASHBOARD_WWW)
