@@ -87,8 +87,8 @@ include $(INCLUDE_DIR)/package.mk
 define Package/afrimesh-base
 	SECTION:=admin
 	CATEGORY:=Administration
-	DEPENDS:=+busybox +libuci +libjson +batmand +credis +ntpclient
-	TITLE:=Easy management for B.A.T.M.A.N. wireless mesh networks
+	DEPENDS:=+busybox +libuci +libjson +credis +ntpclient
+	TITLE:=Easy management for wireless community mesh networks
 	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
 	#$(call Config,afrimesh.location.latitude,string,-25.7481182,Router Latitude)
 	#$(call Config,afrimesh.location.longitude,string,28.2822312,Router Longitude)
@@ -101,7 +101,7 @@ $(call $(TARGET)/conffiles)
 endef
 
 define Package/afrimesh-base/description
-	Easy management for B.A.T.M.A.N. wireless mesh networks
+	Easy management for wireless community networks
 endef
 
 define Package/afrimesh-base/install
@@ -121,6 +121,40 @@ define Package/afrimesh-base/install
 
 	# - runonce --
 	$(INSTALL_BIN)  ./files/etc/init.d/runonce  $(1)/etc/init.d/runonce.afrimesh-base
+endef
+
+
+# - afrimesh-batmand ---------------------------------------------------------
+define Package/afrimesh-batman
+	SECTION:=admin
+	CATEGORY:=Administration
+	DEPENDS:=+afrimesh-base +batmand
+	TITLE:=Easy management for B.A.T.M.A.N. wireless mesh networks
+	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
+endef
+
+define Package/afrimesh-batman/description
+	Easy management for B.A.T.M.A.N. wireless mesh networks
+endef
+
+define Package/afrimesh-batman/install
+endef
+
+
+# - afrimesh-olsr ------------------------------------------------------------
+define Package/afrimesh-olsr
+	SECTION:=admin
+	CATEGORY:=Administration
+	DEPENDS:=+afrimesh-base +olsr
+	TITLE:=Easy management for OLSR wireless mesh networks
+	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
+endef
+
+define Package/afrimesh-olsr/description
+	Easy management for OLSR wireless mesh networks
+endef
+
+define Package/afrimesh-olsr/install
 endef
 
 
@@ -383,6 +417,8 @@ endef
 
 
 $(eval $(call BuildPackage,afrimesh-base))
+$(eval $(call BuildPackage,afrimesh-batman))
+$(eval $(call BuildPackage,afrimesh-olsr))
 $(eval $(call BuildPackage,afrimesh-gateway))
 $(eval $(call BuildPackage,afrimesh-portal))
 $(eval $(call BuildPackage,afrimesh-webif))
