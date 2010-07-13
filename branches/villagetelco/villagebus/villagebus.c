@@ -117,7 +117,7 @@ const fexp* villagebus_evaluate(closure* c, villagebus* self, const fexp* expres
 
   // search for channel in registered modules
   fexp* iter; 
-  for (iter = self->modules; iter != fexp_nil; iter = (fexp*)send(self->modules, s_fexp_cdr)) {
+  for (iter = self->modules; iter != fexp_nil; iter = (fexp*)send(iter, s_fexp_cdr)) {
     object* entry  = send(iter,  s_fexp_car);
     object* module = send(entry, s_fexp_car);
     if (channel == module) {
