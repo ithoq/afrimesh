@@ -74,16 +74,20 @@ int main(int argc, char** argv)
   whttpd_out(L"request->data     : %s\n", request->data);*/
 
   /** - bootstrap interpreter --------------------------------------------- */
+  wprintl(L"Bootstrapping object\n");
   obj_init();
+  wprintl(L"Bootstrapping fexpression\n");
   fexp_init();
 
   /** - bootstrap modules ------------------------------------------------- */
+  wprintl(L"Bootstrapping modules: ");
   villagebus_init();
   db_init();
   config_init();
-  /*printf("villagebus->modules: ");
-  send(((villagebus*)VillageBus)->modules, s_print);
-  printf("\n");*/
+  sys_init();
+  string* modules = (string*)send(VillageBus->modules, s_tojson, false);
+  wprintl(L"%s\n", (char*)send(modules, s_string_tochar));
+  //send(VillageBus->modules, s_print);
 
   /** - compile request --------------------------------------------------- */
   const fexp* message = (fexp*)send(VillageBus, s_villagebus_compile, request);
@@ -99,8 +103,10 @@ int main(int argc, char** argv)
 
   } else if (send(message, s_fexp_car) == s_villagebus_error) { // TODO - handle error messages in jQuery 
     whttpd_out(L"%S(", request->callback);
-    send(message, s_print);
-    whttpd_out(L", null)\n");
+    message = (fexp*)send(message, s_fexp_cdr);
+    message = (fexp*)send(message, s_fexp_car);
+    string* error = (string*)send(message, s_tojson, false);
+    whttpd_out(L"{ 'error' : %S })\n", error->buffer);
 
   } else if (send(message, s_fexp_car) == s_villagebus_json) { // encapsulated json - usually from mod_db 
     message = (fexp*)send(message, s_fexp_cdr);

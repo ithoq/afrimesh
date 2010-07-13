@@ -109,8 +109,9 @@ install-www:
 	$(INSTALL) dashboard/cgi-bin/ajax-proxy.cgi $(DASHBOARD_CGI)
 	$(INSTALL) dashboard/cgi-bin/mesh-topology.kml $(DASHBOARD_CGI)
 	chmod 0755 $(DASHBOARD_CGI)/mesh-topology.kml
-	$(INSTALL) village-bus/urldecode $(DASHBOARD_CGI)
-	for i in $(VILLAGERS); do echo "Installing: $$i"; $(INSTALL) ./$$i/$$i $(DASHBOARD_CGI); done
+	-$(INSTALL) villagebus/villagebus $(DASHBOARD_CGI)
+	-$(INSTALL) village-bus/urldecode $(DASHBOARD_CGI)
+	-for i in $(VILLAGERS); do echo "Installing: $$i"; $(INSTALL) ./$$i/$$i $(DASHBOARD_CGI); done
 	find $(DASHBOARD_WWW) -name "*~"   | xargs rm -f
 	find $(DASHBOARD_WWW) -name ".svn" | xargs rm -rf
 	find $(DASHBOARD_CGI) -name "*~"   | xargs rm -f

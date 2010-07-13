@@ -130,7 +130,8 @@ tconc* tconc_append(closure* c, tconc* self, object* item);
 
 
 /* - obj extensions ----------------------------------------------------- */
-vtable* object_type (closure* c, object* self);
-symbol* symbol_print(closure* c, symbol* self);
+vtable* object_type (closure* c,  object* self);
+symbol* symbol_print(closure* c,  symbol* self);
+string* symbol_tojson(closure* c, symbol* self, bool quoted);
 
 #endif /* FEXP_H */

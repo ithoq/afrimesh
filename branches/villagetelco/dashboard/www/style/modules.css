@@ -232,12 +232,13 @@ div#network-devices form.filter .active {
 div#network-devices div.scrollview {
   border: 0px solid red;
   overflow: auto;
+  overflow-x: hidden; 
   position: absolute;
   top: 5em;
   bottom: 1.0em;
   right: 1.0em;
   left: 1.0em;
-  padding-right: 2.0em; /* make space for the scrollbar */
+  padding-right: 1.0em; /* make space for the scrollbar */
 }
 div#network-devices div.devices {
   display: table;

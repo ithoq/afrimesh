@@ -384,13 +384,14 @@ const Request* cgi_request(int argc, char** argv)
     if (content_length) {
       read_expected = atoi(content_length);
     }
-    cgi_post_buffer = malloc((read_expected+1) * sizeof(char));
+    cgi_post_buffer = malloc((read_expected + 1) * sizeof(char));
     while (read_actual < read_expected) {
       size_t read = fread(cgi_post_buffer, 1, read_expected, stdin);
       read_actual += read;
       cgi_post_buffer[read_actual] = 0;
-      //printl("GOT: %d %s\n", read_actual, cgi_post_buffer);
+      //wprintl(L"GOT: %d %s\n", read_actual, cgi_post_buffer);
       if (read == 0) {
+        //wprintl(L"fin\n");
         break;
       }
     }    

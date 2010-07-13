@@ -38,8 +38,9 @@ void fexp_init()
   s_tojson = symbol_intern(0, 0, L"tojson");
 
   // extend base object model
-  send(object_vt, s_addMethod, s_type,  object_type);
-  send(symbol_vt, s_addMethod, s_print, symbol_print);
+  send(object_vt, s_addMethod, s_type,   object_type);
+  send(symbol_vt, s_addMethod, s_print,  symbol_print);
+  send(symbol_vt, s_addMethod, s_tojson, symbol_tojson);
 
   // string
   s_string_fromwchar = symbol_intern(0, 0, L"fromwchar");
@@ -105,6 +106,14 @@ symbol* symbol_print(closure* c, symbol* self)
 {
   wprintf(L"#%ls", self->string);
   return self;
+}
+
+string* symbol_tojson(closure* c, symbol* self, bool quoted)
+{
+  /*if (quoted) {
+    return self;
+  } */
+  return (string*)send(String, s_string_fromwchar, L"\"#%S\"", self->string);
 }
 
 
@@ -255,8 +264,7 @@ fexp* fexp_print(closure* c, fexp* self)
   object* iter; 
   for (iter = (object*)self; iter != (object*)fexp_nil; iter = send(iter, s_fexp_cdr)) {
     wprintf(L" ");
-    //if (iter->_vt[-1] != Fexp->_vt[-1]) { // Is not a Fexp - TODO is this the best way? 
-    if ((vtable*)send(iter, s_type) != fexp_vt) {
+    if ((vtable*)send(iter, s_type) != fexp_vt) { // it's a cons pair
       wprintf(L". ");
       send(iter, s_print);
       break;
@@ -274,14 +282,19 @@ string* fexp_tojson(closure* c, fexp* self, bool quoted)
   object* iter;
   bool first = true;
   for (iter = (object*)self; iter != (object*)fexp_nil; iter = send(iter, s_fexp_cdr)) {
+    if ((vtable*)send(iter, s_type) != fexp_vt) { // it's a cons pair
+      // TODO - need an elegant way that does not require that everyone implement a s_tojson
+      //        best would probably be to change s_print to s_tostring and stick s_print 
+      //        into object
+      break;
+    } 
     object* car = send(iter, s_fexp_car);
     string* json_car = (string*)send(car, s_tojson, quoted);
-    if (first) {
-      first = false;
-    } else {
+    if (!first) {
       json_car = (string*)send(String, s_string_fromwchar, L", %S", json_car->buffer);
     }
     json = (string*)send(json, s_string_add, json_car);
+    first = false;
   }  
   json = (string*)send(json, s_string_fromwchar, L"%S ]", json->buffer);
   return json;

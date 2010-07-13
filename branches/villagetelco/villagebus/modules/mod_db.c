@@ -52,7 +52,7 @@ void db_init()
   send(db_vt, s_addMethod, s_villagebus_evaluate, db_evaluate);
   _DB = send(db_vt, s_allocate, 0);
 
-  // register some local symbols
+  // register local symbols
   s_db_keys   = (symbol*)symbol_intern(0, _DB, L"keys"); // TODO - symbol_intern should return symbol*
   s_db_get    = symbol_intern(0, _DB, L"get");
   s_db_lrange = symbol_intern(0, _DB, L"lrange");
@@ -72,7 +72,7 @@ void db_init()
   // register module with VillageBus - TODO lose vb->modules & register directly in vtable perhaps?
   s_db = symbol_intern(0, 0, L"db");
   fexp* module = (fexp*)send(Fexp, s_new, s_db, DB);
-  ((villagebus*)VillageBus)->modules = (fexp*)send(((villagebus*)VillageBus)->modules, s_fexp_cons, module);
+  VillageBus->modules = (fexp*)send(VillageBus->modules, s_fexp_cons, module);
 }
 
 
@@ -195,7 +195,7 @@ const string* db_get(closure* c, db* self, const fexp* message)
  */
 const fexp* db_lrange(closure* c, db* self, const fexp* message)
 {
-  const Request* request = ((villagebus*)VillageBus)->request;
+  const Request* request = VillageBus->request;
   fexp* reply = fexp_nil;
 
   // get any parameters
@@ -244,17 +244,27 @@ const string* db_getset(closure* c, db* self, const fexp* message, const unsigne
 {
   object* reply = (object*)fexp_nil;
 
-  string* key  = (string*)send(message, s_fexp_join, self->delimiter);  // generate a key from message
-  wprintl(L"PUT /db/getset/%S %s\n", key->buffer, data);
+  // generate key
+  string* skey  = (string*)send(message, s_fexp_join, self->delimiter);  // generate a key from message
+  char*   key   = (char*)send(skey, s_string_tochar); // TODO - redis not support UNICODE so much
 
-  char* keyc = (char*)send(key, s_string_tochar); // TODO - redis not support UNICODE so much
+  // make query
+  wprintl(L"PUT /db/getset/%S %s\n", skey->buffer, data);
   char* val;
-  if (credis_getset(self->handle, keyc, data, &val) != 0) {
-    reply = send(VillageBus, s_villagebus_error, L"getset failed %s: %s", keyc, data);
+  int rc = credis_getset(self->handle, key, data, &val);
+  
+  /* credis is a bit crummy here... getset on new keys return rc==-1 && val==NULL, 
+     on existing keys rc==0 && val=data */
+  if (rc == -1) {
+    val = (char*)data;
+  } else if (rc != 0) {
+    reply = send(VillageBus, s_villagebus_error, L"getset failed %s: %s", key, data);
+    free(key);
+    return (string*)reply;
   }
-  free(keyc);
+  free(key);
   reply = send(String, s_string_fromchar, val, strlen(val));
-
+  
   return (string*)reply;
 }
 

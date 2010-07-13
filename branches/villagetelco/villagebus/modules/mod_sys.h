@@ -28,45 +28,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UTIL
-#define UTIL
 
-/* logging */
-static const int log_level = 1;
-static const char* log_filename = "/tmp/village-bus.log";
-static FILE* log_file = NULL;
-void printl(const char* message, ...);
-void vprintl(const char* message, va_list ap);
-void wprintl(const wchar_t* message, ...);
-void vwprintl(const wchar_t* message, va_list ap);
-void log_release();
+#ifndef SYS_H
+#define SYS_H
 
-/* string utilities */
-char* triml(char* s);
-char* trimr(char* s);
-char* trim(char *s);
-char* substring(char *s, size_t start, size_t count);
+#include <villagebus.h>
 
-/* wide string utilities */
-wchar_t* wcsdupchar(const char* string);
-//wchar_t* wcsdup(const wchar_t* string);
-int vaswprintf(wchar_t** result, const wchar_t* format, va_list args);
+/* - sys ---------------------------------------------------------------- */
+typedef struct _sys {
+  vtable* _vt[0];
+} sys;
+extern vtable* sys_vt;
+extern object* _Sys;
+extern sys*    Sys;
+extern symbol* s_sys;
+extern symbol* s_sys_service;
+extern symbol* s_sys_syslog;
+extern symbol* s_sys_uname;
+extern symbol* s_sys_version;
 
-/* file utilities */
-char* path_exists(const char* name);
+void sys_init();
+sys* sys_print(closure* c, sys* self);
 
-/* parse utilities */
-struct Symbol {
-  int    symbol;
-  size_t length;
-  const  char* string;
-  char* (*lambda) ();
-};
-typedef struct Symbol SymbolTable [];
-static const int SYMBOL_UNKNOWN = -1;
-int string_to_symbol(const char* string, const SymbolTable symbols);
+const fexp* sys_evaluate(closure* c, sys* self, const fexp* expression);
 
-char* cut_field(const char* input, size_t start, size_t end);
-const char* parse_field(const char* input, size_t length, char* tokens, char** pfield);
+// names
+const fexp*   sys_service(closure* c, sys* self, const fexp* message);
+const fexp*   sys_syslog (closure* c, sys* self, const fexp* message);
+const fexp*   sys_uname  (closure* c, sys* self, const fexp* message);
+const string* sys_version(closure* c, sys* self, const fexp* message); 
 
-#endif /* UTIL */
+// utilities
+const fexp* exec(char* command, char** arguments);
+const fexp* exec_parsed(char* command, char** arguments, 
+                        struct json_object* (*parser)(const char*, size_t));
+
+
+
+#endif /* SYS_H */
+

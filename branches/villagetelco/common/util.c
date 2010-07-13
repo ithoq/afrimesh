@@ -28,8 +28,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "util.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#include <string.h>
+#include <stdbool.h>
+#include <fcntl.h>
+#include <limits.h>
+#include <errno.h>
+#include <sys/types.h>
+#include <unistd.h>
 
+#include "util.h"
 
 
 /**
@@ -173,6 +183,62 @@ int vaswprintf(wchar_t** result, const wchar_t* format, va_list args)
 
 
 /**
+ * File utilities
+ */
+/**
+ * Check to see if a file called 'name' exists as specified or in the system path
+ * 
+ * NULL if not, else fully qualified binary name
+ */
+char* path_exists(const char* name)
+{
+  const char *path, *cursor;
+  size_t count;
+  size_t namelen;
+  static char* buf = NULL;
+  if (buf == NULL) {
+    free(buf);
+    buf = malloc(PATH_MAX * sizeof(char));
+  }
+  
+  if (name == NULL || name[0] == '\0') {
+    return NULL;
+  }
+  
+  /* if it is an absolute or relative path, just check it  */
+  if (strchr(name, '/') && access(path, F_OK) == 0) {
+    return strdup(name); // caller is responsible for free()ing memory
+  }
+  
+  /* Search the system path for the file */
+  namelen = strlen(name);
+  //path = getenv("PATH"); {  TODO - we need a better solution for non-existent httpd path variables
+  path = "/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin:/opt/local/bin";
+  
+  cursor = path;
+  do {
+    for (path = cursor; *cursor != 0 && *cursor != ':'; cursor++) continue;
+    if (cursor == path) {
+      path = ".";
+      count = 1;
+    } else {
+      count = cursor - path;
+    }
+    memcpy(buf, path, count);
+    buf[count] = '/';
+    memcpy(buf + count + 1, name, namelen);
+    buf[count + namelen + 1] = '\0';
+    if (access(buf, F_OK) == 0) {
+      return buf;
+    }
+  } while (*cursor++ == ':');
+  
+  return NULL;
+}
+
+
+
+/**
  * Parsing utilities
  */
 int string_to_symbol(const char* string, const SymbolTable symbols)
@@ -189,3 +255,53 @@ int string_to_symbol(const char* string, const SymbolTable symbols)
   return SYMBOL_UNKNOWN;
 }
 
+
+// TODO - not threadsafe
+static char* cut_field_buf = NULL;
+char* cut_field(const char* input, size_t start, size_t end)
+{
+  if (cut_field_buf != NULL) {
+    free(cut_field_buf);
+  }
+  size_t length = end - start;
+  cut_field_buf = malloc((length + 1) * sizeof(char));
+  strncpy(cut_field_buf, input + start, length);
+  cut_field_buf[length] = '\0';
+  return cut_field_buf;
+}
+
+
+const char* parse_field(const char* input, size_t length, char* tokens, char** pfield)
+{
+  char* field;
+  const char* cursor;
+  int n = 0;
+  for (cursor = input; tokens[n] != -1   &&
+                       *cursor   != '\0' &&
+                       cursor    != NULL && 
+         cursor    != (input + length); cursor++) {
+    char c = *cursor;
+    if (tokens[n] == c) {
+      n++;
+    } else if (tokens[n] == '_')  { /* eat whitespace */
+      if (c == ' ' || c == '\t') {
+        continue;
+      } 
+      n++;
+    }
+    if (tokens[n] == -1) {
+      size_t fieldlen = cursor - input;
+      field = malloc(sizeof(char) * fieldlen+1);
+      strncpy(field, input, fieldlen);
+      field[fieldlen] = '\0';
+      *pfield = field;
+    }
+  }
+
+  if (tokens[n] != -1) {
+    *pfield = "<unknown.err>";
+    cursor = input;
+  }
+
+  return cursor;
+}

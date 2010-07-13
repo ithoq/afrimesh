@@ -40,14 +40,14 @@ endif
 core=safelib.o util.o object.o fexpression.o
 
 # modules
-modules=mod_db.o mod_config.o
+modules=mod_db.o mod_config.o mod_sys.o
 modulelibs=$(DEPROOT)/lib/libcredis.a $(DEPROOT)/lib/libuci.a 
 
 # build flags
 CC=gcc 
 INCLUDES+=-I. -I.. -I../common -I modules -I$(DEPROOT)/include 
 DEFINES+=
-CFLAGS+=-O0 -g $(DEFINES) -DAFRIMESH_VERSION="\"$(VERSION)\""
+CFLAGS+=-O0 -g $(DEFINES) -DAFRIMESH_VERSION="L\"$(VERSION)\""
 # -std=c99
 LDFLAGS+=-L$(DEPROOT)/lib $(modulelibs) $(DEPROOT)/lib/libjson.a
 
@@ -100,6 +100,9 @@ mod_db.o : modules/mod_db.h modules/mod_db.c
 mod_config.o : modules/mod_config.h modules/mod_config.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c modules/mod_config.c
 
+mod_sys.o : modules/mod_sys.h modules/mod_sys.c
+	$(CC) $(INCLUDES) $(CFLAGS) -c modules/mod_sys.c
+
 villagebus.o : villagebus.c villagebus.h
 	$(CC) $(INCLUDES) $(CFLAGS) -c villagebus.c
 
@@ -112,17 +115,6 @@ clean :
 	rm -f *.o *~ villagebus urldecode
 
 
-# - test-http --------------------------------------------------------------
-test-http : villagebus
-	export REQUEST_METHOD="POST" ; \
-	export PATH_INFO=$(path)   ; \
-	export QUERY_STRING="plink=plonk&foo=bar" ; \
-  $(ECHO) $(json_db) | ./villagebus 
-	export REQUEST_METHOD="GET" ; \
-	export PATH_INFO=$(path)   ; \
-  ./villagebus 
-
-
 # - test-db ----------------------------------------------------------------
 version="r133"
 # TODO uci get mesh address
@@ -132,7 +124,7 @@ gateway=192.168.20.1
 timestamp=$(shell date +%s)000
 uname=`uname`
 ping=$(shell ping -c 1 192.168.20.1 | grep from | awk '{ print $$7 }' | cut -d = -f 2)
-path="/root/db/status/$(self)"
+path="/root/db/test/$(self)"
 db_json="{ \
   'timestamp' : $(timestamp),	 \
   'version' : '$(version)',	\
@@ -142,6 +134,15 @@ db_json="{ \
 test-db :
 	$(ECHO) $(db_json) | ./villagebus POST "$(path)"
 	./villagebus GET $(path)
+
+test-http-db : villagebus	
+	@echo
+	export REQUEST_METHOD="PUT" ; \
+	export PATH_INFO=$(path)   ; \
+  $(ECHO) $(db_json) | ./villagebus 
+	export REQUEST_METHOD="GET" ; \
+	export PATH_INFO=$(path)   ; \
+  ./villagebus 
 
 
 # - test-config ------------------------------------------------------------
