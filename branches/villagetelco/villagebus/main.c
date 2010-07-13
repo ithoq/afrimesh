@@ -81,10 +81,15 @@ int main(int argc, char** argv)
 
   /** - bootstrap modules ------------------------------------------------- */
   wprintl(L"Bootstrapping modules: ");
+  // TODO - generate .so's and load dynamically
   villagebus_init();
-  db_init();
+  accounting_init();
   config_init();
+  db_init();
+  package_init();
+  snmp_init();
   sys_init();
+  telephony_init();
   string* modules = (string*)send(VillageBus->modules, s_tojson, false);
   wprintl(L"%s\n", (char*)send(modules, s_string_tochar));
   //send(VillageBus->modules, s_print);

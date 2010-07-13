@@ -29,8 +29,8 @@
  */
 
 
-#ifndef CONFIG_H
-#define CONFIG_H
+#ifndef MOD_CONFIG_H
+#define MOD_CONFIG_H
 
 #include <villagebus.h>
 
@@ -64,5 +64,5 @@ char* option_to_string(struct uci_option* option);
 static void uci_reset_typelist(void);
 
 
-#endif /* CONFIG_H */
+#endif /* MOD_CONFIG_H */
 

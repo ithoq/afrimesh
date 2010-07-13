@@ -59,21 +59,25 @@ void fexp_init()
   String = send(string_vt, s_allocate, 0);
 
   // fexp
-  s_fexp_car  = symbol_intern(0, 0, L"car");
-  s_fexp_cdr  = symbol_intern(0, 0, L"cdr");
-  s_fexp_cons = symbol_intern(0, 0, L"cons");
-  s_fexp_last = symbol_intern(0, 0, L"last");
-  s_fexp_join = symbol_intern(0, 0, L"join");
+  s_fexp_car    = symbol_intern(0, 0, L"car");
+  s_fexp_cdr    = symbol_intern(0, 0, L"cdr");
+  s_fexp_cons   = symbol_intern(0, 0, L"cons");
+  s_fexp_last   = symbol_intern(0, 0, L"last");
+  s_fexp_nth    = symbol_intern(0, 0, L"nth");
+  s_fexp_nthcdr = symbol_intern(0, 0, L"nthcdr");
+  s_fexp_join   = symbol_intern(0, 0, L"join");
   fexp_vt = (vtable*)send(object_vt, s_delegated);
   send(fexp_vt, s_addMethod, s_new,    fexp_new);
   send(fexp_vt, s_addMethod, s_length, fexp_length);
   send(fexp_vt, s_addMethod, s_print,  fexp_print);
   send(fexp_vt, s_addMethod, s_tojson, fexp_tojson);
-  send(fexp_vt, s_addMethod, s_fexp_car,  fexp_car);
-  send(fexp_vt, s_addMethod, s_fexp_cdr,  fexp_cdr);
-  send(fexp_vt, s_addMethod, s_fexp_cons, fexp_cons);
-  send(fexp_vt, s_addMethod, s_fexp_last, fexp_last);
-  send(fexp_vt, s_addMethod, s_fexp_join, fexp_join);
+  send(fexp_vt, s_addMethod, s_fexp_car,    fexp_car);
+  send(fexp_vt, s_addMethod, s_fexp_cdr,    fexp_cdr);
+  send(fexp_vt, s_addMethod, s_fexp_cons,   fexp_cons);
+  send(fexp_vt, s_addMethod, s_fexp_last,   fexp_last);
+  send(fexp_vt, s_addMethod, s_fexp_nth,    fexp_nth);
+  send(fexp_vt, s_addMethod, s_fexp_nthcdr, fexp_nthcdr);
+  send(fexp_vt, s_addMethod, s_fexp_join,   fexp_join);
   Fexp = send(fexp_vt, s_allocate, 0);
   //string* nil = (string*)send(String, s_new, L"NIL", 3)
   object* nil = send(String, s_new, L"NIL", 3);
@@ -236,11 +240,13 @@ string* string_add(closure* c, string *self, const string *s)
 /* - fexp --------------------------------------------------------------- */
 vtable* fexp_vt = 0;
 object* Fexp = 0;
-object* s_fexp_car    = 0;
-object* s_fexp_cdr    = 0;
-object* s_fexp_cons   = 0;
-object* s_fexp_last   = 0;
-object* s_fexp_join   = 0;
+object* s_fexp_car       = 0;
+object* s_fexp_cdr       = 0;
+object* s_fexp_cons      = 0;
+object* s_fexp_last      = 0;
+object* s_fexp_nth       = 0;
+object* s_fexp_nthcdr    = 0;
+object* s_fexp_join      = 0;
 fexp*   fexp_environment = 0;
 fexp*   fexp_nil         = 0;
 object* fexp_t           = 0;
@@ -300,7 +306,7 @@ string* fexp_tojson(closure* c, fexp* self, bool quoted)
   return json;
 }
 
-object* fexp_car(closure* c, fexp *self)
+object* fexp_car(closure* c, fexp* self)
 {
   return self->car;
 }
@@ -310,17 +316,39 @@ object* fexp_cdr(closure* c, fexp* self)
   return self->cdr;
 }
 
-fexp* fexp_cons(closure* c, fexp *self, object* car)
+fexp* fexp_cons(closure* c, fexp* self, object* car)
 {
   fexp *x = (fexp*)send(Fexp, s_new, car, self);
   return x;
 }
 
-fexp* fexp_last(closure* c, fexp *self)
+fexp* fexp_last(closure* c, fexp* self)
 {
   //return (self->cdr == fexp_nil) ? self->car : fexp_last(closure, self->cdr);
   //printf("nil(%p) - self(%p) - self->cdr(%p)\n", fexp_nil, self, self->cdr);
   return ((fexp*)self->cdr == fexp_nil) ? self : (fexp*)send(self->cdr, s_fexp_last);
+}
+
+object* fexp_nth (closure* c, fexp* self, int n)
+{
+  if (self == fexp_nil) {
+    return (object*)fexp_nil;
+  }
+  if (n == 0) {
+    return self->car;
+  }
+  return send(self->cdr, s_fexp_nth, n - 1);
+}
+
+fexp* fexp_nthcdr(closure* c, fexp* self, int n)
+{
+  if (self == fexp_nil) {
+    return fexp_nil;
+  }
+  if (n == 0) {
+    return self;
+  }
+  return (fexp*)send(self->cdr, s_fexp_nthcdr, n - 1);
 }
 
 string* fexp_join(closure* c, fexp* self, const string* delimiter)

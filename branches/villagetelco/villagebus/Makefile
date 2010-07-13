@@ -40,8 +40,15 @@ endif
 core=safelib.o util.o object.o fexpression.o
 
 # modules
-modules=mod_db.o mod_config.o mod_sys.o
+modules=mod_db.o mod_config.o mod_sys.o mod_telephony.o mod_accounting.o mod_package.o
 modulelibs=$(DEPROOT)/lib/libcredis.a $(DEPROOT)/lib/libuci.a 
+
+ifeq ($(DISABLE_SNMP),1)
+CFLAGS+=-DDISABLE_SNMP
+else
+modules+=mod_snmp.o 
+modulelibs+=-lnetsnmp
+endif
 
 # build flags
 CC=gcc 
@@ -102,6 +109,18 @@ mod_config.o : modules/mod_config.h modules/mod_config.c
 
 mod_sys.o : modules/mod_sys.h modules/mod_sys.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c modules/mod_sys.c
+
+mod_telephony.o : modules/mod_telephony.h modules/mod_telephony.c
+	$(CC) $(INCLUDES) $(CFLAGS) -c modules/mod_telephony.c
+
+mod_accounting.o : modules/mod_accounting.h modules/mod_accounting.c
+	$(CC) $(INCLUDES) $(CFLAGS) -c modules/mod_accounting.c
+
+mod_package.o : modules/mod_package.h modules/mod_package.c
+	$(CC) $(INCLUDES) $(CFLAGS) -c modules/mod_package.c
+
+mod_snmp.o : modules/mod_snmp.h modules/mod_snmp.c
+	$(CC) $(INCLUDES) $(CFLAGS) -c modules/mod_snmp.c
 
 villagebus.o : villagebus.c villagebus.h
 	$(CC) $(INCLUDES) $(CFLAGS) -c villagebus.c

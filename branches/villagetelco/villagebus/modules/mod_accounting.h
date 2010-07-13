@@ -29,39 +29,30 @@
  */
 
 
-#ifndef SYS_H
-#define SYS_H
+#ifndef MOD_ACCOUNTING_H
+#define MOD_ACCOUNTING_H
 
 #include <villagebus.h>
 
-/* - sys ---------------------------------------------------------------- */
-typedef struct _sys {
+/* - accounting ---------------------------------------------------------------- */
+typedef struct _accounting {
   vtable* _vt[0];
-} sys;
-extern vtable* sys_vt;
-extern object* _Sys;
-extern sys*    Sys;
-extern symbol* s_sys;
-extern symbol* s_sys_service;
-extern symbol* s_sys_syslog;
-extern symbol* s_sys_uname;
-extern symbol* s_sys_version;
+} accounting;
+extern vtable*     accounting_vt;
+extern object*     _Accounting;
+extern accounting* Accounting;
+extern symbol*     s_accounting;
+extern symbol*     s_accounting_gateway;
 
-void sys_init();
-sys* sys_print(closure* c, sys* self);
-
-const fexp* sys_evaluate(closure* c, sys* self, const fexp* expression);
+// base
+void        accounting_init();
+accounting* accounting_print(closure* c, accounting* self);
+const fexp* accounting_evaluate(closure* c, accounting* self, const fexp* expression);
 
 // names
-const fexp*   sys_service(closure* c, sys* self, const fexp* message);
-const fexp*   sys_syslog (closure* c, sys* self, const fexp* message);
-const fexp*   sys_uname  (closure* c, sys* self, const fexp* message);
-const string* sys_version(closure* c, sys* self, const fexp* message); 
+const fexp* accounting_gateway(closure* c, accounting* self, const fexp* message);
 
 // utilities
-const fexp* exec(char* command, char** arguments);
-const fexp* exec_parsed(char* command, char** arguments, 
-                        struct json_object* (*parser)(const char*, size_t));
+struct json_object* pmacct_exec_parser(const char* line, size_t length);
 
-
-#endif /* SYS_H */
+#endif /* MOD_ACCOUNTING_H */

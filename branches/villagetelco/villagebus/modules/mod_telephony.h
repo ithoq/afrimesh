@@ -29,39 +29,31 @@
  */
 
 
-#ifndef SYS_H
-#define SYS_H
+#ifndef MOD_TELEPHONY_H
+#define MOD_TELEPHONY_H
 
 #include <villagebus.h>
 
-/* - sys ---------------------------------------------------------------- */
-typedef struct _sys {
+/* - telephony ---------------------------------------------------------------- */
+typedef struct _telephony {
   vtable* _vt[0];
-} sys;
-extern vtable* sys_vt;
-extern object* _Sys;
-extern sys*    Sys;
-extern symbol* s_sys;
-extern symbol* s_sys_service;
-extern symbol* s_sys_syslog;
-extern symbol* s_sys_uname;
-extern symbol* s_sys_version;
+} telephony;
+extern vtable*    telephony_vt;
+extern object*    _Telephony;
+extern telephony* Telephony;
+extern symbol*    s_telephony;
+extern symbol*    s_telephony_sip;
 
-void sys_init();
-sys* sys_print(closure* c, sys* self);
-
-const fexp* sys_evaluate(closure* c, sys* self, const fexp* expression);
+// base
+void        telephony_init();
+telephony*  telephony_print(closure* c, telephony* self);
+const fexp* telephony_evaluate(closure* c, telephony* self, const fexp* expression);
 
 // names
-const fexp*   sys_service(closure* c, sys* self, const fexp* message);
-const fexp*   sys_syslog (closure* c, sys* self, const fexp* message);
-const fexp*   sys_uname  (closure* c, sys* self, const fexp* message);
-const string* sys_version(closure* c, sys* self, const fexp* message); 
+const fexp* telephony_sip_asterisk(closure* c, telephony* self, const fexp* message);
 
 // utilities
-const fexp* exec(char* command, char** arguments);
-const fexp* exec_parsed(char* command, char** arguments, 
-                        struct json_object* (*parser)(const char*, size_t));
+struct json_object* asterisk_sip_peers_parser(const char* line, size_t length);
 
 
-#endif /* SYS_H */
+#endif /* MOD_TELEPHONY_H */

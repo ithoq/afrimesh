@@ -29,8 +29,8 @@
  */
 
 
-#ifndef DB_H
-#define DB_H
+#ifndef MOD_DB_H
+#define MOD_DB_H
 
 #include <villagebus.h>
 
@@ -67,5 +67,5 @@ const string* db_getset(closure* c, db* self, const fexp* message, const unsigne
 const fexp* db_lpush (closure* c, db* self, const fexp* message, const unsigned char* data);  // list
 
 
-#endif /* DB_H */
+#endif /* MOD_DB_H */
 

@@ -94,16 +94,20 @@ extern object* s_fexp_car;
 extern object* s_fexp_cdr;
 extern object* s_fexp_cons;
 extern object* s_fexp_last;
+extern object* s_fexp_nth;
+extern object* s_fexp_nthcdr;
 extern object* s_fexp_join;
 extern fexp*   fexp_environment;
 extern fexp*   fexp_nil;
 extern object* fexp_t;
 
-object* fexp_car (closure* c, fexp* self);
-object* fexp_cdr (closure* c, fexp* self);
-fexp*   fexp_cons(closure* c, fexp* self, object* car);
-fexp*   fexp_last(closure* c, fexp* self);
-string* fexp_join(closure* c, fexp* self, const string* delimiter);
+object* fexp_car   (closure* c, fexp* self);
+object* fexp_cdr   (closure* c, fexp* self);
+fexp*   fexp_cons  (closure* c, fexp* self, object* car);
+fexp*   fexp_last  (closure* c, fexp* self);
+object* fexp_nth   (closure* c, fexp* self, int n);
+fexp*   fexp_nthcdr(closure* c, fexp* self, int n);
+string* fexp_join  (closure* c, fexp* self, const string* delimiter);
 
 object* fexp_new   (closure* c, fexp* self, object* car, object* cdr);
 size_t  fexp_length(closure* c, fexp* self);

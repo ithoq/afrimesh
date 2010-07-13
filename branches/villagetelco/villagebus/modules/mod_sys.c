@@ -28,7 +28,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 #include <errno.h>
 #include <unistd.h>
 
@@ -47,7 +46,6 @@ symbol* s_sys_service = 0;
 symbol* s_sys_syslog  = 0;
 symbol* s_sys_uname   = 0;
 symbol* s_sys_version = 0;
-
 
 void sys_init() 
 {
@@ -74,6 +72,7 @@ void sys_init()
   fexp* module = (fexp*)send(Fexp, s_new, s_sys, Sys);
   VillageBus->modules = (fexp*)send(VillageBus->modules, s_fexp_cons, module);
 }
+
 
 
 const fexp* sys_evaluate(closure* c, sys* self, const fexp* expression)
@@ -111,6 +110,7 @@ const fexp* sys_evaluate(closure* c, sys* self, const fexp* expression)
 
   return message;*/
 }
+
 
 
 sys* sys_print(closure* c, sys* self)
@@ -166,6 +166,7 @@ const fexp* sys_service(closure* c, sys* self, const fexp* message)
 }
 
 
+
 /**
  * Jan  2 18:12:08 <daemon.err> 192.168.20.2 batmand[567]: Error - got packet from unknown client: 10.0.0.3 (tunnelled sender ip 169.254.
 0.3)  
@@ -188,6 +189,8 @@ LogEntry parse_entry(const char* input, size_t length)
   entry.message = strdup(cursor);
   return entry;
 }
+
+
 
 /**
  * TODO - add support for POSTing to syslog
@@ -351,6 +354,7 @@ const fexp* exec(char* command, char** arguments)
 {
   return exec_parsed(command, arguments, (void*)NULL);
 }
+
 
 
 /**
