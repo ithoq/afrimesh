@@ -40,7 +40,7 @@ vtable* snmp_vt = 0;
 object* _SNMP   = 0;
 snmp*   SNMP    = 0;
 symbol* s_snmp  = 0;
-symbol* s_snmp_ = 0;
+//symbol* s_snmp_ = 0;
 
 void snmp_init() 
 {
@@ -50,8 +50,8 @@ void snmp_init()
   _SNMP = send(snmp_vt, s_allocate, 0);
 
   // register local symbols
-  s_snmp_ = (symbol*)symbol_intern(0, _SNMP, L"_"); 
-  send(snmp_vt, s_addMethod, s_snmp_, snmp_);
+  //s_snmp_ = (symbol*)symbol_intern(0, _SNMP, L"_"); 
+  //send(snmp_vt, s_addMethod, s_snmp_, snmp_);
 
   // global module instance vars
   SNMP = (snmp*)send(_SNMP->_vt[-1], s_allocate, sizeof(snmp));

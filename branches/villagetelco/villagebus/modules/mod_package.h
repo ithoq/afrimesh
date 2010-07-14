@@ -29,39 +29,36 @@
  */
 
 
-#ifndef MOD_SNMP_H
-#define MOD_SNMP_H
+#ifndef MOD_PACKAGE_H
+#define MOD_PACKAGE_H
 
 #include <villagebus.h>
 
-/* - snmp ---------------------------------------------------------------- */
-typedef struct _snmp {
+/* - package ---------------------------------------------------------------- */
+typedef struct _package {
   vtable* _vt[0];
-} snmp;
-extern vtable* snmp_vt;
-extern object* _SNMP;
-extern snmp*   SNMP;
-extern symbol* s_snmp;
-//extern symbol* s_snmp_;
+} package;
+extern vtable*  package_vt;
+extern object*  _Package;
+extern package* Package;
+extern symbol*  s_package;
+extern symbol*  s_package_update;
+extern symbol*  s_package_list;
+extern symbol*  s_package_status;
+extern symbol*  s_package_upgrade;
 
 // base
-void        snmp_init();
-snmp*       snmp_print(closure* c, snmp* self);
-const fexp* snmp_evaluate(closure* c, snmp* self, const fexp* expression);
+void        package_init();
+package*    package_print   (closure* c, package* self);
+const fexp* package_evaluate(closure* c, package* self, const fexp* expression);
 
 // names
-const fexp* snmp_    (closure* c, snmp* self, const fexp* message);
-const fexp* snmp_get (closure* c, snmp* self, const fexp* message);
-
-// snmp helpers
-struct snmp_session* start_snmp(const char* address, const char* community);
-void stop_snmp(struct snmp_session* session);
-struct json_object* snmpget(struct snmp_session* session, struct json_object* oids);
-struct json_object* snmpwalk(struct snmp_session* session, const char* name_oid);
+const fexp* package_update (closure* c, package* self, const fexp* message);
+const fexp* package_list   (closure* c, package* self, const fexp* message);
+const fexp* package_status (closure* c, package* self, const fexp* message);
+const fexp* package_upgrade(closure* c, package* self, const fexp* message);
 
 // utilities
-char* escape_oid(char* name);
-void json_object_snmp_add(struct json_object* object, struct variable_list* variable, int index);
+struct json_object* ipkg_list_exec_parser(const char* line, size_t length);
 
-
-#endif /* MOD_SNMP_H */
+#endif /* MOD_PACKAGE_H */

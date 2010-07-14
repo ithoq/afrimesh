@@ -79,7 +79,7 @@ const fexp* telephony_evaluate(closure* c, telephony* self, const fexp* expressi
                      name->buffer);  
   /*
   // evaluate request 
-  const Request* request = ((villagebus*)VillageBus)->request;
+  const Request* request = VillageBus->request;
   switch (request->method) {
     case PUT:
     message = telephony_put(c, self, message, request->data);
