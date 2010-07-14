@@ -22,7 +22,9 @@ var afrimesh = undefined;
     };
     console.log("this.settings.address : " + this.settings.address);
 
+    // register API modules
     this.storage    = BootStorage(this);
+    this.system     = BootSystem(this);
     this.network    = BootNetwork(this);
     this.device     = BootDevice(this);        
     this.customers  = BootCustomers(this);

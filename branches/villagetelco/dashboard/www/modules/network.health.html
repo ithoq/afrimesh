@@ -34,7 +34,7 @@
 <p/><br/>
 
 <table border=0><tr><td><h2>Messages</h2></td></tr></table>
-<div id="network-messages"></div>
+<div id="network-messages" class="scrollview" style="top:160px";></div>
 
 
 <script type="text/javascript"> //<![CDATA[    
@@ -74,7 +74,7 @@
                                          ".1.3.6.1.2.1.2.2.1.16." + afrimesh.settings.internet_gateway.snmp.interface ]); 
 
     // messages
-    afrimesh.villagebus.syslog.async(update_network_messages, 20);
+    afrimesh.system.log(update_network_messages, 20);
 
     timer = setTimeout(update, update_frequency); 
     if (update_frequency < update_target) {  
@@ -146,7 +146,11 @@
   };
 
 
-  function update_network_messages(log) {
+  function update_network_messages(error, log) {
+    if (error) {
+      return console.error("error: " + error); // TODO - Fail handler
+    }
+
     var html = "<table class='network-messages' border=0>"
     html += "<thead><th>timestamp</th><th>level</th><th>node</th><th>process</th><th>message</th></thead>";
     html += "<tbody></tbody></table>";

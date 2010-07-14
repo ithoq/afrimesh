@@ -82,7 +82,7 @@
     $("#device-template").hide(); // TODO - No comment. File jquery bug.
     afrimesh.network.info(function(error, address, device) {
         if (error) {
-          return console.log("error: " + error); // TODO - Fail handler
+          return console.error("error: " + error); // TODO - Fail handler
         }
 
         // clone device template

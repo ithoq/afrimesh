@@ -31,7 +31,7 @@ function BootDevice(parent) {
 
 
   /** 
-   * Returns temporal data for the device at address
+    * Returns temporal data for the device at address
    */
   device.stat = function(address, continuation, range) {
     var name = afrimesh.villagebus.Name("/root/db/lrange/devicestat/" + address);

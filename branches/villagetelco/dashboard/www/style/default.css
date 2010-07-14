@@ -258,3 +258,17 @@ div.tooltip p {
 }
 div.tooltip p.explain {
 }
+
+
+/* - scrollview --------------------------------------------------------- */
+div.scrollview {
+  border: 0px solid red;
+  overflow: auto;
+  overflow-x: hidden; 
+  position: absolute;
+  top: 5em;            /* TODO - Should be relative to previous elements on the page. Remember to fix all references to scrollview */
+  bottom: 1.0em;
+  right: 1.0em;
+  left: 1.0em;
+  padding-right: 1.0em; /* make space for the scrollbar */
+}
