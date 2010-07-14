@@ -424,6 +424,7 @@ void cgi_release()
   }
   if (cgi_href_buffer != NULL) {
     free(cgi_href_buffer);  
+    cgi_href_buffer = NULL;
   }
 }
 

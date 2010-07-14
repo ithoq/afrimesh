@@ -128,11 +128,6 @@ int main(int argc, char** argv)
     whttpd_out(L")\n");
   }
 
-  
-  /** - release resources ------------------------------------------------- */
-  cgi_release();
-
-  //printf("-----------------------------------------------------\n");
-
+  /** - release resources & exit ---------------------------------------- */
   return exit_success();
 }
