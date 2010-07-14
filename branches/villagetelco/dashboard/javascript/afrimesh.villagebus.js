@@ -478,26 +478,6 @@ var BootVillageBus = function (afrimesh) {
   villagebus.uci.set.async = function(f, address, entries) { return rpc_async(villagebus.uci.url(address), "set", [entries], f);  };
 
 
-  /** - villagebus.syslog ------------------------------------------------- */
-  villagebus.syslog = function() { return this.syslog.sync(); }
-
-  // will always show the log on the machine being viewed. If you want all nodes in the log, view
-  // the remote log server
-  villagebus.syslog.url = function() {
-    return "http://" + afrimesh.settings.address + "/cgi-bin/village-bus/sys";
-  };
-
-  villagebus.syslog.sync = function(count) {
-    if (count == undefined) { count = 10; }
-    return rpc(villagebus.syslog.url(), "syslog", [count]);
-  };
-
-  villagebus.syslog.async = function(f, count) {
-    if (count == undefined) { count = 10; }
-    return rpc_async(villagebus.syslog.url(), "syslog", [count], f);
-  };
-
-
   /** - villagebus.voip --------------------------------------------------- */
   villagebus.voip = {};
   villagebus.voip.url = function(address) {
