@@ -61,7 +61,6 @@ struct json_object* snmpwalk(struct snmp_session* session, const char* name_oid)
 
 // utilities
 char* escape_oid(char* name);
-//void print_snmp_variable(struct variable_list* variable);
 void json_object_snmp_add(struct json_object* object, struct variable_list* variable, int index);
 
 

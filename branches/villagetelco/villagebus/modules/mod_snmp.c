@@ -112,7 +112,6 @@ const fexp* snmp_get(closure* c, snmp* self, const fexp* message)
   struct snmp_session* session;
 
   // get parameters
-  wprintf(L"Message: "); send(message, s_print); wprintf(L"\n");
   char* name      = (char*)send(send(message, s_fexp_nth, 0), s_string_tochar);
   char* address   = (char*)send(send(message, s_fexp_nth, 1), s_string_tochar);
   char* community = (char*)send(send(message, s_fexp_nth, 2), s_string_tochar);
@@ -229,7 +228,6 @@ struct json_object* snmpget(struct snmp_session* session, struct json_object* oi
   char buf[1024];
   oid name[MAX_OID_LEN];
   count = json_object_array_length(oids);
-  //size_t name_length[count];
   size_t name_len;
 
   /* initialize our result object */
@@ -238,14 +236,10 @@ struct json_object* snmpget(struct snmp_session* session, struct json_object* oi
   /* build query */
   pdu = snmp_pdu_create(SNMP_MSG_GET);
   for (count = 0; count < json_object_array_length(oids); count++) {
-    //name_length[count] = MAX_OID_LEN;
     name_len = MAX_OID_LEN;
     read_objid(json_object_get_string(json_object_array_get_idx(oids, count)), 
                name, 
                &name_len);
-               //&(name_length[count]));   
-    //snmp_add_null_var(pdu, name, name_length[count]);
-    //wprintl(L"FOOK: %s - %s (%d)\n", json_object_get_string(json_object_array_get_idx(oids, count)), name, name_len);
     snmp_add_null_var(pdu, name, name_len);
   }
 
@@ -262,11 +256,6 @@ struct json_object* snmpget(struct snmp_session* session, struct json_object* oi
   /* print query results */
   count = 0;
   for (variable = response->variables; variable; variable = variable->next_variable) {
-    /*snprint_objid(buf, 1024, variable->name, variable->name_length);
-    printf("%s\n\t\"%s\" : ", (variable == response->variables ? "" : ","), escape_oid(buf));
-    print_snmp_variable(variable);
-    printf(",\n\t%d : ", count);
-    print_snmp_variable(variable);*/
     json_object_snmp_add(result, variable, count);
     count++;
   }
@@ -376,28 +365,6 @@ char* escape_oid(char* name)
   }*/
   return name;
 }
-
-
-/**
- * Print a SNMP variable to stdout
- */
-#ifdef JUNK
-void print_snmp_variable(struct variable_list* variable) 
-{
-  if (variable->type == ASN_OCTET_STR) {
-    char buf[variable->val_len + 1];
-    snprintf(buf, variable->val_len, "%s", variable->val.string);
-    buf[variable->val_len] = '\0';
-    printf("\"%s\"", buf);
-  } else if (variable->type == ASN_COUNTER) { /* ASN_COUNTER */
-    printf("%lu", *variable->val.integer);
-  } else if (variable->type == ASN_NULL) {    /* ASN_NULL */
-    printf("null");
-  } else {
-    printf("\"unknown type: 0x%x\"", variable->type);
-  }
-}
-#endif
 
 
 /**
