@@ -30,6 +30,7 @@
 
 
 #include <uci.h> 
+#include <common/jsonrpc.h>
 
 #include "mod_config.h"
 

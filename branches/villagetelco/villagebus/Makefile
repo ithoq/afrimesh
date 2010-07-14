@@ -54,7 +54,7 @@ endif
 CC=gcc 
 INCLUDES+=-I. -I.. -I../common -I modules -I$(DEPROOT)/include 
 DEFINES+=
-CFLAGS+=-O0 -g $(DEFINES) -DAFRIMESH_VERSION="L\"$(VERSION)\""
+CFLAGS+=-O0 -g $(DEFINES) -DAFRIMESH_VERSION="L\"$(VERSION)\"" 
 # -std=c99
 LDFLAGS+=-L$(DEPROOT)/lib $(modulelibs) $(DEPROOT)/lib/libjson.a
 
@@ -98,7 +98,7 @@ fexpression.o : ../common/fexpression.h ../common/fexpression.c
 cgi.o : ../common/cgi.h ../common/cgi.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c ../common/cgi.c
 
-jsonrpc.o : ../common/cgi.h ../common/jsonrpc.c
+jsonrpc.o : ../common/jsonrpc.h ../common/jsonrpc.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c ../common/jsonrpc.c
 
 mod_db.o : modules/mod_db.h modules/mod_db.c

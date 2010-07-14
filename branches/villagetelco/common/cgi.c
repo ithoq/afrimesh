@@ -369,6 +369,16 @@ const Request* cgi_request(int argc, char** argv)
   if (request->json) {
     const char* callback = json_object_get_string(json_object_object_get(request->json, "callback"));
     request->callback = callback ? wcsdupchar(callback) : request->callback;
+    json_object_object_del(request->json, "callback"); // remove reference to callback
+    // set request->json to NULL if there are no other parameter
+    size_t count = 0;
+    struct lh_entry* iter;
+    for (iter = json_object_get_object(request->json)->head; iter ; iter = iter->next) {
+      count++;
+    }
+    if (count == 0) {
+      request->json = NULL;
+    }
   }
 
   /* parse request - Data */
