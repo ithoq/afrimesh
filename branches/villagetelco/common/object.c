@@ -21,6 +21,7 @@
 #include "object.h"
 
 
+/* - structures --------------------------------------------------------- */
 struct _vtable *SymbolList= 0;
 
 struct _vtable *vtable_vt;
@@ -33,6 +34,8 @@ struct _object *s_allocate  = 0;
 struct _object *s_delegated = 0;
 struct _object *s_lookup    = 0;
 
+
+/* - implementation ----------------------------------------------------- */
 
 /*extern*/ inline void *alloc(size_t size)
 {
@@ -61,44 +64,12 @@ struct _object *closure_new(imp_t method, struct _object *data)
   return (struct _object *)closure;
 }
 
-//struct _object *vtable_lookup(struct _closure *closure, struct _vtable *self, struct _object *key);
-/*
-#if ICACHE
-# define send(RCV, MSG, ARGS...) ({				\
-      struct        object   *r = (struct _object *)(RCV);	\
-      static struct _vtable   *prevVT  = 0;			\
-      static struct _closure  *closure = 0;			\
-      register struct _vtable *thisVT  = r->_vt[-1];		\
-      thisVT == prevVT						\
-	?  closure						\
-	: (prevVT  = thisVT,					\
-	   closure = bind(r, (MSG)));				\
-      closure->method(closure, r, ##ARGS);			\
-    })
-#else
-# define send(RCV, MSG, ARGS...) ({				\
-      struct _object  *r = (struct _object *)(RCV);		\
-      struct _closure *c = bind(r, (MSG));			\
-      c->method(c, r, ##ARGS);					\
-    })
-#endif
-*/
-
-#if MCACHE
-struct entry {
-  struct _vtable  *vtable;
-  struct _object *selector;
-  struct _closure *closure;
-} MethodCache[8192];
-#endif
-
-
-struct _closure *bind(struct _object *rcv, struct _object *msg)
+struct _closure *_bind(struct _object *rcv, struct _object *msg)
 {
   struct _closure *c;
   struct _vtable  *vt = rcv->_vt[-1];
 #if MCACHE
-  struct entry   *cl = MethodCache + ((((unsigned)vt << 2) ^ ((unsigned)msg >> 3)) & ((sizeof(MethodCache) / sizeof(struct entry)) - 1));
+  struct entry *cl = MethodCache + ((((unsigned)vt << 2) ^ ((unsigned)msg >> 3)) & ((sizeof(MethodCache) / sizeof(struct entry)) - 1));
   if (cl->vtable == vt && cl->selector == msg)
     return cl->closure;
 #endif

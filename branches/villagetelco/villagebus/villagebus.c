@@ -64,6 +64,13 @@ void villagebus_init()
 
 /**
  * Compile the parsed HTTP request
+ *
+ * TODO - parse ',' properly to produce nested fexp's e.g.
+ *
+ *   /foo/1,2,3,4          =>  ( foo ( 1 2 3 4 ) )
+ *   /bar/a,b/c            =>  ( bar ( a b ) c )
+ *   /bar/a,b,/c/d/,e/f    =>  ( bar ( a b ( c d ) e ) f )
+ *
  */
 const fexp* villagebus_compile(closure* c, villagebus* self, const Request* request)
 {
@@ -79,7 +86,7 @@ const fexp* villagebus_compile(closure* c, villagebus* self, const Request* requ
   size_t index = 0;
   size_t last  = 0;
   for (index = 0; request->pathname[index] != L'\0'; index++) {
-    if (request->pathname[index] == L'/') {
+    if ((request->pathname[index] == L'/') || (request->pathname[index] == L',')) {
       string* entry;
       if (index - last == 0) {
         entry = (string*)send(String, s_new, L"/", 1);

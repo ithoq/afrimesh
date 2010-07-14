@@ -197,7 +197,7 @@ void snmpget(struct snmp_session* session, struct json_object* oids)
 
 
 /** 
- * NEW VERSION
+ * Perform a snmpget on an array of oids
  */
 struct json_object* snmp_get(struct snmp_session* session, struct json_object* oids)
 {
@@ -338,7 +338,7 @@ void snmpwalk(struct snmp_session* session, const char* name_oid)
 
 
 /**
- * NEW VERSION
+ * Perform a snmpwalk on each element in an array of oids
  */
 struct json_object* snmp_walk(struct snmp_session* session, const char* name_oid)
 {

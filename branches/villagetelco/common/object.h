@@ -18,8 +18,8 @@
 #ifndef OBJ_H
 #define OBJ_H
 
-#define ICACHE 0	/* nonzero to enable point-of-send inline cache */
-#define MCACHE 0	/* nonzero to enable global method cache        */
+#define ICACHE 1	/* nonzero to enable point-of-send inline cache */
+#define MCACHE 1	/* nonzero to enable global method cache        */
 
 struct _vtable;
 struct _object;
@@ -67,7 +67,22 @@ extern struct _object *s_delegated;
 extern struct _object *s_lookup;
 
 
-/* macros */
+/* - implementation ----------------------------------------------------- */
+void *alloc(size_t size);
+struct _object *symbol_new(const wchar_t *string);
+struct _object *closure_new(imp_t method, struct _object *data);
+struct _object *vtable_lookup(struct _closure *closure, struct _vtable *self, struct _object *key);
+struct _closure *_bind(struct _object *rcv, struct _object *msg);  /* _bind conflicts with socket.h */
+struct _vtable *vtable_delegated(struct _closure *closure, struct _vtable *self);
+struct _object *vtable_allocate(struct _closure *closure, struct _vtable *self, int payloadSize);
+struct _object *vtable_lookup(struct _closure *closure, struct _vtable *self, struct _object *key);
+struct _object *symbol_intern(struct _closure *closure, struct _object *self, const wchar_t *string);
+struct _object* symbol_lookup(struct _closure* closure, struct _object* self, const wchar_t *string);
+void obj_init(void);
+
+
+/* - cache macros ------------------------------------------------------ */
+struct _closure *_bind(struct _object *rcv, struct _object *msg);
 #if ICACHE
 # define send(RCV, MSG, ARGS...) ({                       \
       struct        _object   *r = (struct _object *)(RCV);	\
@@ -77,30 +92,24 @@ extern struct _object *s_lookup;
       thisVT == prevVT                                    \
         ?  closure                                        \
         : (prevVT  = thisVT,                              \
-           closure = bind(r, (MSG)));                     \
+           closure = _bind(r, (MSG)));                     \
       closure->method(closure, r, ##ARGS);                \
     })
 #else
 # define send(RCV, MSG, ARGS...) ({                 \
       struct _object  *r = (struct _object *)(RCV);		\
-      struct _closure *c = bind(r, (MSG));           \
+      struct _closure *c = _bind(r, (MSG));           \
       c->method(c, r, ##ARGS);                      \
     })
 #endif
 
-
-/* */
-void *alloc(size_t size);
-struct _object *symbol_new(const wchar_t *string);
-struct _object *closure_new(imp_t method, struct _object *data);
-struct _object *vtable_lookup(struct _closure *closure, struct _vtable *self, struct _object *key);
-struct _closure *bind(struct _object *rcv, struct _object *msg);
-struct _vtable *vtable_delegated(struct _closure *closure, struct _vtable *self);
-struct _object *vtable_allocate(struct _closure *closure, struct _vtable *self, int payloadSize);
-struct _object *vtable_lookup(struct _closure *closure, struct _vtable *self, struct _object *key);
-struct _object *symbol_intern(struct _closure *closure, struct _object *self, const wchar_t *string);
-struct _object* symbol_lookup(struct _closure* closure, struct _object* self, const wchar_t *string);
-void obj_init(void);
+#if MCACHE
+struct entry {
+  struct _vtable  *vtable;
+  struct _object *selector;
+  struct _closure *closure;
+} MethodCache[8192];
+#endif
 
 
 #endif /* OBJ_H */
