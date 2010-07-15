@@ -25,7 +25,7 @@ function BootDevice(parent) {
         if (error) return continuation(error, null);
         return continuation(error, response);
       });
-    name = afrimesh.villagebus.Send(name);
+    name = afrimesh.villagebus.GET(name);
     return name;
   };
 
@@ -39,7 +39,7 @@ function BootDevice(parent) {
         if (error) return continuation(error, null);  // TODO - return Fail(error, continuation) maybe ?
         return continuation(error, response);
       });
-    name = afrimesh.villagebus.Send(name, (range ? range : { start : 0, end : -1 }));
+    name = afrimesh.villagebus.GET(name, (range ? range : { start : 0, end : -1 }));
     return name;
   };
 

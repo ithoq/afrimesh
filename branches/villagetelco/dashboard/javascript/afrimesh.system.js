@@ -22,7 +22,7 @@ function BootSystem(parent) {
         if (error) return continuation(error, null); // TODO - return Fail(error, continuation) maybe ?
         return continuation(error, response);
       });
-    name = afrimesh.villagebus.Send(name, { count : (count?count:10) });
+    name = afrimesh.villagebus.GET(name, { count : (count?count:10) });
     return name;
   };
 
@@ -36,7 +36,7 @@ function BootSystem(parent) {
         if (error) return continuation(error, null); // TODO - return Fail(error, continuation) maybe ?
         return continuation(error, response);
       });
-    name = afrimesh.villagebus.Send(name);
+    name = afrimesh.villagebus.GET(name);
     return name;
   };
 
@@ -49,7 +49,7 @@ function BootSystem(parent) {
         if (error) return continuation(error, null); // TODO - return Fail(error, continuation) maybe ?
         return continuation(error, response);
       });
-    name = afrimesh.villagebus.Send(name);
+    name = afrimesh.villagebus.GET(name);
     return name;
   };
 
@@ -62,13 +62,14 @@ function BootSystem(parent) {
         if (error) return continuation(error, null); // TODO - return Fail(error, continuation) maybe ?
         return continuation(error, response);
       });
-    name = afrimesh.villagebus.Send(name, { command : (command?command:"status") });
+    name = afrimesh.villagebus.GET(name, { command : (command?command:"status") });
     return name;
   };
   system.service.status = function(address, service, continuation) {
     return system.service(address, service, continuation, "status");
   };
   system.service.reload = function(address, service, continuation) {
+    // TODO - think a bit about GET/PUT/POST semantics for various service commands
     return system.service(address, service, continuation, "reload");
   };
 

@@ -23,12 +23,12 @@ function BootNetwork(parent) {
     name = afrimesh.villagebus.Bind(name, function(error, response) {
         if (error) return continuation(error, null);  // TODO - return Fail(error, continuation) maybe ?
         response.map(function(key) {
-            return afrimesh.villagebus.Send(afrimesh.villagebus.Bind("/root/db/" + key, function(error, response) {
+            return afrimesh.villagebus.GET(afrimesh.villagebus.Bind("/root/db/" + key, function(error, response) {
                 return continuation(error, response.self, response);
               }));
           });
       });
-    name = afrimesh.villagebus.Send(name);
+    name = afrimesh.villagebus.GET(name);
     return name;
   };
 

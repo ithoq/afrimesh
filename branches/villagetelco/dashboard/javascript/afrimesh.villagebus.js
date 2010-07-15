@@ -25,6 +25,8 @@ var BootVillageBus = function (afrimesh) {
     for (var p in this) { if (p != "prototype") ret.push(p); }
     return ret;
   };
+
+  /** - ajax_proxy ------------------------------------------------------ */
   villagebus.ajax_proxy = function() { 
     return "http://" + afrimesh.settings.address + afrimesh.settings.ajax_proxy; 
   };
@@ -33,7 +35,7 @@ var BootVillageBus = function (afrimesh) {
 
   /* Either this:
   var name     = afrimesh.villagebus.Name("/root/db/keys/status");
-  var channel  = afrimesh.villagebus.Send(name, "*");
+  var channel  = afrimesh.villagebus.GET(name, "*");
   var response = afrimesh.villagebus.Read(channel);
   if (afrimesh.villagebus.Error(response)) {
     console.log(response.error);
@@ -55,7 +57,7 @@ var BootVillageBus = function (afrimesh) {
     }
     return response;
   });
-  var channel = afrimesh.villagebus.Send(name, "*");
+  var channel = afrimesh.villagebus.GET(name, "*");
   var response = Read(channel); */ 
   villagebus.Name = function(name) {
     name = name.split('/').map(function(node) {   // perform path transformations for network locations
@@ -102,7 +104,7 @@ var BootVillageBus = function (afrimesh) {
     return name;
   };
 
-  villagebus.Send = function(name, args) {
+  villagebus.GET = function(name, args) {
     //console.log("VBUS.SEND " + name.url);
     // TODO - if there is no continuation bound to name configure a
     //        sync JSON request via ajax-proxy.cgi
@@ -121,6 +123,13 @@ var BootVillageBus = function (afrimesh) {
     return name;
   };
   
+  villagebus.PUT = function(name, data, args) {
+  };
+
+  villagebus.POST = function(name, data, args) {
+  };
+
+
   /**
    * Intended semantics is that calling Read() on an async request will 
    * block until call returns. In practice, there's no way to block on 
