@@ -58,11 +58,13 @@ var BootVillageBus = function (afrimesh) {
   var channel = afrimesh.villagebus.Send(name, "*");
   var response = Read(channel); */ 
   villagebus.Name = function(name) {
-    name = name.split('/').map(function(node) {   // perform path transformations
+    name = name.split('/').map(function(node) {   // perform path transformations for network locations
       if (node == "root") {
         return "/" + afrimesh.settings.root + "/cgi-bin/villagebus";
       } else if (node == "self") {
         return "/" + afrimesh.settings.address + "/cgi-bin/villagebus"; 
+      } else if (node[0] == '@') {
+        return "/" + node.substring(1) + "/cgi-bin/villagebus"; 
       }
       return node;
     }).join('/');
@@ -71,6 +73,7 @@ var BootVillageBus = function (afrimesh) {
       type        : "GET",
       url         : "http:" + name, 
       contentType : "application/json",
+      //contentType : "application/x-javascript",
       dataType    : "jsonp",
       context     : document.body,
       success     : function(response) { }, // TODO - default sync handler
@@ -85,19 +88,22 @@ var BootVillageBus = function (afrimesh) {
     if (isString(name)) {
       name = villagebus.Name(name);
     }
+    //name.complete = function() { console.log("COMPLETE " + name.url); };
     name.success = function(response) {
       if (villagebus.Fail(response)) {
         return continuation(response, null);
       }
       return continuation(null, response);
     };
-    name.error   = function(response) {
+    name.error = function(response) {
+      console.error("VBUS.ERROR " + name.url + " " + response);
       return continuation(response, null);
     };
     return name;
   };
 
   villagebus.Send = function(name, args) {
+    //console.log("VBUS.SEND " + name.url);
     // TODO - if there is no continuation bound to name configure a
     //        sync JSON request via ajax-proxy.cgi
     if (args) {
@@ -138,6 +144,7 @@ var BootVillageBus = function (afrimesh) {
    * Check for a response of type: { 'error' : 'some message' }
    */
   villagebus.Fail = function(response) { 
+    //console.log("Is this an error: " + show(response) + response.hasOwnProperty("error"));
     return response.hasOwnProperty("error");
   };
 
@@ -398,26 +405,6 @@ var BootVillageBus = function (afrimesh) {
     return rpc_async(this.url(), command, [address, community, oids], f); 
   };
 
-
-  /** - villagebus.sys ---------------------------------------------------- */
-  villagebus.sys = function(address) {
-    return { uname : "", syslog : "", version : "" };
-  };
-  villagebus.sys.url = function(address) { 
-    if (address == afrimesh.settings.address) {
-      return "http://" + address + "/cgi-bin/village-bus/sys";
-    }
-    return afrimesh.villagebus.ajax_proxy() + "http://" + address + "/cgi-bin/village-bus/sys";
-  };
-  villagebus.sys.uname = function(address) { return villagebus.sys.uname.sync(address); };
-  villagebus.sys.uname.sync  = function(address)    { return rpc(villagebus.sys.url(address), "uname", []); };
-  villagebus.sys.uname.async = function(f, address) { return rpc_async(villagebus.sys.url(address), "uname", [], f); };  
-  villagebus.sys.version = function(address) { return villagebus.sys.version.sync(address); };
-  villagebus.sys.version.sync  = function(address)    { return rpc(villagebus.sys.url(address), "version", []); };
-  villagebus.sys.version.async = function(f, address) { return rpc_async(villagebus.sys.url(address), "version", [], f); };  
-  villagebus.sys.service = function(address, service, command)       { return villagebus.sys.service.sync(address, service, command); };
-  villagebus.sys.service.sync  = function(address, name, command)    { return rpc(villagebus.sys.url(address), "service", [ name, command ]); };
-  villagebus.sys.service.async = function(f, address, name, command) { return rpc_async(villagebus.sys.url(address), "service", [ name, command ], f); };  
 
   /** - villagebus.ipkg --------------------------------------------------- */
   villagebus.ipkg = function(address) {

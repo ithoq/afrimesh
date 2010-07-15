@@ -29,8 +29,50 @@ function BootSystem(parent) {
   /**
    *
    */
-  system.uname = function(address, continuation) {};
+  system.uname = function(address, continuation) {
+    //var name = afrimesh.villagebus.Name("//" + address + "/cgi-bin/villagebus/sys/uname");
+    var name = afrimesh.villagebus.Name("/@" + address + "/sys/uname");
+    name = afrimesh.villagebus.Bind(name, function(error, response) {
+        if (error) return continuation(error, null); // TODO - return Fail(error, continuation) maybe ?
+        return continuation(error, response);
+      });
+    name = afrimesh.villagebus.Send(name);
+    return name;
+  };
 
+  /**
+   *
+   */
+  system.version = function(address, continuation) {
+    var name = afrimesh.villagebus.Name("/@" + address + "/sys/version");
+    name = afrimesh.villagebus.Bind(name, function(error, response) {
+        if (error) return continuation(error, null); // TODO - return Fail(error, continuation) maybe ?
+        return continuation(error, response);
+      });
+    name = afrimesh.villagebus.Send(name);
+    return name;
+  };
+
+  /**
+   *
+   */
+  system.service = function(address, service, continuation, command) {
+    var name = afrimesh.villagebus.Name("/@" + address + "/sys/service/" + service);
+    name = afrimesh.villagebus.Bind(name, function(error, response) {
+        if (error) return continuation(error, null); // TODO - return Fail(error, continuation) maybe ?
+        return continuation(error, response);
+      });
+    name = afrimesh.villagebus.Send(name, { command : (command?command:"status") });
+    return name;
+  };
+  system.service.status = function(address, service, continuation) {
+    return system.service(address, service, continuation, "status");
+  };
+  system.service.reload = function(address, service, continuation) {
+    return system.service(address, service, continuation, "reload");
+  };
+
+  
   return system;
 };
 console.debug("loaded afrimesh.systemy.js");

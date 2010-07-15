@@ -87,7 +87,9 @@ int main(int argc, char** argv)
   config_init();
   db_init();
   package_init();
+#ifndef DISABLE_SNMP
   snmp_init();
+#endif
   sys_init();
   telephony_init();
   string* modules = (string*)send(VillageBus->modules, s_tojson, false);

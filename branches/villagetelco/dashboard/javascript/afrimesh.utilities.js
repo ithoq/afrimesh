@@ -61,6 +61,11 @@
         ((object.indexOf("http://") === 0) ||
          (object.indexOf("https://") === 0));
   };
+  function isNetworkAddress(object) { // TODO - really cheap hack
+    var ret = isString(object) && (object.split(".").length > 1);
+    console.log("isNetworkAddress: " + object.split(".") + " " + ret);
+    return ret;
+  };
   function type(object) {
     if (isArray(object)) {
       return "Array";

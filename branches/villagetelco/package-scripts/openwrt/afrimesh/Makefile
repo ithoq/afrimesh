@@ -57,7 +57,7 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_SOURCE_SUBDIR)
 
 # build flags
 PKG_EXTRA_CFLAGS= \
-  -DAFRIMESH_VERSION="\"$(VERSION)\"" \
+	-DAFRIMESH_VERSION="\"$(VERSION)\""\
 	-DDISABLE_LOG                 \
 	-D_METAPACK                   \
 	-DOPENWRT                     \
@@ -81,13 +81,11 @@ MAKE_VILLAGEBUS_ARGS += \
 #PKG_BUILD_DEPENDS=+credis
 
 # - afrimesh-base ------------------------------------------------------------
-#+mini-httpd +libnetsnmp
 include $(INCLUDE_DIR)/package.mk
-
 define Package/afrimesh-base
 	SECTION:=admin
 	CATEGORY:=Administration
-	DEPENDS:=+busybox +libuci +libjson +credis +ntpclient
+	DEPENDS:=+busybox +libuci +libjson +credis +ntpclient +mini-httpd
 	TITLE:=Easy management for wireless community mesh networks
 	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
 	#$(call Config,afrimesh.location.latitude,string,-25.7481182,Router Latitude)

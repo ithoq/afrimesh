@@ -157,8 +157,9 @@ const fexp* sys_service(closure* c, sys* self, const fexp* message)
   argv[1] = command;
   argv[2] = 0;
 
-  // TODO - only support reload until we have some level of security in the system
-  if (strncasecmp(command, "reload", 6) == 0) {
+  // TODO - only support status&reload until we have some level of security in the system
+  if ((strncasecmp(command, "reload", 6) == 0) || 
+      (strncasecmp(command, "status", 6) == 0)) {
     return exec(argv[0], argv);
   } 
 
@@ -334,7 +335,7 @@ const string* sys_version(closure* c, sys* self, const fexp* message)
   object* reply = (object*)fexp_nil;
   wprintl(L"GET /sys/version\n");
 #ifdef AFRIMESH_VERSION
-  reply = send(String, s_new, AFRIMESH_VERSION, wcslen(AFRIMESH_VERSION));
+  reply = send(String, s_string_fromchar, AFRIMESH_VERSION, strlen(AFRIMESH_VERSION));
 #else
   reply = send(String, s_new, L"r?-unknown", wcslen(L"r?-unknown"));
 #endif

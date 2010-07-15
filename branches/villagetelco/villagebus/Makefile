@@ -54,7 +54,7 @@ endif
 CC=gcc 
 INCLUDES+=-I. -I.. -I../common -I modules -I$(DEPROOT)/include 
 DEFINES+=
-CFLAGS+=-O0 -g $(DEFINES) -DAFRIMESH_VERSION="L\"$(VERSION)\"" 
+CFLAGS+=-g $(DEFINES) -DAFRIMESH_VERSION="\"$(VERSION)\"" 
 # -std=c99
 LDFLAGS+=-L$(DEPROOT)/lib $(modulelibs) $(DEPROOT)/lib/libjson.a
 

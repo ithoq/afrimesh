@@ -78,6 +78,7 @@
     //$("div#network-devices .filter label").addClass("shadow");
     $("div#network-devices .filter input[type=checkbox]").each(function(e) { return $(this).click(); });
 
+
     /* load data */   
     $("#device-template").hide(); // TODO - No comment. File jquery bug.
     afrimesh.network.info(function(error, address, device) {
@@ -131,7 +132,7 @@
                                 borderWidth : 1.0,
                                 labelMargin : 0.0,
                                 axisMargin  : 0.0  } });
-          }, { start : 0, end : 47 });
+          }, { start : 0, end : 47 }); 
       });
 
     return unload;

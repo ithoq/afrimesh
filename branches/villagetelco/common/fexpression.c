@@ -182,14 +182,6 @@ object* string_fromwchar(closure* c, string* self, const wchar_t* format, ...)
 
 // TODO - make it take a format string as above and onstruct using vasprintf
 object* string_fromchar(closure* c, string *self, const char* s, size_t length) {
-  /*  va_list args;
-  va_start(args, query);
-  char* final_query;
-  if ((vasprintf(&final_query, query, args) == -1) || final_query == NULL) {
-      printf("\t{\n\t\terror : \"Could not build query '%s'\"\n\t}\n", query);
-      return -1;    
-  }
-  va_end(args);  */
   if (length > strlen(s)) return (object*)fexp_nil; 
   string *clone = (string*)send(self->_vt[-1], s_allocate, sizeof(string));
   clone->length = length;
@@ -324,8 +316,6 @@ fexp* fexp_cons(closure* c, fexp* self, object* car)
 
 fexp* fexp_last(closure* c, fexp* self)
 {
-  //return (self->cdr == fexp_nil) ? self->car : fexp_last(closure, self->cdr);
-  //printf("nil(%p) - self(%p) - self->cdr(%p)\n", fexp_nil, self, self->cdr);
   return ((fexp*)self->cdr == fexp_nil) ? self : (fexp*)send(self->cdr, s_fexp_last);
 }
 

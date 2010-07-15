@@ -141,7 +141,7 @@ const char* cgi_decode(const char* request, size_t length)
       break;
     }
   }
-  //printl("DECODED REQUEST: %s\n\n", buffer);
+  //wprintl(L"DECODED REQUEST: %s\n\n", buffer);
   return buffer;
 }
 
@@ -311,15 +311,15 @@ const Request* cgi_request(int argc, char** argv)
   script_filename = getenv("SCRIPT_FILENAME");
   path_info       = getenv("PATH_INFO");
   path_translated = getenv("PATH_TRANSLATED");
-  if (request_uri)     printl("    REQUEST_URI: %s\n", request_uri);
-  if (script_name)     printl("    SCRIPT_NAME: %s\n", script_name);
-  if (script_filename) printl("SCRIPT_FILENAME: %s\n", script_filename);
-  if (path_info)       printl("      PATH_INFO: %s\n", path_info);
-  if (path_translated) printl("PATH_TRANSLATED: %s\n", path_translated);
-  if (request_method)  printl(" REQUEST_METHOD: %s\n", request_method);
-  if (content_type)    printl("   CONTENT_TYPE: %s\n", content_type);
-  if (content_length)  printl(" CONTENT_LENGTH: %s\n", content_length);
-  if (query_string)    printl("   QUERY_STRING: %s\n", query_string); 
+  if (request_uri)     wprintl(L"    REQUEST_URI: %s\n", request_uri);
+  if (script_name)     wprintl(L"    SCRIPT_NAME: %s\n", script_name);
+  if (script_filename) wprintl(L"SCRIPT_FILENAME: %s\n", script_filename);
+  if (path_info)       wprintl(L"      PATH_INFO: %s\n", path_info);
+  if (path_translated) wprintl(L"PATH_TRANSLATED: %s\n", path_translated);
+  if (request_method)  wprintl(L" REQUEST_METHOD: %s\n", request_method);
+  if (content_type)    wprintl(L"   CONTENT_TYPE: %s\n", content_type);
+  if (content_length)  wprintl(L" CONTENT_LENGTH: %s\n", content_length);
+  if (query_string)    wprintl(L"   QUERY_STRING: %s\n", query_string); 
 
   /* parse request - Method */
   if (request_method == NULL && argc >= 1 && argv[1]) { // command line
@@ -327,7 +327,7 @@ const Request* cgi_request(int argc, char** argv)
   } 
   request->method = string_to_symbol(request_method, Methods);
   if (request->method == SYMBOL_UNKNOWN) {
-    printl("METHOD NOT FOUND!\n");
+    wprintl(L"METHOD NOT FOUND!\n");
     // TODO - fail nicely
   }
 
