@@ -150,7 +150,10 @@ const fexp* config_put(closure* c, config* self, const fexp* message, const unsi
   // clean up
   json_object_put(items);
 
-  return (fexp*)message;
+  // tag reply as JSON
+  message = (fexp*)send(message, s_fexp_cons, s_villagebus_json);  
+
+  return message;
 }
 
 

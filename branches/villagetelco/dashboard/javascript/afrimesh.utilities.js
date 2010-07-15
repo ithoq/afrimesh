@@ -102,6 +102,16 @@
     return object_1;
   };
 
+
+  /**
+   * { href, hostname, pathname }
+   */
+  function parseURL(url) {
+    var a = document.createElement("a");
+    a.href = url;
+    return a;
+  };
+
   
   /** - Query object graphs using simple selectors ------------------------ */
   var regex_nested_selector = new RegExp(/\([\w_\|\@\-\[\]]+\)|[\|\w\@\-\[\]]+/g);  // a|(nested|selector)|pattern -> (nested|selector)

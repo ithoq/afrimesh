@@ -53,23 +53,28 @@ function BootDevice(parent) {
    * Access device configuration
    * DIRECT
    */
-  device.configuration = function(address, key, continuation, value) {
+  device.configuration = function(address, key, continuation) {
     var name = afrimesh.villagebus.Name("/@" + address + "/config/" + key);
     name = afrimesh.villagebus.Bind(name, function(error, response) {
         if (error) return continuation(error, null); // TODO - return Fail(error, continuation) maybe ?
         return continuation(error, response);
       });
-    if (value) {
-      name = afrimesh.villagebus.PUT(name, value);
-    } else {
-      name = afrimesh.villagebus.GET(name);
-    }
+    name = afrimesh.villagebus.GET(name);
+    return name;
+  };
+  device.configuration.set = function(address, entries, continuation) {
+    var name = afrimesh.villagebus.Name("/@" + address + "/config");
+    name = afrimesh.villagebus.Bind(name, function(error, response) {
+        if (error) return continuation(error, null); // TODO - return Fail(error, continuation) maybe ?
+        return continuation(error, response);
+      });
+    name = afrimesh.villagebus.PUT(name, entries);
     return name;
   };
 
 
   /**
-   * Return device uname
+   * Return OS uname for device
    * DIRECT
    */
   device.uname = function(address, continuation) {
@@ -109,9 +114,6 @@ function BootDevice(parent) {
       });
     name = afrimesh.villagebus.GET(name, { command : (command?command:"status") });
     return name;
-  };
-  device.service.status = function(address, service, continuation) {
-    return device.service(address, service, continuation, "status");
   };
   device.service.reload = function(address, service, continuation) {
     // TODO - think a bit about GET/PUT/POST semantics for various service commands

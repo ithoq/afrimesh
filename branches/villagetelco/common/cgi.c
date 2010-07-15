@@ -406,6 +406,7 @@ const Request* cgi_request(int argc, char** argv)
       }
     }    
     request->data = cgi_post_buffer;
+    if (request->data) wprintl(L"   CONTENT_DATA: %s\n", request->data);
   }
 
   return request;

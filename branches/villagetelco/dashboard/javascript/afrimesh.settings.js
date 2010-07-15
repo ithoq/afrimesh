@@ -106,6 +106,17 @@ function BootSettings(parent, address) {
       return false;
     }
     Qset(parent, selector, value);                         // apply to local settings object
+
+    afrimesh.device.configuration.set(address, [{ 
+      config  : remote[0],
+      section : remote[1],
+      option  : remote[2],
+      value   : value }], function(error, response) {
+        if (error) { return console.error("Could not save configuration: " + error); }
+        console.debug("PUT /config " + address + "/" + afrimesh2uci[selector].remote + ", " + value + ") -> " + response);
+      });
+
+/*
     parent.villagebus.uci.set.async(function (response) {  // apply to remote UCI
         console.debug("afrimesh.settings.save(uci://" + address + "/" + afrimesh2uci[selector].remote + ", " + value + ") -> " + response);
       },
@@ -114,34 +125,40 @@ function BootSettings(parent, address) {
           section : remote[1], 
           option  : remote[2], 
           value   : value }    ]);
+*/
+
     return true;
   };
 
 
   /** - apply persistent settings ------------------------------------------ */
+  //parent.device.configuration(address, "*", function(error, config) {
+  //if (error) { return console.error("Could not load config: " + error); }
   var load_remote = function() {
-    var config = parent.villagebus.uci.get.sync(address, "");
-    parent.settings.uci_config = config;
-    //console.debug("REMOTE CONFIG: \n" + rshow(config));
-    for (var local in afrimesh2uci) {
-      var value = "";
-      try { 
-        value = (afrimesh2uci[local] ? Q(config, afrimesh2uci[local].remote, "config") : ""); 
-      } catch (e) { 
-        console.error("Failed to load configuration item: " + e);
+      var config = parent.villagebus.uci.get.sync(address, "");  
+      parent.settings.uci_config = config;
+      //console.debug("REMOTE CONFIG: \n" + rshow(config));
+      for (var local in afrimesh2uci) {
+        var value = "";
+        try { 
+          value = (afrimesh2uci[local] ? Q(config, afrimesh2uci[local].remote, "config") : ""); 
+        } catch (e) { 
+          console.error("Failed to load configuration item: " + e);
+        }
+        if (value) {
+          Qset(parent, local, value);
+        } else {
+          Qset(parent, local, afrimesh2uci[local].init);
+          //console.debug ("Missing configuration entry '" + local + "'; reverting to default: " + afrimesh2uci[local].init);
+        }
       }
-      if (value) {
-        Qset(parent, local, value);
-      } else {
-        Qset(parent, local, afrimesh2uci[local].init);
-        //console.debug ("Missing configuration entry '" + local + "'; reverting to default: " + afrimesh2uci[local].init);
+      for (var setting in parent.settings) {
+        settings[setting] = parent.settings[setting];
       }
-    }
-    for (var setting in parent.settings) {
-      settings[setting] = parent.settings[setting];
-    }
-  };
-  load_remote();
+
+  }; load_remote();
+    //});
+  
 
   /* TODO - cleanup this evilness to deal w/ hosting OpenLayers elsewhere in order to save space */
   settings.map.openlayers_url = "http://" + settings.map.server + "/openlayers/";

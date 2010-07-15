@@ -93,12 +93,13 @@ var BootVillageBus = function (afrimesh) {
     //name.complete = function() { console.log("COMPLETE " + name.url); };
     name.success = function(response) {
       if (villagebus.Fail(response)) {
-        return continuation(response, null);
+        console.error("VBUS.FAIL " + response.error + " " + name.url);
+        return continuation(response.error, null);
       }
       return continuation(null, response);
     };
     name.error = function(response) {
-      console.error("VBUS.ERROR " + name.url + " " + response);
+      console.error("VBUS.XHR-ERROR " + response + " " + name.url);
       return continuation(response, null);
     };
     return name;
@@ -127,18 +128,40 @@ var BootVillageBus = function (afrimesh) {
     name.type = "GET";
     return villagebus.Send(name, args);
   };
-  
+
   villagebus.PUT = function(name, data, args) {
+    name      = jsonp_to_json(name, data);
     name.type = "PUT";
-    name.data = data;
     return villagebus.Send(name, args);
   };
 
   villagebus.POST = function(name, data, args) {
+    name      = jsonp_to_json(name, data);
     name.type = "POST";
-    name.data = data;
     return villagebus.Send(name, args);
   };
+
+  // jsonp does not support POST so we need to adjust our strategy to use JSON 
+  function jsonp_to_json(name, data) {
+    name.data     = JSON.stringify(data);
+    name.dataType = "text";
+    var success = name.success; 
+    name.success = function(response) {
+      try {
+        function jsonp(payload) { // handle the jsonp reply
+          return success(payload);      // call original success fn
+        };
+        eval(response); // evaluates jsonp reply and calls ^^^^^^^
+      } catch (fail) { 
+        return success({ error : fail }); // call original success fn
+      }
+    };
+    if (parseURL(name.url).hostname != afrimesh.settings.address) {
+      name.url = afrimesh.villagebus.ajax_proxy() + name.url;
+    }
+    return name;
+  };
+
 
 
   /**
