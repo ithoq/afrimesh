@@ -98,7 +98,7 @@ void vwprintl(const wchar_t* message, va_list ap)
 
 void log_release() 
 {
-  printl("============================================================\n\n");
+  wprintl(L"============================================================\n\n");
   if (log_file != NULL) {
     fclose(log_file);
   }
@@ -206,7 +206,7 @@ char* path_exists(const char* name)
   }
   
   /* if it is an absolute or relative path, just check it  */
-  if (strchr(name, '/') && access(path, F_OK) == 0) {
+  if (strchr(name, '/') && access(name, F_OK) == 0) {
     return strdup(name); // caller is responsible for free()ing memory
   }
   
