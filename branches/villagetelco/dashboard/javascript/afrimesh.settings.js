@@ -95,17 +95,8 @@ function BootSettings(parent, address) {
   };
   settings.address = address;
 
-  /** - utility functions ------------------------------------------------- */
-  settings.load = function(local, remote, key) {
-    console.debug("local: " + local + " - key: " + key);
-    if (local && remote && remote[key]) {
-      local[key] = remote[key];
-    } else {
-      console.warn("afrimesh.settings.load: " + address + " has no value for '" + key + "'");
-    }
-    return 0;
-  };
 
+  /** - functions on selectors -------------------------------------------- */
   settings.save = function(selector, value) {
     console.debug("Saving: " + selector + " = " + value);
     var remote = Qsplit(parent.settings.uci_config, afrimesh2uci[selector].remote);

@@ -163,7 +163,7 @@ const fexp* config_get(closure* c, config* self, const fexp* message)
                           //        Being profoundly and fundamentally document-orientated 
                           //        HTTP error handling does not support streamed data so much. 
                           //        Which kinda sucks totally.
-  int n = uci_show(self->context, query); // TODO - I have no idea if this is going to work either
+  int n = uci_show(self->context, (strchr(query, '*') ? NULL : query)); // TODO - some decent error handling inside there...
   whttpd_out(L")\n");
   free(query);
   
