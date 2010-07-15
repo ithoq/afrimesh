@@ -104,8 +104,8 @@ var BootVillageBus = function (afrimesh) {
     return name;
   };
 
-  villagebus.GET = function(name, args) {
-    //console.log("VBUS.SEND " + name.url);
+  villagebus.Send = function(name, args) {
+    //console.log("VBUS." + name.type + " " + name.url);
     // TODO - if there is no continuation bound to name configure a
     //        sync JSON request via ajax-proxy.cgi
     if (args) {
@@ -122,11 +122,22 @@ var BootVillageBus = function (afrimesh) {
     name._xhr_ = $.ajax(name);
     return name;
   };
+
+  villagebus.GET = function(name, args) {
+    name.type = "GET";
+    return villagebus.Send(name, args);
+  };
   
   villagebus.PUT = function(name, data, args) {
+    name.type = "PUT";
+    name.data = data;
+    return villagebus.Send(name, args);
   };
 
   villagebus.POST = function(name, data, args) {
+    name.type = "POST";
+    name.data = data;
+    return villagebus.Send(name, args);
   };
 
 
