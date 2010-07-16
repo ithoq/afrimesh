@@ -106,7 +106,7 @@ var BootVillageBus = function (afrimesh) {
   };
 
   villagebus.Send = function(name, args) {
-    //console.log("VBUS." + name.type + " " + name.url);
+    console.log("VBUS." + name.type + " " + name.url);
     // TODO - if there is no continuation bound to name configure a
     //        sync JSON request via ajax-proxy.cgi
     if (args) {

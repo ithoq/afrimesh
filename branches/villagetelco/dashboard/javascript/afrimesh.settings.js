@@ -98,9 +98,9 @@ function BootSettings(parent, address) {
 
   /** - functions on selectors -------------------------------------------- */
   settings.save = function(selector, value) {
-    console.debug("Saving: " + selector + " = " + value);
+    //console.debug("Saving: " + selector + " = " + value);
     var remote = Qsplit(parent.settings.uci_config, afrimesh2uci[selector].remote);
-    console.debug("Remote: " + afrimesh2uci[selector].remote + " = " + remote);
+    //console.debug("Remote: " + afrimesh2uci[selector].remote + " = " + remote);
     if (remote.length != 3) { 
       console.error("afrimesh.settings: '" + selector + "' has invalid remote selector '" + afrimesh2uci[selector].remote + "'");
       return false;
@@ -113,19 +113,8 @@ function BootSettings(parent, address) {
       option  : remote[2],
       value   : value }], function(error, response) {
         if (error) { return console.error("Could not save configuration: " + error); }
-        console.debug("PUT /config " + address + "/" + afrimesh2uci[selector].remote + ", " + value + ") -> " + response);
+        console.debug("PUT /" + address + "/config/" + afrimesh2uci[selector].remote + " " + value + " -> " + show(response));
       });
-
-/*
-    parent.villagebus.uci.set.async(function (response) {  // apply to remote UCI
-        console.debug("afrimesh.settings.save(uci://" + address + "/" + afrimesh2uci[selector].remote + ", " + value + ") -> " + response);
-      },
-      address, 
-      [ { config  : remote[0], 
-          section : remote[1], 
-          option  : remote[2], 
-          value   : value }    ]);
-*/
 
     return true;
   };
