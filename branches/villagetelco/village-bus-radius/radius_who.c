@@ -42,7 +42,7 @@ void radius_who()
   FILE* radutmp_file;
   radutmp_file = fopen(radutmp_filename, "r");
   if (radutmp_file == NULL) {
-    printf("\t{\n\t\terror : \"%s\"\n\t}\n", strerror(errno));
+    printf("\t{\n\t\t\"error\" : \"%s\"\n\t}\n", strerror(errno));
     return;
   }
 
@@ -57,38 +57,38 @@ void radius_who()
     printf("\n\t{\n");
     switch (rt.type) {
     case P_IDLE: 
-      printf("\t\ttype              : \"idle\",\n");
+      printf("\t\t\"type\"              : \"idle\",\n");
       break;
     case P_LOGIN: 
-      printf("\t\ttype              : \"login\",\n");
+      printf("\t\t\"type\"              : \"login\",\n");
       break;
     default: 
-      printf("\t\ttype              : \"unknown\",\n");
+      printf("\t\t\"type\"              : \"unknown\",\n");
     }
-    printf("\t\tusername          : \"%s\",\n", rt.login);
+    printf("\t\t\"username\"          : \"%s\",\n", rt.login);
     strncpy(buf, rt.session_id, 8); buf[8] = '\0';
-    printf("\t\tsession_id        : \"%s\",\n", buf);
-    printf("\t\tnas_address       : \"%s\",\n", inet_ntop(AF_INET, &rt.nas_address, buf, sizeof(buf)));
-    printf("\t\tnas_port          : %d,\n", rt.nas_port);
+    printf("\t\t\"session_id\"        : \"%s\",\n", buf);
+    printf("\t\t\"nas_address\"       : \"%s\",\n", inet_ntop(AF_INET, &rt.nas_address, buf, sizeof(buf)));
+    printf("\t\t\"nas_port\"          : %d,\n", rt.nas_port);
     switch (rt.proto) {
     case 'S': 
-      printf("\t\tservice_type      : \"Framed-User\",\n");
-      printf("\t\tframed_protocol   : \"SLIP\",\n");
+      printf("\t\t\"service_type\"      : \"Framed-User\",\n");
+      printf("\t\t\"framed_protocol\"   : \"SLIP\",\n");
       break;
     case 'P': 
-      printf("\t\tservice_type      : \"Framed-User\",\n");
-      printf("\t\tframed_protocol   : \"PPP\",\n");
+      printf("\t\t\"service_type\"      : \"Framed-User\",\n");
+      printf("\t\t\"framed_protocol\"   : \"PPP\",\n");
       break;
     default: 
-      printf("\t\tservice_type      : \"Login-User\",\n");
+      printf("\t\t\"service_type\"      : \"Login-User\",\n");
       break;
     }
-    printf("\t\tframed_address : \"%s\",\n", inet_ntop(AF_INET, &rt.framed_address, buf, sizeof(buf)));
+    printf("\t\t\"framed_address\" : \"%s\",\n", inet_ntop(AF_INET, &rt.framed_address, buf, sizeof(buf)));
     time_t now = 0;
     now = time(NULL);
-    printf("\t\tsession_time : %d,\n", (unsigned int)(now - rt.time));
+    printf("\t\t\"session_time\" : %d,\n", (unsigned int)(now - rt.time));
     strncpy(buf, rt.caller_id, 16); buf[16] = '\0';
-    printf("\t\tcaller_id   : \"%s\"\n", buf);
+    printf("\t\t\"caller_id\"   : \"%s\"\n", buf);
 
     printf("\t}");
   }

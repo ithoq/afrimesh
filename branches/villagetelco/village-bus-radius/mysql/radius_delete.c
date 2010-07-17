@@ -44,7 +44,7 @@ void radius_delete_mysql(const char* username)
   count = mysql_affected_rows(connection);
 
   /* output result */
-  printf("\t{ count : %d }\n", count); 
+  printf("\t{ \"count\" : %d }\n", count); 
 
   /* close connection */
   if (connection != NULL) {
