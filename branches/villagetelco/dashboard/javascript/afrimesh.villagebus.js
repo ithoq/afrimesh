@@ -163,7 +163,6 @@ var BootVillageBus = function (afrimesh) {
   };
 
 
-
   /**
    * Intended semantics is that calling Read() on an async request will 
    * block until call returns. In practice, there's no way to block on 
