@@ -78,11 +78,12 @@ var BootVillageBus = function (afrimesh) {
       //contentType : "application/x-javascript",
       dataType    : "jsonp",
       context     : document.body,
-      success     : function(response) { }, // TODO - default sync handler
-      error       : function(response) { }, // TODO - default sync handler
+      success     : function(response) { return response; }, // TODO - default sync handler
+      error       : function(response) { return response; }, // TODO - default sync handler
       complete    : function() { },
       beforeSend  : function() { }
     };
+    name.continuations = [];
     return name;
   };
   
@@ -90,6 +91,7 @@ var BootVillageBus = function (afrimesh) {
     if (isString(name)) {
       name = villagebus.Name(name);
     }
+    name.continuations.push(continuation);
     //name.complete = function() { console.log("COMPLETE " + name.url); };
     name.success = function(response) {
       if (villagebus.Fail(response)) {
@@ -107,8 +109,14 @@ var BootVillageBus = function (afrimesh) {
 
   villagebus.Send = function(name, args) {
     console.log("VBUS." + name.type + " " + name.url);
-    // TODO - if there is no continuation bound to name configure a
-    //        sync JSON request via ajax-proxy.cgi
+    // TODO - if there are no continuations bound to name configure a
+    //        sync JSON request so that we can block on read.
+    if (name.continuations.length == 0) {
+      console.log("No continuations registered. Converting to sync JSON call");
+      name = jsonp_to_json(name, args);
+      name.async = false;
+      return name;
+    }
     if (args) {
       var search = "?";
       for (var arg in args) {
@@ -143,13 +151,16 @@ var BootVillageBus = function (afrimesh) {
 
   // jsonp does not support POST so we need to adjust our strategy to use JSON 
   function jsonp_to_json(name, data) {
-    name.data     = JSON.stringify(data);
+    if (data) {
+      name.data     = JSON.stringify(data);
+    } 
     name.dataType = "text";
     var success = name.success; 
     name.success = function(response) {
       try {
         function jsonp(payload) { // handle the jsonp reply
-          return success(payload);      // call original success fn
+          name._payload_ = payload;
+          return success(payload);
         };
         eval(response); // evaluates jsonp reply and calls ^^^^^^^
       } catch (fail) { 
@@ -167,19 +178,19 @@ var BootVillageBus = function (afrimesh) {
    * Intended semantics is that calling Read() on an async request will 
    * block until call returns. In practice, there's no way to block on 
    * an async request w/ Browser JS. :-/
+   *
+   * What we're doing at the moment is to reconfigure the request as a
+   * sync JSON call (via ajax-proxy as needed)
+   *
    * Best bet would prob. be to use Web Workers to manage XHR execution. 
    * WebKit and Gecko both support so mayhap 'tis time to just do it.
    *
    *   See: http://caniuse.com/#feat=webworkers
    *        http://html5test.com
-   *
-   * For sync requests, just fire the request & return response
    */
   villagebus.Read = function(name) {
-    if (!name.async) {
-      return $.ajax(name); // or somesuch
-    }
-    return name;
+    name._xhr_ = $.ajax(name);
+    return name._payload_;
   };
   
   /**
@@ -533,7 +544,7 @@ var BootVillageBus = function (afrimesh) {
         async       : request.async,
         data        : JSON.stringify(request.request),
         error       : (request.error ? request.error : function () {
-            console.error("JSON error");
+            console.error("JSON error for: " + request.url);
             console.error("url : "  + request.url);
             console.error("data : " + JSON.stringify(request.request));
           }),
