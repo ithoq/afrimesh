@@ -48,14 +48,14 @@ void radius_modify_mysql(const char* username, const char* new_username, const c
   /* update user information */
   if (new_username) {
     if (mysql(&connection, "UPDATE radcheck SET username='%s' WHERE username='%s'", new_username, username) != 0) {
-      printf("{ error : \"Failed to update username\" }");
+      printf("{ \"error\" : \"Failed to update username\" }");
       return;
     }
     username = new_username;
   }
   if (new_password) {
     if (mysql(&connection, "UPDATE radcheck SET value='%s' WHERE username='%s' AND attribute='ClearText-Password'", new_password, username) != 0) {
-      printf("{ error : \"Failed to update password\" }");
+      printf("{ \"error\" : \"Failed to update password\" }");
       return;
     }
   }
@@ -67,7 +67,7 @@ void radius_modify_mysql(const char* username, const char* new_username, const c
   if (connection) {
     count = mysql_affected_rows(connection);
   }
-  printf("\t{ count : %d }\n", count); 
+  printf("\t{ \"count\" : %d }\n", count); 
 
   /* close connection */
   if (connection) {

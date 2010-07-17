@@ -45,7 +45,7 @@ int check_username(const char* username)
   }
   result = mysql_use_result(connection);
   if ((row = mysql_fetch_row(result)) == NULL) {
-    printf("\t{\n\t\terror : \"Could not perform username check\"\n\t}\n");
+    printf("\t{\n\t\t\"error\" : \"Could not perform username check\"\n\t}\n");
     return -1;
   }
   count = atoi(row[0]);
@@ -53,7 +53,7 @@ int check_username(const char* username)
     mysql_free_result(result);
   }
   if (count != 0) {
-    printf("\t{\n\t\terror : \"The username '%s' already exists\"\n\t}\n", username);
+    printf("\t{\n\t\t\"error\" : \"The username '%s' already exists\"\n\t}\n", username);
     return -1;
   }
 
@@ -79,7 +79,7 @@ int generate_username(char** ret, size_t n, const char* base)
   }
   result = mysql_use_result(connection);
   if ((row = mysql_fetch_row(result)) == NULL) {
-    printf("\t{\n\t\terror : \"Could not perform basename check\"\n\t}\n");
+    printf("\t{\n\t\t\"error\" : \"Could not perform basename check\"\n\t}\n");
     return - 1;
   }
   base_count = atoi(row[0]);
@@ -159,8 +159,8 @@ void radius_new_mysql(const char* username, const char* type, int seconds)
 
   /* output result */
   printf("\t{\n");
-  printf("\t\tusername : \"%s\",\n", username);
-  printf("\t\tpassword : \"%s\"\n", password);
+  printf("\t\t\"username\" : \"%s\",\n", username);
+  printf("\t\t\"password\" : \"%s\"\n", password);
   printf("\t}\n");
 
   /* close connection */
