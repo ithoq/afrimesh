@@ -73,7 +73,7 @@ int main(int argv, char** argc)
     log_message("NULL request\n");if (UCI_CONTEXT == NULL) {
     return NULL;
   }
-    printf("[\n\t{ error: \"NULL request\" }\n]\n");
+    printf("[\n\t{ \"error\" : \"NULL request\" }\n]\n");
     json_cgi_release();
     return EXIT_FAILURE;
   } 
@@ -83,14 +83,14 @@ int main(int argv, char** argc)
     return NULL;
   }
     log_message("Could not parse request: %s\n", request);
-    printf("[\n\t{ error: \"Could not parse request: %s\" }\n]\n", request);
+    printf("[\n\t{ \"error\" : \"Could not parse request: %s\" }\n]\n", request);
     json_cgi_release();
     return EXIT_FAILURE;
   }
   char* command = json_object_get_string(json_object_object_get(request_object, "command"));
 
   /* execute request command */
-  printf("[\n");
+  printf("[");
   if (strncasecmp("who", command, 3) == 0) {
     radius_who(); 
 
@@ -131,7 +131,7 @@ int main(int argv, char** argc)
     }
 
   } else {
-    printf("{ error: \"unknown command\" }");
+    printf("{ \"error\" : \"unknown command\" }");
   }
   printf("\n]\n");
 
@@ -156,7 +156,7 @@ int main(int argv, char** argc)
 int mysql(MYSQL** connection, const char* query, ...)
 {
   if (query == NULL) {
-    printf("\t{\n\t\terror : \"Cannot perform null query\"\n\t}\n");
+    printf("\t{\n\t\t\"error\" : \"Cannot perform null query\"\n\t}\n");
     return -1;
   }
 
@@ -171,7 +171,7 @@ int mysql(MYSQL** connection, const char* query, ...)
       char* message = mysql_error(*connection);
       log_message("Failed to connect to mysql server: %s\n", radius_mysql_server);
       log_message("Message was: %s\n", message);
-      printf("\t{\n\t\terror : \"%s\"\n\t}\n", message);
+      printf("\t{\n\t\t\"error\" : \"%s\"\n\t}\n", message);
       return -1;
     }
   }
@@ -181,7 +181,7 @@ int mysql(MYSQL** connection, const char* query, ...)
   va_start(args, query);
   char* final_query;
   if ((vasprintf(&final_query, query, args) == -1) || final_query == NULL) {
-      printf("\t{\n\t\terror : \"Could not build query '%s'\"\n\t}\n", query);
+      printf("\t{\n\t\t\"error\" : \"Could not build query '%s'\"\n\t}\n", query);
       return -1;    
   }
   va_end(args);
@@ -191,7 +191,7 @@ int mysql(MYSQL** connection, const char* query, ...)
     char* message = mysql_error(*connection);
     log_message("Error executing mysql query: %s\n", final_query);
     log_message("Message was: %s\n", message);
-    printf("\t{\n\t\terror : \"%s\"\n\t}\n", message);
+    printf("\t{\n\t\t\"error\" : \"%s\"\n\t}\n", message);
     return -1;
   } 
   free(final_query);

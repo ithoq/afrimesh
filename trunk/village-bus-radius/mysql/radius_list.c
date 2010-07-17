@@ -35,12 +35,12 @@
 void print_customer(const char* username, const char* cleartext_password, const char* max_prepaid_session)
 {
   printf("{ ");
-  printf("username : \"%s\", ", username);
+  printf("\"username\" : \"%s\", ", username);
   if (max_prepaid_session) {
-    printf("type : \"prepaid\", ");
-    printf("seconds : %s", max_prepaid_session);
+    printf("\"type\" : \"prepaid\", ");
+    printf("\"seconds\" : %s", max_prepaid_session);
   } else {
-    printf("type : \"flatrate\"");
+    printf("\"type\" : \"flatrate\"");
   }
   printf(" }");
 }
