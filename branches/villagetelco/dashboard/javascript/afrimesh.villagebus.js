@@ -264,29 +264,6 @@ var BootVillageBus = function (afrimesh) {
         async   : false });
   };
 
-  /** - villagebus.geolocation ------------------------------------------- */
-  villagebus.geolocation = function (address, f) {
-    // TODO - cheap'n'very nasty hack for demos - remove before 1.0 release.
-    if (afrimesh.settings.network.mesh.vis_server == demo_server) {
-      address = afrimesh.settings.network.mesh.vis_server + afrimesh.settings.ajax_proxy + "http://" + address;
-    } 
-    villagebus.uci.get.async(function (config) {
-        f(config.afrimesh.location.longitude, config.afrimesh.location.latitude);
-      }, address, "afrimesh.location");
-  };
-  villagebus.geolocation.set = function (address, longitude, latitude, f) {
-    /* - invariably folk will think that the demo dashboard is their network and try to change
-         it! So disable setting of node positions.
-    if (afrimesh.settings.network.mesh.vis_server == demo_server) {
-      address = afrimesh.settings.network.mesh.vis_server + afrimesh.settings.ajax_proxy + "http://" + address;
-    } */
-    afrimesh.villagebus.uci.set.async(function (response) {
-        f("success");
-      }, address, 
-      [ { config: "afrimesh", section: "location", option: "longitude", value: longitude.toString() }, 
-        { config: "afrimesh", section: "location", option: "latitude",  value: latitude.toString()  } ]);
-  };
-  
 
   /** - villagebus.acct -------------------------------------------------- */
   villagebus.acct = { }; 

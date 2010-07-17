@@ -128,7 +128,7 @@ function BootSettings(parent, address) {
     //
     // We're going to access VillageBus directly to be able to perform
     // this call synchronously so that we can block further initialization
-    // until it is complete.
+    // until it has completed.
     var name = parent.villagebus.Name("/@" + address + "/config/*");
     name = parent.villagebus.GET(name);
     var config = parent.villagebus.Read(name)[0];

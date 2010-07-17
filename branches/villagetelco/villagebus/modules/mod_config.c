@@ -162,10 +162,11 @@ const fexp* config_get(closure* c, config* self, const fexp* message)
   string* s     = (string*)send(message, s_fexp_join, self->delimiter);  // generate a key from message
   char*   query = (char*)send(s, s_string_tochar); // TODO - uci not support UNICODE so much
 
-  whttpd_out(L"jsonp(");  // TODO - This may be memory efficient, but it's not particularly pretty.
-                          //        Being profoundly and fundamentally document-orientated 
-                          //        HTTP error handling does not support streamed data so much. 
-                          //        Which kinda sucks totally.
+  // TODO - This may be memory efficient, but it's not particularly pretty.
+  //        Being profoundly and fundamentally document-orientated 
+  //        HTTP error handling does not support streamed data so much. 
+  //        Which kinda sucks totally.
+  whttpd_out(L"%S(", VillageBus->request->callback);  
   int n = uci_show(self->context, (strchr(query, '*') ? NULL : query)); // TODO - some decent error handling inside there...
   whttpd_out(L")\n");
   free(query);

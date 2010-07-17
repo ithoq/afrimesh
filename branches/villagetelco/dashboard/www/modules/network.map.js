@@ -122,7 +122,7 @@ var Map = undefined;
       feature.id = router.address;
       feature.router = router;
       the_map.routers.addFeatures([feature]);
-      afrimesh.villagebus.geolocation(router.address, function (longitude, latitude) {
+      afrimesh.device.location(router.address, function (longitude, latitude) {
           feature.geometry = new Point(longitude, latitude);
           the_map.routers.redraw();
         });
@@ -276,10 +276,8 @@ var Map = undefined;
     function on_position(feature) {
       // update router location config
       var location = new OpenLayers.LonLat(feature.geometry.x, feature.geometry.y).transform(epsg_900913, epsg_4326);
-      afrimesh.villagebus.geolocation.set(feature.router.address, 
-                                          location.lon, 
-                                          location.lat, 
-                                          function (response) {
+      afrimesh.device.location.set(feature.router.address, location.lon, location.lat, function (error, response) {
+          if (error) return console.error("Could not update router location for " + feature.router.address + ": " + error);
           console.debug("Updated router location for:" + feature.router.address);
         });
       
