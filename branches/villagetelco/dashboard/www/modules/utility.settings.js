@@ -323,11 +323,10 @@ var LocationMap = null;
             var latitude  = parseFloat(location.lat).toFixed(7);
             $("input.[id*=afrimesh|settings|location|longitude]").val(longitude);
             $("input.[id*=afrimesh|settings|location|latitude]").val(latitude);
-            afrimesh.villagebus.uci.set.async(function (response) {
+            afrimesh.device.location.set(feature.router.address, location.lon, location.lat, function (error, response) {
+                if (error) return console.error("Could not update router location for " + feature.router.address + ": " + error);
                 console.debug("Updated router location for:" + feature.router.address);
-              }, feature.router.address,
-              [ { config: "afrimesh", section: "location", option: "longitude", value: longitude.toString() },
-                { config: "afrimesh", section: "location", option: "latitude",  value: latitude.toString() } ]);
+              });
           };
         }
         map.addControl(map.dragger);
