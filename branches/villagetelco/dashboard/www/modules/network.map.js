@@ -73,7 +73,7 @@ var Map = undefined;
       click_selector.activate();*/
       var router_hover_selector = new OpenLayers.Control.SelectFeature(map.routers, 
                                                                 { multiple : false, 
-                                                                  hover    : true });
+                                                                  hover    : false });
       router_hover_selector.onSelect = on_select_router;
       router_hover_selector.onUnselect = on_unselect_router;
       map.addControl(router_hover_selector);

@@ -66,6 +66,8 @@ var BootVillageBus = function (afrimesh) {
         return "/" + afrimesh.settings.root + "/cgi-bin/villagebus";
       } else if (node == "@self") {
         return "/" + afrimesh.settings.address + "/cgi-bin/villagebus"; 
+      } else if (node == "@topology") {
+        return "/" + afrimesh.settings.network.mesh.vis_server + ":2005";  
       } else if (node[0] == '@') {
         return "/" + node.substring(1) + "/cgi-bin/villagebus"; 
       }
@@ -151,7 +153,7 @@ var BootVillageBus = function (afrimesh) {
   };
 
   // jsonp does not support POST so we need to adjust our strategy to use JSON 
-  function jsonp_to_json(name, data) {
+  function jsonp_to_json(name, data, raw) {
     if (data) {
       name.data     = JSON.stringify(data);
     } 
@@ -159,7 +161,11 @@ var BootVillageBus = function (afrimesh) {
     var success = name.success; 
     name.success = function(response) {
       try {
-        function jsonp(payload) { // handle the jsonp reply
+        if (raw) {
+          name._payload_ = eval(response);
+          return success(name._payload_);
+        } 
+        function jsonp(payload) { // handle a jsonp reply
           name._payload_ = payload;
           return success(payload);
         };
@@ -173,6 +179,7 @@ var BootVillageBus = function (afrimesh) {
     }
     return name;
   };
+  villagebus.jsonp_to_json = jsonp_to_json; // export it - TODO - better Naming please
 
 
   /**
@@ -224,47 +231,6 @@ var BootVillageBus = function (afrimesh) {
       }, error); 
   };
   
-  /** - villagebus.mesh_topology ---------------------------------------- */
-  villagebus.mesh_topology       = function()  { return this.mesh_topology.vis();};
-  villagebus.mesh_topology.vis   = function()  { 
-    return this.vis.sync(); 
-  }; 
-  villagebus.mesh_topology.async = function(f) {
-    return this.vis.async(f);
-  };
-
-  villagebus.mesh_topology.vis.url  = function() { 
-    if (afrimesh.settings.network.mesh.vis_server == afrimesh.settings.address) {
-      return "http://" + afrimesh.settings.address + ":2005"; 
-    }
-    return villagebus.ajax_proxy() + "http://" + afrimesh.settings.network.mesh.vis_server + ":2005"; 
-    //return "http://" + afrimesh.settings.network.mesh.vis_server + ":2005?callback=foo"; 
-  };
-  
-  villagebus.mesh_topology.vis.async = function(handler) { 
-    var xml = make_json_request({
-        url     : this.url(),
-        request : {},
-        success : handler,
-        async   : true });
-    return xml;
-  };
-  villagebus.mesh_topology.vis.poll = function(f, frequency) {   
-    this.async(f);
-    setTimeout(function() { afrimesh.villagebus.mesh_topology.vis.poll(f, frequency); }, 
-               frequency);
-  };
-  villagebus.mesh_topology.vis.sync = function() { 
-    var handler  = function(data) { 
-      handler.response = data;  
-    };
-    return make_json_request({
-        url     : this.url(),
-        request : {},
-        success : handler,
-        async   : false });
-  };
-
 
   /** - villagebus.acct -------------------------------------------------- */
   villagebus.acct = { }; 

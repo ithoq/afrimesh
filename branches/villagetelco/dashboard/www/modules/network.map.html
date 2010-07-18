@@ -163,7 +163,8 @@ function() {
   var timer = {};
   function update(network_map) {
     clearTimeout(timer);
-    afrimesh.network.mesh.routers.async(function(routers) { 
+    afrimesh.network.routers(function(error, routers) { 
+        if (error) return console.error("Error getting network devices list: " + error);
         update_complete(network_map, routers); 
       });
   };

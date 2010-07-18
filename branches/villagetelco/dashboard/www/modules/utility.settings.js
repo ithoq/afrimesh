@@ -138,17 +138,14 @@ var LocationMap = null;
   update_vis_server = function() {
     $("input.[id*=afrimesh|settings|network|mesh|vis_server]").css("background", "#FFAAAA");
     try {
-      //var routes = afrimesh.villagebus.mesh_topology();
-      function update (routes) {
-        if (routes != undefined && isArray(routes)) {
+      afrimesh.network.routes(function (error, routes) {
+          if (error || !isArray(routes)) {
+            $("p.[id*=vis_server|error]").html("Visualization server unreachable.");
+            return console.debug("Visualization server unreachable: " + error);
+          }
           $("input.[id*=afrimesh|settings|network|mesh|vis_server]").css("background", "#AAFFAA");
           $("p.[id*=vis_server|error]").html("");
-        } else {
-          console.debug("utility.settings.js->update_vis_server: Visualization server unreachable.");
-          $("p.[id*=vis_server|error]").html("Visualization server unreachable.");
-        }
-      };
-      afrimesh.villagebus.mesh_topology.vis.async(update);
+        });
     } catch (error) {
       $("p.[id*=vis_server|error]").html("Visualization server unreachable. " + error + ".");
       console.debug("Vis server is unreachable. " + error);

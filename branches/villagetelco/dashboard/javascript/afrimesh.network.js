@@ -17,6 +17,7 @@ function BootNetwork(parent) {
 
   /**
    * Returns a list of all devices on the network annotated w/ instantaneous device information
+   * BUFFERED
    */
   network.info = function(continuation) {
     var name = afrimesh.villagebus.Name("/@root/db/keys/deviceinfo/*");
@@ -82,65 +83,36 @@ function BootNetwork(parent) {
     return routers;
   };
 
-  network.routes  = function() { return this.backbone().concat(this.mesh()); };
-  network.routers = function() { return this.backbone.routers().concat(this.mesh.routers()); };
 
-  network.backbone = function() { return this.backbone.routes(); }
-  network.backbone.routes  = function() { return [ ] };
-  network.backbone.routers = function() { return [ { address : afrimesh.settings.internet_gateway.address, routes : [] } ] };
+  /* - network topology ------------------------------------------------- */
 
-  network.mesh = function() { return this.mesh.routes(); }; 
-  network.mesh.routes  = function() { return this.routes.sync();  };
-  network.mesh.routers = function() { return this.routers.sync(); };
+  network.routes = function(continuation) {
+    var name = afrimesh.villagebus.Name("/@topology");
+    name = afrimesh.villagebus.Bind(name, continuation);
+    name = afrimesh.villagebus.jsonp_to_json(name, null, true); // vis server outputs raw JSON
+    name = afrimesh.villagebus.GET(name);
+    return name;
+  };
 
-  network.mesh.routes.sync  = function() { 
-    var routes  = [];
-    try {
-      routes = afrimesh.villagebus.mesh_topology();
-    } catch (error) {
-      console.debug("Vis server unreachable due to unknown reason. " + error);
-    }
-    return routes;
-  }
-
-  network.mesh.routers.sync = function() {
-    var routers  = [];
-    var included = {};
-    try {
-      afrimesh.villagebus.mesh_topology().map(function(route) {
-        if (!included[route.router]) { 
-          router = { address : route.router,
-                     routes  : [ route ]     };
-          routers.push(router);
-          included[router.address] = router;
-        } else {
-          included[router.address].routes.push(route);
-        }
+  network.routers = function(continuation) {
+    return network.routes(function(error, routes) {
+        if (error) return continuation(error, null);
+        var routers  = [];
+        var included = {};
+        routes.map(function(route) {
+            if (!included[route.router]) { 
+              router = { address : route.router,
+                         routes  : [ route ]     };
+              routers.push(router);
+              included[router.address] = router;
+            } else {
+              included[router.address].routes.push(route);
+            }
+          });
+        return continuation(null, routers);
       });
-    } catch (error) {
-      console.debug("Vis server unreachable due to unknown reason. " + error);
-    }
-    return routers;
   };
 
-  network.mesh.routers.async = function(f) {
-    function on_complete(routes) {
-      var routers = [];
-      var included = {};
-      routes.map(function(route) {
-          if (!included[route.router]) { 
-            router = { address : route.router,
-                       routes  : [ route ]     };
-            routers.push(router);
-            included[router.address] = router;
-          } else {
-            included[router.address].routes.push(route);
-          }
-        });
-      f(routers);
-    };
-    afrimesh.villagebus.mesh_topology.async(on_complete);
-  };
   
   return network;
 };

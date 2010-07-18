@@ -78,10 +78,6 @@ function BootDevice(parent) {
    * DIRECT
    */
   device.location = function(address, continuation) {
-    // TODO - cheap'n'very nasty hack for demos - remove before 1.0 release.
-    //if (afrimesh.settings.network.mesh.vis_server == demo_server) {
-    //  address = afrimesh.settings.network.mesh.vis_server + afrimesh.settings.ajax_proxy + "http://" + address;
-    //} 
     return device.configuration(address, "afrimesh.location", function (error, config) {
         if (error) return continuation(error, null); // TODO - return Fail(error, continuation) maybe ? 
         return continuation(config.afrimesh.location.longitude, config.afrimesh.location.latitude);
