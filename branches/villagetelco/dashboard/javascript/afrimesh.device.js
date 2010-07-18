@@ -22,7 +22,7 @@ function BootDevice(parent) {
    *        direct query of device & buffered info coming from db
    */
   device.info = function(address, continuation) {
-    var name = afrimesh.villagebus.Name("/root/db/deviceinfo/" + address);
+    var name = afrimesh.villagebus.Name("/@root/db/deviceinfo/" + address);
     name = afrimesh.villagebus.Bind(name, function(error, response) {
         if (error) return continuation(error, null);
         return continuation(error, response);
@@ -37,7 +37,7 @@ function BootDevice(parent) {
    * BUFFERED
    */
   device.stat = function(address, continuation, range) {
-    var name = afrimesh.villagebus.Name("/root/db/lrange/devicestat/" + address);
+    var name = afrimesh.villagebus.Name("/@root/db/lrange/devicestat/" + address);
     name = afrimesh.villagebus.Bind(name, function(error, response) {
         if (error) return continuation(error, null);  // TODO - return Fail(error, continuation) maybe ?
         return continuation(error, response);
@@ -99,7 +99,6 @@ function BootDevice(parent) {
    * DIRECT
    */
   device.uname = function(address, continuation) {
-    //var name = afrimesh.villagebus.Name("//" + address + "/cgi-bin/villagebus/sys/uname");
     var name = afrimesh.villagebus.Name("/@" + address + "/sys/uname");
     name = afrimesh.villagebus.Bind(name, function(error, response) {
         if (error) return continuation(error, null); // TODO - return Fail(error, continuation) maybe ?

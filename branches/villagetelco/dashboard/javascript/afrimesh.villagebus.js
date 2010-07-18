@@ -34,7 +34,7 @@ var BootVillageBus = function (afrimesh) {
   /** - villagebus.api -------------------------------------------------- */
 
   /* Either this:
-  var name     = afrimesh.villagebus.Name("/root/db/keys/status");
+  var name     = afrimesh.villagebus.Name("/@root/db/keys/status");
   var channel  = afrimesh.villagebus.GET(name, "*");
   var response = afrimesh.villagebus.Read(channel);
   if (afrimesh.villagebus.Error(response)) {
@@ -46,7 +46,7 @@ var BootVillageBus = function (afrimesh) {
   }
 
   // Or this:
-  var name = afrimesh.villagebus.Name("/root/db/keys/status");
+  var name = afrimesh.villagebus.Name("/@root/db/keys/status");
   name = Bind(name, function(error, response) {
     if (error) {
       console.log(error);
@@ -60,10 +60,11 @@ var BootVillageBus = function (afrimesh) {
   var channel = afrimesh.villagebus.GET(name, "*");
   var response = Read(channel); */ 
   villagebus.Name = function(name) {
+    //console.log("NAMING: " + name);
     name = name.split('/').map(function(node) {   // perform path transformations for network locations
-      if (node == "root") {
+      if (node == "@root") {
         return "/" + afrimesh.settings.root + "/cgi-bin/villagebus";
-      } else if (node == "self") {
+      } else if (node == "@self") {
         return "/" + afrimesh.settings.address + "/cgi-bin/villagebus"; 
       } else if (node[0] == '@') {
         return "/" + node.substring(1) + "/cgi-bin/villagebus"; 
@@ -461,38 +462,6 @@ var BootVillageBus = function (afrimesh) {
   villagebus.ipkg.upgrade       = function(address, pkgname) { return villagebus.ipkg.upgrade.sync(address, pkgname); };
   villagebus.ipkg.upgrade.sync  = function(address, pkgname) { return rpc(villagebus.ipkg.url(address), "upgrade", [pkgname]); };
   villagebus.ipkg.upgrade.async = function(f, address, pkgname) { return rpc_async(villagebus.ipkg.url(address), "upgrade", [pkgname], f); };
-
-
-  /** - villagebus.uci ---------------------------------------------------- */
-  // UDE - sometimes there are problems with permissions on /etc/config & /tmp/.uci 
-  villagebus.uci = function(address) {
-    return villagebus.uci.get.sync(address, "");
-  };
-
-  // UDE - when dashboard_host != mesh_gateway then we need a way to be able to proxy
-  //       through the mesh gateway onto the mesh
-  // INJ - TODO - modify ajax_proxy.cgi to be able to chain ajax proxy calls ?
-  // INJ.alt - the way open mesh deals with this is to have the mesh nodes pull requests to the
-  //           dashboard rather than the dashboard pushing to the nodes. Hrmm. Must ponder.
-  //
-  // e.g.  return afrimesh.villagebus.ajax_proxy()  + "http://" + afrimesh.settings.hosts.mesh_gateway + 
-  //              afrimesh.settings.ajax_proxy      + "http://" + address + "/cgi-bin/village-bus-uci";
-  villagebus.uci.url = function(address) { 
-    if (address == afrimesh.settings.address) {
-      return "http://" + address + "/cgi-bin/village-bus/uci";
-    }
-    //console.error("FINAL UCI URL: " + afrimesh.villagebus.ajax_proxy() + "http://" + address + "/cgi-bin/village-bus/uci");
-    return afrimesh.villagebus.ajax_proxy() + "http://" + address + "/cgi-bin/village-bus/uci";
-  };
-
-  villagebus.uci.get = function(address, selector) { return villagebus.uci.get.sync(address, selector);  };
-  villagebus.uci.set = function(address, entries)  { return villagebus.uci.set.sync(address, entries);   };
-
-  villagebus.uci.get.sync = function(address, selector) { return rpc(villagebus.uci.url(address), "show", [selector]);  };
-  villagebus.uci.get.async = function(f, address, selector) { return rpc_async(villagebus.uci.url(address), "show", [selector], f);  };
-
-  villagebus.uci.set.sync = function(address, entries) { return rpc(villagebus.uci.url(address), "set", [entries]);  };
-  villagebus.uci.set.async = function(f, address, entries) { return rpc_async(villagebus.uci.url(address), "set", [entries], f);  };
 
 
   /** - villagebus.voip --------------------------------------------------- */

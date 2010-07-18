@@ -19,11 +19,11 @@ function BootNetwork(parent) {
    * Returns a list of all devices on the network annotated w/ instantaneous device information
    */
   network.info = function(continuation) {
-    var name = afrimesh.villagebus.Name("/root/db/keys/deviceinfo/*");
+    var name = afrimesh.villagebus.Name("/@root/db/keys/deviceinfo/*");
     name = afrimesh.villagebus.Bind(name, function(error, response) {
         if (error) return continuation(error, null);  // TODO - return Fail(error, continuation) maybe ?
         response.map(function(key) {
-            return afrimesh.villagebus.GET(afrimesh.villagebus.Bind("/root/db/" + key, function(error, response) {
+            return afrimesh.villagebus.GET(afrimesh.villagebus.Bind("/@root/db/" + key, function(error, response) {
                 return continuation(error, response.self, response);
               }));
           });

@@ -94,6 +94,7 @@
             });
         };
         add_dock_item("customers", "customers.manage");
+        add_dock_item("calls",     "customers.recharge");
         add_dock_item("devices",   "network.devices");
         add_dock_item("gateway",   "network.health");
         add_dock_item("settings",  "utility.settings");
@@ -108,7 +109,7 @@
         $("#message-loading").html("");
 
         /* TODO - debug */
-        $("ul#dock li#settings").click();
+        $("ul#dock li#devices").click();
 
         console.debug("$(document).ready() -------------------- end");
       });

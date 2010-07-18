@@ -103,7 +103,7 @@ td.v-brace {
 
 
 /* - customers-recharge module -------------------------------------------- */
-/*.customers-recharge      { margin: 1em; }
+.customers-recharge      { margin: 1em; }
 .customers-recharge td.spacer { width: 0em; height: 1em; }
 .customers-recharge div.button, div.button-submit {
   background: lightgray;
@@ -143,7 +143,7 @@ td.v-brace {
   width: 30em;
   cursor: default;  
 }
-*/
+
 
 /* - network health module ------------------------------------------------ */
 /*.network-messages thead {

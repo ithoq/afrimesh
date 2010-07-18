@@ -22,17 +22,18 @@
 
   /** construction -------------------------------------------------------- */
   ready = function() { 
-    afrimesh.villagebus.uci.get.async(function (config) { // TODO - move to afrimesh.customers
+    afrimesh.device.configuration("root", "afrimesh", function(error, config) {
+        if (error) return console.error("customers.plans - " + error);
         customer_plans = [];
         for (var section in config.afrimesh) {
           var plan = config.afrimesh[section];
           if (plan._sectiontype == "customer-plan") {  // TODO - design a cleaner solution for uci lists ? 
-            plan.section = section;            //        Probably not do-able given that uci does not
-            customer_plans.push(plan);         //        group entries logically but only in the order
-          }                                    //        they appear in the config file.
+            plan.section = section;                    //        Probably not do-able given that uci does not
+            customer_plans.push(plan);                 //        group entries logically but only in the order
+          }                                            //        they appear in the config file.
         }
-        populate_control(customer_plans);
-      }, afrimesh.settings.address, "afrimesh");
+        populate_control(customer_plans);      
+      });
     console.debug("loaded customers.plans.html");
     return unload;
   };
@@ -73,11 +74,14 @@
 
 
   function on_submit(new_value, settings) {
-    afrimesh.villagebus.uci.set.async(function (response) { 
-        console.debug("Updated customer plan: " + dump_object(response)); 
-      }, 
-      afrimesh.settings.address, 
-      [ { config: "afrimesh", section: this.id, option: settings.name, value: new_value } ]);
+    afrimesh.device.configuration.set("root", [ { config  : "afrimesh", 
+                                                  section : this.id, 
+                                                  option  : settings.name, 
+                                                  value   : new_value } ], 
+                                      function (error, response) { 
+                                          if (error) return console.error("Could not update customer plan: " + error);
+                                          console.debug("Updated customer plan: " + dump_object(response)); 
+                                        });
 
     // UDE - for uci lists the section id changes on commit
     //       either grin&bear the page reload or maybe return the new 
