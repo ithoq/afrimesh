@@ -464,19 +464,6 @@ var BootVillageBus = function (afrimesh) {
   villagebus.ipkg.upgrade.async = function(f, address, pkgname) { return rpc_async(villagebus.ipkg.url(address), "upgrade", [pkgname], f); };
 
 
-  /** - villagebus.voip --------------------------------------------------- */
-  villagebus.voip = {};
-  villagebus.voip.url = function(address) {
-    if (address == afrimesh.settings.address) {
-      return "http://" + address + "/cgi-bin/village-bus/voip";
-    }
-    return afrimesh.villagebus.ajax_proxy() + "http://" + address + "/cgi-bin/village-bus/voip";
-  };
-  villagebus.voip.sip = {};
-  villagebus.voip.sip.peers = function(address) { return villagebus.voip.sip.peers.sync(address); }
-  villagebus.voip.sip.peers.sync  = function(address)    { return rpc(villagebus.voip.url(address), "sip", [ "show peers" ]);    }
-  villagebus.voip.sip.peers.async = function(f, address) { return rpc_async(villagebus.voip.url(address), "sip", [ "show peers" ], f); }
-
   /** - helper functions -------------------------------------------------- */
   /**
    * @return XMLHttpRequest

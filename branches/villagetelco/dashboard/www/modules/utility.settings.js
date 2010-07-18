@@ -111,14 +111,15 @@ var LocationMap = null;
     } 
     $(".sip_trunk").show();
     var server = $("input.[id*=afrimesh|settings|voip|sip|address]").val();
-    afrimesh.villagebus.voip.sip.peers.async(function(peers) {
+    afrimesh.telephony.sip.peers("self", function(error, peers) {
+      if (error) return console.error("Could not get sip peers: " + error);
         peers.map(function(peer) {
             console.debug(show(peer));
             if (peer.host == server && peer.status == "OK") {
               $("fieldset#asterisk :text, :password").css("background", "#AAFFAA");
             }
           });
-      }, afrimesh.settings.address);
+    });
   };
 
   update_iax_server = function() {
