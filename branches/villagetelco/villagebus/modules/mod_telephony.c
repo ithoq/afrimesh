@@ -122,10 +122,11 @@ const fexp* telephony_sip_asterisk(closure* c, telephony* self, const fexp* mess
     command = param ? (char*)param : command;
   }
 
-  char* argv[3];
+  char* argv[4];
   argv[0] = "asterisk";
   argv[1] = "-rx";
   argv[2] = 0;
+  argv[3] = 0;
   if (strncasecmp(command, "peers", 5) == 0) {
     argv[2] = "sip show peers";
     return exec_parsed(argv[0], argv, asterisk_sip_peers_parser);
@@ -149,7 +150,6 @@ struct json_object* asterisk_sip_peers_parser(const char* line, size_t length)
       strcasestr (line, "[Monitored:")       != NULL)  {
     return NULL;
   }  
-
   /*        1         2         3         4         5         6         7         8
   012345678901234567890123456789012345678901234567890123456789012345678901234567890  
   Name/username              Host            Dyn Nat ACL Port     Status         */
