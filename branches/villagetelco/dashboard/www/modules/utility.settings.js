@@ -155,16 +155,14 @@ var LocationMap = null;
   update_accounting_server = function() {
     $("input.[id*=afrimesh|settings|network|mesh|accounting_server]").css("background", "#FFAAAA");
     try {
-      function update (data) {
-        if (data != undefined && isArray(data)) {
+      afrimesh.network.accounting(function (error, data) {
+          if (error && !isArray(data)) {
+            $("p.[id*=accounting_server|error]").html("Accounting server unreachable.");
+            return console.debug("utility.settings.js->update_vis_server: Visualization server unreachable.");
+          }
           $("input.[id*=afrimesh|settings|network|mesh|accounting_server]").css("background", "#AAFFAA");
           $("p.[id*=accounting_server|error]").html("");
-        } else {
-          console.debug("utility.settings.js->update_vis_server: Visualization server unreachable.");
-          $("p.[id*=accounting_server|error]").html("Accounting server unreachable.");
-        }
-      };
-      afrimesh.villagebus.acct.gateway.async(update);
+        });
     } catch (error) {
       $("p.[id*=vis_server|error]").html("Visualization server unreachable. " + error + ".");
       console.debug("Vis server is unreachable. " + error);

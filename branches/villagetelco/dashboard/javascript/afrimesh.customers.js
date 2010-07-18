@@ -12,7 +12,6 @@ function BootCustomers(parent) {
 
   var customers = function(callback) { return this.customers.status(callback); };
 
-  // TODO - use fn assignment instead where possible?
   customers.select = function(callback) {
     return afrimesh.villagebus.radius.select(callback);
   }

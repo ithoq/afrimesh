@@ -201,12 +201,12 @@ var Map = undefined;
     /* event handling ----------------------------------------------------- */     
 
     function on_select_router(feature) {
-      afrimesh.network.accounting(feature.router);
       the_map.selected = feature;
       var html = "<div class='popup'>";
       html += "<div id='address'>";
       html += "<span id='ip'>" + "<a href='#'>" + feature.router.address + "</a>" + "</span>&nbsp;&nbsp;";
-      html += "<span id='mac'>" + (feature.router.mac ? feature.router.mac : "unknown mac")  + "</span></div>";
+      html += "<span id='mac'></span>";
+      html += "</div>";
       var last_seen = (new Date()) - feature.last_seen;
       html += "<div id='health'>";
       if (last_seen <= (update_target * 2.0)) { // UDE - this is a bit clumsy
@@ -215,35 +215,29 @@ var Map = undefined;
         html += "<span style='color:red;'>node last checked in " + pretty_seconds(last_seen / 1000.0) + " ago</span>";
       }
       html += "</div>";
-      if (feature.router.traffic) {
-        var packets = (feature.router.traffic.packets ? feature.router.traffic.packets : "-");
-        var bytes   = (feature.router.traffic.bytes   ? pretty_bytes(feature.router.traffic.bytes) : "-");
-        html += "<div id='traffic'>";
-        html += "<span>" + packets + " packets " +
-                           bytes   + " </span>";
-        html += "</div>";
-      } 
+      html += "<div id='traffic'></div>";
       html += "<div id='neighbours'>";
-      html+= "Neighbours";
-      html+= "<table border=0>";
+      html += "Neighbours";
+      html += "<table border=0>";
       var rowend = false;
       feature.router.routes.map(function (route) {
-          if (route.neighbour) { 
-            html += (!rowend ? "<tr>" : "");
-            html += "<td><span style='color:" + lq_to_color(route.label).rgb + "'>";
-            html += route.neighbour + "(" + route.label + ")&nbsp;";
-            html += "</span></td>";
-            html += (rowend ? "</tr>" : "");
-            rowend = !rowend;
-          }
-        });
+        if (route.neighbour) { 
+          html += (!rowend ? "<tr>" : "");
+          html += "<td><span style='color:" + lq_to_color(route.label).rgb + "'>";
+          html += route.neighbour + "(" + route.label + ")&nbsp;";
+          html += "</span></td>";
+          html += (rowend ? "</tr>" : "");
+          rowend = !rowend;
+        }
+      });
       html += (rowend ? "</tr>" : "") + "</table>";
       html+= "</div>";  /* end neighbours */
       html += "</div>"; /* end popup */
-      var popup = new OpenLayers.Popup.AnchoredBubble("id" + feature.router.address,
+      var popup = new OpenLayers.Popup.AnchoredBubble("router_popup_" + feature.router.address,
                                                       feature.geometry.getBounds().getCenterLonLat(),
                                                       new OpenLayers.Size(275, 150), html, null, true, 
                                                       function(event){on_unselect_router(the_map.selected);} );
+      console.log("POP: " + popup.id);
       popup.setBackgroundColor("black");
       popup.setOpacity(0.95);
       popup.autoSize = false;
@@ -251,8 +245,17 @@ var Map = undefined;
       the_map.addPopup(popup);
       // Stupid Safari fix
       $(".olPopupContent").css("overflow", "hidden");
-      $("#ip").bind("click", function(event) {
+      $(".popup span#ip").bind("click", function(event) {
           evil_display_overlay("http://" + feature.router.address +"/");
+        });
+
+      // populate accounting information
+      afrimesh.network.accounting.router(feature.router, function(error, router) {
+          if (error) return console.debug("Could not retrieve accounting information for router: " + error);
+          var packets = (router.traffic.packets ? router.traffic.packets : "-");
+          var bytes   = (router.traffic.bytes   ? pretty_bytes(router.traffic.bytes) : "-");
+          $(".popup div#traffic").html("<span>" + packets + " packets " + bytes   + " </span>");
+          $(".popup span#mac").html(feature.router.mac ? feature.router.mac : "unknown mac");  
         });
     };
 

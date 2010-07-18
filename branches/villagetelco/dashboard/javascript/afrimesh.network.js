@@ -36,51 +36,67 @@ function BootNetwork(parent) {
 
   /* - network accounting ----------------------------------------------- */
 
+  /**
+   * Raw accounting info as reported by pmacct
+   */
+  network.accounting = function(continuation) {
+    var name = afrimesh.villagebus.Name("/@pmacct/accounting/gateway"); 
+    name = afrimesh.villagebus.Bind(name, continuation);
+    name = afrimesh.villagebus.GET(name);
+    return name;
+  };
+
   /** 
    * decorates a router with network accounting information 
    */
-  network.accounting = function(router) { /* TODO - afrimesh.villagebus.acct a) should be a map keyed w/ IP b) cached */
+  network.accounting.router = function(router, continuation) { /* TODO - network.accounting should a) be a map keyed w/ IP and b) cached */
     var temp = 0;
     router.traffic = { bytes : 0, packets : 0 };
     try { 
-      afrimesh.villagebus.acct.gateway().map(function(entry) {		
-          if (router.address == entry.DST_IP) {
-            if (typeof router.mac == "undefined") {	router.mac = entry.DST_MAC; } 
-            router.traffic.bytes   += parseInt(entry.BYTES);
-            router.traffic.packets += parseInt(entry.PACKETS);
-          }
+      return network.accounting(function(error, entries) {
+          if (error) return console.error("Could not retrieve network accounting information: " + error);
+          entries.map(function(entry) {		
+              if (router.address == entry.DST_IP) {
+                if (typeof router.mac == "undefined") {	router.mac = entry.DST_MAC; } 
+                router.traffic.bytes   += parseInt(entry.BYTES);
+                router.traffic.packets += parseInt(entry.PACKETS);
+              }
+            });
+          continuation(null, router);
         });
     } catch (error) {
       console.debug("pmacct error " + error);
     }
-    return router;
   };
 
   /** 
    * decorates a list of routers with network accounting information 
    */
-  network.accounting.routers = function(routers) {
+  network.accounting.routers = function(routers, continuation) {
     var targets = {};
     routers.map(function(router) {
         router.traffic = { bytes : 0, packets : 0 };
         targets[router.address] = router;
         console.debug("Added: " + router.address);
       });
-    afrimesh.villagebus.acct.gateway().map(function(entry) {
-        var router = targets[entry.DST_IP];
-        if (router) {
-          console.debug("IN: " + entry.DST_IP + " (" + entry.DST_MAC + ") -> " + entry.PACKETS + " packets  " + entry.BYTES + " bytes");          
-          if (typeof router.mac == "undefined") {	router.mac = entry.DST_MAC; } 
-          router.traffic.bytes   += parseInt(entry.BYTES);
-          router.traffic.packets += parseInt(entry.PACKETS);
+    return network.accounting(function(error, entries) { 
+        if (error) return console.error("Could not retrieve network accounting information: " + error);
+        entries.map(function(entry) {
+            var router = targets[entry.DST_IP];
+            if (router) {
+              console.debug(entry.DST_IP + " (" + entry.DST_MAC + ") -> " + entry.PACKETS + " packets " + entry.BYTES + " bytes");
+              if (typeof router.mac == "undefined") {	router.mac = entry.DST_MAC; } 
+              router.traffic.bytes   += parseInt(entry.BYTES);
+              router.traffic.packets += parseInt(entry.PACKETS);
+            }
+          });
+        routers = [];
+        for (var router in targets) {
+          router = targets[router];
+          routers.push(router);
         }
+        continuation(null, routers);
       });
-    routers = [];
-    for (var router in targets) {
-      router = targets[router];
-      routers.push(router);
-    }
-    return routers;
   };
 
 

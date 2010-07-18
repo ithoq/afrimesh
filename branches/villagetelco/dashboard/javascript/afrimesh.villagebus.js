@@ -68,6 +68,8 @@ var BootVillageBus = function (afrimesh) {
         return "/" + afrimesh.settings.address + "/cgi-bin/villagebus"; 
       } else if (node == "@topology") {
         return "/" + afrimesh.settings.network.mesh.vis_server + ":2005";  
+      } else if (node == "@pmacct") {
+        return "/" + afrimesh.settings.network.mesh.accounting_server + "/cgi-bin/villagebus";  
       } else if (node[0] == '@') {
         return "/" + node.substring(1) + "/cgi-bin/villagebus"; 
       }
@@ -231,18 +233,6 @@ var BootVillageBus = function (afrimesh) {
       }, error); 
   };
   
-
-  /** - villagebus.acct -------------------------------------------------- */
-  villagebus.acct = { }; 
-  villagebus.acct.url  = function() { 
-    if (afrimesh.settings.network.mesh.accounting_server == afrimesh.settings.address) {
-      return "http://" + afrimesh.settings.address + "/cgi-bin/village-bus/acct";
-    }
-    return afrimesh.villagebus.ajax_proxy() + "http://" + afrimesh.settings.network.mesh.accounting_server + "/cgi-bin/village-bus/acct";
-  };
-  villagebus.acct.gateway = function() { return villagebus.acct.gateway.sync(); }
-  villagebus.acct.gateway.sync  = function()  { return rpc(villagebus.acct.url(), "gateway", []); }
-  villagebus.acct.gateway.async = function(f) { return rpc_async(villagebus.acct.url(), "gateway", [], f); }
 
   /** - villagebus.radius ------------------------------------------------- */
   // TODO - refactor into rpc* and finally drop make_*_handler && make_*_request
