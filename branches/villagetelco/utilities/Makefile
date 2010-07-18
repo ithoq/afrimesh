@@ -28,6 +28,14 @@
 #
 
 
+# build flags
+CC=gcc 
+INCLUDES+=-I. -I.. -I../common -I$(DEPROOT)/include 
+DEFINES+=
+CFLAGS+=-g $(DEFINES) 
+LDFLAGS+=-L$(DEPROOT)/lib
+
+
 all : urldecode
 
 

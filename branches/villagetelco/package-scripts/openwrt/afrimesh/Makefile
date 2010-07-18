@@ -32,7 +32,7 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ------------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=721
+PKG_REV:=809
 PKG_VERSION:=0.9-r$(PKG_REV)
 PKG_RELEASE:=1
 
@@ -56,36 +56,47 @@ PKG_SOURCE:=$(PKG_SOURCE_SUBDIR).tar.gz
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_SOURCE_SUBDIR)
 
 # build flags
-PKG_EXTRA_CFLAGS= \
-	-DAFRIMESH_VERSION="\"$(VERSION)\""\
-	-DDISABLE_LOG                 \
-	-D_METAPACK                   \
-	-DOPENWRT                     \
-	-I$(PKG_BUILD_DIR)            \
-	-I$(PKG_BUILD_DIR)/common     \
-  -I$(STAGING_DIR)/usr/include  \
+PKG_EXTRA_CFLAGS=\
+	-D_METAPACK \
+	-DOPENWRT \
+	-I$(PKG_BUILD_DIR) \
+	-I$(PKG_BUILD_DIR)/common \
+  -I$(STAGING_DIR)/usr/include \
   -I$(STAGING_DIR)/include-host \
 	-I$(STAGING_DIR_HOST)/include \
-	-include endian.h             \
-	-DDISABLE_SNMP                \
+	-include endian.h \
+	-DAFRIMESH_VERSION="\"$(VERSION)\"" \
+	-DDISABLE_LOG \
+	-DDISABLE_MOD_SNMP \
+	-DDISABLE_MOD_REDIS
 
 TARGET_CFLAGS += $(FPIC)
+
+MAKE_ARGS += \
+	CC='$(TARGET_CC) $(PKG_EXTRA_CFLAGS) $(TARGET_CFLAGS_EXTRA) ' \
+	CFLAGS='$(TARGET_CFLAGS)' \
+	LDFLAGS='$(TARGET_LDFLAGS)' \
+	FLAVOR='LINUX'
 
 MAKE_VILLAGEBUS_ARGS += \
 	CC='$(TARGET_CC) $(PKG_EXTRA_CFLAGS) $(TARGET_CFLAGS_EXTRA) ' \
 	CFLAGS='$(TARGET_CFLAGS)' \
-	LDFLAGS='$(TARGET_LDFLAGS) -ljson -luci -lcredis' \
+	LDFLAGS='$(TARGET_LDFLAGS) -ljson -luci' \
 	FLAVOR='LINUX' \
-	DISABLE_SNMP=1
+	DISABLE_MOD_SNMP=1 \
+	DISABLE_MOD_REDIS=1
 
-#PKG_BUILD_DEPENDS=+credis
+
+#LDFLAGS -lredis
+#PKG_BUILD_DEPENDS=+credis 
 
 # - afrimesh-base ------------------------------------------------------------
+# +credis 
 include $(INCLUDE_DIR)/package.mk
 define Package/afrimesh-base
 	SECTION:=admin
 	CATEGORY:=Administration
-	DEPENDS:=+busybox +libuci +libjson +credis +ntpclient +mini-httpd
+	DEPENDS:=+busybox +libuci +libjson +ntpclient +mini-httpd
 	TITLE:=Easy management for wireless community mesh networks
 	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
 	#$(call Config,afrimesh.location.latitude,string,-25.7481182,Router Latitude)
@@ -315,11 +326,11 @@ endef
 
 
 # - afrimesh-potato -----------------------------------------------------------
-# +curl-nossl
+# +curl-nossl +luci-admin-full 
 define Package/afrimesh-potato
 	SECTION:=admin
 	CATEGORY:=Administration
-	DEPENDS:=+libuci +libjson +batmand +haserl +luci-admin-full +luci-admin-rpc
+	DEPENDS:=+libuci +libjson +batmand +haserl +luci-admin-rpc
 	TITLE:=Web interface for the Mesh Potato
 endef
 
@@ -336,8 +347,8 @@ define Package/afrimesh-potato/install
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/index.redirect.html  $(1)/www/afrimesh/index.redirect.html
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/index.potato.html    $(1)/www/afrimesh/index.html
 	$(INSTALL_DIR)  $(1)/www/cgi-bin
-	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/village-bus/village-bus                $(1)/www/cgi-bin/village-bus
-	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/village-bus/urldecode                  $(1)/www/cgi-bin/urldecode
+	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/villagebus/villagebus                  $(1)/www/cgi-bin/villagebus
+	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/utilities/urldecode                    $(1)/www/cgi-bin/urldecode
 	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/dashboard/cgi-bin/firmware-upload.cgi  $(1)/www/cgi-bin/firmware-upload.cgi
 	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/dashboard/cgi-bin/firmware-flash.cgi   $(1)/www/cgi-bin/firmware-flash.cgi
 	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/dashboard/cgi-bin/ajax-proxy.cgi       $(1)/www/cgi-bin/ajax-proxy.cgi
@@ -409,7 +420,7 @@ define Build/Configure
 endef
 
 define Build/Compile
-	#cd $(PKG_BUILD_DIR)/village-bus ; VERSION=$(PKG_VERSION) make $(MAKE_VILLAGEBUS_ARGS) 
+	cd $(PKG_BUILD_DIR)/utilities  ; VERSION=$(PKG_VERSION) make $(MAKE_ARGS) 
 	cd $(PKG_BUILD_DIR)/villagebus ; VERSION=$(PKG_VERSION) make $(MAKE_VILLAGEBUS_ARGS) 
 endef
 

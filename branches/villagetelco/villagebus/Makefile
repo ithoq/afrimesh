@@ -40,15 +40,21 @@ endif
 core=safelib.o util.o object.o fexpression.o
 
 # modules
-modules=mod_db.o mod_config.o mod_sys.o mod_telephony.o mod_accounting.o mod_package.o
+modules=mod_config.o mod_sys.o mod_telephony.o mod_accounting.o mod_package.o
 modulelibs=$(DEPROOT)/lib/libcredis.a $(DEPROOT)/lib/libuci.a 
-
-ifeq ($(DISABLE_SNMP),1)
-CFLAGS+=-DDISABLE_SNMP
+ifeq ($(DISABLE_MOD_SNMP),1)
+CFLAGS+=-DDISABLE_MOD_SNMP
 else
 modules+=mod_snmp.o 
 modulelibs+=-lnetsnmp
 endif
+ifeq ($(DISABLE_MOD_REDIS),1)
+CFLAGS+=-DDISABLE_MOD_REDIS
+else
+modules+=mod_db.o 
+modulelibs+=-lcredis
+endif
+
 
 # build flags
 CC=gcc 

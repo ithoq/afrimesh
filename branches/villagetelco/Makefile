@@ -28,7 +28,7 @@
 #
 
 # - configuration ------------------------------------------------------------
-VERSION=0.9-r721
+VERSION=0.9-r809
 RELEASE=1
 
 # Ubuntu Launchpad Personal Package Archive 
@@ -40,9 +40,6 @@ PPA=afrimesh-ppa
 
 # Some non-standard dependencies are hosted here
 #DEPS_URL="https://launchpad.net/~antoine-7degrees/+archive/ppa/+files/"
-
-# - binaries -----------------------------------------------------------------
-VILLAGERS=village-bus village-bus-radius
 
 
 # - commands -----------------------------------------------------------------
@@ -87,9 +84,9 @@ DASHBOARD_WWW=$(WWW_ROOT)/afrimesh.vt
 
 # - common -------------------------------------------------------------------
 all: 
-	#export DEPROOT=$(DEPROOT); cd village-bus-radius ; $(MAKE)
-	#export DEPROOT=$(DEPROOT); cd village-bus        ; VERSION=$(VERSION) FLAVOR=$(FLAVOR) $(MAKE)
-	export DEPROOT=$(DEPROOT); cd villagebus         ; VERSION=$(VERSION) FLAVOR=$(FLAVOR) $(MAKE)
+	#TODO - export DEPROOT=$(DEPROOT); cd village-bus-radius ; $(MAKE)
+	export DEPROOT=$(DEPROOT); cd villagebus ; VERSION=$(VERSION) FLAVOR=$(FLAVOR) $(MAKE)
+	export DEPROOT=$(DEPROOT); cd utilities  ; VERSION=$(VERSION) FLAVOR=$(FLAVOR) $(MAKE)
 
 install: install-www install-config
 
@@ -106,12 +103,12 @@ install-www:
 	@echo "Installing dashboard cgi scripts in: $(DASHBOARD_CGI)"
 	@if ! test -d $(DASHBOARD_CGI) ; then mkdir -p $(DASHBOARD_CGI) ; fi
 	$(INSTALL) ./package-scripts/openwrt/afrimesh/files/www/cgi-bin/uam.pl $(DASHBOARD_CGI)
-	$(INSTALL) dashboard/cgi-bin/ajax-proxy.cgi $(DASHBOARD_CGI)
-	$(INSTALL) dashboard/cgi-bin/mesh-topology.kml $(DASHBOARD_CGI)
+	$(INSTALL) dashboard/cgi-bin/ajax-proxy.cgi       $(DASHBOARD_CGI)
+	$(INSTALL) dashboard/cgi-bin/mesh-topology.kml    $(DASHBOARD_CGI)
 	chmod 0755 $(DASHBOARD_CGI)/mesh-topology.kml
-	-$(INSTALL) villagebus/villagebus $(DASHBOARD_CGI)
-	-$(INSTALL) village-bus/urldecode $(DASHBOARD_CGI)
-	-for i in $(VILLAGERS); do echo "Installing: $$i"; $(INSTALL) ./$$i/$$i $(DASHBOARD_CGI); done
+	-$(INSTALL) utilities/urldecode                   $(DASHBOARD_CGI)
+	-$(INSTALL) villagebus/villagebus                 $(DASHBOARD_CGI)
+	-$(INSTALL) village-bus-radius/village-bus-radius $(DASHBOARD_CGI)
 	find $(DASHBOARD_WWW) -name "*~"   | xargs rm -f
 	find $(DASHBOARD_WWW) -name ".svn" | xargs rm -rf
 	find $(DASHBOARD_CGI) -name "*~"   | xargs rm -f
@@ -134,10 +131,8 @@ install-config:
 
 clean : # clean-www
 	cd village-bus-radius ; $(MAKE) clean
-	cd village-bus-snmp   ; $(MAKE) clean
-	cd village-bus-uci    ; $(MAKE) clean
-	cd village-bus        ; $(MAKE) clean
 	cd villagebus         ; $(MAKE) clean
+	cd utilities          ; $(MAKE) clean
 
 clean-www: 
 	@echo "Cleaning"
@@ -149,7 +144,7 @@ clean-www:
 	rm -rf $(DASHBOARD_CGI)/*
 
 distclean : clean
-	cd village-bus-radius ; make distclean
+	#cd village-bus-radius ; make distclean
 
 sources : clean
 	echo "Assembling local sources"
@@ -336,9 +331,3 @@ install-freebsd : freebsd install-www
 
 #distclean-openwrt : clean-openwrt
 #	rm -f $(KAMIKAZE)/package/afrimesh
-
-
-
-
-
-

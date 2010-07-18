@@ -105,7 +105,7 @@ snmp* snmp_print(closure* c, snmp* self)
 /**
  *
  */
-#ifndef DISABLE_SNMP
+#ifndef DISABLE_MOD_SNMP
 const fexp* snmp_get(closure* c, snmp* self, const fexp* message)
 {
   size_t i;
@@ -167,10 +167,10 @@ const fexp* snmp_get(closure* c, snmp* self, const fexp* message)
 #else
 const fexp* snmp_get(closure* c, snmp* self, const fexp* message)
 {
-  const wchar_t* message = L"SNMP has been disabled in this build. Please recompile without the DISABLE_SNMP flag.";
+  const wchar_t* message = L"SNMP has been disabled in this build. Please recompile without the DISABLE_MOD_SNMP flag.";
   return (fexp*)send(VillageBus, s_villagebus_error, L"%S", message);  
 }
-#endif // DISABLE_SNMP
+#endif // DISABLE_MOD_SNMP
 
 
 /**

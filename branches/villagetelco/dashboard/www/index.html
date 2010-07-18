@@ -34,6 +34,7 @@
     <script type="text/javascript" src="javascript/afrimesh.network.js"></script>
     <script type="text/javascript" src="javascript/afrimesh.device.js"></script>
     <script type="text/javascript" src="javascript/afrimesh.customers.js"></script>
+    <script type="text/javascript" src="javascript/afrimesh.telephony.js"></script>
     <script type="text/javascript" src="javascript/afrimesh.settings.js"></script>
     <script type="text/javascript" src="javascript/afrimesh.js"></script>
 
@@ -110,6 +111,12 @@
 
         /* TODO - debug */
         $("ul#dock li#devices").click();
+
+        /*afrimesh.telephony.sip.peers("10.130.1.20", function(error, peers) {
+            console.log("PEERS");
+            console.log(error);
+            console.log(peers);
+          });*/
 
         console.debug("$(document).ready() -------------------- end");
       });

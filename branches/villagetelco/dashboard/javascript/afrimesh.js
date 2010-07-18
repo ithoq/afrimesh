@@ -25,8 +25,9 @@ var afrimesh = undefined;
     this.storage    = BootStorage(this);
     this.system     = BootSystem(this);
     this.network    = BootNetwork(this);
-    this.device     = BootDevice(this);        
+    this.device     = BootDevice(this); 
     this.customers  = BootCustomers(this);
+    this.telephony  = BootTelephony(this);       
     this.villagebus = BootVillageBus(this);
 
     // override default settings with live settings from the server
