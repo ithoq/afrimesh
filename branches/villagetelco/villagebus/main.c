@@ -64,6 +64,13 @@ int main(int argc, char** argv)
   /** - parse request ----------------------------------------------------- */
   cgi_init();
   const Request* request = cgi_request(argc, argv);
+  if (request == NULL) {
+    whttpd_out(L"{ \"error\" : \"usage: villagebus [GET|PUT|POST] name\" }\n");
+    return EXIT_FAILURE;
+  } else if (request->pathname == NULL) {
+    whttpd_out(L"{ \"error\" : \"name not found\" }\n");
+    return EXIT_FAILURE;
+  }
   /*whttpd_out(L"request->method   : %d\n", request->method);
   whttpd_out(L"request->href     : %S\n", request->href);
   whttpd_out(L"request->pathname : %S\n", request->pathname);

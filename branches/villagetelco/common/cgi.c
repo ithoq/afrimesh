@@ -324,7 +324,9 @@ const Request* cgi_request(int argc, char** argv)
   /* parse request - Method */
   if (request_method == NULL && argc >= 1 && argv[1]) { // command line
     request_method = argv[1];
-  } 
+  } else if (request_method == NULL) {                  // command line but no params
+    return NULL;
+  }
   request->method = string_to_symbol(request_method, Methods);
   if (request->method == SYMBOL_UNKNOWN) {
     wprintl(L"METHOD NOT FOUND!\n");
