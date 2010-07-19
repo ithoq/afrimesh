@@ -239,81 +239,16 @@ var BootVillageBus = function (afrimesh) {
   };
   
 
-  /** - villagebus.snmp --------------------------------------------------- */
-  // snmpwalk -v 2c -c public 196.211.3.106 SysDescr
-  villagebus.snmp = function(address, community, oids) {
-    return villagebus.snmp.get(address, community, oids);
-  };
-
-  villagebus.snmp.get = function(address, community, oids) {
-    return villagebus.snmp.sync("get", address, community, oids);
-  };
-
-  villagebus.snmp.get.async = function(f, address, community, oids) {
-    return villagebus.snmp.async(f, "get", address, community, oids);
-  };
-
-  villagebus.snmp.walk = function(address, community, oid) {
-    return villagebus.snmp.sync("walk", address, community, oid);
-  };
-
-  villagebus.snmp.walk.async = function(f, address, community, oid) {
-    return villagebus.snmp.async(f, "walk", address, community, oid);
-  };
-
-  // will always use the machine being viewed for the snmp service
-  // if snmp is not supported on that machine, use another one!
-  villagebus.snmp.url = function() {
-    return "http://" + afrimesh.settings.address + "/cgi-bin/village-bus/snmp";
-  };
-
-  villagebus.snmp.poll = function(f, frequency, address, community, oids) {
-    // TODO
-  };
-
-  villagebus.snmp.sync = function(command, address, community, oids) {
-    return rpc(this.url(), command, [address, community, oids]);
-  };
-
-  villagebus.snmp.async = function(f, command, address, community, oids) {
-    return rpc_async(this.url(), command, [address, community, oids], f); 
-  };
-
-
-  /** - villagebus.ipkg --------------------------------------------------- */
-  villagebus.ipkg = function(address) {
-    return { update : "", list : "", status : "", upgrade : "" };
-  };
-  villagebus.ipkg.url = function(address) { 
-    if (address == afrimesh.settings.address) {
-      return "http://" + address + "/cgi-bin/village-bus/ipkg";
-    }
-    return afrimesh.villagebus.ajax_proxy() + "http://" + address + "/cgi-bin/village-bus/ipkg";
-  };
-  villagebus.ipkg.update       = function(address) { return villagebus.ipkg.update.sync(address); };
-  villagebus.ipkg.update.sync  = function(address) { return rpc(villagebus.ipkg.url(address), "update", []); };
-  villagebus.ipkg.update.async = function(f, address) { return rpc_async(villagebus.ipkg.url(address), "update", [], f); };
-
-  villagebus.ipkg.list       = function(address) { return villagebus.ipkg.list.sync(address); };
-  villagebus.ipkg.list.sync  = function(address) { return rpc(villagebus.ipkg.url(address), "list", []); };
-  villagebus.ipkg.list.async = function(f, address) { return rpc_async(villagebus.ipkg.url(address), "list", [], f); };
-
-  villagebus.ipkg.status       = function(address) { return villagebus.ipkg.status.sync(address); };
-  villagebus.ipkg.status.sync  = function(address) { return rpc(villagebus.ipkg.url(address), "status", []); };
-  villagebus.ipkg.status.async = function(f, address) { return rpc_async(villagebus.ipkg.url(address), "status", [], f); };
-
-  villagebus.ipkg.upgrade       = function(address, pkgname) { return villagebus.ipkg.upgrade.sync(address, pkgname); };
-  villagebus.ipkg.upgrade.sync  = function(address, pkgname) { return rpc(villagebus.ipkg.url(address), "upgrade", [pkgname]); };
-  villagebus.ipkg.upgrade.async = function(f, address, pkgname) { return rpc_async(villagebus.ipkg.url(address), "upgrade", [pkgname], f); };
-
-
-  /** - helper functions -------------------------------------------------- */
+  /** - JSON/RPC helper functions --------------------------------------- */
+  
+  // only used for LuCI login - to be deprecated!
+  
   /**
+   * Invoke a JSON/RPC interface
+   * @deprecate
    * @return XMLHttpRequest
    */
-
-  // TODO - don't require parameters to be in an array - rather use varargs!
-  var rpc = function(url, method, parameters) {
+  var rpc = function(url, method, parameters) {   // TODO - don't require parameters to be in an array - rather use varargs!
     // TODO - check host & path
     var request = {
       url         : url, //"http://" + rpc.host + rpc.path, 
@@ -343,6 +278,11 @@ var BootVillageBus = function (afrimesh) {
     return request.result;
   }; 
 
+  /**
+   * Invoke a JSON/RPC interface
+   * @deprecate
+   * @return XMLHttpRequest
+   */
   function rpc_async(url, method, parameters, continuation, error) {
     var request = {
       url          :  url, //"http://" + rpc.host + rpc.path, 

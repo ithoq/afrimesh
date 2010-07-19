@@ -65,16 +65,16 @@
     clearTimeout(timer);
 
     // traffic
-    afrimesh.villagebus.snmp.get.async(update_internet_traffic,
-                                       afrimesh.settings.internet_gateway.address, 
-                                       afrimesh.settings.internet_gateway.snmp.community, 
-                                       [ // interfaces.ifTable.ifEntry.ifInOctets.interface
-                                         ".1.3.6.1.2.1.2.2.1.10." + afrimesh.settings.internet_gateway.snmp.interface,    
-                                         // interfaces.ifTable.ifEntry.ifOutOctets.interface
-                                         ".1.3.6.1.2.1.2.2.1.16." + afrimesh.settings.internet_gateway.snmp.interface ]); 
+    afrimesh.device.snmp(afrimesh.settings.internet_gateway.address, 
+                         afrimesh.settings.internet_gateway.snmp.community, 
+                         [ // interfaces.ifTable.ifEntry.ifInOctets.interface
+                           ".1.3.6.1.2.1.2.2.1.10." + afrimesh.settings.internet_gateway.snmp.interface,    
+                           // interfaces.ifTable.ifEntry.ifOutOctets.interface
+                           ".1.3.6.1.2.1.2.2.1.16." + afrimesh.settings.internet_gateway.snmp.interface ],
+                         update_internet_traffic); 
 
     // messages
-    afrimesh.system.log(update_network_messages, 20);
+    afrimesh.network.log(update_network_messages, 20);
 
     timer = setTimeout(update, update_frequency); 
     if (update_frequency < update_target) {  
@@ -96,8 +96,8 @@
     traffic.down.push(0);
     traffic.up.push(0);
   }
-  function update_internet_traffic(snmp) {
-    //console.debug("update: " + dump_object(traffic));
+  function update_internet_traffic(error, snmp) {
+    if (error) return console.error("Could not update internet traffic display: " + error);
     var now = new Date();
     if (traffic.last_down == 0      || traffic.last.getTime() > now.getTime() ||
         traffic.last_down > snmp[0] ||  traffic.last_up   > snmp[1])  {  // IF_MIB__ifInOctets_4 | IF_MIB__ifOutOctets_4

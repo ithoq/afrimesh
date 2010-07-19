@@ -13,13 +13,13 @@ function BootDevice(parent) {
   var device = function(address, continuation) { return this.device.info(address, continuation); };
 
 
-  /* - DB Buffered -------------------------------------------------------- */
+  /* - DB Buffered -------------------------------------------------------- 
+     These methods are pulling buffered data from redis so are usually the
+     fastest & most reliable way to pull information about particular 
+     devices from the mesh */
 
   /**
    * Returns instantaneous DB data for the device at address
-   * BUFFERED
-   * TODO - we need a clear way to distinguish between info coming from
-   *        direct query of device & buffered info coming from db
    */
   device.info = function(address, continuation) {
     var name = afrimesh.villagebus.Name("/@root/db/deviceinfo/" + address);
@@ -34,7 +34,6 @@ function BootDevice(parent) {
 
   /** 
    * Returns temporal DB data for the device at address
-   * BUFFERED
    */
   device.stat = function(address, continuation, range) {
     var name = afrimesh.villagebus.Name("/@root/db/lrange/devicestat/" + address);
@@ -47,11 +46,30 @@ function BootDevice(parent) {
   };
 
 
-  /* - Direct ------------------------------------------------------------- */
+  /* - Direct ------------------------------------------------------------- 
+     These methods are making network requests directly to the device 
+     address. Their performance are thus highly dependent on mesh weather
+     and available routing between the browser and the mesh nodes */
 
+  /** 
+   * SNMP access to device
+   */
+  device.snmp = function(address, community, oids, continuation) {
+    var name = afrimesh.villagebus.Name("/@root/snmp/get/" + address + "/" + community + "/" + oids.join(","));
+    name = afrimesh.villagebus.Bind(name, continuation);
+    name = afrimesh.villagebus.GET(name);
+    return name;
+  };
+  device.snmp.walk = function(address, community, oid, continuation) {
+    var name = afrimesh.villagebus.Name("/@root/snmp/walk/" + address + "/" + community + "/" + oid);
+    name = afrimesh.villagebus.Bind(name, continuation);
+    name = afrimesh.villagebus.GET(name);
+    return name;
+  };
+
+  
   /**
    * Access device configuration
-   * DIRECT
    */
   device.configuration = function(address, key, continuation) {
     var name = afrimesh.villagebus.Name("/@" + address + "/config/" + key);
@@ -75,7 +93,6 @@ function BootDevice(parent) {
 
   /**
    * Device location
-   * DIRECT
    */
   device.location = function(address, continuation) {
     return device.configuration(address, "afrimesh.location", function (error, config) {
@@ -92,7 +109,6 @@ function BootDevice(parent) {
 
   /**
    * Return OS uname for device
-   * DIRECT
    */
   device.uname = function(address, continuation) {
     var name = afrimesh.villagebus.Name("/@" + address + "/sys/uname");
@@ -104,9 +120,9 @@ function BootDevice(parent) {
     return name;
   };
 
+
   /**
    * Return Afrimesh version for device
-   * DIRECT
    */
   device.version = function(address, continuation) {
     var name = afrimesh.villagebus.Name("/@" + address + "/sys/version");
@@ -118,9 +134,9 @@ function BootDevice(parent) {
     return name;
   };
 
+
   /**
    *  Device Services
-   *  DIRECT
    */
   device.service = function(address, service, continuation, command) {
     var name = afrimesh.villagebus.Name("/@" + address + "/sys/service/" + service);
@@ -137,7 +153,34 @@ function BootDevice(parent) {
   };
 
 
-
+  /** 
+   * Device package management
+   */
+  device.package = { };
+  device.package.update  = function(address, continuation) {
+    var name = afrimesh.villagebus.Name("/@" + address + "/package/update");
+    name = afrimesh.villagebus.Bind(name, continuation);
+    name = afrimesh.villagebus.GET(name);    
+    return name;
+  };
+  device.package.list    = function(address, continuation) {
+    var name = afrimesh.villagebus.Name("/@" + address + "/package/list");
+    name = afrimesh.villagebus.Bind(name, continuation);
+    name = afrimesh.villagebus.GET(name);    
+    return name;
+  };
+  device.package.status  = function(address, name, continuation) {
+    var name = afrimesh.villagebus.Name("/@" + address + "/package/status/" + name);
+    name = afrimesh.villagebus.Bind(name, continuation);
+    name = afrimesh.villagebus.GET(name);    
+    return name;
+  };
+  device.package.upgrade = function(address, name, continuation) {
+    var name = afrimesh.villagebus.Name("/@" + address + "/package/upgrade/" + name);
+    name = afrimesh.villagebus.Bind(name, continuation);
+    name = afrimesh.villagebus.GET(name);    
+    return name;
+  };
 
   return device;
 };

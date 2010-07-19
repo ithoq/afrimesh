@@ -34,6 +34,21 @@ function BootNetwork(parent) {
   };
 
 
+  /* - network monitoring ----------------------------------------------- */
+
+  /**
+   * Returns the network log
+   */
+  network.log = function(continuation, count) {
+    var name = afrimesh.villagebus.Name("/@root/sys/syslog");
+    name = afrimesh.villagebus.Bind(name, continuation);
+    name = afrimesh.villagebus.GET(name, { count : (count?count:10) });
+    return name;
+  };
+
+
+
+
   /* - network accounting ----------------------------------------------- */
 
   /**
@@ -48,8 +63,10 @@ function BootNetwork(parent) {
 
   /** 
    * decorates a router with network accounting information 
+   *
+   * TODO - network.accounting should a) be a map keyed w/ IP and b) cached 
    */
-  network.accounting.router = function(router, continuation) { /* TODO - network.accounting should a) be a map keyed w/ IP and b) cached */
+  network.accounting.router = function(router, continuation) { 
     var temp = 0;
     router.traffic = { bytes : 0, packets : 0 };
     try { 
