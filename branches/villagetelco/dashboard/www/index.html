@@ -112,6 +112,12 @@
         /* TODO - debug */
         //$("ul#dock li#devices").click();
 
+        afrimesh.customers.status(function(error, status) {
+            console.log("STATUS: ");
+            console.log(error);
+            console.log(status);
+          });
+
         console.debug("$(document).ready() -------------------- end");
       });
 

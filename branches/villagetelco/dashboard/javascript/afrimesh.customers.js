@@ -10,29 +10,58 @@
 
 function BootCustomers(parent) {
 
-  var customers = function(callback) { return this.customers.status(callback); };
+  var customers = function(continuation) { return this.customers.status(continuation); };
 
-  customers.select = function(callback) {
-    return afrimesh.villagebus.radius.select(callback);
-  }
-  customers.generate = function(username, type, seconds, callback) { 
-    return afrimesh.villagebus.radius.insert(username, type, seconds, callback);
-  };
-  customers.update = function(username, new_username, new_password, new_type, callback) { 
-    return afrimesh.villagebus.radius.update(username, new_username, new_password, new_type. callback); 
-  };
-  customers.update.username = function(username, new_username, callback) { 
-    return afrimesh.villagebus.radius.update(username, new_username, null, null, callback); 
-  };
-  customers.update.type = function(username, new_type, callback) { 
-    return afrimesh.villagebus.radius.update(username, null, null, new_type, callback); 
-  };
-  customers.remove = function(username, callback) { 
-    return afrimesh.villagebus.radius.remove(username, callback); 
-  };
-  customers.status  = function(callback) {
-    return afrimesh.villagebus.radius.who(callback);
+  customers.status  = function(continuation) {
+    var name = afrimesh.villagebus.Name("/@radius");
+    name = afrimesh.villagebus.Bind(name, continuation);
+    name = afrimesh.villagebus.POST(name, { command : "who" }, null, true);
+    return name;
   };  
+
+  customers.select = function(continuation) {
+    var name = afrimesh.villagebus.Name("/@radius");
+    name = afrimesh.villagebus.Bind(name, continuation);
+    name = afrimesh.villagebus.POST(name, { command : "list" }, null, true);
+    return name;
+  };
+
+  customers.generate = function(username, type, seconds, continuation) { 
+    var name = afrimesh.villagebus.Name("/@radius");
+    name = afrimesh.villagebus.Bind(name, continuation);
+    name = afrimesh.villagebus.POST(name, { command  : "new",
+                                            username : username, 
+                                            type     : type,
+                                            seconds  : seconds }, null, true);    
+    return name;
+  };
+
+  customers.update = function(username, new_username, new_password, new_type, continuation) { 
+    var name = afrimesh.villagebus.Name("/@radius");
+    name = afrimesh.villagebus.Bind(name, continuation);
+    name = afrimesh.villagebus.POST(name, { command      : "modify",
+                                            username     : username, 
+                                            new_username : new_username,
+                                            new_password : new_password,
+                                            new_type     : new_type }, null, true);    
+    return name;
+  };
+
+  customers.update.username = function(username, new_username, continuation) { 
+    return customers.update(username, new_username, null, null, continuation);
+  };
+
+  customers.update.type = function(username, new_type, continuation) { 
+    return customers.update(username, null, null, new_type, continuation);
+  };
+
+  customers.remove = function(username, continuation) { 
+    var name = afrimesh.villagebus.Name("/@radius");
+    name = afrimesh.villagebus.Bind(name, continuation);
+    name = afrimesh.villagebus.POST(name, { command  : "delete",
+                                            username : username }, null, true);    
+    return name;
+  };
 
   return customers;
 };

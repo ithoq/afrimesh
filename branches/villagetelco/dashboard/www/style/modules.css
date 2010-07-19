@@ -9,7 +9,7 @@
 
 
 /* - funky braces --------------------------------------------------------- */
-/*td.instructions {
+td.instructions {
   text-align: center;
   font-size: 1.5em;
   color: lightgray;
@@ -28,11 +28,11 @@ td.v-brace {
   border-top: 1px solid lightgray;
   border-right: 1px solid lightgray;
   border-bottom: 1px solid lightgray;
-}*/
+}
 
 
 /* - customers-manage module ----------------------------------------------- */
-/*.customers-manage         { font-size: 1.25em; }
+.customers-manage         { font-size: 1.25em; }
 .customers-manage table   {  } 
 .customers-manage th      {  
   background-repeat: no-repeat;
@@ -67,10 +67,10 @@ td.v-brace {
   width: 7.5em;
   cursor: hand; 
 }
-*/
+
 
 /* - customers-status module ----------------------------------------------- */
-/*.customers-status         { font-size: 1.25em; }
+.customers-status         { font-size: 1.25em; }
 .customers-status table   { } 
 .customers-status th      {   
   background-repeat: no-repeat;
@@ -88,18 +88,18 @@ td.v-brace {
 }
 .customers-status tr.idle { color: lightgray;  }
 .customers-status td      {  } 
-.customers-status td.name { width: 10em; } */
+.customers-status td.name { width: 10em; } 
 
 
 /* - customers-plans ------------------------------------------------------ */
-/*.customers-plans              { font-size: 1.25em; }
+.customers-plans              { font-size: 1.25em; }
 .customers-plans table        {  } 
 .customers-plans th           { padding:0px; padding-right:1.0em;} 
 .customers-plans td           { padding-top: 0.5em; } 
 .customers-plans td.name      { cursor: caret; width: 10em;  }
 .customers-plans td.minutes   { cursor: caret;  }
 .customers-plans td.currency  { cursor: caret;  }
-.customers-plans td.price     { cursor: caret;  }*/
+.customers-plans td.price     { cursor: caret;  }
 
 
 /* - customers-recharge module -------------------------------------------- */
@@ -146,7 +146,7 @@ td.v-brace {
 
 
 /* - network health module ------------------------------------------------ */
-/*.network-messages thead {
+.network-messages thead {
   color: black;
 }
 .network-messages tr {
@@ -192,7 +192,7 @@ td.v-brace {
 }
 .network-messages tr.unknown td {
   color: #202020;
-}*/
+}
         
 /* - network devices module ------------------------------------------------ */
 div#network-devices {
@@ -289,14 +289,14 @@ div#network-devices div.device span.graph {
 
 
 /* - utility upgrade module ---------------------------------------------- */
-/*.utility-upgrade td { 
+.utility-upgrade td { 
   margin:0px; 
   padding:0px; 
 }
-*/
+
 
 /* - internet-configure module -------------------------------------------- */
-/*.ui-sortable, .ui-sortable-brace, .ui-sortable-instructions { width: 310px; padding: 5px; }
+.ui-sortable, .ui-sortable-brace, .ui-sortable-instructions { width: 310px; padding: 5px; }
 .ui-sortable        { border:1px solid gray; min-height: 230px; margin: 5px; }
 .ui-sortable-brace  {   
   border-left: 1px solid lightgray;
@@ -321,12 +321,12 @@ dl.sort dt {
   width: 300px; 
 }
 dl.sort dd { background-color:red;  }
-*/
 
-/* .internet-configure td { background-color: lightgray; border: 4px solid white; padding: 4px;  } */
+
+.internet-configure td { background-color: lightgray; border: 4px solid white; padding: 4px;  } 
 
 /* - help module ---------------------------------------------------------- */
-/*.help li {
+.help li {
   margin-left: 2.0em;
   list-style-type: disc;
   list-style-position: outside;
@@ -336,7 +336,7 @@ dl.sort dd { background-color:red;  }
 }
 .help div.navigation {
   background: #f7f7f7;
-}*/
+}
 
 
 /* - setting module ------------------------------------------------------- */

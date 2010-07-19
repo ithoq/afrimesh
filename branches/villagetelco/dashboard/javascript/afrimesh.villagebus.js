@@ -70,6 +70,8 @@ var BootVillageBus = function (afrimesh) {
         return "/" + afrimesh.settings.network.mesh.vis_server + ":2005";  
       } else if (node == "@pmacct") {
         return "/" + afrimesh.settings.network.mesh.accounting_server + "/cgi-bin/villagebus";  
+      } else if (node == "@radius") {
+        return "/" + afrimesh.settings.radius.server + "/cgi-bin/village-bus-radius";
       } else if (node[0] == '@') {
         return "/" + node.substring(1) + "/cgi-bin/villagebus"; 
       }
@@ -103,6 +105,7 @@ var BootVillageBus = function (afrimesh) {
         console.error("VBUS.FAIL " + response.error + " " + name.url);
         return continuation(response.error, null);
       }
+      name._response_ = response;
       return continuation(null, response);
     };
     name.error = function(response) {
@@ -117,9 +120,11 @@ var BootVillageBus = function (afrimesh) {
     // TODO - if there are no continuations bound to name configure a
     //        sync JSON request so that we can block on read.
     if (name.continuations.length == 0) {
-      console.log("No continuations registered. Converting to sync JSON call");
-      name = jsonp_to_json(name, args);
-      name.async = false;
+      console.log("No continuations registered. Converting " + name.url + " to Sync JSON call (" + name.dataType + ")");
+      name.async = false;            // convert to SYNC call
+      if (name.dataType != "text") { // don't convert from JSONP if it's already a JSON call
+        name = jsonp_to_json(name, args); 
+      }
       return name;
     }
     if (args) {
@@ -142,14 +147,14 @@ var BootVillageBus = function (afrimesh) {
     return villagebus.Send(name, args);
   };
 
-  villagebus.PUT = function(name, data, args) {
-    name      = jsonp_to_json(name, data);
+  villagebus.PUT = function(name, data, args, raw) {
+    name      = jsonp_to_json(name, data, raw);
     name.type = "PUT";
     return villagebus.Send(name, args);
   };
 
-  villagebus.POST = function(name, data, args) {
-    name      = jsonp_to_json(name, data);
+  villagebus.POST = function(name, data, args, raw) {
+    name      = jsonp_to_json(name, data, raw);
     name.type = "POST";
     return villagebus.Send(name, args);
   };
@@ -164,12 +169,12 @@ var BootVillageBus = function (afrimesh) {
     name.success = function(response) {
       try {
         if (raw) {
-          name._payload_ = eval(response);
-          return success(name._payload_);
+          name._response_ = eval(response);
+          return success(name._response_);
         } 
         function jsonp(payload) { // handle a jsonp reply
-          name._payload_ = payload;
-          return success(payload);
+          name._response_ = payload;
+          return success(name._response_);
         };
         eval(response); // evaluates jsonp reply and calls ^^^^^^^
       } catch (fail) { 
@@ -200,7 +205,7 @@ var BootVillageBus = function (afrimesh) {
    */
   villagebus.Read = function(name) {
     name._xhr_ = $.ajax(name);
-    return name._payload_;
+    return name._response_;
   };
   
   /**
@@ -233,124 +238,6 @@ var BootVillageBus = function (afrimesh) {
       }, error); 
   };
   
-
-  /** - villagebus.radius ------------------------------------------------- */
-  // TODO - refactor into rpc* and finally drop make_*_handler && make_*_request
-  villagebus.radius        = function(callback) { return villagebus.radius.who(); };
-  villagebus.radius.url    = function() {
-    if (afrimesh.settings.radius.server == afrimesh.settings.address) {
-      return "http://" + afrimesh.settings.radius.server + "/cgi-bin/village-bus-radius";
-    }
-    return villagebus.ajax_proxy() + "http://" + afrimesh.settings.radius.server + "/cgi-bin/village-bus-radius";
-  };
-  villagebus.radius.who = function(callback) { 
-    return (callback ? villagebus.radius.who.async(callback) 
-                     : villagebus.radius.who.sync()); 
-  };
-  villagebus.radius.select = function(callback) { 
-    return (callback ? villagebus.radius.select.async(callback) 
-                     : villagebus.radius.select.sync()); 
-  };
-  villagebus.radius.insert = function(username, type, seconds, callback) { 
-    return (callback ? villagebus.radius.insert.async(username, type, seconds, callback)
-                     : villagebus.radius.insert.sync(username, type, seconds)); 
-  };
-  villagebus.radius.remove = function(username, callback) { 
-    return (callback ? villagebus.radius.remove.async(username, callback)
-                     : villagebus.radius.remove.sync(username)); 
-  };
-  villagebus.radius.update = function(username, new_username, new_password, new_type, callback) { 
-    return (callback ? villagebus.radius.update.async(username, new_username, new_password, new_type, callback) 
-                     : villagebus.radius.update.sync(username, new_username, new_password, new_type)); 
-  };
-
-  villagebus.radius.who.sync = function() {
-    var handler = function(data) { handler.response = data; }; // TODO - extend sync handler to handle array data
-    return make_json_request({
-        url     : villagebus.radius.url(),
-        request : { package  : "radius",
-                    command  : "who" },
-        success : handler,
-        async   : false });
-  };
-  villagebus.radius.async_helper = function(request, callback) {
-    return make_json_request({
-        url     : villagebus.radius.url(),
-        request : request,
-        error   : function(err)  { callback(err);        },
-        success : function(data) { callback(null, data); },
-        async   : true });
-  };
-  villagebus.radius.who.async = function(callback) {
-    return villagebus.radius.async_helper({ package  : "radius", command  : "who" }, 
-                                          callback);
-  };
-  villagebus.radius.select.sync = function() {
-    var handler = function(data) { handler.response = data; }; // TODO - extend sync handler to handle array data
-    return make_json_request({
-        url     : villagebus.radius.url(),
-        request : { package : "radius",
-                    command : "list" },
-        success : handler,
-        async   : false });
-  };
-  villagebus.radius.select.async = function(callback) {
-    return villagebus.radius.async_helper({ package  : "radius", command  : "list" }, 
-                                          callback);
-  };
-  villagebus.radius.insert.sync = function(username, type, seconds) {
-    return make_json_request({
-        url     : villagebus.radius.url(),
-        request : { package  : "radius",
-                    command  : "new",
-                    username : username,
-                    type     : type,
-                    seconds  : seconds },  
-        success : make_sync_response_handler(villagebus.radius.url(), "villagebus.radius.insert"),
-        async   : false });
-  };
-  villagebus.radius.insert.async = function(username, type, seconds, callback) {
-    return villagebus.radius.async_helper({ package  : "radius", command  : "new",
-                                            username : username, 
-                                            type     : type, 
-                                            seconds  : seconds }, 
-                                          callback);
-  };
-  villagebus.radius.update.sync = function(username, new_username, new_password, new_type) {
-    return make_json_request({
-        url     : villagebus.radius.url(),
-        request : { package      : "radius",
-                    command      : "modify",
-                    username     : username,
-                    new_username : new_username,
-                    new_password : new_password,
-                    new_type     : new_type },
-        success : make_sync_response_handler(villagebus.radius.url(), "villagebus.radius.update"),
-        async   : false });
-  };
-  villagebus.radius.update.async = function(username, new_username, new_password, new_type, callback) {
-    return villagebus.radius.async_helper({ package  : "radius", command  : "modify",
-                                            username     : username, 
-                                            new_username : new_username, 
-                                            new_password : new_password, 
-                                            new_type     : new_type }, 
-                                          callback);
-  };
-  villagebus.radius.remove.sync = function(username) {
-    return make_json_request({
-        url     : villagebus.radius.url(),
-        request : { package  : "radius",
-                    command  : "delete",
-                    username : username },
-        success : make_sync_response_handler(villagebus.radius.url(), "villagebus.radius.remove"),
-        async   : false });
-  };
-  villagebus.radius.remove.async = function(username, callback) {
-    return villagebus.radius.async_helper({ package  : "radius", command  : "delete",
-                                            username : username }, 
-                                          callback);
-  };
-
 
   /** - villagebus.snmp --------------------------------------------------- */
   // snmpwalk -v 2c -c public 196.211.3.106 SysDescr
@@ -424,75 +311,6 @@ var BootVillageBus = function (afrimesh) {
   /**
    * @return XMLHttpRequest
    */
-  function make_json_request(request) {
-    var xml = $.ajax({
-        url: request.url,
-        type        : "POST",
-        contentType : "application/json",
-        dataType    : "json",
-        async       : request.async,
-        data        : JSON.stringify(request.request),
-        error       : (request.error ? request.error : function () {
-            console.error("JSON error for: " + request.url);
-            console.error("url : "  + request.url);
-            console.error("data : " + JSON.stringify(request.request));
-          }),
-        success     : request.success });
-    if (request.async) {
-      return xml;
-    }
-    return request.success.response;
-  };
-
-  function make_jsonp_request(request) {
-    console.log("Async: " + request.async);
-    console.log("URL: " + request.url);
-    var xml = $.ajax({
-        url         : request.url,
-        type        : "GET",
-        contentType : "application/json",
-        dataType    : "jsonp",
-        //jsonp       : "callback",
-        async       : request.async,
-        data        : "", //{ json : $.toJSON(request.request) },
-        success     : request.success });
-    console.log("Made request");
-    if (request.async) {
-      return xml;
-    }
-    return request.success.response;
-  };
-
-  function make_sync_response_handler(address, name) {
-    var handler = function(data) {
-      if (data.length == 0) {
-        console.error(name + " failed to get data from address: " + address);
-        console.error(data);
-        return;
-      }
-      handler.response = data[0]; 
-      if (handler.response.error) {
-        console.error(name + " failed with error: " + data[0].error);
-      }
-    };
-    return handler;
-  };
-
-  function make_async_response_handler(f, address, name) {
-    var handler = function(data) {
-      if (data.length == 0) {
-        console.error(name + " failed to get data from address: " + address);
-        console.error(data);
-        return;
-      } 
-      handler.response = data[0]; 
-      if (handler.response.error) {
-        console.error(name + " failed with error: " + data[0].error);
-      }
-      f(data[0]);
-    };
-    return handler;
-  };
 
   // TODO - don't require parameters to be in an array - rather use varargs!
   var rpc = function(url, method, parameters) {
