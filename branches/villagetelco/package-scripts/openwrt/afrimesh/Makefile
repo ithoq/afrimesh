@@ -152,20 +152,20 @@ define Build/Compile
 endef
 
 
-# - afrimesh-villagetelco ---------------------------------------------------------
-define Package/afrimesh-villagetelco
+# - villagetelco-node ---------------------------------------------------------
+define Package/villagetelco-node
 	SECTION:=admin
 	CATEGORY:=Administration
 	DEPENDS:=+afrimesh-base +afrimesh-batman +afrimesh-provision
-	TITLE:=Default factory firmware for using Afrimesh routers on villagetelco mesh networks
+	TITLE:=VillageTelco firmware for OpenWRT routers
 	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
 endef
 
-define Package/afrimesh-villagetelco/description
-	Default factory firmware for using Afrimesh routers on villagetelco mesh networks
+define Package/villagetelco-node/description
+	Build OpenWRT router firmware that can join a VillageTelco mesh
 endef
 
-define Package/afrimesh-villagetelco/install
+define Package/villagetelco-node/install
 	$(INSTALL_DIR)  $(1)/etc
 	$(INSTALL_DIR)  $(1)/etc/config
 	$(INSTALL_DIR)  $(1)/etc/init.d
@@ -176,10 +176,10 @@ define Package/afrimesh-villagetelco/install
 
 	# - runonce --
 	# Packages not part of the base distribution tend to overwrite anything we install above
-	#$(INSTALL_DATA) ./files.villagetelco/etc/firewall.user.runonce   $(1)/etc/firewall.user.afrimesh-villagetelco
-	#$(INSTALL_DATA) ./files.villagetelco/etc/config/firewall.runonce $(1)/etc/config/firewall.afrimesh-villagetelco
-	#$(INSTALL_DATA) ./files.villagetelco/etc/config/batmand.runonce  $(1)/etc/config/batmand.afrimesh-villagetelco
-	$(INSTALL_BIN)  ./files.villagetelco/etc/init.d/runonce          $(1)/etc/init.d/runonce.afrimesh-villagetelco
+	#$(INSTALL_DATA) ./files.villagetelco/etc/firewall.user.runonce   $(1)/etc/firewall.user.villagetelco-node
+	#$(INSTALL_DATA) ./files.villagetelco/etc/config/firewall.runonce $(1)/etc/config/firewall.villagetelco-node
+	#$(INSTALL_DATA) ./files.villagetelco/etc/config/batmand.runonce  $(1)/etc/config/batmand.villagetelco-node
+	$(INSTALL_BIN)  ./files.villagetelco/etc/init.d/runonce          $(1)/etc/init.d/runonce.villagetelco-node
 endef
 
 
@@ -477,7 +477,7 @@ $(eval $(call BuildPackage,afrimesh-base))
 $(eval $(call BuildPackage,afrimesh-batman))
 $(eval $(call BuildPackage,afrimesh-olsr))
 $(eval $(call BuildPackage,afrimesh-provision))
-$(eval $(call BuildPackage,afrimesh-villagetelco))
+$(eval $(call BuildPackage,villagetelco-node))
 $(eval $(call BuildPackage,afrimesh-gateway))
 $(eval $(call BuildPackage,afrimesh-portal))
 $(eval $(call BuildPackage,afrimesh-webif))
