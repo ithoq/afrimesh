@@ -21,6 +21,8 @@ timestamp=`date +%s`000
 uname=`uname -a`
 uptime=`cat /proc/uptime | awk '{ print $1 }'`
 idle=`cat /proc/uptime | awk '{ print $2 }'`
+longitude=`uci get afrimesh.location.longitude`
+latitude=`uci get afrimesh.location.latitude`
 
 # traffic stats - TODO wifi0 as well
 buffer=`cat /proc/net/dev|grep $interface`
@@ -86,6 +88,7 @@ json="{ 'timestamp' : $timestamp, \
         'uname'     : '$uname', \
         'uptime'    : $uptime, \
         'idle'      : $idle, \
+        'location'  : { 'longitude' : '$longitude', 'latitude' : '$latitude' }, \
         'bytes'     : $bytes, \
         'gateways'  : [ $failures ] }"
 HTTP="PUT $villagebus/$path_info HTTP/1.0\n"

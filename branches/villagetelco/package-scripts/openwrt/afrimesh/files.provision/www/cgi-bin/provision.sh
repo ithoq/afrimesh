@@ -34,12 +34,15 @@ factory_roots=192.168.1.9 10.0.0.1 10.0.0.254
 #  
 #   MAC address
 #   IP address
-#   Router ssl public key
+#   Router rsa public key
+
+# dropbearkey -y -f /etc/dropbear/dropbear_rsa_host_key
+# ssh -i /etc/dropbear/dropbear_rsa_host_key antoine@pi.artifactual.org.za
 
 
 # 4. Receive provisiond reply
 #
-#   Network ssl public key
+#   Network rsa public key
 #   Configuration tarball
 #   Checksum
 

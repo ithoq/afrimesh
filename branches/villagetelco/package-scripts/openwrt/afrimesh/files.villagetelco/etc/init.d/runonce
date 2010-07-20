@@ -23,6 +23,6 @@ start () {
   chmod 0666 /etc/config/*
 
   # cleanup
-  rm -rf /etc/init.d/runonce.afrimesh-gateway 
-  rm -rf /etc/rc.d/S30runonce.afrimesh-gateway
+  rm -rf /etc/init.d/runonce.villagetelco-node 
+  rm -rf /etc/rc.d/S30runonce.villagetelco-node
 }
