@@ -90,27 +90,6 @@ MAKE_VILLAGEBUS_ARGS += \
 	DISABLE_MOD_REDIS=1
 
 
-# - build rules --------------------------------------------------------------
-define Build/Prepare
-	-$(call Build/Prepare/Default)
-	if [ -z "$(PKG_SOURCE_URL)" ]; then \
-		echo "Building from local sources" ; \
-		rm -rf $(PKG_BUILD_DIR)	  ; \
-		mkdir  $(PKG_BUILD_DIR)   ; \
-    $(LOCAL_SOURCES)/clean.sh ; \
-		$(CP) $(LOCAL_SOURCES)/*  $(PKG_BUILD_DIR) ; \
-	fi
-endef
-
-define Build/Configure
-endef
-
-define Build/Compile
-	cd $(PKG_BUILD_DIR)/utilities  ; VERSION=$(PKG_VERSION) make $(MAKE_ARGS) 
-	cd $(PKG_BUILD_DIR)/villagebus ; VERSION=$(PKG_VERSION) make $(MAKE_VILLAGEBUS_ARGS) 
-endef
-
-
 # - afrimesh-base ------------------------------------------------------------
 include $(INCLUDE_DIR)/package.mk
 define Package/afrimesh-base
@@ -152,6 +131,58 @@ define Package/afrimesh-base/install
 endef
 
 
+# - build rules --------------------------------------------------------------
+define Build/Prepare
+	-$(call Build/Prepare/Default)
+	if [ -z "$(PKG_SOURCE_URL)" ]; then \
+		echo "Building from local sources" ; \
+		rm -rf $(PKG_BUILD_DIR)	  ; \
+		mkdir  $(PKG_BUILD_DIR)   ; \
+    $(LOCAL_SOURCES)/clean.sh ; \
+		$(CP) $(LOCAL_SOURCES)/*  $(PKG_BUILD_DIR) ; \
+	fi
+endef
+
+define Build/Configure
+endef
+
+define Build/Compile
+	cd $(PKG_BUILD_DIR)/utilities  ; VERSION=$(PKG_VERSION) make $(MAKE_ARGS) 
+	cd $(PKG_BUILD_DIR)/villagebus ; VERSION=$(PKG_VERSION) make $(MAKE_VILLAGEBUS_ARGS) 
+endef
+
+
+# - afrimesh-villagetelco ---------------------------------------------------------
+define Package/afrimesh-villagetelco
+	SECTION:=admin
+	CATEGORY:=Administration
+	DEPENDS:=+afrimesh-base +afrimesh-batman +afrimesh-provision
+	TITLE:=Default factory firmware for using Afrimesh routers on villagetelco mesh networks
+	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
+endef
+
+define Package/afrimesh-villagetelco/description
+	Default factory firmware for using Afrimesh routers on villagetelco mesh networks
+endef
+
+define Package/afrimesh-villagetelco/install
+	$(INSTALL_DIR)  $(1)/etc
+	$(INSTALL_DIR)  $(1)/etc/config
+	$(INSTALL_DIR)  $(1)/etc/init.d
+
+	#$(INSTALL_DATA) ./files.villagetelco/etc/config/network      $(1)/etc/config
+	#$(INSTALL_DATA) ./files.villagetelco/etc/config/wireless     $(1)/etc/config
+	$(INSTALL_BIN)  ./files.villagetelco/etc/init.d/fallback-ip  $(1)/etc/init.d
+
+	# - runonce --
+	# Packages not part of the base distribution tend to overwrite anything we install above
+	#$(INSTALL_DATA) ./files.villagetelco/etc/firewall.user.runonce   $(1)/etc/firewall.user.afrimesh-villagetelco
+	#$(INSTALL_DATA) ./files.villagetelco/etc/config/firewall.runonce $(1)/etc/config/firewall.afrimesh-villagetelco
+	#$(INSTALL_DATA) ./files.villagetelco/etc/config/batmand.runonce  $(1)/etc/config/batmand.afrimesh-villagetelco
+	$(INSTALL_BIN)  ./files.villagetelco/etc/init.d/runonce          $(1)/etc/init.d/runonce.afrimesh-villagetelco
+endef
+
+
 # - afrimesh-provision -------------------------------------------------------
 define Package/afrimesh-provision
 	SECTION:=admin
@@ -173,7 +204,7 @@ define Package/afrimesh-provision/install
 endef
 
 
-# - afrimesh-batmand ---------------------------------------------------------
+# - afrimesh-batman ----------------------------------------------------------
 define Package/afrimesh-batman
 	SECTION:=admin
 	CATEGORY:=Administration
@@ -446,6 +477,7 @@ $(eval $(call BuildPackage,afrimesh-base))
 $(eval $(call BuildPackage,afrimesh-batman))
 $(eval $(call BuildPackage,afrimesh-olsr))
 $(eval $(call BuildPackage,afrimesh-provision))
+$(eval $(call BuildPackage,afrimesh-villagetelco))
 $(eval $(call BuildPackage,afrimesh-gateway))
 $(eval $(call BuildPackage,afrimesh-portal))
 $(eval $(call BuildPackage,afrimesh-webif))

@@ -22,6 +22,6 @@ start () {
   chmod 0666 /etc/config/*
 
   # cleanup
-  #rm -rf /etc/init.d/runonce.afrimesh-base
-  #rm -rf /etc/rc.d/S30runonce.afrimesh-base
+  rm -rf /etc/init.d/runonce.afrimesh-base
+  rm -rf /etc/rc.d/S30runonce.afrimesh-base
 }
