@@ -91,7 +91,6 @@ MAKE_VILLAGEBUS_ARGS += \
 #PKG_BUILD_DEPENDS=+credis 
 
 # - afrimesh-base ------------------------------------------------------------
-# +credis 
 include $(INCLUDE_DIR)/package.mk
 define Package/afrimesh-base
 	SECTION:=admin
@@ -117,18 +116,17 @@ define Package/afrimesh-base/install
 	$(INSTALL_DIR)  $(1)/etc
 	$(INSTALL_DIR)  $(1)/etc/config
 	$(INSTALL_DIR)  $(1)/etc/crontabs
-	$(INSTALL_DIR)  $(1)/etc/init.d
 	$(INSTALL_DIR)  $(1)/www/cgi-bin
 
 	mkdir -p $(1)/CONTROL
 	echo "/etc/config/afrimesh" >> $(1)/CONTROL/conffiles
-	$(INSTALL_CONF) ./files/etc/config/afrimesh  $(1)/etc/config
-	$(INSTALL_BIN)  ./files/etc/crontabs/afrimesh $(1)/etc/crontabs/root
-
-	$(INSTALL_BIN)  ./files/www/cgi-bin/status.sh          $(1)/www/cgi-bin/status
-	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/villagebus/villagebus $(1)/www/cgi-bin/villagebus
+	$(INSTALL_CONF) ./files/etc/config/afrimesh             $(1)/etc/config
+	$(INSTALL_BIN)  ./files/etc/crontabs/afrimesh           $(1)/etc/crontabs/root
+	$(INSTALL_BIN)  ./files/www/cgi-bin/status.sh           $(1)/www/cgi-bin/status
+	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/villagebus/villagebus  $(1)/www/cgi-bin/villagebus
 
 	# - runonce --
+	$(INSTALL_DIR)  $(1)/etc/init.d
 	$(INSTALL_BIN)  ./files/etc/init.d/runonce  $(1)/etc/init.d/runonce.afrimesh-base
 endef
 
@@ -221,7 +219,7 @@ endef
 
 define Package/afrimesh-gateway/postinst
 #!/bin/sh
-# # check if we are on the real system
+# check if we are on the real system
 if [ -z "$${IPKG_INSTROOT}" ]; then
         touch /etc/afrimesh.postinst.test
 fi
@@ -234,7 +232,6 @@ define Package/afrimesh-webif
 	SECTION:=admin
 	CATEGORY:=Administration
 	DEPENDS:=+afrimesh-base 
-#+curl-nossl
 	TITLE:=Web interface for mesh nodes
 endef
 
@@ -243,35 +240,31 @@ define Package/afrimesh-webif/description
 endef
 
 define Package/afrimesh-webif/install
-	#$(INSTALL_DIR)  $(1)/etc
-	#$(INSTALL_DIR)  $(1)/etc/config
-	#$(INSTALL_CONF) ./files.router/etc/config/afrimesh $(1)/etc/config
 	$(INSTALL_DIR)   $(1)/www/afrimesh
-	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/www/index.redirect.html   $(1)/www/index.html
-	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/www/index.router.html     $(1)/www/afrimesh/index.html
-	$(INSTALL_DIR)   $(1)/www/cgi-bin
-	$(INSTALL_BIN)   $(PKG_BUILD_DIR)/dashboard/cgi-bin/ajax-proxy.cgi    $(1)/www/cgi-bin
-	$(INSTALL_BIN)   $(PKG_BUILD_DIR)/dashboard/cgi-bin/mesh-topology.kml $(1)/www/cgi-bin
 	$(INSTALL_DIR)   $(1)/www/afrimesh/images
-	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/www/images/*.gif          $(1)/www/afrimesh/images
-	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/www/images/*.png          $(1)/www/afrimesh/images
 	$(INSTALL_DIR)   $(1)/www/afrimesh/javascript
 	$(INSTALL_DIR)   $(1)/www/afrimesh/javascript/jquery
-	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/javascript/jquery/*       $(1)/www/afrimesh/javascript/jquery
 	$(INSTALL_DIR)   $(1)/www/afrimesh/javascript/openlayers
-	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/javascript/openlayers/*   $(1)/www/afrimesh/javascript/openlayers
 	$(INSTALL_DIR)   $(1)/www/afrimesh/javascript/yahoo
+	$(INSTALL_DIR)   $(1)/www/afrimesh/modules
+	$(INSTALL_DIR)   $(1)/www/afrimesh/style
+	$(INSTALL_DIR)   $(1)/www/afrimesh/style/images
+	$(INSTALL_DIR)   $(1)/www/afrimesh/style/images/controls
+	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/www/index.redirect.html   $(1)/www/index.html
+	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/www/index.router.html     $(1)/www/afrimesh/index.html
+	$(INSTALL_BIN)   $(PKG_BUILD_DIR)/dashboard/cgi-bin/ajax-proxy.cgi    $(1)/www/cgi-bin
+	$(INSTALL_BIN)   $(PKG_BUILD_DIR)/dashboard/cgi-bin/mesh-topology.kml $(1)/www/cgi-bin
+	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/www/images/*.gif          $(1)/www/afrimesh/images
+	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/www/images/*.png          $(1)/www/afrimesh/images
+	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/javascript/jquery/*       $(1)/www/afrimesh/javascript/jquery
+	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/javascript/openlayers/*   $(1)/www/afrimesh/javascript/openlayers
 	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/javascript/yahoo/*        $(1)/www/afrimesh/javascript/yahoo
 	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/javascript/afrimesh*.js   $(1)/www/afrimesh/javascript
-	$(INSTALL_DIR)   $(1)/www/afrimesh/modules
 	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/www/modules/*.html        $(1)/www/afrimesh/modules
 	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/www/modules/*.js          $(1)/www/afrimesh/modules
-	$(INSTALL_DIR)   $(1)/www/afrimesh/style
 	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/www/style/*.css           $(1)/www/afrimesh/style
-	$(INSTALL_DIR)   $(1)/www/afrimesh/style/images
 	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/www/style/images/*.gif    $(1)/www/afrimesh/style/images
 	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/www/style/images/*.png    $(1)/www/afrimesh/style/images
-	$(INSTALL_DIR)   $(1)/www/afrimesh/style/images/controls
 	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/www/style/images/controls/*.png   $(1)/www/afrimesh/style/images/controls
 endef
 
@@ -292,13 +285,14 @@ define Package/afrimesh-portal/install
 	$(INSTALL_DIR)  $(1)/etc/chilli
 	$(INSTALL_DIR)  $(1)/etc/chilli/www
 	$(INSTALL_DIR)  $(1)/www/cgi-bin
-	$(INSTALL_DATA) ./files/etc/chilli/defaults $(1)/etc/chilli
-	$(INSTALL_DATA) ./files/etc/chilli/www/ChilliLibrary.js $(1)/etc/chilli/www
-	$(INSTALL_DATA) ./files/etc/chilli/www/chilli.js  $(1)/etc/chilli/www
-	$(INSTALL_DATA) ./files/etc/chilli/www/index.html $(1)/etc/chilli/www
-	$(INSTALL_BIN)  ./files/www/cgi-bin/hotspotlogin.cgi $(1)/www/cgi-bin
-	$(INSTALL_BIN)  ./files/www/cgi-bin/portal-auth.cgi $(1)/www/cgi-bin
-	$(INSTALL_BIN)  ./files/www/cgi-bin/uam.pl $(1)/www/cgi-bin
+
+	$(INSTALL_DATA) ./files.portal/etc/chilli/defaults             $(1)/etc/chilli
+	$(INSTALL_DATA) ./files.portal/etc/chilli/www/ChilliLibrary.js $(1)/etc/chilli/www
+	$(INSTALL_DATA) ./files.portal/etc/chilli/www/chilli.js        $(1)/etc/chilli/www
+	$(INSTALL_DATA) ./files.portal/etc/chilli/www/index.html       $(1)/etc/chilli/www
+	$(INSTALL_BIN)  ./files.portal/www/cgi-bin/hotspotlogin.cgi    $(1)/www/cgi-bin
+	$(INSTALL_BIN)  ./files.portal/www/cgi-bin/portal-auth.cgi     $(1)/www/cgi-bin
+	$(INSTALL_BIN)  ./files.portal/www/cgi-bin/uam.pl              $(1)/www/cgi-bin
 endef
 
 

@@ -1,0 +1,13 @@
+#!/bin/sh /etc/rc.common
+# (C) 2008 openwrt.org
+
+START=96
+
+start() {
+    DATE=`date`
+    echo "Tried to provision on $DATE" >> /tmp/provision
+}
+
+stop() {
+}
+
