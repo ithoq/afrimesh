@@ -133,6 +133,27 @@ define Package/afrimesh-base/install
 endef
 
 
+# - afrimesh-provision -------------------------------------------------------
+define Package/afrimesh-provision
+	SECTION:=admin
+	CATEGORY:=Administration
+	DEPENDS:=+afrimesh-base
+	TITLE:=Mesh router auto-provisioning support
+	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
+endef
+
+define Package/afrimesh-provision/description
+	Mesh router auto-provisioning support
+endef
+
+define Package/afrimesh-provision/install
+	$(INSTALL_DIR)  $(1)/etc/init.d
+	$(INSTALL_DIR)  $(1)/www/cgi-bin
+	$(INSTALL_BIN)  ./files.provision/etc/init.d/provision     $(1)/etc/init.d/provision
+	$(INSTALL_BIN)  ./files.provision/www/cgi-bin/provision.sh $(1)/www/cgi-bin/provision
+endef
+
+
 # - afrimesh-batmand ---------------------------------------------------------
 define Package/afrimesh-batman
 	SECTION:=admin
@@ -428,6 +449,7 @@ endef
 $(eval $(call BuildPackage,afrimesh-base))
 $(eval $(call BuildPackage,afrimesh-batman))
 $(eval $(call BuildPackage,afrimesh-olsr))
+$(eval $(call BuildPackage,afrimesh-provision))
 $(eval $(call BuildPackage,afrimesh-gateway))
 $(eval $(call BuildPackage,afrimesh-portal))
 $(eval $(call BuildPackage,afrimesh-webif))

@@ -41,7 +41,7 @@ core=safelib.o util.o object.o fexpression.o
 
 # modules
 modules=mod_config.o mod_sys.o mod_telephony.o mod_accounting.o mod_package.o
-modulelibs=$(DEPROOT)/lib/libcredis.a $(DEPROOT)/lib/libuci.a 
+modulelibs=$(DEPROOT)/lib/libuci.a 
 ifeq ($(DISABLE_MOD_SNMP),1)
 CFLAGS+=-DDISABLE_MOD_SNMP
 else
@@ -52,7 +52,8 @@ ifeq ($(DISABLE_MOD_REDIS),1)
 CFLAGS+=-DDISABLE_MOD_REDIS
 else
 modules+=mod_db.o 
-modulelibs+=-lcredis
+#modulelibs+=-lcredis
+modulelibs+=$(DEPROOT)/lib/libcredis.a
 endif
 
 

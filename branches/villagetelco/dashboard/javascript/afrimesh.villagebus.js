@@ -37,10 +37,7 @@ var BootVillageBus = function (afrimesh) {
   var name     = afrimesh.villagebus.Name("/@root/db/keys/status");
   var channel  = afrimesh.villagebus.GET(name, "*");
   var response = afrimesh.villagebus.Read(channel);
-  if (afrimesh.villagebus.Error(response)) {
-    console.log(response.error);
-    return;
-  }
+  if (afrimesh.villagebus.Fail(response)) return console.log(response.error);
   for (key in response) {
     // dadadada
   }
@@ -48,15 +45,10 @@ var BootVillageBus = function (afrimesh) {
   // Or this:
   var name = afrimesh.villagebus.Name("/@root/db/keys/status");
   name = Bind(name, function(error, response) {
-    if (error) {
-      console.log(error);
-      return error;
-    }
-    for (key in response) {
-      // dadadadada
-    }
-    return response;
-  });
+      if (error) return console.log(error);
+      for (key in response) { // dadadadada }
+      return response;
+    });
   var channel = afrimesh.villagebus.GET(name, "*");
   var response = Read(channel); */ 
   villagebus.Name = function(name) {
