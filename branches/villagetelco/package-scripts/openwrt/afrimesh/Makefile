@@ -36,26 +36,29 @@ PKG_REV:=809
 PKG_VERSION:=0.9-r$(PKG_REV)
 PKG_RELEASE:=1
 
+
 # See: http://downloads.openwrt.org/people/florian/fosdem/openwrt_cfp_fosdem2008.pdf
 #      https://dev.openwrt.org/ticket/3815
 #      http://forum.openwrt.org/viewtopic.php?id=18090
 ##PKG_SOURCE_MIRROR=0
+
 
 # - to use local sources, disable PKG_SOURCE_URL & set LOCAL_SOURCES ---------
 LOCAL_SOURCES:=~/afrimesh
 ifeq "$(wildcard $(LOCAL_SOURCES) )"  ""
 PKG_SOURCE_URL:=http://afrimesh.googlecode.com/svn/trunk
 endif
-# ----------------------------------------------------------------------------
 
-# source setup
+
+# - sources ------------------------------------------------------------------
 PKG_SOURCE_PROTO:=svn
 PKG_SOURCE_VERSION:=$(PKG_REV)
 PKG_SOURCE_SUBDIR:=$(if $(PKG_BRANCH),$(PKG_BRANCH),$(PKG_NAME))-$(PKG_VERSION)
 PKG_SOURCE:=$(PKG_SOURCE_SUBDIR).tar.gz
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_SOURCE_SUBDIR)
 
-# build flags
+
+# - build configuration ------------------------------------------------------
 PKG_EXTRA_CFLAGS=\
 	-D_METAPACK \
 	-DOPENWRT \
@@ -87,8 +90,26 @@ MAKE_VILLAGEBUS_ARGS += \
 	DISABLE_MOD_REDIS=1
 
 
-#LDFLAGS -lredis
-#PKG_BUILD_DEPENDS=+credis 
+# - build rules --------------------------------------------------------------
+define Build/Prepare
+	-$(call Build/Prepare/Default)
+	if [ -z "$(PKG_SOURCE_URL)" ]; then \
+		echo "Building from local sources" ; \
+		rm -rf $(PKG_BUILD_DIR)	  ; \
+		mkdir  $(PKG_BUILD_DIR)   ; \
+    $(LOCAL_SOURCES)/clean.sh ; \
+		$(CP) $(LOCAL_SOURCES)/*  $(PKG_BUILD_DIR) ; \
+	fi
+endef
+
+define Build/Configure
+endef
+
+define Build/Compile
+	cd $(PKG_BUILD_DIR)/utilities  ; VERSION=$(PKG_VERSION) make $(MAKE_ARGS) 
+	cd $(PKG_BUILD_DIR)/villagebus ; VERSION=$(PKG_VERSION) make $(MAKE_VILLAGEBUS_ARGS) 
+endef
+
 
 # - afrimesh-base ------------------------------------------------------------
 include $(INCLUDE_DIR)/package.mk
@@ -312,29 +333,30 @@ endef
 define Package/afrimesh-dashboard/install
 	$(INSTALL_DIR)  $(1)/etc
 	$(INSTALL_DIR)  $(1)/etc/config
-	$(INSTALL_CONF) ./files/etc/config/afrimesh $(1)/etc/config
 	$(INSTALL_DIR)  $(1)/www/afrimesh
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/index.html             $(1)/www/afrimesh/index.html
 	$(INSTALL_DIR)  $(1)/www/cgi-bin
-	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/dashboard/cgi-bin/ajax-proxy.cgi     $(1)/www/cgi-bin
-	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/dashboard/cgi-bin/mesh-topology.kml  $(1)/www/cgi-bin
 	$(INSTALL_DIR)  $(1)/www/afrimesh/images
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/images/*.gif           $(1)/www/afrimesh/images
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/images/*.png           $(1)/www/afrimesh/images
 	$(INSTALL_DIR)  $(1)/www/afrimesh/javascript
 	$(INSTALL_DIR)  $(1)/www/afrimesh/javascript/jquery
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/jquery/*        $(1)/www/afrimesh/javascript/jquery
 	$(INSTALL_DIR)  $(1)/www/afrimesh/javascript/openlayers
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/openlayers/*    $(1)/www/afrimesh/javascript/openlayers
 	$(INSTALL_DIR)  $(1)/www/afrimesh/javascript/yahoo
+	$(INSTALL_DIR)  $(1)/www/afrimesh/style/images
+	$(INSTALL_DIR)  $(1)/www/afrimesh/style
+	$(INSTALL_DIR)  $(1)/www/afrimesh/modules
+
+	$(INSTALL_CONF) ./files/etc/config/afrimesh $(1)/etc/config
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/index.html             $(1)/www/afrimesh/index.html
+	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/dashboard/cgi-bin/ajax-proxy.cgi     $(1)/www/cgi-bin
+	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/dashboard/cgi-bin/mesh-topology.kml  $(1)/www/cgi-bin
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/images/*.gif           $(1)/www/afrimesh/images
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/images/*.png           $(1)/www/afrimesh/images
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/jquery/*        $(1)/www/afrimesh/javascript/jquery
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/openlayers/*    $(1)/www/afrimesh/javascript/openlayers
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/yahoo/*         $(1)/www/afrimesh/javascript/yahoo
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/afrimesh*.js    $(1)/www/afrimesh/javascript
-	$(INSTALL_DIR)  $(1)/www/afrimesh/modules
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/*.html         $(1)/www/afrimesh/modules
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/*.js           $(1)/www/afrimesh/modules
-	$(INSTALL_DIR)  $(1)/www/afrimesh/style
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/*.css            $(1)/www/afrimesh/style
-	$(INSTALL_DIR)  $(1)/www/afrimesh/style/images
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/images/*.gif     $(1)/www/afrimesh/style/images
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/images/*.png     $(1)/www/afrimesh/style/images
 endef
@@ -356,23 +378,30 @@ endef
 define Package/afrimesh-potato/install
 	$(INSTALL_DIR)  $(1)/etc
 	$(INSTALL_DIR)  $(1)/etc/config
-	$(INSTALL_CONF) ./files.potato/etc/config/afrimesh $(1)/etc/config
 	$(INSTALL_DIR)  $(1)/www/afrimesh
+	$(INSTALL_DIR)  $(1)/www/cgi-bin
+	$(INSTALL_DIR)  $(1)/www/afrimesh/images
+	$(INSTALL_DIR)  $(1)/www/afrimesh/javascript
+	$(INSTALL_DIR)  $(1)/www/afrimesh/javascript/jquery
+	$(INSTALL_DIR)  $(1)/www/afrimesh/javascript/openlayers
+	$(INSTALL_DIR)  $(1)/www/afrimesh/modules
+	$(INSTALL_DIR)  $(1)/www/afrimesh/style
+	$(INSTALL_DIR)  $(1)/www/afrimesh/style/images
+	$(INSTALL_DIR)  $(1)/www/afrimesh/style/images/controls
+
+	$(INSTALL_CONF) ./files.potato/etc/config/afrimesh                  $(1)/etc/config
 	$(INSTALL_CONF) ./files.potato/www/index.luci.html                  $(1)/www/afrimesh/index.luci.html
+
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/index.redirect.html  $(1)/www/afrimesh/index.redirect.html
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/index.potato.html    $(1)/www/afrimesh/index.html
-	$(INSTALL_DIR)  $(1)/www/cgi-bin
 	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/villagebus/villagebus                  $(1)/www/cgi-bin/villagebus
 	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/utilities/urldecode                    $(1)/www/cgi-bin/urldecode
 	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/dashboard/cgi-bin/firmware-upload.cgi  $(1)/www/cgi-bin/firmware-upload.cgi
 	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/dashboard/cgi-bin/firmware-flash.cgi   $(1)/www/cgi-bin/firmware-flash.cgi
 	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/dashboard/cgi-bin/ajax-proxy.cgi       $(1)/www/cgi-bin/ajax-proxy.cgi
 	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/dashboard/cgi-bin/mesh-topology.kml    $(1)/www/cgi-bin/mesh-topology.kml
-	$(INSTALL_DIR)  $(1)/www/afrimesh/images
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/images/*.gif         $(1)/www/afrimesh/images
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/images/*.png         $(1)/www/afrimesh/images
-	$(INSTALL_DIR)  $(1)/www/afrimesh/javascript
-	$(INSTALL_DIR)  $(1)/www/afrimesh/javascript/jquery
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/jquery/jquery.tools.min.js  \
 			            $(1)/www/afrimesh/javascript/jquery
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/jquery/jquery.json.js  \
@@ -381,13 +410,9 @@ define Package/afrimesh-potato/install
 			            $(1)/www/afrimesh/javascript/jquery
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/jquery/jquery.checkbox.js  \
 			            $(1)/www/afrimesh/javascript/jquery
-	$(INSTALL_DIR)  $(1)/www/afrimesh/javascript/openlayers
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/openlayers/OpenLayers.js    $(1)/www/afrimesh/javascript/openlayers
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/openlayers/OpenStreetMap.js $(1)/www/afrimesh/javascript/openlayers
-	#$(INSTALL_DIR)  $(1)/www/afrimesh/javascript/yahoo
-	#$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/yahoo/*      $(1)/www/afrimesh/javascript/yahoo
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/afrimesh*.js  $(1)/www/afrimesh/javascript
-	$(INSTALL_DIR)  $(1)/www/afrimesh/modules
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/help.chat.html                $(1)/www/afrimesh/modules
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/help.group.html               $(1)/www/afrimesh/modules
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/help.howto.html               $(1)/www/afrimesh/modules
@@ -397,12 +422,9 @@ define Package/afrimesh-potato/install
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/utility.upgrade.html          $(1)/www/afrimesh/modules
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/network.map.js                $(1)/www/afrimesh/modules
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/utility.settings.js           $(1)/www/afrimesh/modules
-	$(INSTALL_DIR)  $(1)/www/afrimesh/style
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/*.css          $(1)/www/afrimesh/style
-	$(INSTALL_DIR)  $(1)/www/afrimesh/style/images
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/images/*.gif   $(1)/www/afrimesh/style/images
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/images/*.png   $(1)/www/afrimesh/style/images
-	$(INSTALL_DIR)  $(1)/www/afrimesh/style/images/controls
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/style/images/controls/*.png   $(1)/www/afrimesh/style/images/controls
 endef
 
@@ -418,26 +440,6 @@ define Package/afrimesh-potato/postinst
 }
 endef
 
-
-# - build rules --------------------------------------------------------------
-define Build/Prepare
-	-$(call Build/Prepare/Default)
-	if [ -z "$(PKG_SOURCE_URL)" ]; then \
-		echo "Building from local sources" ; \
-		rm -rf $(PKG_BUILD_DIR)	  ; \
-		mkdir  $(PKG_BUILD_DIR)   ; \
-    $(LOCAL_SOURCES)/clean.sh ; \
-		$(CP) $(LOCAL_SOURCES)/*  $(PKG_BUILD_DIR) ; \
-	fi
-endef
-
-define Build/Configure
-endef
-
-define Build/Compile
-	cd $(PKG_BUILD_DIR)/utilities  ; VERSION=$(PKG_VERSION) make $(MAKE_ARGS) 
-	cd $(PKG_BUILD_DIR)/villagebus ; VERSION=$(PKG_VERSION) make $(MAKE_VILLAGEBUS_ARGS) 
-endef
 
 
 $(eval $(call BuildPackage,afrimesh-base))
