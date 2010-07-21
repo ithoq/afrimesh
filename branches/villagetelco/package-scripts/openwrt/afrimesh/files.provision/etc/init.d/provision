@@ -1,12 +1,15 @@
 #!/bin/sh /etc/rc.common
 START=94
 
+LOGFILE=/tmp/provision.log
+
 start() {
     DATE=`date`
-    echo "Tried to provision on $DATE" >> /tmp/provision
+    echo "Tried to start provisioning on $DATE" >> $LOGFILE
+    /www/cgi-bin/provision /tmp/provision.log   >> $LOGFILE
 }
 
 stop() {
-    echo "Stopped provisioning on $DATE" >> /tmp/provision
+    echo "Tried to stop provisioning on $DATE" >> $LOGFILE
 }
 
