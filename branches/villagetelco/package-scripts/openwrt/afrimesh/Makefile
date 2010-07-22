@@ -69,9 +69,7 @@ PKG_EXTRA_CFLAGS=\
 	-I$(STAGING_DIR_HOST)/include \
 	-include endian.h \
 	-DAFRIMESH_VERSION="\"$(VERSION)\"" \
-	-DDISABLE_LOG \
-	-DDISABLE_MOD_SNMP \
-	-DDISABLE_MOD_REDIS
+	-DDISABLE_LOG 
 
 TARGET_CFLAGS += $(FPIC)
 
@@ -85,10 +83,7 @@ MAKE_VILLAGEBUS_ARGS += \
 	CC='$(TARGET_CC) $(PKG_EXTRA_CFLAGS) $(TARGET_CFLAGS_EXTRA) ' \
 	CFLAGS='$(TARGET_CFLAGS)' \
 	LDFLAGS='$(TARGET_LDFLAGS) -ljson -luci' \
-	FLAVOR='LINUX' \
-	DISABLE_MOD_SNMP=1 \
-	DISABLE_MOD_REDIS=1
-
+	FLAVOR='LINUX'
 
 # - afrimesh-base ------------------------------------------------------------
 include $(INCLUDE_DIR)/package.mk

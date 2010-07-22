@@ -27,9 +27,14 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-# - configuration ------------------------------------------------------------
+# - configuration ----------------------------------------------------------
 VERSION=0.9-r809
 RELEASE=1
+
+MODULES=\
+  ENABLE_MOD_PROVISION=1 \
+  ENABLE_MOD_DB=1 \
+  ENABLE_MOD_SNMP=1
 
 # Ubuntu Launchpad Personal Package Archive 
 #   _DO_ set this to your personal ppa if you want to build test packages
@@ -42,25 +47,18 @@ PPA=afrimesh-ppa
 #DEPS_URL="https://launchpad.net/~antoine-7degrees/+archive/ppa/+files/"
 
 
-# - commands -----------------------------------------------------------------
-INSTALL=cp -rf
-MKDIR=mkdir -p
-MAKE=make
-
-
-# - platform detection -------------------------------------------------------
+# - platform detection -----------------------------------------------------
 DEPROOT=/usr
 WWW_ROOT=$(DESTDIR)/www
 DASHBOARD_CGI=$(DESTDIR)/www/cgi-bin
 DASHBOARD_ETC=$(DESTDIR)/etc
-FLAVOR=BSD
-UNAME = $(shell uname)
+UNAME=$(shell uname)
+FLAVOR=LINUX
+MAKE=make
 
 ifeq ($(UNAME),Linux)
 WWW_ROOT=$(DESTDIR)/var/www
-DASHBOARD_WWW=$(WWW_ROOT)/afrimesh
 DASHBOARD_CGI=$(DESTDIR)/usr/lib/cgi-bin
-FLAVOR=LINUX
 endif
 
 ifeq ($(UNAME),FreeBSD)
@@ -78,15 +76,27 @@ DASHBOARD_CGI=$(DESTDIR)/Library/WebServer/CGI-Executables
 DEPROOT=/Volumes/afrimesh-dev/ext
 MAKE=make
 FLAVOR=BSD
+CFLAGS+=-m32
 endif
 
-DASHBOARD_WWW=$(WWW_ROOT)/afrimesh.vt
+DASHBOARD_WWW=$(WWW_ROOT)/afrimesh.vt # TODO - fix before release!
 
-# - common -------------------------------------------------------------------
+
+# - common -----------------------------------------------------------------
+INSTALL=cp -rf
+MKDIR=mkdir -p
+
+MFLAGS += \
+  FLAVOR=$(FLAVOR) \
+	VERSION=$(VERSION) \
+	CFLAGS=$(CFLAGS) \
+	LDFLAGS=$(LDFLAGS) 
+
+# - targets -----------------------------------------------------------------
 all: 
 	#TODO - export DEPROOT=$(DEPROOT); cd village-bus-radius ; $(MAKE)
-	export DEPROOT=$(DEPROOT); cd villagebus ; VERSION=$(VERSION) FLAVOR=$(FLAVOR) $(MAKE)
-	export DEPROOT=$(DEPROOT); cd utilities  ; VERSION=$(VERSION) FLAVOR=$(FLAVOR) $(MAKE)
+	export DEPROOT=$(DEPROOT); cd villagebus ; $(MFLAGS) $(MODULES) $(MAKE) 
+	export DEPROOT=$(DEPROOT); cd utilities  ; $(MFLAGS) $(MAKE) 
 
 install: install-www install-config
 
@@ -302,13 +312,13 @@ depends-launchpad-linux : #depends-packages-linux-json-c depends-packages-linux-
 	dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/libmemcachedb_0.25-1_source.changes
 
 
-# - freebsd ------------------------------------------------------------------
+# - freebsd ----------------------------------------------------------------
 freebsd : village-bus
 install-freebsd : freebsd install-www
 	#chown -R :www $(DASHBOARD_ETC)/config/
 
 
-# - openwrt ------------------------------------------------------------------
+# - openwrt ----------------------------------------------------------------
 # DEPRECATED
 # If you want to build packages for OpenWRT you need to set this to the
 # location of a copy of the kamikaze sources or SDK

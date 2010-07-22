@@ -92,11 +92,14 @@ int main(int argc, char** argv)
   villagebus_init();
   accounting_init();
   config_init();
-#ifndef DISABLE_MOD_REDIS
+  package_init();
+#ifdef ENABLE_MOD_PROVISION
+  provision_init();
+#endif
+#ifdef ENABLE_MOD_REDIS
   db_init();
 #endif
-  package_init();
-#ifndef DISABLE_MOD_SNMP
+#ifdef ENABLE_MOD_SNMP
   snmp_init();
 #endif
   sys_init();
