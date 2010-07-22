@@ -94,9 +94,9 @@ echo "$REQUEST"
 echo "--------------------------------------------------------"
 echo
 echo "- provisiond reply -------------------------------------"
-#RESPONSE=`echo -n "$REQUEST" | nc $root 80`
+#echo -n "$REQUEST" | nc $root 80
 #echo -n "$REQUEST" | nc $root 80 >& /tmp/foo
-echo -n "$REQUEST" | nc $root 80 | sed '/HTTP.*OK/,/Content-Type: application\/x-tar/d; 1d' >& /tmp/bundle.tar
+echo -n "$REQUEST" | nc $root 80 | sed '/HTTP.*OK/,/Content-Type: application\/x-tar/d; 1d' >& /tmp/bundle.tar.gz
 echo "--------------------------------------------------------"
 echo
 
