@@ -1,13 +1,13 @@
 #!/usr/bin/env sh
 
 
-# Configuration
+# - Configuration ----------------------------------------------------------
 PROVISIOND_ROOT=./provisiond-router
 PROVISIOND_TMP=/tmp/provisiond.tmp
 LOG=1
 
 
-# Logging
+# - Logging ----------------------------------------------------------------
 LOGFILE="/tmp/provisiond-router.log"
 BUFFER="$LOGFILE.$$"
 function log {
@@ -28,7 +28,7 @@ if [ "$LOG" = "1" ] ; then
 fi
 
 
-# Read client request
+# - Read client request ----------------------------------------------------
 if [ "$REQUEST_METHOD" = "POST" ]; then
     POST_DATA=$(</dev/stdin)
 else
@@ -68,6 +68,9 @@ fi
 cp -r "$PAYLOAD_DIR" "$TARBALL_DIR"
 
 
+# network settings
+
+
 # Send Reply Header
 echo "Content-Type: application/x-tar"
 echo
@@ -75,9 +78,10 @@ echo
 
 # Send configuration bundle
 CURDIR="$PWD"
-#tar -C "$TARBALL_DIR" -cf - . | gzip -f
-tar -C "$TARBALL_DIR" -cf - . 
+tar -C "$TARBALL_DIR" -cf - . | gzip -f
+#tar -C "$TARBALL_DIR" -cf - . 
 cd "$CURDIR"
+
 
 # Log reply
 if [ "$LOG" = "1" ] ; then
