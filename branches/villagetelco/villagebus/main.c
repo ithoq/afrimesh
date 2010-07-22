@@ -33,22 +33,22 @@
 
 
 /**
- * 
+ * Lifecycle state management
  */
-int exit_failure() 
+int exit_failure(Request* request, const wchar_t* error) 
 {
-  cgi_release();
+  request->out(request, error);
+  cgi_release(request);
   log_release();
   return EXIT_FAILURE;
 }
 
-int exit_success() 
+int exit_success(Request* request) 
 {
-  cgi_release();
+  cgi_release(request);
   log_release();
   return EXIT_SUCCESS;
 }
-
 
 
 /**
@@ -56,37 +56,31 @@ int exit_success()
  */
 int main(int argc, char** argv)
 {
-  /** - output HTTP header ------------------------------------------------ */
-  //whttpd_out(L"Content-type: application/json\n\n");  
-  whttpd_out(L"Content-type: application/x-javascript\n\n"); // Grrf
-  //whttpd_out(L"Content-type: text/plain\n\n");
 
-  /** - parse request ----------------------------------------------------- */
+  /** - parse request --------------------------------------------------- */
   cgi_init();
-  const Request* request = cgi_request(argc, argv);
-  if (request == NULL) {
-    whttpd_out(L"{ \"error\" : \"usage: villagebus [GET|PUT|POST] name\" }\n");
-    return EXIT_FAILURE;
+  Request* request = cgi_request(argc, argv);
+  if (request->method == SYMBOL_UNKNOWN) {
+    return exit_failure(request, L"{ \"error\" : \"usage: villagebus [GET|PUT|POST] name\" }");
   } else if (request->pathname == NULL) {
-    whttpd_out(L"{ \"error\" : \"name not found\" }\n");
-    return EXIT_FAILURE;
+    return exit_failure(request, L"{ \"error\" : \"name not found\" }");
   }
-  /*whttpd_out(L"request->method   : %d\n", request->method);
-  whttpd_out(L"request->href     : %S\n", request->href);
-  whttpd_out(L"request->pathname : %S\n", request->pathname);
-  whttpd_out(L"request->search   : %S\n", request->search);
+  /*wprintf(L"request->method   : %d\n", request->method);
+  wprintf(L"request->href     : %S\n", request->href);
+  wprintf(L"request->pathname : %S\n", request->pathname);
+  wprintf(L"request->search   : %S\n", request->search);
   if (request->search) {
-    whttpd_out(L"request->search   : %S\n", search_to_json(request->search, wcslen(request->search)));
+    wprintf(L"request->search   : %S\n", search_to_json(request->search, wcslen(request->search)));
   }
-  whttpd_out(L"request->data     : %s\n", request->data);*/
+  wprintf(L"request->data     : %s\n", request->data);*/
 
-  /** - bootstrap interpreter --------------------------------------------- */
+  /** - bootstrap interpreter ------------------------------------------- */
   wprintl(L"Bootstrapping object\n");
   obj_init();
   wprintl(L"Bootstrapping fexpression\n");
   fexp_init();
 
-  /** - bootstrap modules ------------------------------------------------- */
+  /** - bootstrap modules ----------------------------------------------- */
   wprintl(L"Bootstrapping modules: ");
   // TODO - generate .so's and load dynamically
   villagebus_init();
@@ -105,43 +99,36 @@ int main(int argc, char** argv)
   sys_init();
   telephony_init();
   string* modules = (string*)send(VillageBus->modules, s_tojson, false);
-  wprintl(L"%s\n", (char*)send(modules, s_string_tochar));
-  //send(VillageBus->modules, s_print);
+  wprintl(L"Loaded modules %s\n", (char*)send(modules, s_string_tochar));
 
-  /** - compile request --------------------------------------------------- */
+  /** - compile request ------------------------------------------------- */
   const fexp* message = (fexp*)send(VillageBus, s_villagebus_compile, request);
 
-  /** - evaluate message -------------------------------------------------- */
+  /** - evaluate message ------------------------------------------------ */
   message = (fexp*)send(VillageBus, s_villagebus_evaluate, message);
 
-  /** - print eval result (if any) ---------------------------------------- */
+  /** - print eval result (if any) -------------------------------------- */
   if (message == fexp_nil) {  // do nothing & allow handlers to manage their own output
 
-  } else if ((vtable*)send(message, s_type) == string_vt) {  // strings are printed verbatim
-    whttpd_out(L"%S(%S)\n", request->callback, ((string*)message)->buffer);
+  } else if ((vtable*)send(message, s_type) == string_vt) {     // strings are printed verbatim - WTF?!?!
+    request->out(request, ((string*)message)->buffer);
 
   } else if (send(message, s_fexp_car) == s_villagebus_error) { // TODO - handle error messages in jQuery 
-    whttpd_out(L"%S(", request->callback);
     message = (fexp*)send(message, s_fexp_cdr);
     message = (fexp*)send(message, s_fexp_car);
     string* error = (string*)send(message, s_tojson, false);
-    whttpd_out(L"{ 'error' : %S })\n", error->buffer);
+    request->out(request, L"{ 'error' : %S }", error->buffer);
 
   } else if (send(message, s_fexp_car) == s_villagebus_json) { // encapsulated json - usually from mod_db 
     message = (fexp*)send(message, s_fexp_cdr);
-    // TODO - make a call on conventions - whttpd_out(L"%S(null, ", request->callback);
-    whttpd_out(L"%S(", request->callback);
     string* json = (string*)send(message, s_tojson, true);
-    whttpd_out(L"%S", json->buffer);
-    whttpd_out(L")\n");
+    request->out(request, json->buffer);
 
   } else {                                                     // everything else treated as plain json
-    whttpd_out(L"%S(", request->callback);
     string* json = (string*)send(message, s_tojson, false);
-    whttpd_out(L"%S", json->buffer);
-    whttpd_out(L")\n");
+    request->out(request, json->buffer);
   }
 
   /** - release resources & exit ---------------------------------------- */
-  return exit_success();
+  return exit_success(request);
 }

@@ -76,24 +76,6 @@ const fexp* accounting_evaluate(closure* c, accounting* self, const fexp* expres
                      s_villagebus_error, 
                      L"mod_accounting has no registered handler for requested name: %S", 
                      name->buffer);  
-  /*
-  // evaluate request 
-  const Request* request = ((villagebus*)VillageBus)->request;
-  switch (request->method) {
-    case PUT:
-    message = accounting_put(c, self, message, request->data);
-    break;
-  case GET:
-    message = accounting_get(c, self, message);
-    break;
-  default:
-    message = (fexp*)send(VillageBus, 
-                          s_villagebus_error, 
-                          L"mod_accounting has no registered handler for request method: %d", 
-                          request->method);  // TODO method_to_string 
-  }
-
-  return message;*/
 }
 
 

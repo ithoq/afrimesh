@@ -109,7 +109,7 @@ const fexp* db_evaluate(closure* c, db* self, const fexp* expression)
   } 
 
   // evaluate expression w/ default handlers
-  const Request* request = ((villagebus*)VillageBus)->request;
+  Request* request = VillageBus->request;
   const fexp* reply = fexp_nil;
   switch (request->method) {
   case PUT:
@@ -195,7 +195,7 @@ const string* db_get(closure* c, db* self, const fexp* message)
  */
 const fexp* db_lrange(closure* c, db* self, const fexp* message)
 {
-  const Request* request = VillageBus->request;
+  Request* request = VillageBus->request;
   fexp* reply = fexp_nil;
 
   // get any parameters

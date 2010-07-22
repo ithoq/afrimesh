@@ -47,6 +47,7 @@ void fexp_init()
   s_string_fromchar  = symbol_intern(0, 0, L"fromchar");
   s_string_tochar    = symbol_intern(0, 0, L"tochar");
   s_string_add       = symbol_intern(0, 0, L"add");
+  s_string_split     = symbol_intern(0, 0, L"split");
   string_vt = (vtable*)send(object_vt, s_delegated);
   send(string_vt, s_addMethod, s_new,    string_new);
   send(string_vt, s_addMethod, s_length, string_length);
@@ -56,6 +57,7 @@ void fexp_init()
   send(string_vt, s_addMethod, s_string_fromchar,  string_fromchar);
   send(string_vt, s_addMethod, s_string_tochar,    string_tochar);
   send(string_vt, s_addMethod, s_string_add,       string_add);
+  send(string_vt, s_addMethod, s_string_split,     string_split);
   String = send(string_vt, s_allocate, 0);
 
   // fexp
@@ -128,6 +130,7 @@ object *s_string_fromwchar = 0;
 object *s_string_fromchar  = 0;
 object *s_string_tochar    = 0;
 object *s_string_add       = 0;
+object *s_string_split     = 0;
 
 object* string_new(closure* c, string* self, const wchar_t* s, size_t length) {
   if (length > wcslen(s)) return (object*)fexp_nil; 
@@ -228,6 +231,25 @@ string* string_add(closure* c, string *self, const string *s)
   return self;
 }
 
+fexp* string_split(closure* c, string* self, const string* delimiter)
+{
+  tconc* ret = (tconc*)send(Tconc, s_new, fexp_nil);
+  wchar_t* iter = self->buffer;
+  wchar_t* next;
+  while (true) {
+    next = wcsstr(iter, delimiter->buffer);
+    if (!next || next == iter) {
+      object* s = send(String, s_new, iter, wcslen(iter));
+      ret = (tconc*)send(ret, s_tconc_append, s);
+      break;
+    } 
+    object* s = send(String, s_new, iter, next - iter);
+    ret = (tconc*)send(ret, s_tconc_append, s);
+    iter = next + 1;
+  }
+  return (fexp*)send(ret, s_tconc_tconc);
+}
+
 
 /* - fexp --------------------------------------------------------------- */
 vtable* fexp_vt = 0;
@@ -253,7 +275,7 @@ object* fexp_new(closure* c, fexp* self, object* car, object* cdr)
 
 size_t fexp_length(closure* c, fexp *self)
 {
-  return ((fexp*)self->cdr != fexp_nil) ? 1 + (size_t)send(self->cdr, s_length) : 0;
+  return ((fexp*)self->cdr != fexp_nil) ? 1 + (size_t)send(self->cdr, s_length) : 1;
 }
 
 fexp* fexp_print(closure* c, fexp* self)

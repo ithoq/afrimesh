@@ -38,8 +38,8 @@ vtable* provision_vt = 0;
 object* _Provision = 0;
 provision* Provision  = 0;
 symbol* s_provision = 0;
-symbol* s_provision_mac = 0;
 symbol* s_provision_ip  = 0;
+symbol* s_provision_mac = 0;
 
 void provision_init()
 {
@@ -49,10 +49,10 @@ void provision_init()
   _Provision = send(provision_vt, s_allocate, 0);
 
   // register local symbols
-  s_provision_mac = (symbol*)symbol_intern(0, _Provision, L"mac"); 
   s_provision_ip  = (symbol*)symbol_intern(0, _Provision, L"ip");
-  send(provision_vt, s_addMethod, s_provision_mac, provision_mac);
+  s_provision_mac = (symbol*)symbol_intern(0, _Provision, L"mac"); 
   send(provision_vt, s_addMethod, s_provision_ip,  provision_ip);
+  send(provision_vt, s_addMethod, s_provision_mac, provision_mac);
 
   // global module instance vars
   Provision = (provision*)send(_Provision->_vt[-1], s_allocate, sizeof(provision));
@@ -74,6 +74,7 @@ const fexp* provision_evaluate(closure* c, provision* self, const fexp* expressi
 {
   const fexp* reply = fexp_nil;
 
+#ifdef TODO
   // lazily initialize redis connection
   if ((self->handle == NULL) || (credis_ping(self->handle) != 0)) {
     self->handle = credis_connect("localhost", 6379, 2000);
@@ -85,6 +86,7 @@ const fexp* provision_evaluate(closure* c, provision* self, const fexp* expressi
     reply = (fexp*)send(VillageBus, s_villagebus_error, L"Could not connect to redis server");
     goto done;
   }
+#endif
 
   // search for name in local context
   string* name    = (string*)send(expression, s_fexp_car);
@@ -112,7 +114,29 @@ const fexp* provision_evaluate(closure* c, provision* self, const fexp* expressi
 /* - GET ---------------------------------------------------------------- */
 
 /**
- *
+ * Given a MAC address return the IP associated with it.
+ */
+const string* provision_ip (closure* c, provision* self, const fexp* message)
+{
+  string* mac    = (string*)send(message, s_fexp_car);
+  fexp*   octets = (fexp*)  send(mac, s_string_split, self->delimiter);
+  if ((size_t)send(octets, s_length) != 6) {
+    return (string*)fexp_nil;
+  }
+  string* octet_1 = (string*)send(octets, s_fexp_nth, 2);
+  string* octet_2 = (string*)send(octets, s_fexp_nth, 4);
+  string* octet_3 = (string*)send(octets, s_fexp_nth, 5);
+  int n1 = wcstoimax(octet_1->buffer, NULL, 16);
+  int n2 = wcstoimax(octet_2->buffer, NULL, 16);
+  int n3 = wcstoimax(octet_3->buffer, NULL, 16);
+  // TODO - the default for Strings in main.c should be to print as json *sigh*
+  string* ret = (string*)send(String, s_string_fromwchar, L"\"10.%d.%d.%d\"", n1, n2, n3);
+  return ret;
+}
+
+
+/**
+ * Given an IP address return the MAC associated with it.
  */
 const string* provision_mac(closure* c, provision* self, const fexp* message)
 {
@@ -121,14 +145,6 @@ const string* provision_mac(closure* c, provision* self, const fexp* message)
 
 
  
-/**
- *
- */
-const string* provision_ip (closure* c, provision* self, const fexp* message)
-{
-  return (string*)fexp_nil;
-}
-
 
 
 /*const fexp* provision_keys(closure* c, provision* self, const fexp* message)

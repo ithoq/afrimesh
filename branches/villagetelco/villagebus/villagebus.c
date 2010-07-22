@@ -72,7 +72,7 @@ void villagebus_init()
  *   /bar/a,b,/c/d/,e/f    =>  ( bar ( a b ( c d ) e ) f )
  *
  */
-const fexp* villagebus_compile(closure* c, villagebus* self, const Request* request)
+const fexp* villagebus_compile(closure* c, villagebus* self, Request* request)
 {
   if (request == NULL || request->pathname == NULL) {
     return fexp_nil;

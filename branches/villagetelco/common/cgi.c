@@ -48,66 +48,27 @@ static const SymbolTable Methods = {
 };
 
 
-
 /**
  * 
  */
-void httpd_out(const char* message, ...)
+void cgi_out(Request* self, const wchar_t* message, ...)
 {
-  va_list args;
-  va_start(args, message);
-  vprintf(message, args);
-  vprintl(message, args);
-  va_end(args);
-}
+  // print HTTP headers if needed
+  if (self && self->state == OUT_HEADER) {
+    //wprintf(L"Content-type: text/plain\n\n");
+    //wprintf(L"Content-type: application/json\n\n");  
+    wprintf(L"Content-type: application/x-javascript\n\n"); // Grrf
+    wprintf(L"%S(", self->callback);
+    self->state = OUT_BODY;
+  }
 
-
-/**
- *
- */
-void httpd_error(const char* message, ...)
-{
-  va_list args;
-  printf("json_error_handler([ { \"error\" : \"");
-  printl("ERROR: error([ { \"error\" : \"");
-  va_start(args, message);
-  vprintf(message, args);
-  vprintl(message, args);
-  va_end(args);  
-  printf("\" } ])\n");
-  printl("\" } ])\n");
-}
-
-
-/**
- * 
- */
-void whttpd_out(const wchar_t* message, ...)
-{
+  // print output
   va_list args;
   va_start(args, message);
   vwprintf(message, args);
   vwprintl(message, args);
   va_end(args);
 }
-
-
-/**
- *
- */
-void whttpd_error(const wchar_t* message, ...)
-{
-  va_list args;
-  wprintf(L"json_error_handler([ { \"error\" : \"");
-  wprintl(L"ERROR: error([ { \"error\" : \"");
-  va_start(args, message);
-  vwprintf(message, args);
-  vwprintl(message, args);
-  va_end(args);  
-  wprintf(L"\" } ])\n");
-  wprintl(L"\" } ])\n");
-}
-
 
 
 /**
@@ -281,7 +242,7 @@ wchar_t* wsearch_to_json_string(const wchar_t* search, size_t length)
 /**
  * Transparently return the CGI request whether it was sent via the web or the command line
  */
-const Request* cgi_request(int argc, char** argv)
+Request* cgi_request(int argc, char** argv)
 {
   static Request* request = NULL;
   if (request != NULL) {
@@ -290,6 +251,9 @@ const Request* cgi_request(int argc, char** argv)
   } 
   request = (Request*)malloc(sizeof(Request));
   memset(request, 0, sizeof(Request));
+  request->callback = L"jsonp"; // TODO - make optional ?
+  request->out      = cgi_out;
+  request->state    = OUT_RAW;  
 
   char* request_method;
   char* content_type;
@@ -325,12 +289,15 @@ const Request* cgi_request(int argc, char** argv)
   if (request_method == NULL && argc >= 1 && argv[1]) { // command line
     request_method = argv[1];
   } else if (request_method == NULL) {                  // command line but no params
-    return NULL;
+    request->method = SYMBOL_UNKNOWN;
+    return request;
+  } else {                                              // web
+    request->state = OUT_HEADER;
   }
   request->method = string_to_symbol(request_method, Methods);
   if (request->method == SYMBOL_UNKNOWN) {
-    wprintl(L"METHOD NOT FOUND!\n");
-    // TODO - fail nicely
+    wprintl(L"METHOD NOT FOUND: %s\n", request_method);
+    return request;
   }
 
   /* parse request - HREF */
@@ -367,7 +334,6 @@ const Request* cgi_request(int argc, char** argv)
   }  
 
   /* parse request - jsonp Callback */
-  request->callback = L"jsonp"; // TODO - make optional ?
   if (request->json) {
     const char* callback = json_object_get_string(json_object_object_get(request->json, "callback"));
     request->callback = callback ? wcsdupchar(callback) : request->callback;
@@ -429,8 +395,15 @@ void cgi_init()
 /**
  *
  */
-void cgi_release()
+void cgi_release(Request* self)
 {
+  if (self && self->state == OUT_BODY) {
+    //wprintf(L"Content-type: text/plain\n\n");
+    //wprintf(L"Content-type: application/json\n\n");  
+    wprintf(L")\n");
+    self->state == OUT_RAW;
+  }
+  // TODO - lose static global buffers
   if (cgi_post_buffer != NULL) {
     free(cgi_post_buffer);
     cgi_post_buffer = NULL;

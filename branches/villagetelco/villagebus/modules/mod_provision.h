@@ -52,8 +52,8 @@ provision*  provision_print   (closure* c, provision* self);
 const fexp* provision_evaluate(closure* c, provision* self, const fexp* expression);
 
 // GET
-const string* provision_mac(closure* c, provision* self, const fexp* message); 
 const string* provision_ip (closure* c, provision* self, const fexp* message); 
+const string* provision_mac(closure* c, provision* self, const fexp* message); 
 
 
 #endif /* MOD_PROVISION_H */

@@ -91,24 +91,6 @@ const fexp* sys_evaluate(closure* c, sys* self, const fexp* expression)
                      s_villagebus_error, 
                      L"mod_sys has no registered handler for requested name: %S", 
                      name->buffer);  
-  /*
-  // evaluate request 
-  const Request* request = ((villagebus*)VillageBus)->request;
-  switch (request->method) {
-    case PUT:
-    message = sys_put(c, self, message, request->data);
-    break;
-  case GET:
-    message = sys_get(c, self, message);
-    break;
-  default:
-    message = (fexp*)send(VillageBus, 
-                          s_villagebus_error, 
-                          L"mod_sys has no registered handler for request method: %d", 
-                          request->method);  // TODO method_to_string 
-  }
-
-  return message;*/
 }
 
 
@@ -138,7 +120,7 @@ sys* sys_print(closure* c, sys* self)
  */
 const fexp* sys_service(closure* c, sys* self, const fexp* message)
 {
-  const Request* request = VillageBus->request; 
+  Request* request = VillageBus->request; 
 
   // get parameters
   char* name    = (char*)send(send(message, s_fexp_car), s_string_tochar);
@@ -198,7 +180,7 @@ LogEntry parse_entry(const char* input, size_t length)
  */
 const fexp* sys_syslog(closure* c, sys* self, const fexp* message)
 {
-  const Request* request = VillageBus->request; 
+  Request* request = VillageBus->request; 
   object* reply = (object*)fexp_nil;
 
   // get parameters
@@ -230,7 +212,7 @@ const fexp* sys_syslog(closure* c, sys* self, const fexp* message)
     json_object_object_add(entry, "process",   json_object_new_string("village-bus-syslog"));
     json_object_object_add(entry, "message",   json_object_new_string("Could not locate system logfile"));
     json_object_array_add(entries, entry);  
-    whttpd_out(L"%S(%s)\n", request->callback, json_object_get_string(entries));
+    request->out(request, L"%s", json_object_get_string(entries));
     return fexp_nil;
   }
 
@@ -306,7 +288,7 @@ const fexp* sys_syslog(closure* c, sys* self, const fexp* message)
   }
 
   /* output log */
-  whttpd_out(L"%S(%s)\n", request->callback, json_object_get_string(entries));
+  request->out(request, L"%s", json_object_get_string(entries));
 
   return fexp_nil;
 }
@@ -365,6 +347,8 @@ const fexp* exec(char* command, char** arguments)
 const fexp* exec_parsed(char* command, char** arguments, 
                         struct json_object* (*parser)(const char*, size_t))
 {
+  Request* request = VillageBus->request; 
+
   size_t max   = 1024; /* Hard limit on number of output lines - TODO last 'max' lines rather than first ? */
   size_t count = 0;
   struct json_object* lines;
@@ -404,7 +388,7 @@ const fexp* exec_parsed(char* command, char** arguments,
   fclose(output);
 
   /* output command output */
-  whttpd_out(L"%S(%s)\n", VillageBus->request->callback, json_object_get_string(lines));
+  request->out(request, L"%s", json_object_get_string(lines));
 
   return fexp_nil;
 }

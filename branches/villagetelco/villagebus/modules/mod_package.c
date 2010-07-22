@@ -87,24 +87,6 @@ const fexp* package_evaluate(closure* c, package* self, const fexp* expression)
                      s_villagebus_error, 
                      L"mod_package has no registered handler for requested name: %S", 
                      name->buffer);  
-  /*
-  // evaluate request 
-  const Request* request = ((villagebus*)VillageBus)->request;
-  switch (request->method) {
-    case PUT:
-    message = package_put(c, self, message, request->data);
-    break;
-  case GET:
-    message = package_get(c, self, message);
-    break;
-  default:
-    message = (fexp*)send(VillageBus, 
-                          s_villagebus_error, 
-                          L"mod_package has no registered handler for request method: %d", 
-                          request->method);  // TODO method_to_string 
-  }
-
-  return message;*/
 }
 
 
@@ -159,7 +141,7 @@ const fexp* package_status(closure* c, package* self, const fexp* message)
 const fexp* package_upgrade(closure* c, package* self, const fexp* message)
 {
   // get parameters
-  const Request* request = VillageBus->request;
+  Request* request = VillageBus->request;
   char* name = (char*)send(send(message, s_fexp_car), s_string_tochar);
   if (request->json) {
     const char* param = json_object_get_string(json_object_object_get(request->json, "name"));

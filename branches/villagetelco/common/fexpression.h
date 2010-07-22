@@ -31,6 +31,7 @@ typedef struct _object  object;
 typedef struct _closure closure;
 typedef struct _symbol  symbol;
 
+typedef unsigned char byte;
 
 /* - initialization ----------------------------------------------------- */
 void fexp_init();
@@ -56,16 +57,18 @@ extern object* s_string_fromwchar;
 extern object* s_string_fromchar;
 extern object* s_string_tochar;
 extern object* s_string_add;
-
-object* string_fromwchar(closure* c, string* self, const wchar_t* format, ...);
-object* string_fromchar (closure* c, string* self, const char* s, size_t length);
-char*   string_tochar   (closure* c, string* self);
-string* string_add      (closure* c, string* self, const string* s);
+extern object* s_string_split;
 
 object* string_new   (closure* c, string* self, const wchar_t* s, size_t length);
 size_t  string_length(closure* c, string* self);
 string* string_print (closure* c, string* self);
 string* string_tojson(closure* c, string* self, bool quoted);
+
+object* string_fromwchar(closure* c, string* self, const wchar_t* format, ...);
+object* string_fromchar (closure* c, string* self, const char* s, size_t length);
+char*   string_tochar   (closure* c, string* self);
+string* string_add      (closure* c, string* self, const string* s);
+struct _fexp* string_split(closure* c, string* self, const string* delimiter);
 
 
 /* - number ------------------------------------------------------------- */
@@ -101,6 +104,11 @@ extern fexp*   fexp_environment;
 extern fexp*   fexp_nil;
 extern object* fexp_t;
 
+object* fexp_new   (closure* c, fexp* self, object* car, object* cdr);
+size_t  fexp_length(closure* c, fexp* self);
+fexp*   fexp_print (closure* c, fexp* self);
+string* fexp_tojson(closure* c, fexp* self, bool quoted);
+
 object* fexp_car   (closure* c, fexp* self);
 object* fexp_cdr   (closure* c, fexp* self);
 fexp*   fexp_cons  (closure* c, fexp* self, object* car);
@@ -109,10 +117,6 @@ object* fexp_nth   (closure* c, fexp* self, int n);
 fexp*   fexp_nthcdr(closure* c, fexp* self, int n);
 string* fexp_join  (closure* c, fexp* self, const string* delimiter);
 
-object* fexp_new   (closure* c, fexp* self, object* car, object* cdr);
-size_t  fexp_length(closure* c, fexp* self);
-fexp*   fexp_print (closure* c, fexp* self);
-string* fexp_tojson(closure* c, fexp* self, bool quoted);
 
 
 /* - tconc -------------------------------------------------------------- */
@@ -125,6 +129,7 @@ extern vtable* tconc_vt;
 extern object* Tconc;
 extern object* s_tconc_tconc;
 extern object* s_tconc_append;
+
 tconc* tconc_new   (closure* c, tconc* self, fexp* list);
 size_t tconc_length(closure* c, tconc* self);
 tconc* tconc_print (closure* c, tconc* self);

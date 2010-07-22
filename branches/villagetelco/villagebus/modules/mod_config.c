@@ -57,7 +57,7 @@ void config_init()
   // register module with VillageBus
   s_config = symbol_intern(0, 0, L"config");
   fexp* module = (fexp*)send(Fexp, s_new, s_config, Config);
-  ((villagebus*)VillageBus)->modules = (fexp*)send(((villagebus*)VillageBus)->modules, s_fexp_cons, module);
+  VillageBus->modules = (fexp*)send(VillageBus->modules, s_fexp_cons, module);
 }
 
 
@@ -72,7 +72,7 @@ const fexp* config_evaluate(closure* c, config* self, const fexp* message)
   }
 
   // evaluate request 
-  const Request* request = ((villagebus*)VillageBus)->request;
+  Request* request = VillageBus->request;
   switch (request->method) {
   case PUT:
     message = config_put(c, self, message, request->data);
@@ -166,9 +166,7 @@ const fexp* config_get(closure* c, config* self, const fexp* message)
   //        Being profoundly and fundamentally document-orientated 
   //        HTTP error handling does not support streamed data so much. 
   //        Which kinda sucks totally.
-  whttpd_out(L"%S(", VillageBus->request->callback);  
   int n = uci_show(self->context, (strchr(query, '*') ? NULL : query)); // TODO - some decent error handling inside there...
-  whttpd_out(L")\n");
   free(query);
   
   return fexp_nil;
@@ -185,8 +183,10 @@ config* config_print(closure* c, config* self)
 /* - uci utilities ------------------------------------------------------ */
 int uci_show(struct uci_context* context, const char* package)
 {
-  wprintf(L"["); 
-  wprintf(L"\t{");
+  Request* request = VillageBus->request;
+
+  request->out(request, L"["); 
+  request->out(request, L"\t{");
 
   int num_sections;
   if (package && strcasecmp(package, "") != 0) {
@@ -201,7 +201,7 @@ int uci_show(struct uci_context* context, const char* package)
     bool first_package = true;      
     char** p;      
     for (p = packages; *p; p++) {
-      wprintf(L"%s\n", (first_package ? "" : ",")); 
+      request->out(request, L"%s\n", (first_package ? "" : ",")); 
       num_sections = uci_show_package(context, *p);
       if (first_package && (num_sections == 0)) { 
         first_package = true;
@@ -210,8 +210,8 @@ int uci_show(struct uci_context* context, const char* package)
       }
     }
   }
-  wprintf(L"\t}");
-  wprintf(L" ]");
+  request->out(request, L"\t}");
+  request->out(request, L" ]");
 
   return num_sections;
 }
@@ -232,6 +232,8 @@ static struct uci_type_list* type_list = NULL;
 
 int uci_show_package(struct uci_context* context, const char* package)
 {
+  Request* request = VillageBus->request;
+
   int num_sections = 0;
   struct uci_ptr ptr;
   if (uci_lookup_ptr(context, &ptr, (char*)package, true) != UCI_OK) {
@@ -249,24 +251,24 @@ int uci_show_package(struct uci_context* context, const char* package)
     section = uci_to_section(element_section);
     //cur_section_ref = uci_lookup_section_ref(section);  // TODO - better handling for lists
     if (first_section) {
-      wprintf(L"  %s\t: { ", section->package->e.name);
+      request->out(request, L"  %s\t: { ", section->package->e.name);
       first_section = false;
     } else {
-      wprintf(L",\n\t\t    ");
+      request->out(request, L",\n\t\t    ");
     }
-    wprintf(L"%s\t: { _sectiontype\t: \"%s\"", (cur_section_ref ? cur_section_ref : section->e.name), section->type);
+    request->out(request, L"%s\t: { _sectiontype\t: \"%s\"", (cur_section_ref ? cur_section_ref : section->e.name), section->type);
     struct uci_element* element_option;
     uci_foreach_element(&section->options, element_option) { /* for each option */
       struct uci_option* option;
       option = uci_to_option(element_option);
-      wprintf(L",\n");
-      wprintf(L"\t\t\t\t    %s\t: ", option->e.name);
-      wprintf(L"\"%s\"", option_to_string(option));
+      request->out(request, L",\n");
+      request->out(request, L"\t\t\t\t    %s\t: ", option->e.name);
+      request->out(request, L"\"%s\"", option_to_string(option));
     } /* end for each option */
-    wprintf(L" }"); /* end options */
+    request->out(request, L" }"); /* end options */
   } /* end for each section */
   uci_reset_typelist();
-  if (num_sections > 0) wprintf(L"\n\t\t  }"); /* end sections */
+  if (num_sections > 0) request->out(request, L"\n\t\t  }"); /* end sections */
 
   uci_unload(context, ptr.p);
 

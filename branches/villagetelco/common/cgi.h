@@ -42,8 +42,9 @@
 #include <util.h>
 
 
+typedef enum { OUT_HEADER = 1, OUT_BODY = 2, OUT_RAW = 3 } OutState;
 typedef enum { OPTIONS, GET, HEAD, POST, PUT, DELETE,  PATCH, CONNECT, TRACE } Method;
-typedef struct {
+typedef struct _Request {
   Method method;            // POST
   wchar_t* href;            // /status/self?foo=bar&plink=plonk
   wchar_t* pathname;        // /status/self
@@ -51,26 +52,22 @@ typedef struct {
   struct json_object* json; // { 'foo' : 'bar', 'plink' : 'plonk' }
   wchar_t* callback;        // jsonp1277450195457
   unsigned char* data;      // { some raw data }
+  OutState state;
+  void (*out) (struct _Request*, const wchar_t*, ...);
 } Request;
 
-static wchar_t* cgi_href_buffer  = NULL;
-static char*    cgi_post_buffer  = NULL;
+static wchar_t* cgi_href_buffer  = NULL; // TODO - embed global static buffer in Request object 
+static char*    cgi_post_buffer  = NULL; // TODO - embed global static buffer in Request object 
 
-void httpd_out(const char* message, ...);
-void httpd_error(const char* message, ...);
-void whttpd_out(const wchar_t* message, ...);
-void whttpd_error(const wchar_t* message, ...);
+void     cgi_init();
+Request* cgi_request(int argc, char** argv);
+void     cgi_release(Request* self);
+void     cgi_out(Request* self, const wchar_t* message, ...);
 
-
-void cgi_init();
-const Request* cgi_request(int argc, char** argv);
 const char* cgi_decode(const char* request, size_t length);
-void cgi_release();
-
 
 struct json_object* search_to_json(const char* search, size_t length);
 char*    search_to_json_string(const char* search, size_t length);
 wchar_t* wsearch_to_json_string(const wchar_t* search, size_t length);
-
 
 #endif /* CGI */

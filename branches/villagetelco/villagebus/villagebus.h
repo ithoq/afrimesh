@@ -42,7 +42,7 @@
 typedef struct _villagebus {
   vtable* _vt[0];
   fexp* modules;
-  const Request* request;
+  Request* request;
 } villagebus;
 extern vtable* villagebus_vt;
 extern object* _VillageBus;
@@ -54,7 +54,7 @@ extern object* s_villagebus_json;
 
 void  villagebus_init();
 
-const fexp* villagebus_compile (closure* c, villagebus* self, const Request* request);
+const fexp* villagebus_compile (closure* c, villagebus* self, Request* request);
 const fexp* villagebus_evaluate(closure* c, villagebus* self, const fexp* expression);
 const fexp* villagebus_error   (closure* c, villagebus* self, const wchar_t* format, ...);
 villagebus* villagebus_print   (closure* c, villagebus* self);

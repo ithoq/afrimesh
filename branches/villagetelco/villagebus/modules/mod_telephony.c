@@ -77,24 +77,6 @@ const fexp* telephony_evaluate(closure* c, telephony* self, const fexp* expressi
                      s_villagebus_error, 
                      L"mod_telephony has no registered handler for requested name: %S", 
                      name->buffer);  
-  /*
-  // evaluate request 
-  const Request* request = VillageBus->request;
-  switch (request->method) {
-    case PUT:
-    message = telephony_put(c, self, message, request->data);
-    break;
-  case GET:
-    message = telephony_get(c, self, message);
-    break;
-  default:
-    message = (fexp*)send(VillageBus, 
-                          s_villagebus_error, 
-                          L"mod_telephony has no registered handler for request method: %d", 
-                          request->method);  // TODO method_to_string 
-  }
-
-  return message;*/
 }
 
 
@@ -113,7 +95,7 @@ telephony* telephony_print(closure* c, telephony* self)
  */
 const fexp* telephony_sip_asterisk(closure* c, telephony* self, const fexp* message)
 {
-  const Request* request = VillageBus->request; 
+  Request* request = VillageBus->request; 
 
   // get parameters
   char* command = (char*)send(send(message, s_fexp_car), s_string_tochar);

@@ -76,7 +76,7 @@ const fexp* snmp_evaluate(closure* c, snmp* self, const fexp* expression)
   } 
 
   // evaluate request 
-  const Request* request = ((villagebus*)VillageBus)->request;
+  Request* request = VillageBus->request;
   switch (request->method) {
   case GET:
     message = snmp_get(c, self, expression);
@@ -108,6 +108,8 @@ snmp* snmp_print(closure* c, snmp* self)
 #ifdef ENABLE_MOD_SNMP
 const fexp* snmp_get(closure* c, snmp* self, const fexp* message)
 {
+  Request* request = VillageBus->request; 
+
   size_t i;
   struct snmp_session* session;
 
@@ -156,7 +158,7 @@ const fexp* snmp_get(closure* c, snmp* self, const fexp* message)
   }
 
   /* output response */
-  whttpd_out(L"%S(%s)\n", VillageBus->request->callback, json_object_get_string(response));
+  request->out(request, L"%s", json_object_get_string(response));
 
   /* cleanup */
   stop_snmp(session);
