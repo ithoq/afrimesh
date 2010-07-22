@@ -69,4 +69,7 @@ int string_to_symbol(const char* string, const SymbolTable symbols);
 char* cut_field(const char* input, size_t start, size_t end);
 const char* parse_field(const char* input, size_t length, char* tokens, char** pfield);
 
+/* ip address utilities */
+
+
 #endif /* UTIL */

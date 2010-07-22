@@ -285,13 +285,18 @@ Request* cgi_request(int argc, char** argv)
   if (content_length)  wprintl(L" CONTENT_LENGTH: %s\n", content_length);
   if (query_string)    wprintl(L"   QUERY_STRING: %s\n", query_string); 
 
+
+
+
   /* parse request - Method */
-  if (request_method == NULL && argc >= 1 && argv[1]) { // command line
+  if (request_method == NULL && argc >= 1 && argv[1]) {    // command line
     request_method = argv[1];
-  } else if (request_method == NULL) {                  // command line but no params
+  } else if (request_method == NULL) {                     // command line but no params
     request->method = SYMBOL_UNKNOWN;
     return request;
-  } else {                                              // web
+  } else if (strncmp(request_method, "CONSOLE", 7) == 0) { // command line from cgi @ugly!
+    request_method = argv[1];
+  } else {                                                 // web
     request->state = OUT_HEADER;
   }
   request->method = string_to_symbol(request_method, Methods);

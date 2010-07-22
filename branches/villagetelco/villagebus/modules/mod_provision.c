@@ -28,7 +28,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <credis.h>
+#include <errno.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
 
 #include "mod_provision.h"
 
@@ -56,8 +58,7 @@ void provision_init()
 
   // global module instance vars
   Provision = (provision*)send(_Provision->_vt[-1], s_allocate, sizeof(provision));
-  Provision->handle = NULL;
-  Provision->delimiter = (string*)send(String, s_new, L":", 1); // TODO - use mod_db's delimiter?
+  Provision->delimiter = (string*)send(String, s_new, L":", 1); // MAC delimiter
 
   // register module with VillageBus 
   s_provision = (symbol*)symbol_intern(0, 0, L"provision");
@@ -72,42 +73,16 @@ void provision_init()
  */
 const fexp* provision_evaluate(closure* c, provision* self, const fexp* expression)
 {
-  const fexp* reply = fexp_nil;
-
-#ifdef TODO
-  // lazily initialize redis connection
-  if ((self->handle == NULL) || (credis_ping(self->handle) != 0)) {
-    self->handle = credis_connect("localhost", 6379, 2000);
-  }
-  
-  // check connection
-  if ((self->handle == NULL) || (credis_ping(self->handle) != 0)) {
-    // TODO - try to start up redis server
-    reply = (fexp*)send(VillageBus, s_villagebus_error, L"Could not connect to redis server");
-    goto done;
-  }
-#endif
-
   // search for name in local context
   string* name    = (string*)send(expression, s_fexp_car);
   fexp*   message = (fexp*)send(expression, s_fexp_cdr);
   object* channel = symbol_lookup(0, _Provision, name->buffer);
   if (channel) {
-    reply = (fexp*)send(self, channel, message);
-  } else {
-    reply = (fexp*)send(VillageBus, s_villagebus_error, 
-                        L"mod_provision has no registered handler for name: %S",
-                        name->buffer);  
-  }
-  
-  // close server connection & release resources
- done:   
-  if (self->handle != NULL) {
-    credis_close(self->handle);
-    self->handle = NULL;
-  }
-  
-  return reply;
+    return (fexp*)send(self, channel, message);
+  } 
+  return (fexp*)send(VillageBus, s_villagebus_error, 
+                     L"mod_provision has no registered handler for name: %S",
+                     name->buffer);  
 }
 
 
@@ -115,22 +90,88 @@ const fexp* provision_evaluate(closure* c, provision* self, const fexp* expressi
 
 /**
  * Given a MAC address return the IP associated with it.
+ *
+ *   in_addr_t          ->  u_int
+ *   struct in_addr     -> { in_addr_t s_addr; }
+ *   struct sockaddr_in -> { __uint8_t       sin_len;
+ *                           sa_family_t     sin_family;
+ *                           in_port_t       sin_port;
+ *                           struct  in_addr sin_addr;
+ *                           char            sin_zero[8];
+ *   };
  */
 const string* provision_ip (closure* c, provision* self, const fexp* message)
 {
+  Request* request = VillageBus->request; 
+
+  // parse arguments
   string* mac    = (string*)send(message, s_fexp_car);
   fexp*   octets = (fexp*)  send(mac, s_string_split, self->delimiter);
   if ((size_t)send(octets, s_length) != 6) {
     return (string*)fexp_nil;
   }
-  string* octet_1 = (string*)send(octets, s_fexp_nth, 2);
+
+  // get any parameters
+  const char* address = NULL;
+  const char* network = "10.130.1.0";
+  if (request->json) {
+    address = json_object_get_string(json_object_object_get(request->json, "address"));
+    network = json_object_get_string(json_object_object_get(request->json, "network"));
+  }
+  //wprintf(L"MAC: %S ADDRESS: %s NETWORK: %s\n\n", mac->buffer, address, network);
+    
+
+  /* Strategy 1 - If an address is specified, register w/ database and 
+                  simply return it again */
+  if (address) {
+    return (string*)send(String, s_string_fromwchar, L"%s", address);
+  }
+
+  /* Strategy 2 - Sequential allocation within a given network backed
+                  by database.
+     . Check for MAC in database
+     . If it's there return allocated IP
+     . Otherwise, increment allocation counter, generate an IP
+       and store it in database */
+
+  // convert network address to int
+  struct in_addr _in_addr;
+  if(inet_aton(network, &_in_addr) == 0) {
+    wprintf(L"Error parsing %s: %s\n", network, strerror(errno));
+    // TODO - error handling
+  }
+  wprintf(L"inet_aton:   %d, %s\n", _in_addr.s_addr, inet_ntoa(_in_addr.s_addr));  
+  // construct IP from network address and sequence#
+  unsigned int sequence = 258;
+  _in_addr.s_addr = ntohl(ntohl(_in_addr.s_addr) + sequence);
+  wprintf(L"inet_aton:   %d, %s\n", _in_addr.s_addr, inet_ntoa(_in_addr.s_addr));  
+  // convert int ip address to string
+  struct sockaddr_in sa;
+  sa.sin_addr = _in_addr;
+  char buf[INET_ADDRSTRLEN];
+  inet_ntop(AF_INET, &(sa.sin_addr), buf, INET_ADDRSTRLEN);
+  if (buf == NULL) {
+    wprintf(L"Error parsing int %s: %s\n", network, strerror(errno));
+  }
+  printf("inet_ntop:          %s\n", buf);
+
+  // Check for MAC in database
+  // If there, look up IP and return
+  // If not, increment counter, generate IP and store in database
+  string* ret = (string*)send(String, s_string_fromwchar, L"\"10.130.1.2\"");
+
+  // Strategy 3 - Dumb MAC2IP
+  /*string* octet_1 = (string*)send(octets, s_fexp_nth, 3);
   string* octet_2 = (string*)send(octets, s_fexp_nth, 4);
   string* octet_3 = (string*)send(octets, s_fexp_nth, 5);
   int n1 = wcstoimax(octet_1->buffer, NULL, 16);
   int n2 = wcstoimax(octet_2->buffer, NULL, 16);
   int n3 = wcstoimax(octet_3->buffer, NULL, 16);
   // TODO - the default for Strings in main.c should be to print as json *sigh*
-  string* ret = (string*)send(String, s_string_fromwchar, L"\"10.%d.%d.%d\"", n1, n2, n3);
+  string* ret = (string*)send(String, s_string_fromwchar, L"\"10.%d.%d.%d\"", n1, n2, n3);*/
+
+  // Strategy 4 - ability to specify an external hook for IP generation
+
   return ret;
 }
 
@@ -145,29 +186,6 @@ const string* provision_mac(closure* c, provision* self, const fexp* message)
 
 
  
-
-
-/*const fexp* provision_keys(closure* c, provision* self, const fexp* message)
-{
-  fexp* reply = fexp_nil;
-
-  string* key  = (string*)send(message, s_fexp_join, self->delimiter);  // generate a key from message
-  wprintl(L"GET /provision/keys/%S\n", key->buffer);
-  char*  keyc = (char*)send(key, s_string_tochar); // TODO - redis not support UNICODE so much
-
-  char** bufferv;
-  int i;
-  for (i = 0; i < credis_keys(self->handle, keyc, &bufferv); i++) {
-    if (strcmp(bufferv[i], "") == 0) continue; // getting an empty key on zero match result :-/
-    string* item = (string*)send(String, s_string_fromchar, bufferv[i], strlen(bufferv[i]));
-    reply = (fexp*)send(reply, s_fexp_cons, item);
-  }
-  free(keyc);
-
-  return reply;
-  }*/
-
-
 
 
 /* - Global Handlers ---------------------------------------------------- */

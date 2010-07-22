@@ -36,8 +36,6 @@ pubkey=`dropbearkey -y -f /etc/dropbear/dropbear_rsa_host_key | head -2 | tail -
 # ssh -i /etc/dropbear/dropbear_rsa_host_key antoine@pi.artifactual.org.za
 
 
-
-
 # - 0. Build provisioning request ------------------------------------------
 #
 #   Router address
@@ -58,9 +56,8 @@ json="{ \
                      'address'  : '$eth0_address', \
                      'mac'      : '$eth0_mac' } ] \
 }"
-#search="?self=$self&mac=$wifi0_mac&pubkey=$pubkey"
-search="?self=$self&mac=$wifi0_mac"
-
+#search="/provision/ip/$wifi0_mac?address=$self&network=$self_network&pubkey=$pubkey"
+search="/provision/ip/$wifi0_mac?address=$self"
 
 
 # 1. Do we have an active network on either the wifi or ethernet interfaces?
@@ -94,8 +91,6 @@ echo "$REQUEST"
 echo "--------------------------------------------------------"
 echo
 echo "- provisiond reply -------------------------------------"
-#echo -n "$REQUEST" | nc $root 80
-#echo -n "$REQUEST" | nc $root 80 >& /tmp/foo
 echo -n "$REQUEST" | nc $root 80 | sed '/HTTP.*OK/,/Content-Type: application\/x-tar/d; 1d' >& /tmp/bundle.tar.gz
 echo "--------------------------------------------------------"
 echo

@@ -2,7 +2,7 @@
 
 # TODO - hasn't anyone written a nice, portable, secure ajax-proxy ?
 
-# config
+# - config -----------------------------------------------------------------
 LOG=1
 
 # Log Buffer
@@ -11,11 +11,11 @@ BUFFER="$LOGFILE.$$"
 touch "$BUFFER"
 if [ "$LOG" = "1" ] ; then
     echo >> "$BUFFER"
-    echo "======================================================================"  >> "$BUFFER"
+    echo "=================================================================="  >> "$BUFFER"
 fi
 
 
-# read client request
+# - read client request ----------------------------------------------------
 QUERY=$QUERY_STRING
 if [ "$REQUEST_METHOD" = "POST" ] || [ "$REQUEST_METHOD" = "PUT" ]; then
     read RAW_QUERY
@@ -25,7 +25,7 @@ fi
 URL=`echo "$QUERY_STRING" | grep -oE "(^|[?&])url=[^&]+" | sed "s/%20/ /g" | cut -f 2- -d "="`
 
 
-# parse remote url 
+# - parse remote url -------------------------------------------------------
 REMOTE_HOST=`echo $URL | sed -e 's/http:\/\///;s|\/.*||;s|\:.*||'`
 if [ -z $REMOTE_HOST ] ; then
     echo "Content-Type: $CONTENT_TYPE"
@@ -41,7 +41,6 @@ REMOTE_PATH=`echo $URL | sed -e 's/http:\/\/[^\/]*//g'`
 [ -z $REMOTE_PORT ] && REMOTE_PORT="80"
 [ -z $REMOTE_PATH ] && REMOTE_PATH="/"
 
-
 # log client request
 if [ "$LOG" = "1" ] ; then
     echo "ajax-proxy.cgi - URL:            $URL"            >> "$BUFFER"
@@ -56,7 +55,7 @@ if [ "$LOG" = "1" ] ; then
 fi
 
 
-# construct remote request 
+# - perform remote request -------------------------------------------------
 if [ "$REQUEST_METHOD" = "POST" ] || [ "$REQUEST_METHOD" = "PUT" ]; then
     REQUEST="$REQUEST_METHOD $REMOTE_PATH HTTP/1.0
 Content-Type:   $CONTENT_TYPE
@@ -74,10 +73,8 @@ if [ "$LOG" = "1" ] ; then
     echo             >> "$BUFFER"
 fi
 
-
 # invoke remote request 
 RESPONSE=`echo -n "$REQUEST" | nc $REMOTE_HOST $REMOTE_PORT`
-
 
 # check response headers 
 RESPONSE_HEADER=`echo "$RESPONSE" | head -n 1`
@@ -90,7 +87,7 @@ else
 fi
 
 
-# forward response to client
+# - forward response to client ---------------------------------------------
 echo -n "$RESPONSE_BODY"
 if [ "$LOG" = "1" ] ; then
     echo "- remote response -------------------------------- " >> "$BUFFER"
@@ -98,7 +95,6 @@ if [ "$LOG" = "1" ] ; then
     echo "--"               >> "$BUFFER"
     echo "$RESPONSE_BODY"   >> "$BUFFER"
     echo                    >> "$BUFFER"
-
     # Append log buffer to actual log & nuke buffer
     cat "$BUFFER" >> "$LOGFILE"
     rm "$BUFFER"

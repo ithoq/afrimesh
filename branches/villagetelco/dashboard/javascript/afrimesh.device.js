@@ -22,7 +22,7 @@ function BootDevice(parent) {
    * Returns instantaneous DB data for the device at address
    */
   device.info = function(address, continuation) {
-    var name = afrimesh.villagebus.Name("/@root/db/deviceinfo/" + address);
+    var name = afrimesh.villagebus.Name("/@root/db/device:info/" + address);
     name = afrimesh.villagebus.Bind(name, function(error, response) {
         if (error) return continuation(error, null);
         return continuation(error, response);
@@ -36,7 +36,7 @@ function BootDevice(parent) {
    * Returns temporal DB data for the device at address
    */
   device.stat = function(address, continuation, range) {
-    var name = afrimesh.villagebus.Name("/@root/db/lrange/devicestat/" + address);
+    var name = afrimesh.villagebus.Name("/@root/db/lrange/device:stat/" + address);
     name = afrimesh.villagebus.Bind(name, function(error, response) {
         if (error) return continuation(error, null);  // TODO - return Fail(error, continuation) maybe ?
         return continuation(error, response);

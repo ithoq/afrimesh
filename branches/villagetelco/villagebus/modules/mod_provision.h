@@ -37,7 +37,6 @@
 /* - provision ---------------------------------------------------------- */
 typedef struct _provision {
   vtable* _vt[0];
-  REDIS   handle;
   string* delimiter;
 } provision;
 extern vtable* provision_vt;

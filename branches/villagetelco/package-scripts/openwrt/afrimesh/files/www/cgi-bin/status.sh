@@ -13,8 +13,8 @@ self=`uci get network.$device.ipaddr`
 #root=`uci get system.@system[0].log_ip`
 root=`uci get afrimesh.@settings[0].root`
 mac=`ifconfig $interface | grep HWaddr | awk '{ print $5 }'`
-path_info="$root/db/deviceinfo/$self"
-path_stat="$root/db/devicestat/$self"
+path_info="$root/db/device/info/$self"
+path_stat="$root/db/device/stat/$self"
 
 # misc information
 timestamp=`date +%s`000
