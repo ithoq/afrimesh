@@ -40,8 +40,8 @@ MODULES=\
 #   _DO_ set this to your personal ppa if you want to build test packages
 #   _DON'T_ set this to afrimesh-ppa unless you are planning on doing a
 #   release !!!                                   
-#PPA=antoine-7degrees-ppa
-PPA=afrimesh-ppa
+PPA=antoine-7degrees-ppa
+#PPA=afrimesh-ppa
 
 # Some non-standard dependencies are hosted here
 #DEPS_URL="https://launchpad.net/~antoine-7degrees/+archive/ppa/+files/"
@@ -323,10 +323,10 @@ depends-packages-linux-libcredis :
 	# Ugly workaround for launchpad lameness
 	#rm -rf $(PKG_BUILD_DIR)/libcredis-0.2.2.orig.tar.gz
 	#wget -P $(PKG_BUILD_DIR) http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu/pool/main/l/libcredis/libcredis-0.2.2.orig.tar.gz
-	#@cd $(PKG_BUILD_DIR)/libcredis-0.2.2 ; debuild -S
+	@cd $(PKG_BUILD_DIR)/libcredis-0.2.2 ; debuild -S
 	# to build binaries:
-	@cd $(PKG_BUILD_DIR)/libcredis-0.2.2 ; pdebuild
-	@cd $(PKG_BUILD_DIR)/libcredis-0.2.2 ; fakeroot dpkg-buildpackage -b -uc 
+	#@cd $(PKG_BUILD_DIR)/libcredis-0.2.2 ; pdebuild
+	#@cd $(PKG_BUILD_DIR)/libcredis-0.2.2 ; fakeroot dpkg-buildpackage -b -uc 
 
 
 depends-launchpad-linux : #depends-packages-linux-json-c depends-packages-linux-uci depends-packages-linux-libmemcached depends-packages-linux-libcredis
@@ -336,7 +336,7 @@ depends-launchpad-linux : #depends-packages-linux-json-c depends-packages-linux-
 	#dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/json-c_0.9-1_source.changes
 	#dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/uci_0.7.5-1_source.changes
 	#dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/libmemcachedb_0.25-1_source.changes
-  #dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/libcredis_0.2.2-1_source.changes	
+	dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/libcredis_0.2.2-1_source.changes	
 
 
 # - freebsd ----------------------------------------------------------------
