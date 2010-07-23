@@ -37,7 +37,7 @@ else
     echo "Content-Type: application/json"
     echo
     echo "{ 'error' : 'invalid provisioning request' }"
-    log "provisiond-router.cgi - ERROR invalid request from: $REMOTE_ADDR"
+    log "ERROR invalid request from: $REMOTE_ADDR"
     close_log
     exit
 fi
@@ -50,25 +50,26 @@ TARBALL_DIR="$PROVISIOND_TMP/router-${client_mac//:/_}.$$"
 # Log client request
 if [ "$LOG" = "1" ] ; then
     #env >> "$BUFFER"
-    log "provisiond-router.cgi - METHOD:         $REQUEST_METHOD" >> "$BUFFER"
-    log "provisiond-router.cgi - REMOTE_ADDR:    $REMOTE_ADDR"    >> "$BUFFER"
-    log "provisiond-router.cgi - PATH_INFO:      $PATH_INFO"      >> "$BUFFER"
-    log "provisiond-router.cgi - QUERY_STRING:   $QUERY_STRING"   >> "$BUFFER"
-    log "provisiond-router.cgi - CONTENT_TYPE:   $CONTENT_TYPE"   >> "$BUFFER"
-    log "provisiond-router.cgi - CONTENT_LENGTH: $CONTENT_LENGTH" >> "$BUFFER"
-    log "provisiond-router.cgi - POST_DATA:      $POST_DATA"      >> "$BUFFER"
-    log "provisiond-router.cgi - PAYLOAD_DIR:    $PAYLOAD_DIR"    >> "$BUFFER"
-    log "provisiond-router.cgi - TARBALL_DIR:    $TARBALL_DIR"    >> "$BUFFER"
+    log "METHOD:         $REQUEST_METHOD" >> "$BUFFER"
+    log "REMOTE_ADDR:    $REMOTE_ADDR"    >> "$BUFFER"
+    log "PATH_INFO:      $PATH_INFO"      >> "$BUFFER"
+    log "QUERY_STRING:   $QUERY_STRING"   >> "$BUFFER"
+    log "CONTENT_TYPE:   $CONTENT_TYPE"   >> "$BUFFER"
+    log "CONTENT_LENGTH: $CONTENT_LENGTH" >> "$BUFFER"
+    #log "POST_DATA:      $POST_DATA"      >> "$BUFFER"
+    log "PAYLOAD_DIR:    $PAYLOAD_DIR"    >> "$BUFFER"
+    log "TARBALL_DIR:    $TARBALL_DIR"    >> "$BUFFER"
 fi
 
 
 # - forward request to villagebus & ask for network settings ---------------
-log "- provisioned setting -------------------------------- " >> "$BUFFER"
+
+log "- provisioned settings -- " >> "$BUFFER"
 REQUEST_METHOD=CONSOLE
-#prov_address=`$VILLAGEBUS GET "/provision/ip/$client_mac?address=$client_address&network=$client_network"`` 
-#prov_address=`$VILLAGEBUS GET "/provision/ip/$client_mac?address=$client_address"`
-prov_address=`$VILLAGEBUS GET "$PATH_INFO?$QUERY_STRING"`
-log "provisiond-router.cgi - address: |$prov_address|" >> "$BUFFER"
+#provision_address=`$VILLAGEBUS GET "/provision/ip/$client_mac?address=$client_address&network=$client_network"`` 
+#provision_address=`$VILLAGEBUS GET "/provision/ip/$client_mac?address=$client_address"`
+provision_address=`$VILLAGEBUS GET "$PATH_INFO?$QUERY_STRING"`
+log "Device address: $provision_address" >> "$BUFFER"
 
 
 # - Construct configuration bundle -----------------------------------------

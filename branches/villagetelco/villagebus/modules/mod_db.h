@@ -62,10 +62,11 @@ const fexp*   db_lrange(closure* c, db* self, const fexp* message); // list
 
 // PUT
 const string* db_getset(closure* c, db* self, const fexp* message, const unsigned char* data); // string
+//unsigned int db_incr(closure* c, db& self, const string* key);
 
 // POST
-const fexp* db_lpush (closure* c, db* self, const fexp* message, const unsigned char* data);  // list
-
+const fexp* db_lpush(closure* c, db* self, const fexp* message, const unsigned char* data);  // list
+//const fexp* db_hset(closure* c, db* self, const string* name, const string* key, const string* value);
 
 #endif /* MOD_DB_H */
 

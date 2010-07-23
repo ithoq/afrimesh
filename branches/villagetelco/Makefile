@@ -59,6 +59,9 @@ MAKE=make
 ifeq ($(UNAME),Linux)
 WWW_ROOT=$(DESTDIR)/var/www
 DASHBOARD_CGI=$(DESTDIR)/usr/lib/cgi-bin
+DEPROOT=/usr
+MAKE=make
+FLAVOR=LINUX
 endif
 
 ifeq ($(UNAME),FreeBSD)
@@ -310,6 +313,8 @@ depends-packages-linux-libmemcached :
 depends-packages-linux-libcredis :
 	wget --no-clobber -P $(PKG_BUILD_DIR) http://credis.googlecode.com/files/credis-0.2.2.tar.gz
 	rm -rf $(PKG_BUILD_DIR)/libcredis-0.2.2/debian
+	tar xzvf $(PKG_BUILD_DIR)/credis-0.2.2.tar.gz -C $(PKG_BUILD_DIR)
+	mv $(PKG_BUILD_DIR)/credis $(PKG_BUILD_DIR)/libcredis-0.2.2
 	@cd $(PKG_BUILD_DIR)/libcredis-0.2.2 ; dh_make --library -c BSD -e antoine@7degrees.co.za --packagename libcredis --createorig
 	rm -rf  $(PKG_BUILD_DIR)/libcredis-0.2.2/debian/*.ex
 	rm -rf  $(PKG_BUILD_DIR)/libcredis-0.2.2/debian/*.EX
@@ -318,10 +323,10 @@ depends-packages-linux-libcredis :
 	# Ugly workaround for launchpad lameness
 	#rm -rf $(PKG_BUILD_DIR)/libcredis-0.2.2.orig.tar.gz
 	#wget -P $(PKG_BUILD_DIR) http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu/pool/main/l/libcredis/libcredis-0.2.2.orig.tar.gz
-	@cd $(PKG_BUILD_DIR)/libcredis-0.2.2 ; debuild -S
+	#@cd $(PKG_BUILD_DIR)/libcredis-0.2.2 ; debuild -S
 	# to build binaries:
-	#@cd $(PKG_BUILD_DIR)/libcredis-0.2.2 ; pdebuild
-	#@cd $(PKG_BUILD_DIR)/libcredis-0.2.2 ; fakeroot dpkg-buildpackage -b -uc 
+	@cd $(PKG_BUILD_DIR)/libcredis-0.2.2 ; pdebuild
+	@cd $(PKG_BUILD_DIR)/libcredis-0.2.2 ; fakeroot dpkg-buildpackage -b -uc 
 
 
 depends-launchpad-linux : #depends-packages-linux-json-c depends-packages-linux-uci depends-packages-linux-libmemcached depends-packages-linux-libcredis
@@ -331,7 +336,7 @@ depends-launchpad-linux : #depends-packages-linux-json-c depends-packages-linux-
 	#dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/json-c_0.9-1_source.changes
 	#dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/uci_0.7.5-1_source.changes
 	#dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/libmemcachedb_0.25-1_source.changes
-  dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/libcredis_0.2.2-1_source.changes	
+  #dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/libcredis_0.2.2-1_source.changes	
 
 
 # - freebsd ----------------------------------------------------------------

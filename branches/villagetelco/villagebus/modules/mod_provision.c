@@ -124,6 +124,34 @@ const string* provision_ip (closure* c, provision* self, const fexp* message)
   /* Strategy 1 - If an address is specified, register w/ database and 
                   simply return it again */
   if (address) {
+    // is it there?
+
+    // incr provision:id
+    // set  provision:id:<mac>  <id>
+    /*
+
+ 
+  device:123:info
+  device:123:stat
+  device:124:info
+  device:124:stat
+
+  provision:00:18:0A:01:10:2F:id = 123
+  provision:00:18:0A:01:10:2F:id = 124
+  provision:123:info             = { mac : 00:18:0A:01:10:2F, ip : 10.0.0.5 }
+  provision:123:ip               = 10.0.0.5
+  provision:123:mac              = 00:18:0A:01:10:2F
+  provision:124:info             = { mac : 10:18:0A:01:10:2F, ip : 10.0.0.6 }
+  provision:124:ip               = 10.0.0.6
+  provision:124:mac              = 10:18:0A:01:10:2F
+
+
+    */
+    // set provision:ip:<mac>  <ip>
+    // set provision:mac:<ip>  <mac>
+    // hset provision:id:<id> mac <mac>
+    // hset provision:id:<id> ip  <ip>
+
     return (string*)send(String, s_string_fromwchar, L"%s", address);
   }
 
