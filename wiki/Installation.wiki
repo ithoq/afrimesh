@@ -23,6 +23,12 @@ add the Afrimesh package archive & signing keys to the system.
 To do this, please open up a Terminal and run:
 
   {{{
+  sudo apt-add-repository "deb http://ppa.launchpad.net/afrimesh/ppa/ubuntu hardy main"
+  }}}
+
+On older versions of Ubuntu you may need to run this instead:
+
+  {{{
   sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 50CFBA3E
   sudo sh -c "echo deb http://ppa.launchpad.net/afrimesh/ppa/ubuntu hardy main >> /etc/apt/sources.list"
   sudo apt-get update
@@ -273,4 +279,3 @@ Assuming that Network & Wireless settings are correctly configured for
 your particular network, the only configuration required consists of
 setting the B.A.T.M.A.N. Vis Server to the same value you used in the
 Dashboard configuration above.
-
