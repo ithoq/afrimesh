@@ -202,8 +202,8 @@ binary-packages-linux : prep-linux
 	ls -al /var/cache/pbuilder/result
 
 pbuilder-create-linux :
-	sudo pbuilder create --distribution hardy \
-                       --othermirror "deb http://archive.ubuntu.com/ubuntu hardy main restricted universe multiverse"
+	sudo pbuilder create --distribution lucid \
+                       --othermirror "deb http://archive.ubuntu.com/ubuntu lucid main restricted universe multiverse"
 pbuilder-keys-linux :
 	gpg --keyserver keyserver.ubuntu.com --recv 382AF1D2
 	gpg --export --armor 382AF1D2 | sudo apt-key add -
@@ -237,12 +237,16 @@ prep-linux : clean-linux sources #hooks-linux
 #	echo "cd /tmp ; wget $(DEPS_URL)/json-c-dev_0.9-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
 #	echo "cd /tmp ; wget $(DEPS_URL)/libmemcachedb_0.25-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
 #	echo "cd /tmp ; wget $(DEPS_URL)/libmemcachedb-dev_0.25-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
+#	echo "cd /tmp ; wget $(DEPS_URL)/libcredis_0.2.2-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
+#	echo "cd /tmp ; wget $(DEPS_URL)/libcredis-dev_0.2.2-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
 #	echo "dpkg -i /tmp/uci_0.7.5-1_i386.deb" >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
 #	echo "dpkg -i /tmp/uci-dev_0.7.5-1_i386.deb" >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
 #	echo "dpkg -i /tmp/json-c_0.9-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
 #	echo "dpkg -i /tmp/json-c-dev_0.9-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
 #	echo "dpkg -i /tmp/libmemcachedb_0.25-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
 #	echo "dpkg -i /tmp/libmemcachedb-dev_0.25-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
+#	echo "dpkg -i /tmp/libcredis_0.2.2-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
+#	echo "dpkg -i /tmp/libcredis-dev_0.2.2-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
 #	chmod 0755 $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
 
 depends-packages-linux-json-c :
@@ -295,21 +299,39 @@ depends-packages-linux-libmemcached :
 	rm -rf  $(PKG_BUILD_DIR)/libmemcachedb-0.25/debian/*.EX
 	rm -rf  $(PKG_BUILD_DIR)/libmemcachedb-0.25/debian/*.install
 	cp package-scripts/debian/libmemcachedb/* $(PKG_BUILD_DIR)/libmemcachedb-0.25/debian	
-	# Ugly workaround for launchpad lameness                                                                                                   
+	# Ugly workaround for launchpad lameness
 	#rm -rf $(PKG_BUILD_DIR)/libmemcachedb-0.25.orig.tar.gz
 	#wget -P $(PKG_BUILD_DIR) http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu/pool/main/l/libmemcachedb/libmemcachedb-0.25.orig.tar.gz
 	@cd $(PKG_BUILD_DIR)/libmemcachedb-0.25 ; debuild -S
-	# to build binaries:                                                                                                                       
-	#@cd $(PKG_BUILD_DIR)/libmemcachedb-0.25 ; pdebuild                                                                                                 
+	# to build binaries:
+	#@cd $(PKG_BUILD_DIR)/libmemcachedb-0.25 ; pdebuild
 	#@cd $(PKG_BUILD_DIR)/libmemcachedb-0.25 ; fakeroot dpkg-buildpackage -b -uc 
 
-depends-launchpad-linux : #depends-packages-linux-json-c depends-packages-linux-uci depends-packages-linux-libmemcached
+depends-packages-linux-libcredis :
+	wget --no-clobber -P $(PKG_BUILD_DIR) http://credis.googlecode.com/files/credis-0.2.2.tar.gz
+	rm -rf $(PKG_BUILD_DIR)/libcredis-0.2.2/debian
+	@cd $(PKG_BUILD_DIR)/libcredis-0.2.2 ; dh_make --library -c BSD -e antoine@7degrees.co.za --packagename libcredis --createorig
+	rm -rf  $(PKG_BUILD_DIR)/libcredis-0.2.2/debian/*.ex
+	rm -rf  $(PKG_BUILD_DIR)/libcredis-0.2.2/debian/*.EX
+	rm -rf  $(PKG_BUILD_DIR)/libcredis-0.2.2/debian/*.install
+	cp package-scripts/debian/libcredis/* $(PKG_BUILD_DIR)/libcredis-0.2.2/debian	
+	# Ugly workaround for launchpad lameness
+	#rm -rf $(PKG_BUILD_DIR)/libcredis-0.2.2.orig.tar.gz
+	#wget -P $(PKG_BUILD_DIR) http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu/pool/main/l/libcredis/libcredis-0.2.2.orig.tar.gz
+	@cd $(PKG_BUILD_DIR)/libcredis-0.2.2 ; debuild -S
+	# to build binaries:
+	#@cd $(PKG_BUILD_DIR)/libcredis-0.2.2 ; pdebuild
+	#@cd $(PKG_BUILD_DIR)/libcredis-0.2.2 ; fakeroot dpkg-buildpackage -b -uc 
+
+
+depends-launchpad-linux : #depends-packages-linux-json-c depends-packages-linux-uci depends-packages-linux-libmemcached depends-packages-linux-libcredis
 	@echo "Uploading/Refreshing packages to launchpad.net ppa"
 	# TODO run lintian & linda
 	# TODO read package release # from changelogs
 	#dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/json-c_0.9-1_source.changes
 	#dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/uci_0.7.5-1_source.changes
-	dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/libmemcachedb_0.25-1_source.changes
+	#dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/libmemcachedb_0.25-1_source.changes
+  dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/libcredis_0.2.2-1_source.changes	
 
 
 # - freebsd ----------------------------------------------------------------
