@@ -8,7 +8,7 @@
 -->
 
 <div class="network" id="network-map"></div>
-<div class="legend"
+<div class="legend round"
      onmouseover="this.style.opacity=1.0;" 
      onmouseout="this.style.opacity=0.7;">
   <img src="images/network-map-legend.png" />
@@ -20,20 +20,78 @@
   <!-- input type="submit" value="Google Earth"  / -->
   <input type="image" src="images/google-earth-export.png" value="Submit" alt="Submit" />
 </form>  
+<style>
+  div#notification {
+    border   : 0px solid red;
+    position : absolute; 
+    bottom   : 20px; 
+    /*left     : 300px;*/
+    right    : 18px;
+  }
+  div.notify {
+    position : relative;
+    float    : right;
+    border   : 0px solid black;
+    width    : 48px; 
+    height   : 48px;
+    content  : url(images/node.png);
+  }
+
+</style>
+<div id="notification">
+  <div id="1" class="notify"></div>
+  <div id="2" class="notify"></div>
+  <div id="3" class="notify"></div>
+  <!-- button id="halt">stop</button -->
+</div>
 
 
 <!-- see: http://bbs.keyhole.com/ubb/ubbthreads.php?ubb=showflat&Number=283026 -->
 <script type="text/javascript">( //<![CDATA[    
 function() {
 
-  /** includes ------------------------------------------------------------ */
+  /** includes ---------------------------------------------------------- */
 
-  /** construction -------------------------------------------------------- */
+  /** construction ------------------------------------------------------ */
   ready = function() {
     console.debug("loaded network.map.html");
 
     $("div#network-map").addClass("message");
     $("div#network-map").html("<p><br/><p>Loading Network Map...</p>");
+
+
+    // extend jQuery w/ looped animations
+    jQuery.fn.looped = function(start, end, duration) {
+      function loopfn(element, start, end, duration) {
+        return $(element).animate(start, duration, "swing", function() {
+            $(this).animate(end, duration, "swing", function() {
+                //setTimeout(loopfn, duration);
+                loopfn(element, start, end, duration);
+              }); 
+          });
+      }
+      return this.each(function() {
+          return loopfn(this, start, end, duration);
+        });
+    };
+
+
+    $(".notify").click(function() {
+        $(this).unbind();
+        $(this).stop().animate({ "bottom" : "0px" }, "fast")
+      });
+
+    $(".notify").hover(function() { 
+        $(this).stop().animate({ "bottom" : "20px" }, "fast");
+      }, function() {
+        $(this).stop().looped({ "bottom" : "10px" }, 
+                              { "bottom" : "0px"  }, 500);
+
+      });
+
+    $(".notify").looped({ "bottom" : "10px" }, 
+                        { "bottom" : "0px"  }, 500);
+
 
     // Load OpenStreetMap & OpenLayers libraries
     load.async(afrimesh.settings.map.openlayers_url, function(data, textStatus) {

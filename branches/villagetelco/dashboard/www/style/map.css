@@ -4,9 +4,20 @@ div#map .olControlAttribution   {
   left   : 8px!important; 
   right  : auto;
 } 
+
 div#map .olControlMousePosition { 
-  left: 8px!important; 
+  right: 5px!important; 
+  font-weight: bold;
 } 
+
+.olControlScaleLine {
+   display: block;
+   position: absolute;
+   left: 90px!important;
+   bottom: 140px;
+   font-size: xx-small;
+}
+
 div#map .olControlPanPanel {
   background-image: url(images/pan-panel.png);
   left    : auto;
@@ -19,10 +30,10 @@ div#map .olControlZoomPanel {
   right   : 51px;
   top     : 75px;
 } 
+
 div#map .olPopup {
   background-color: black;
   opacity: 0.95;
-  /*z-index: 100;*/
 }    
 
 div#map form.export {
@@ -30,6 +41,7 @@ div#map form.export {
   top      : 134px;
   right    : 26px;
 }
+
 div#map .network {
   position:absolute; 
   top: 0px; 
@@ -37,10 +49,11 @@ div#map .network {
   bottom: 0px; 
   right: 0px;
 }
+
 div#map .legend {
   position       : absolute; 
   bottom         : 5px; 
-  right          : 5px;
+  left           : 80px;
   background     : #d0d0d0; 
   color          : white;
   padding        : 10px; margin: 0px;
@@ -48,11 +61,6 @@ div#map .legend {
   filter         : alpha(opacity=60);
   -moz-opacity   : 0.7;
   -khtml-opacity : 0.7;
-  border-radius : 0.5em;
-  -khtml-border-radius  : 0.5em;
-  -moz-border-radius    : 0.5em;
-  -opera-border-radius  : 0.5em;
-  -webkit-border-radius : 0.5em;
 }
 
 div#map a { color: orange; }
@@ -74,7 +82,6 @@ div#map .popup {
   background-color: black;
   opacity: 0.95;
   overflow: hidden;
-  /*z-index: 100;*/
 }
 div#map .popup #address { 
   margin-bottom: 5px;
