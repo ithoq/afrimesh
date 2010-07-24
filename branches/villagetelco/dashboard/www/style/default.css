@@ -192,6 +192,21 @@ ul#dock .callout-border {
 }
 
 
+/* - notifications ------------------------------------------------------ */
+div#notification-overlay {
+  position   : absolute; 
+  right      : 10px; 
+  bottom     : 100px;
+  width      : 400px;
+  height     : 100px;
+  padding    : 1em;
+  background : rgba(255,255,255,0.95);
+  visibility : hidden;
+}
+div#notification-overlay #content {
+}
+
+
 /* - tooltips ------------------------------------------------------------- */
 /* Toolbar tooltips - Courtesy of: http://www.frequency-decoder.com/demo/css-tooltips/ */
 ul#dock [tooltip] {

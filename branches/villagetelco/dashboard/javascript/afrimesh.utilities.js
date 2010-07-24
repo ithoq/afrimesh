@@ -441,5 +441,27 @@
 //if (!console && window.console) {
 console = window.console; //TODO CLEAN 
 //}
+
+
+  /** - Make jQuery a usuable looped animations ------------------------- */
+  jQuery.fn.looped = function(start, end, duration) {
+    function loopfn(element, start, end, duration) {
+      return $(element).animate(start, duration, "swing", function() {
+          $(this).animate(end, duration, "swing", function() {
+              //setTimeout(loopfn, duration);
+              loopfn(element, start, end, duration);
+            }); 
+        });
+    }
+    return this.each(function() {
+        return loopfn(this, start, end, duration);
+      });
+  };
+
+
+
+
+
+
 console.debug("loaded afrimesh.utilities.js");
 

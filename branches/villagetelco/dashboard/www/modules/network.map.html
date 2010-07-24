@@ -21,29 +21,51 @@
   <input type="image" src="images/google-earth-export.png" value="Submit" alt="Submit" />
 </form>  
 <style>
-  div#notification {
+  div#notifications {
     border   : 0px solid red;
     position : absolute; 
     bottom   : 20px; 
     /*left     : 300px;*/
     right    : 18px;
   }
-  div.notify {
+
+  div#notifications .callout {
+    z-index: 1;
+    position: absolute;
+    top: -12px;
+    right: 8px;
+    font-size: 0px; line-height: 0%; width: 0px;
+    border-left  : 15px solid rgba(255,255,255,0.0);
+    border-top   : 16px solid white;
+    border-right : 15px solid rgba(255,255,255,0.0);
+  }
+
+  div#notifications .callout-border {
+    z-index: 1;
+    position: absolute;
+    top: -11px;
+    right: 8px;
+    font-size: 0px; line-height: 0%; width: 0px;
+    border-left  : 15px solid rgba(255,255,255,0.0);
+    border-top   : 16px solid #bab8b4;
+    border-right : 15px solid rgba(255,255,255,0.0);
+  }
+
+  div.notification {
     position : relative;
     float    : right;
     border   : 0px solid black;
     width    : 48px; 
     height   : 48px;
-    content  : url(images/node.png);
+    background-image : url(images/node.png);
   }
-
 </style>
-<div id="notification">
-  <div id="1" class="notify"></div>
-  <div id="2" class="notify"></div>
-  <div id="3" class="notify"></div>
-  <!-- button id="halt">stop</button -->
+<div id="notifications">
+  <div id="10.0.0.5" class="notification"></div>
+  <div id="10.0.0.2" class="notification"></div>
+  <div id="10.0.0.3" class="notification"></div>
 </div>
+<div id="notification-overlay" class="round-small shadow"></div>
 
 
 <!-- see: http://bbs.keyhole.com/ubb/ubbthreads.php?ubb=showflat&Number=283026 -->
@@ -59,37 +81,28 @@ function() {
     $("div#network-map").addClass("message");
     $("div#network-map").html("<p><br/><p>Loading Network Map...</p>");
 
-
-    // extend jQuery w/ looped animations
-    jQuery.fn.looped = function(start, end, duration) {
-      function loopfn(element, start, end, duration) {
-        return $(element).animate(start, duration, "swing", function() {
-            $(this).animate(end, duration, "swing", function() {
-                //setTimeout(loopfn, duration);
-                loopfn(element, start, end, duration);
-              }); 
-          });
-      }
-      return this.each(function() {
-          return loopfn(this, start, end, duration);
-        });
-    };
-
-
-    $(".notify").click(function() {
+    $(".notification").click(function() {
         $(this).unbind();
-        $(this).stop().animate({ "bottom" : "0px" }, "fast")
+        $(this).stop().animate({ "bottom" : "20px" }, "fast")
       });
 
-    $(".notify").hover(function() { 
-        $(this).stop().animate({ "bottom" : "20px" }, "fast");
+    $(".notification").hover(function() {
+        $(this).stop().animate({ "bottom" : "20px" }, "fast", function() {
+            $("div#notifications .callout").remove();
+            $("div#notifications .callout-border").remove();
+            $(this).append('<span class="callout-border"></span>');
+            $(this).append('<span class="callout"></span>');
+            $("#notification-overlay").css("visibility", "visible");
+          });
       }, function() {
+        $("div#notifications .callout").remove();
+        $("div#notifications .callout-border").remove();
+        $("#notification-overlay").css("visibility", "hidden");
         $(this).stop().looped({ "bottom" : "10px" }, 
                               { "bottom" : "0px"  }, 500);
-
       });
 
-    $(".notify").looped({ "bottom" : "10px" }, 
+    $(".notification").looped({ "bottom" : "10px" }, 
                         { "bottom" : "0px"  }, 500);
 
 
