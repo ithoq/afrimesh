@@ -1,3 +1,10 @@
+afrimesh-dashboard (0.9-r809-1) lucid; urgency=low
+
+  * Blah blah blah
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Tue, 24 July 2010 23:35:00 +0200
+
+
 afrimesh-dashboard (0.9-r721-1) hardy; urgency=low
 
   * Initial beta release of Afrimesh Network Management Dashboard for Ubuntu Linux

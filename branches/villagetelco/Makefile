@@ -333,10 +333,10 @@ depends-launchpad-linux : #depends-packages-linux-json-c depends-packages-linux-
 	@echo "Uploading/Refreshing packages to launchpad.net ppa"
 	# TODO run lintian & linda
 	# TODO read package release # from changelogs
-	#dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/json-c_0.9-1_source.changes
-	#dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/uci_0.7.5-1_source.changes
+	dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/json-c_0.9-2_source.changes
+	dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/uci_0.7.5-2_source.changes
 	#dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/libmemcachedb_0.25-1_source.changes
-	dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/libcredis_0.2.2-1_source.changes	
+	#dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/libcredis_0.2.2-1_source.changes	
 
 
 # - freebsd ----------------------------------------------------------------
