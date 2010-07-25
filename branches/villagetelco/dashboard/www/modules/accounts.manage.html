@@ -18,15 +18,15 @@
   <input type="text" 
          style="width:400px; height:30px; padding-left:10px;"
          name="seach" id="search" 
-         value="" title="Search on account or device info ..." />
+         value="" title="Search on account info ..." />
   <hr />
 
   <!-- account list -->
   <div class="scrollview" style="top:5.0em;">
     <div id="accountlist" class="accounts">
-      <div id="account-template" class="account" style="display:none;"> 
+      <div id="account-template" style="display:none;"> 
         <span class="name">Antoine van Gelder</span> 
-        <span class="devices">10.0.0.2</span>
+        <span class="device">10.0.0.2</span>
         <span class="voipnumber">42</span>
         <!-- span class="address">33 Riverside Drive, Kommetjie</span>
              <span class="balance"></span>
@@ -52,22 +52,30 @@
 
     /* set up search box */
     $('input[title!=""]').hint();    
-    $("div#accounts-manage input#search").bind("keypress", function(event) {
+    $("div#accounts-manage input#search").bind("keyup", function(event) {
+        if (this.value == "") { 
+          return $("div.account").show();
+        }
+        var filter = this.value;
+        $("div.account:not(:contains(" + filter + "))").hide();
+        $("div.account:contains(" + filter + ")").show();
 	      if (event.keyCode != 13) return true;
-        console.log("Searching for: " + this.value);
         return false;
       });
 
-
     /* load data */   
+    var names = [ "antoine", "Bob", "Joe Smith", "Janet Smith" ];
     for (i = 0; i < 50; i++) {
       // clone account template
       var clone = $("#account-template").clone()
-                                        .attr("id", "account-" + i)
+                                        .addClass("account")
+                                        .attr("id", i)
+                                        //.attr("name", names[i % names.length].toUpperCase())
                                         .appendTo("#accountlist").show();
       // add data for account
-      clone.find(".name").html("Potato number: " + i);
+      clone.find(".name").html(names[i % names.length]);
       clone.find(".voipnumber").html(i);
+      clone.find(".device").html("10.0.0." + i);
       //clone.find(".uptime").html(pretty_seconds(device.uptime));
       //clone.find(".traffic").html(pretty_bytes(device.bytes.tx + device.bytes.rx));
     }

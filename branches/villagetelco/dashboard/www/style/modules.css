@@ -209,9 +209,9 @@ div#accounts-manage div.accounts {
 div#accounts-manage div.account {
   display: table-row;
 }
-div#accounts-manage div.account:nth-child(even) {
+/*div#accounts-manage div.account:nth-child(even) {
   background-color: #eee;
-}
+}*/
 div#accounts-manage div.account span {
   display: table-cell;
   border: 0px solid red;
