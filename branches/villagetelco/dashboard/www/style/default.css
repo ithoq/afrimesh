@@ -94,98 +94,96 @@ input[type=text], input[type=password] {
 }
 
 
-/* - content -------------------------------------------------------------- */
+/* - content ------------------------------------------------------------ */
 div#overlay {
-  position:absolute; 
-  left: 90px; 
-  right: 10px; 
-  top: 10px; 
-  bottom: 10px;
-  padding : 1em;
+  position   : absolute; 
+  left       : 80px; 
+  right      : 10px; 
+  top        : 10px; 
+  bottom     : 10px;
+  padding    : 1em;
   background : rgba(255,255,255,0.95);
-  visibility:hidden;
+  display    : none;
 }
 div#overlay #content {
 }
 
 
-/* - dock ----------------------------------------------------------------- */
+/* - dock --------------------------------------------------------------- */
 ul#dock {
-  position:absolute; 
-  top: 10px; 
-  bottom: 10px; 
-  width: 70px;
-  background: rgba(64,64,64,0.8); 
-  /*background: rgba(256,256,256,0.8); */
-  color: white;
-  text-align: center;
-}
+  position    : absolute; 
+  top         : 10px; 
+  bottom      : 10px; 
+  width       : 60px;
+  background  : rgba(64,64,64,0.8); 
+} 
 ul#dock.dockleft {
-  left:0px; 
-  border: 2px solid white;
-  border-left: 0px;
-  border-top-left-radius : 0.0em;
+  left        : 0px; 
+  border      : 2px solid white;
+  border-left : 0px;
+  border-top-left-radius         : 0.0em;
   -khtml-border-top-left-radius  : 0.0em;
   -moz-border-radius-topleft     : 0.0em;
   -opera-border-top-left-radius  : 0.0em;
   -webkit-border-top-left-radius : 0.0em;
-  border-bottom-left-radius : 0.0em;
+  border-bottom-left-radius         : 0.0em;
   -khtml-border-bottom-left-radius  : 0.0em;
   -moz-border-radius-bottomleft     : 0.0em;
   -opera-border-bottom-left-radius  : 0.0em;
   -webkit-border-bottom-left-radius : 0.0em;
 }
 ul#dock.dockright {
-  right:0px; 
-  border: 2px solid white;
-  border-right: 0px;
-  border-top-right-radius : 0.0em;
+  right        : 0px; 
+  border       : 2px solid white;
+  border-right : 0px;
+  border-top-right-radius         : 0.0em;
   -khtml-border-top-right-radius  : 0.0em;
   -moz-border-radius-topright     : 0.0em;
   -opera-border-top-right-radius  : 0.0em;
   -webkit-border-top-right-radius : 0.0em;
-  border-bottom-right-radius : 0.0em;
+  border-bottom-right-radius         : 0.0em;
   -khtml-border-bottom-right-radius  : 0.0em;
   -moz-border-radius-bottomright     : 0.0em;
   -opera-border-bottom-right-radius  : 0.0em;
   -webkit-border-bottom-right-radius : 0.0em;
 }
 ul#dock.dockmax {
-/*left: 0px;*/
 }
 ul#dock.dockmin {
   left: -60px;
 }
 ul#dock hr {
-  border: 0px;
-  height:1.0em;
+  border   : 0px solid blue;
+  height   : 10px;
+  display  : block;
+  margin   : 0px; 
+  padding  : 0px;
 }
 ul#dock li {
-  border: 0px solid red;
-  position:relative;
-  /*line-height: 2.5;*/
-  border: 0px solid blue;
+  border     : 0px solid red;
+  display    : block;
+}
+ul#dock li img {
+  border     : 0px solid green;
 }
 ul#dock li:hover {
-  /*opacity:0.5;*/
-  color: black;
 }
 ul#dock .callout {
-  z-index: 1;
-  position: absolute;
-  top: 10px;
-  right: -22px;
-  font-size: 0px; line-height: 0%; width: 0px;
+  z-index       : 1;
+  position      : absolute;
+  top           : 10px;
+  right         : -22px;
+  font-size     : 0px; line-height: 0%; width: 0px;
   border-top    : 15px solid rgba(255,255,255,0.0);
   border-right  : 16px solid white;
   border-bottom : 15px solid rgba(255,255,255,0.0);
 }
 ul#dock .callout-border {
-  z-index: 1;
-  position: absolute;
-  top: 10px;
-  right: -21px;
-  font-size: 0px; line-height: 0%; width: 0px;
+  z-index       : 1;
+  position      : absolute;
+  top           : 10px;
+  right         : -21px;
+  font-size     : 0px; line-height: 0%; width: 0px;
   border-top    : 15px solid rgba(255,255,255,0.0);
   border-right  : 16px solid #bab8b4;
   border-bottom : 15px solid rgba(255,255,255,0.0);
@@ -260,7 +258,7 @@ ul#dock [tooltip]:focus:after {
   content:attr(tooltip);
   position:absolute;
   top:12px;
-  left:48px;
+  left:35px;
   margin:0 0 0 30px; /* top, right, bottom, left  */
   white-space:nowrap;
   padding:5px;
@@ -311,14 +309,14 @@ div.tooltip p.explain {
 
 
 /* - scrollview --------------------------------------------------------- */
-div.scrollview {
-  border: 0px solid red;
-  overflow: auto;
-  overflow-x: hidden; 
-  position: absolute;
-  top: 5em;            /* TODO - Should be relative to previous elements on the page. Remember to fix all references to scrollview */
-  bottom: 1.0em;
-  right: 1.0em;
-  left: 1.0em;
-  padding-right: 1.0em; /* make space for the scrollbar */
+.scrollview {
+  border        : 0px solid red;
+  overflow      : auto;
+  overflow-x    : hidden; 
+  position      : absolute;
+  top           : 1.0em; /* TODO - Should be relative to previous elements on the page. */
+  bottom        : 1.0em;
+  right         : 1.0em;
+  left          : 1.0em;
+  padding-right : 1.0em; /* make space for the scrollbar */
 }

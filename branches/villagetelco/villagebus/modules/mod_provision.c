@@ -130,6 +130,9 @@ const string* provision_ip (closure* c, provision* self, const fexp* message)
     // set  provision:id:<mac>  <id>
     /*
 
+
+      http://code.google.com/p/redis/wiki/CommandReference
+      http://simonwillison.net/static/2010/redis-tutorial/
  
   device:123:info
   device:123:stat

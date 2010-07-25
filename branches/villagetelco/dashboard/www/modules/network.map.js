@@ -10,9 +10,9 @@
 var Map = undefined;
 (function() {
 
-  /** Includes ------------------------------------------------------------ */
+  /** Includes ---------------------------------------------------------- */
 
-  /** Map ----------------------------------------------------------------- */
+  /** Map --------------------------------------------------------------- */
   function _Map(id, longitude, latitude, extent, zoom, update_target) {
 
     this.update_target    = update_target;
@@ -25,11 +25,12 @@ var Map = undefined;
         displayProjection : epsg_4326,
         units             : "m",
         numZoomLevels     : 20,
-        controls          : [ new OpenLayers.Control.Navigation(),
+        controls          : [ new OpenLayers.Control.Navigation({ 
+                                zoomWheelEnabled : false }),
                               new OpenLayers.Control.PanPanel(),
                               new OpenLayers.Control.ZoomPanel() ],
         //theme             : "style/map.default.css"  
-        theme             : "style/map.css?version=42"  // Ffffffffffuuuuuuuuuu!!!! Damn you Safaris!!!!
+        theme             : "style/map.css?version=43"  // Ffffffffffuuuuuuuuuu!!!! Damn you Safaris!!!!
       };
       var map = new OpenLayers.Map(id, options);
       var mapnik = new OpenLayers.Layer.OSM.Mapnik("Street Map");
@@ -71,9 +72,9 @@ var Map = undefined;
       click_selector.onUnselect = on_unselect_router;
       map.addControl(click_selector);
       click_selector.activate();*/
-      var router_hover_selector = new OpenLayers.Control.SelectFeature(map.routers, 
-                                                                { multiple : false, 
-                                                                  hover    : false });
+      var router_hover_selector = new OpenLayers.Control.SelectFeature(map.routers, { 
+        multiple : false, 
+        hover    : false });
       router_hover_selector.onSelect = on_select_router;
       router_hover_selector.onUnselect = on_unselect_router;
       map.addControl(router_hover_selector);
@@ -86,7 +87,7 @@ var Map = undefined;
       route_hover_selector.onUnselect = on_unselect_route;
       map.addControl(route_hover_selector);
       route_hover_selector.activate();*/
-      
+
       return map;
     };
 

@@ -1,0 +1,95 @@
+<!--
+ * Afrimesh: easy management for B.A.T.M.A.N. wireless mesh networks
+ * Copyright (C) 2008-2009 Meraka Institute of the CSIR
+ * All rights reserved.
+ *  
+ * This software is licensed as free software under the terms of the
+ * New BSD License. See /LICENSE for more information.
+-->
+
+<style>
+  div#accounts-manage #search.blur {
+    color : gray;
+  }
+</style>
+<div id="accounts-manage">
+
+  <!-- search control -->
+  <input type="text" 
+         style="width:400px; height:30px; padding-left:10px;"
+         name="seach" id="search" 
+         value="" title="Search on account or device info ..." />
+  <hr />
+
+  <!-- account list -->
+  <div class="scrollview" style="top:5.0em;">
+    <div id="accountlist" class="accounts">
+      <div id="account-template" class="account" style="display:none;"> 
+        <span class="name">Antoine van Gelder</span> 
+        <span class="devices">10.0.0.2</span>
+        <span class="voipnumber">42</span>
+        <!-- span class="address">33 Riverside Drive, Kommetjie</span>
+             <span class="balance"></span>
+             <span class="contact">antoine@7degrees.co.za</span -->
+      </div>
+    </div>
+  </div>
+
+</div> <!-- #accounts-manage -->
+
+
+<script type="text/javascript"> //<![CDATA[    
+(function() {
+
+  /** includes ---------------------------------------------------------- */
+  /* often a good idea:  load("modules/accounts.manage.js"); *;/
+
+
+  /** construction ------------------------------------------------------ */
+  ready = function() { // INJ 'ready' should be the only symbol we're exposing to the global namespace
+    /* often a good place to do this: populate_control(); */
+    console.debug("loaded accounts.manage.html");
+
+    /* set up search box */
+    $('input[title!=""]').hint();    
+    $("div#accounts-manage input#search").bind("keypress", function(event) {
+	      if (event.keyCode != 13) return true;
+        console.log("Searching for: " + this.value);
+        return false;
+      });
+
+
+    /* load data */   
+    for (i = 0; i < 50; i++) {
+      // clone device template
+      var clone = $("#account-template").clone()
+                                        .attr("id", "account-" + i)
+                                        .appendTo("#accountlist").show();
+      // add data for device
+      clone.find(".name").html("Potato number: " + i);
+      clone.find(".voipnumber").html(i);
+      //clone.find(".uptime").html(pretty_seconds(device.uptime));
+      //clone.find(".traffic").html(pretty_bytes(device.bytes.tx + device.bytes.rx));
+    }
+
+
+    return unload;
+  };
+
+  function unload() {
+    console.debug("unloaded accounts.manage.html");
+  };
+
+
+  /** populate control -------------------------------------------------- */
+  function populate_accounts(accounts) {
+  };
+
+
+  /** done -------------------------------------------------------------- */
+  console.debug("loaded accounts.manage.js");
+ 
+})();
+//]]></script>
+
+

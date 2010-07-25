@@ -295,7 +295,7 @@ var LocationMap = null;
                                 new OpenLayers.Control.ZoomPanel() ],
           //numZoomLevels     : 20,
           //theme             : "style/map.default.css"
-          theme             : "style/map.css"
+          theme             : "style/map.css?version=43"
         };
         var map = new OpenLayers.Map(id, options);
         if (afrimesh.settings.map.server == "openstreetmap.org") { // TODO afrimesh.settings.map.server == afrimesh.settings.map.server.default
@@ -303,7 +303,7 @@ var LocationMap = null;
         } else {
           map.addLayers([ new OpenLayers.Layer.OSM.LocalMap("Relief Map", "http://" + afrimesh.settings.map.server + "/tiles/") ]);
         }
-        map.addControl(new OpenLayers.Control.Attribution());
+        //map.addControl(new OpenLayers.Control.Attribution());
         map.addControl(new OpenLayers.Control.MousePosition());
         map.addControl(new OpenLayers.Control.ScaleLine());
         map.setCenter(LonLat(longitude, latitude), zoom);

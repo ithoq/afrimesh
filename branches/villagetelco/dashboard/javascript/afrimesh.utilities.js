@@ -458,7 +458,32 @@ console = window.console; //TODO CLEAN
       });
   };
 
-
+  /** - http://remysharp.com/2007/01/25/jquery-tutorial-text-box-hints/ - */
+  jQuery.fn.hint = function (blurClass) {
+    if (!blurClass) { 
+      blurClass = 'blur';
+    }
+    return this.each(function () {
+      var $input = jQuery(this),
+      title = $input.attr('title'),
+      $form = jQuery(this.form),
+      $win = jQuery(window);
+      function remove() {
+        if ($input.val() === title && $input.hasClass(blurClass)) {
+          $input.val('').removeClass(blurClass);
+        }
+      }
+      if (title) {                // only apply logic if the element has the attribute
+        $input.blur(function () { // on blur, set value to title attr if text is blank
+          if (this.value === '') {
+            $input.val(title).addClass(blurClass);
+          }
+        }).focus(remove).blur(); // now change all inputs to title
+        $form.submit(remove);    // clear the pre-defined text when form is submitted
+        $win.unload(remove);     // handles Firefox's autocomplete
+      }
+    });
+  };
 
 
 

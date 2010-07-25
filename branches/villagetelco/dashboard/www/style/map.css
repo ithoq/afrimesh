@@ -10,7 +10,7 @@ div#map .olControlMousePosition {
   font-weight: bold;
 } 
 
-.olControlScaleLine {
+div#map .olControlScaleLine {
    display: block;
    position: absolute;
    left: 90px!important;

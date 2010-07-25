@@ -194,12 +194,45 @@ td.v-brace {
   color: #202020;
 }
         
-/* - network devices module ------------------------------------------------ */
+
+/* - accounts manage module --------------------------------------------- */
+div#accounts-manage {
+  border: 0px solid blue;
+}
+div#accounts-manage div.accounts {
+  display: table;
+  border: 0px solid blue;
+  /*border-spacing: 0em 0.5em;*/
+  table-layout : fixed;
+  width : 100%;
+}
+div#accounts-manage div.account {
+  display: table-row;
+}
+div#accounts-manage div.account:nth-child(even) {
+  background-color: #eee;
+}
+div#accounts-manage div.account span {
+  display: table-cell;
+  border: 0px solid red;
+  vertical-align: middle;
+  padding: 5px 5px;
+  text-overflow : ellipsis;
+  white-space   : nowrap;
+  overflow      : hidden; 
+}
+/*div#accounts-manage div.account span.name {
+  color: red;
+}
+div#accounts-manage div.account span.contact {
+  color: blue;
+}*/
+
+
+/* - network devices module --------------------------------------------- */
 div#network-devices {
-  /*border: 1px solid blue;*/
 }
 div#network-devices table, thead, tr, th, td {  
-  /*border: 1px solid brown;*/
 }
 div#network-devices thead {
 }
@@ -209,8 +242,6 @@ div#network-devices th td {
 }
 div#network-devices form.filter {
   border:0px solid blue;
-  /*text-align:right;*/
-  /*display: inline;*/
   background-color: white;
   color: #333;
   padding-top: 1.0em;
@@ -231,10 +262,6 @@ div#network-devices form.filter .active {
 }
 div#network-devices div.devices {
   display: table;
-  /*padding: 0.5em;*/
-  /*text-overflow : ellipsis;
-    white-space   : nowrap;
-    overflow      : hidden; */
   border: 0px solid green;
   border-spacing: 0.5em;
 }
@@ -255,29 +282,23 @@ div#network-devices div.device span {
   vertical-align: middle;
 }
 div#network-devices div.device span.name {
-  display: table-cell;
   color: blue;
   font-weight: bold;
   padding-right: 1.5em;
 }
 div#network-devices div.device span.uptime {
-  display: table-cell;
   color: black;
 }
 div#network-devices div.device span.lastseen {
-  display: table-cell;
   color: black;
 }
 div#network-devices div.device span.status {
-  display: table-cell;
   color: green;
 }
 div#network-devices div.device span.traffic {
-  display: table-cell;
   color: gray;
 }
 div#network-devices div.device span.graph {
-  display: table-cell;
   margin: 0px; padding: 0px;
   border: 1px solid lightgray;
   background: #eee;

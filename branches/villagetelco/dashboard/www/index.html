@@ -9,22 +9,16 @@
 -->
 <html>
   <head>
-    <!-- link rel="stylesheet" type="text/css" href="style/reset.css" --> 
     <link rel="stylesheet" type="text/css" href="style/default.css" /> 
     <link rel="stylesheet" type="text/css" href="style/map.default.css"> 
-    <!-- link rel="stylesheet" type="text/css" href="style/map.css" / --> 
     <link rel="stylesheet" type="text/css" href="style/modules.css"> 
-    <!-- link rel="stylesheet" type="text/css" href="style/overlay-router.css" --> 
 
-    <!-- includes ---------------------------------------------------------- -->
+    <!-- includes ------------------------------------------------------ -->
     <script type="text/javascript" src="javascript/jquery/jquery.min.js"></script>
     <!-- script type="text/javascript" src="http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js"></script -->
     <script type="text/javascript" src="javascript/json.org/json2.min.js"></script>  <!-- TODO update!!! -->
     <script type="text/javascript" src="javascript/jquery/jquery.tooltip.min.js"></script>
-    <!-- script type="text/javascript" src="javascript/jquery/jquery.tools.min.js"></script --> <!-- TODO deprecate, only using tooltips -->
-    <!-- script type="text/javascript" src="javascript/jquery/jquery.corner.js"></script --> <!-- http://jrc.meerbox.nl/ - TODO deprecate -->
-                                                                                      <!-- also look at: http://www.malsup.com/jquery/corner/ -->
-                                                                                      <!--               http://www.ruzee.com/files/shadedborder/ -->
+
     <!-- afrimesh -->
     <script type="text/javascript" src="javascript/afrimesh.utilities.js"></script>
     <script type="text/javascript" src="javascript/afrimesh.platform.js"></script>
@@ -37,20 +31,12 @@
     <script type="text/javascript" src="javascript/afrimesh.settings.js"></script>
     <script type="text/javascript" src="javascript/afrimesh.js"></script>
 
-    <!-- One-time initialization/bootstrap ------------------------------- -->
+    <!-- One-time initialization/bootstrap ----------------------------- -->
     <script type="text/javascript">  //<![CDATA[    
       $(document).ready(function() {
 
-        /** round menu item corners */
-        /*$("#menu .left").corner("bl 13px");*/
-
-        /** init overlay window TODO - should be in network.maps See: http://flowplayer.org/forum/20/21252 */
-        /*var api = $("#overlay-router").overlay({ 
-            api:true,
-            zIndex:200000
-            //top: "0%", // TODO - update to latest jquery.tools
-          }); 
-        evil_display_overlay = function(url) {
+        /** TODO - rename overlay window, move to network.maps */
+        /* evil_display_overlay = function(url) {
            api.getContent().find("iframe.wrap").attr('src', url);
            api.load();
         }*/
@@ -83,25 +69,26 @@
               $(this).append('<span class="callout-border"></span>');
               $(this).append('<span class="callout"></span>');
               unloader(); 
-              $("#overlay").css("visibility", "visible");
+              //$("#overlay").fadeIn(250);
+              $("#overlay").show();
               $("div#content").hide();
               $("div#content").load("modules/" + module + ".html", function(page) { 
-                  //$("div#content").fadeIn("slow"); 
                   $("div#content").show(); 
                   unloader = ready(); // UDE fades mess with load completion and require a ready() method :(
                 });
               return false;
             });
         };
-        add_dock_item("customers", "customers.manage");
-        add_dock_item("calls",     "customers.recharge");
-        add_dock_item("devices",   "network.devices");
-        add_dock_item("gateway",   "network.health");
-        add_dock_item("settings",  "utility.settings");
+        add_dock_item("accounts", "accounts.manage");
+        add_dock_item("calls",    "customers.recharge");
+        add_dock_item("devices",  "network.devices");
+        add_dock_item("health",   "network.health");
+        add_dock_item("help",     "help.chat");
+        add_dock_item("settings", "utility.settings");
 
         /** set default page */
         $("div#map").load("modules/network.map.html", function(page) { 
-            $("div#map").fadeIn("slow"); 
+            //$("div#map").fadeIn("slow"); 
             unloader = ready(); // UDE fades mess with load completion and require a ready() method :(
           });
 
@@ -109,7 +96,7 @@
         $("#message-loading").html("");
 
         /* TODO - debug */
-        //$("ul#dock li#devices").click();
+        $("ul#dock li#accounts").click();
 
         console.debug("$(document).ready() -------------------- end");
       });
@@ -118,18 +105,13 @@
   </head>
   <body>
 
-    <!-- TODO - should be in network.maps See: http://flowplayer.org/forum/20/21252 -->
-    <!-- div class="overlay-router" id="overlay-router">
-         <iframe class="wrap" style="overflow-x: hidden;" width="800" height="600" scrolling="no"></iframe>
-    </div -->
+    <!-- the network map ----------------------------------------------- -->
+    <div style="border:0px solid green;" id="map"></div>
     
-    <!-- the network map ------------------------------------------------- -->
-    <div style="border:0px solid green;" id="map">
-    </div>
-    
-    <!-- dock ------------------------------------------------------------ -->
+    <!-- the dock ------------------------------------------------------ -->
     <ul id="dock" class="round shadow dockleft dockmax">
-      <li onclick='if ($("#dock").hasClass("dockleft")) {
+      <!-- See: http://iconverticons.com/ -->
+      <!--li onclick='if ($("#dock").hasClass("dockleft")) {
                      $("#dock").addClass("dockright").removeClass("dockleft");
                    } else {
                      $("#dock").addClass("dockleft").removeClass("dockright");
@@ -145,42 +127,55 @@
                    }'
           style="text-align:right;">
         hide
+      </li-->
+      <hr/>
+      <li id="accounts" tooltip="Manage Accounts">
+        <img src="icons/users.png" width="48" height="48" /> 
+      </li>
+      <li id="calls" tooltip="Calltime">
+        <img src="icons/calls.png" width="48" height="48" />
       </li>
       <hr/>
-
-      <!-- http://iconverticons.com/ -->
-      <li id="customers" tooltip="Manage Customers"><img src="icons/users.png" width="48" height="48" /></li>
-      <li id="calls" tooltip="Manage Calls"><img src="icons/calls.png" width="48" height="48" /></li>
       <hr/>
-      <li id="devices" tooltip="Monitor Devices"><img src="icons/devices.png" width="48" height="48" /></li>
-      <!-- li id="links"><img src="icons/links.png" width="48px" height="48px"/></li -->
-      <li id="gateway" tooltip="Monitor Gateways"><img src="icons/gateway.png" width="48" height="48" /></li>
-      <!-- li id="logs"><img src="icons/terminal.png" width="48" height="48" /></li -->
-      <div style="position:absolute; bottom: 20px; width:100%;">
-        <li id="help" tooltip="Help"><img src="icons/help.png" width="48" height="48" /></li>
-        <li id="settings" tooltip="Settings"><img src="icons/settings.png" width="48" height="48" /></li>
+      <li id="devices" tooltip="Network Health">
+        <img src="icons/devices.png" width="48" height="48" />
+      </li>
+      <li id="health" tooltip="Network Logs">
+        <img src="icons/terminal.png" width="48" height="48" />
+      </li>
+      <hr/>
+      <hr/>
+      <li id="help" tooltip="Help">
+        <img src="icons/help.png" width="48" height="48" />
+      </li>
+      <div style="position:absolute; bottom: 10px; width:100%;">
+        <li id="settings" tooltip="Settings">
+          <img src="icons/settings.png" width="48" height="48" />
+        </li>
         <hr/>
-        <li id="login" tooltip="Logout"><img src="icons/login.png" width="48" height="48" /></li>
+        <li id="login" tooltip="Logout">
+          <img src="icons/login.png" width="48" height="48" />
+        </li>
       </div>
-
     </ul>
     
-    <!-- content overlay ------------------------------------------------- -->
+    <!-- the content overlay ------------------------------------------- -->
     <!-- see http://www.schillmania.com/content/entries/2009/css3-and-the-future/ -->
     <div id="overlay" class="round shadow">
-      <div style="position:absolute; right:20px;"
-           onClick='$("#overlay").css("visibility", "hidden");
+      <img src="style/images/close-overlay.png" 
+           style="position:absolute; top:5px; right:15px;"
+           onClick='$("#overlay").fadeOut(250);
                     $("ul#dock .callout").remove();
-                    $("ul#dock .callout-border").remove();'>
-        hide
-      </div>
-      <div id="content">
+                    $("ul#dock .callout-border").remove();'/>
+      <div id="content" style="border:0px solid black;">
         please wait a moment...
       </div>
+
+      <!-- live chat --------------------------------------------------- -->
+      <div id="live-chat" 
+           style="position:absolute; display:none; top:2.0em; bottom:2.0em; left:2.0em; right:2.0em;"></div> 
     </div>
-    
-    <!-- live chat ------------------------------------------------------- -->
-    <div id="live-chat" style="padding-left: 1.0em;" ></div> 
     
   </body>
 </html>
+

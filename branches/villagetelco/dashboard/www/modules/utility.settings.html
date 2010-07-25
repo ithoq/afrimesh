@@ -7,7 +7,7 @@
  * New BSD License. See /LICENSE for more information.
 -->
 
-<form class="two-column" 
+<form class="two-column scrollview" 
       id="dashboard"
       OnSubmit="return false;"
       OnKeyPress="return disable_key(13, event);">
@@ -135,14 +135,14 @@
           <div class="label" style="clear:both;">
             Location
             <p/><br/>
+            <p style="padding-right: 1.0em; font-size: 0.8em;">
+              Drag the circle on the map to your location or enter your co-ordinates:
+            </p>
             <input id="afrimesh|settings|location|longitude" style="width:100px; font-size:0.8em;" type="text" /><br/>
             <input id="afrimesh|settings|location|latitude"  style="width:100px; font-size:0.8em;" type="text" /><br/>
             <button id="geolocator">
               update map
             </button>
-            <p style="padding-right: 1.0em;">
-              Set your location by adjusting the map controls on the right or entering your co-ordinates above.
-            </p>
           </div>
         </td>
         <td>
