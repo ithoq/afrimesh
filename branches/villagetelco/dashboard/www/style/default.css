@@ -193,18 +193,53 @@ ul#dock .callout-border {
 
 
 /* - notifications ------------------------------------------------------ */
+div#notifications {
+  border   : 0px solid red;
+  position : absolute; 
+  bottom   : 15px; 
+  right    : 10px;
+}
+div.notification {
+  position : relative;
+  float    : right;
+  border   : 0px solid black;
+  width    : 48px; 
+  height   : 48px;
+  background-image : url(../images/node.png);
+}
 div#notification-overlay {
   position   : absolute; 
   right      : 10px; 
-  bottom     : 100px;
+  bottom     : 95px;
   width      : 400px;
   height     : 100px;
-  padding    : 1em;
+  padding    : 0.5em;
   background : rgba(255,255,255,0.95);
-  visibility : hidden;
+  display : none;
 }
-div#notification-overlay #content {
+div#notifications .callout {
+  z-index: 1;
+  position: absolute;
+  top: -13px;
+  right: 9px;
+  font-size: 0px; line-height: 0%; width: 0px;
+  border-left  : 15px solid rgba(255,255,255,0.0);
+  border-top   : 16px solid white;
+  border-right : 15px solid rgba(255,255,255,0.0);
+  display  : none;
 }
+div#notifications .callout-border {
+  z-index: 1;
+  position: absolute;
+  top: -12px;
+  right: 9px;
+  font-size: 0px; line-height: 0%; width: 0px;
+  border-left  : 15px solid rgba(255,255,255,0.0);
+  border-top   : 16px solid #bab8b4;
+  border-right : 15px solid rgba(255,255,255,0.0);
+  display  : none;
+}
+
 
 
 /* - tooltips ------------------------------------------------------------- */

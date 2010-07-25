@@ -7,68 +7,40 @@
  * New BSD License. See /LICENSE for more information.
 -->
 
+<!-- Main Map Div ------------------------------------------------------ -->
 <div class="network" id="network-map"></div>
 <div class="legend round"
      onmouseover="this.style.opacity=1.0;" 
      onmouseout="this.style.opacity=0.7;">
   <img src="images/network-map-legend.png" />
 </div>
+
+
+<!-- http://bbs.keyhole.com/ubb/ubbthreads.php?ubb=showflat&Number=283026 -->
 <form class="export" 
-      action="/cgi-bin/mesh-topology.kml" method="POST" target="_blank">
+      action="/cgi-bin/mesh-topology.kml" 
+      method="POST" target="_blank">
   <input id="export-map-data" type="hidden" name="data" />
-  <input id="export-map-type" type="hidden" name="type" value="application/vnd.google-earth.kml+xml" />
-  <!-- input type="submit" value="Google Earth"  / -->
-  <input type="image" src="images/google-earth-export.png" value="Submit" alt="Submit" />
+  <input id="export-map-type" type="hidden" name="type" 
+         value="application/vnd.google-earth.kml+xml" />
+  <input type="image" src="images/google-earth-export.png" 
+         value="Submit" alt="Submit" />
 </form>  
-<style>
-  div#notifications {
-    border   : 0px solid red;
-    position : absolute; 
-    bottom   : 20px; 
-    /*left     : 300px;*/
-    right    : 18px;
-  }
 
-  div#notifications .callout {
-    z-index: 1;
-    position: absolute;
-    top: -12px;
-    right: 8px;
-    font-size: 0px; line-height: 0%; width: 0px;
-    border-left  : 15px solid rgba(255,255,255,0.0);
-    border-top   : 16px solid white;
-    border-right : 15px solid rgba(255,255,255,0.0);
-  }
 
-  div#notifications .callout-border {
-    z-index: 1;
-    position: absolute;
-    top: -11px;
-    right: 8px;
-    font-size: 0px; line-height: 0%; width: 0px;
-    border-left  : 15px solid rgba(255,255,255,0.0);
-    border-top   : 16px solid #bab8b4;
-    border-right : 15px solid rgba(255,255,255,0.0);
-  }
-
-  div.notification {
-    position : relative;
-    float    : right;
-    border   : 0px solid black;
-    width    : 48px; 
-    height   : 48px;
-    background-image : url(images/node.png);
-  }
-</style>
-<div id="notifications">
-  <div id="10.0.0.5" class="notification"></div>
-  <div id="10.0.0.2" class="notification"></div>
-  <div id="10.0.0.3" class="notification"></div>
+<!-- Notifications ----------------------------------------------------- -->
+<div id="notifications"></div>
+<div id="notification-overlay" class="round-small shadow">
+  <!-- div id="content" --> 
+    <h3>Provisioning Request</h3>
+    <b>Device Type:</b>Mesh Potato<br/>
+    <b>Device Mac:</b><span class="mac"></span><br/>    
+    Click to process request
+  <!-- /div -->
 </div>
-<div id="notification-overlay" class="round-small shadow"></div>
 
 
-<!-- see: http://bbs.keyhole.com/ubb/ubbthreads.php?ubb=showflat&Number=283026 -->
+
 <script type="text/javascript">( //<![CDATA[    
 function() {
 
@@ -78,33 +50,14 @@ function() {
   ready = function() {
     console.debug("loaded network.map.html");
 
+    // test notifications
+    var n1 = new_notification("00:11:22:33:44:55", "This is my message 1");
+    var n2 = new_notification("00:11:22:33:44:66", "This is my message 2");    
+    var n3 = new_notification("00:11:22:33:44:77", "This is my message 2");    
+    var n4 = new_notification("00:11:22:33:44:88", "This is my message 2");    
+
     $("div#network-map").addClass("message");
     $("div#network-map").html("<p><br/><p>Loading Network Map...</p>");
-
-    $(".notification").click(function() {
-        $(this).unbind();
-        $(this).stop().animate({ "bottom" : "20px" }, "fast")
-      });
-
-    $(".notification").hover(function() {
-        $(this).stop().animate({ "bottom" : "20px" }, "fast", function() {
-            $("div#notifications .callout").remove();
-            $("div#notifications .callout-border").remove();
-            $(this).append('<span class="callout-border"></span>');
-            $(this).append('<span class="callout"></span>');
-            $("#notification-overlay").css("visibility", "visible");
-          });
-      }, function() {
-        $("div#notifications .callout").remove();
-        $("div#notifications .callout-border").remove();
-        $("#notification-overlay").css("visibility", "hidden");
-        $(this).stop().looped({ "bottom" : "10px" }, 
-                              { "bottom" : "0px"  }, 500);
-      });
-
-    $(".notification").looped({ "bottom" : "10px" }, 
-                        { "bottom" : "0px"  }, 500);
-
 
     // Load OpenStreetMap & OpenLayers libraries
     load.async(afrimesh.settings.map.openlayers_url, function(data, textStatus) {
@@ -163,7 +116,52 @@ function() {
   console.debug("loaded network.map.js");
 
 
-  /** export kml ---------------------------------------------------------- */
+
+  /** - Map notifications ----------------------------------------------- */
+  function new_notification(mac, message) {
+    var notification = $(document.createElement("div")).addClass("notification")
+                                                       .attr("id", mac)
+                                                       .appendTo("#notifications");
+
+    notification.looped({ "bottom" : "10px" }, 
+                        { "bottom" : "0px"  }, 500);
+
+    notification.hover(function() {
+        $(this).stop().animate({ "bottom" : "20px" }, "fast", function() {
+            $("div#notification-overlay span.mac").html($(this).attr("id"));
+            $("div#notifications .callout").remove();
+            $("div#notifications .callout-border").remove();
+            $(this).append('<span class="fade callout-border"></span>');
+            $(this).append('<span class="fade callout"></span>');
+            $("#notification-overlay").fadeIn(100);
+            $("div#notifications .fade").fadeIn(150);
+          });
+      }, function() {
+        $("#notification-overlay").fadeOut(150);
+        $("div#notifications .fade").fadeOut(100, function() {
+            $("div#notifications .callout").remove();
+            $("div#notifications .callout-border").remove();
+          });
+        $(this).stop().looped({ "bottom" : "10px" }, 
+                              { "bottom" : "0px"  }, 500);
+      });
+      
+    notification.click(function() {
+        $(this).unbind();
+        $(this).remove();
+        $("#notification-overlay").fadeOut(100);
+        $("div#notifications .fade").fadeOut(50, function() {
+            $("div#notifications .callout").remove();
+            $("div#notifications .callout-border").remove();
+          });
+      });
+
+    return notification;      
+  }
+
+
+
+  /** export kml -------------------------------------------------------- */
   function export_kml(network_map) { 
     var my_kml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"          +
                       "<kml xmlns=\"http://www.opengis.net/kml/2.2\""       +
