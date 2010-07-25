@@ -61,11 +61,11 @@
 
     /* load data */   
     for (i = 0; i < 50; i++) {
-      // clone device template
+      // clone account template
       var clone = $("#account-template").clone()
                                         .attr("id", "account-" + i)
                                         .appendTo("#accountlist").show();
-      // add data for device
+      // add data for account
       clone.find(".name").html("Potato number: " + i);
       clone.find(".voipnumber").html(i);
       //clone.find(".uptime").html(pretty_seconds(device.uptime));
