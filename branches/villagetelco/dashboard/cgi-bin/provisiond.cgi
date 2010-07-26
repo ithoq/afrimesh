@@ -4,14 +4,15 @@
 # - Configuration ----------------------------------------------------------
 #VILLAGEBUS="export REQUEST_METHOD=CONSOLE ; /Library/WebServer/CGI-Executables/villagebus"
 VILLAGEBUS="./villagebus"
-UCI="/usr/local/bin/uci-static"
-PROVISIOND_ROOT=./provisiond-router
+UCI="./uci-static"
 PROVISIOND_TMP=/tmp/provisiond.tmp
+PROVISIOND_ROOT=./provisiond
+BUNDLE_DIR="$PROVISIOND_ROOT"-bundles/mp01.ip
 LOG=1
 
 
 # - Logging ----------------------------------------------------------------
-LOGFILE="/tmp/provisiond-router.log"
+LOGFILE="/tmp/provisiond.log"
 BUFFER="$LOGFILE.$$"
 function log {
     if [ "$LOG" = "1" ] ; then
@@ -45,41 +46,52 @@ fi
 client_address=`echo "$QUERY_STRING" | grep -oE "(^|[?&])address=[^&]+" | sed "s/%20/ /g" | cut -f 2- -d "="`
 client_mac=${PATH_INFO#/provision/ip/}
 
-PAYLOAD_DIR="$PROVISIOND_ROOT".payload
 TARBALL_DIR="$PROVISIOND_TMP/router-${client_mac//:/_}.$$"
 
 # Log client request
 if [ "$LOG" = "1" ] ; then
     #env >> "$BUFFER"
-    log "METHOD:         $REQUEST_METHOD" >> "$BUFFER"
-    log "REMOTE_ADDR:    $REMOTE_ADDR"    >> "$BUFFER"
-    log "PATH_INFO:      $PATH_INFO"      >> "$BUFFER"
-    log "QUERY_STRING:   $QUERY_STRING"   >> "$BUFFER"
-    log "CONTENT_TYPE:   $CONTENT_TYPE"   >> "$BUFFER"
-    log "CONTENT_LENGTH: $CONTENT_LENGTH" >> "$BUFFER"
-    #log "POST_DATA:      $POST_DATA"      >> "$BUFFER"
-    log "PAYLOAD_DIR:    $PAYLOAD_DIR"    >> "$BUFFER"
-    log "TARBALL_DIR:    $TARBALL_DIR"    >> "$BUFFER"
+    log "METHOD:         $REQUEST_METHOD"
+    log "REMOTE_ADDR:    $REMOTE_ADDR"
+    log "PATH_INFO:      $PATH_INFO"
+    log "QUERY_STRING:   $QUERY_STRING"
+    log "CONTENT_TYPE:   $CONTENT_TYPE"
+    log "CONTENT_LENGTH: $CONTENT_LENGTH"
+    #log "POST_DATA:      $POST_DATA"
+    log "BUNDLE_DIR:     $BUNDLE_DIR"
+    log "TARBALL_DIR:    $TARBALL_DIR"
 fi
 
 
 # - forward request to villagebus & ask for network settings ---------------
 
-log "- provisioned settings -- " >> "$BUFFER"
+log "- provisioned settings -- "
 REQUEST_METHOD=CONSOLE
 #provisioned_address=`$VILLAGEBUS GET "/provision/ip/$client_mac?address=$client_address&network=$client_network"`` 
 #provisioned_address=`$VILLAGEBUS GET "/provision/ip/$client_mac?address=$client_address"`
 provisioned_address=`$VILLAGEBUS GET "$PATH_INFO?$QUERY_STRING"`
-log "Device address: $provisioned_address" >> "$BUFFER"
+log "Device address: $provisioned_address"
 
 
 # - Construct configuration bundle -----------------------------------------
 
 # copy base bundle into a temporary directory
 [ ! -d "$PROVISIOND_TMP" ] && mkdir -p "$PROVISIOND_TMP"
-cp -r "$PAYLOAD_DIR" "$TARBALL_DIR"
+cp -r "$BUNDLE_DIR" "$TARBALL_DIR"
+
+# set up UCI
+UCI_TMP="/tmp/.uci-provisiond"
+UCI_CFG="$TARBALL_DIR/etc/config"
+#UCI="/usr/local/bin/uci-static -c $UCI_CFG -P $UCI_TMP" # TODO - fscking UCI bug
+UCI="uci-static -c $UCI_CFG"
+log "UCI: $UCI"
 
 # configure base bundle w/ provisioned values
+wifi0_device=`$UCI get wireless.@wifi-iface[0].device` 
+$UCI set network.$wifi0_device.ipaddr="testing" >> "$BUFFER" 2>&1
+log "provisioned the following config changes: "
+$UCI changes >> "$BUFFER" 2>&1
+$UCI commit >> "$BUFFER" 2>&1
 
 
 # - Send provisioning bundle back to client --------------------------------
@@ -94,5 +106,5 @@ tar -C "$TARBALL_DIR" -cf - . | gzip -f
 
 
 # - Clean up ---------------------------------------------------------------
-[ -d "$TARBALL_DIR" ] && rm -rf "$TARBALL_DIR"
+#[ -d "$TARBALL_DIR" ] && rm -rf "$TARBALL_DIR"
 close_log 

@@ -5,8 +5,8 @@ factory_ssid=batman
 factory_channel=5
 factory_network=10.0.0.0
 factory_netmask=255.0.0.0
-factory_roots="192.168.20.105 10.0.0.1 10.0.0.254"
-factory_provisiond="/cgi-bin/provisiond-router.cgi"
+factory_roots="10.0.0.1 10.0.0.254"
+factory_provisiond="/cgi-bin/provisiond"
 
 
 # - read network device configurations -------------------------------------
@@ -27,8 +27,8 @@ eth0_mac=`ifconfig $eth0_interface | grep HWaddr | awk '{ print $5 }'`
 # - villagebus configuration -----------------------------------------------
 self=$wifi0_address
 # TODO - get from factory root
-root="192.168.20.105"
 #root=`uci get afrimesh.@settings[0].root`
+root="192.168.20.105"
 
 
 # - router pubkey ----------------------------------------------------------
@@ -91,12 +91,15 @@ echo "$REQUEST"
 echo "--------------------------------------------------------"
 echo
 echo "- provisiond reply -------------------------------------"
-echo -n "$REQUEST" | nc $root 80 | sed '/HTTP.*OK/,/Content-Type: application\/x-tar/d; 1d' >& /tmp/bundle.tar.gz
+echo -n "$REQUEST" | nc $root 80 | sed '/HTTP.*OK/,/Content-Type: application\/x-tar/d; 1d' >& /tmp/provision.tar.gz
 echo "--------------------------------------------------------"
 echo
 
-
-# 4. Receive provisiond reply
+# 4. - Execute provisiond reply --------------------------------------------
+#
+# TODO The provisioning daemon sends back an executable file which performs 
+#      all router-side provisioning operations. Usually this file is simply
+#      a self extracting tarfile.
 #
 #   Network rsa public key
 #   Configuration tarball
@@ -108,7 +111,9 @@ echo
 #   Unpack configuration
 #   Reboot
 
+#tar xvzf /tmp/provision.tar.gz -C /
 
-echo
+echo "fin"
+
 
 

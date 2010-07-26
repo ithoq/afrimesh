@@ -2,9 +2,9 @@ Source: afrimesh-dashboard
 Section: net
 Priority: optional
 Maintainer: Antoine van Gelder <antoine@7degrees.co.za>
-Build-Depends: json-c-dev, uci-dev, libmemcachedb-dev, snmp, libsnmp-dev, freeradius, libmysqlclient15-dev, debhelper (>= 5)
+Build-Depends: makeself, json-c-dev, uci-dev, libmemcachedb-dev, snmp, libsnmp-dev, freeradius, libmysqlclient15-dev, debhelper (>= 5)
 Standards-Version: 3.7.3
-Homepage: http://code.google.com/p/afrimesh
+Homepage: http://afrimesh.org
 
 Package: afrimesh-dashboard
 Architecture: any

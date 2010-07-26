@@ -98,7 +98,7 @@ void vwprintl(const wchar_t* message, va_list ap)
 
 void log_release() 
 {
-  wprintl(L"============================================================\n\n");
+  wprintl(L"\n============================================================\n\n");
   if (log_file != NULL) {
     fclose(log_file);
   }

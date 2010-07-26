@@ -125,7 +125,7 @@ function() {
                         { "bottom" : "0px"  }, 500);
 
     notification.hover(function() {
-        $(this).stop().animate({ "bottom" : "20px" }, "fast", function() {
+        $(this).stop().animate({ "bottom" : "20px" }, 50, function() {
             $("div#notification-overlay span.mac").html($(this).attr("id"));
             $("div#notifications .callout").remove();
             $("div#notifications .callout-border").remove();
