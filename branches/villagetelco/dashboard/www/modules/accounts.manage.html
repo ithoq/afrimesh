@@ -8,7 +8,7 @@
 -->
 
 <style>
-  div#accounts-manage #search.blur {
+  div#accounts-manage input.blur {
     color : gray;
   }
 </style>
@@ -19,12 +19,28 @@
          style="width:400px; height:30px; padding-left:10px;"
          name="seach" id="search" 
          value="" title="Search on account info ..." />
+  &nbsp;
+  <span id="account-create" class="round button">New Account</span>
   <hr />
 
   <!-- account list -->
   <div class="scrollview" style="top:5.0em;">
+
+    <!-- account editor -->
+    <div id="editor-template" class="round-small editor">
+      <input type="text" title="first name"/>
+      <input type="text" title="last name"/>
+      <input type="text" title="email"/><br/>
+      <input type="text" title="street address"/><br/>
+      <input type="text" title="suburb"/><br/>
+      <input type="text" title="city"/><br/>
+    </div>
+
+
     <div id="accountlist" class="accounts">
       <div id="account-template" style="display:none;"> 
+      <!-- div id="account-template" class="account" --> 
+        <span class="expand">+</span>
         <span class="name">Antoine van Gelder</span> 
         <span class="device">10.0.0.2</span>
         <span class="voipnumber">42</span>
@@ -36,6 +52,7 @@
   </div>
 
 </div> <!-- #accounts-manage -->
+
 
 
 <script type="text/javascript"> //<![CDATA[    
@@ -63,6 +80,14 @@
         return false;
       });
 
+
+    /* set up new account button */
+    $("#account-create").click(function() {
+        $("#editor-template").show();
+        
+      });
+
+
     /* load data */   
     var names = [ "antoine", "Bob", "Joe Smith", "Janet Smith" ];
     for (i = 0; i < 50; i++) {
@@ -78,6 +103,18 @@
       clone.find(".device").html("10.0.0." + i);
       //clone.find(".uptime").html(pretty_seconds(device.uptime));
       //clone.find(".traffic").html(pretty_bytes(device.bytes.tx + device.bytes.rx));
+      clone.click(function() {
+          $(this).unbind();
+          console.log("Editing account: " + $(this).find(".name").html());
+          var clone = $("#editor-template").clone()
+                                           .attr("id", "");
+          //clone.insertAfter(this).show();
+          clone.appendTo($(this).find(".name")).show();
+          $(this).find(".name").css("background", "#eee");
+          $(this).find(".name").addClass("round-small");
+          $(this).find(".expand").html("-");
+          $('input[title!=""]').hint();    
+        });
     }
 
 

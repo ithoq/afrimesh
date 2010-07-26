@@ -307,6 +307,17 @@ div.tooltip p {
 div.tooltip p.explain {
 }
 
+.button {
+  padding : 5px 20px 5px 20px;
+  background: #B2C3DD;
+  font-weight: bold;
+}
+.button:hover {
+  background: #92A3BD;
+}
+.button:click {
+  background: #72839D;
+}
 
 /* - scrollview --------------------------------------------------------- */
 .scrollview {
