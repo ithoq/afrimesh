@@ -38,12 +38,15 @@
 typedef struct _provision {
   vtable* _vt[0];
   string* delimiter;
+  string* device_id;
+  string* device_ids;
+  string* provision_device;
+  string* provision_mac;
 } provision;
 extern vtable* provision_vt;
 extern object* _Provision;
 extern provision* Provision;
 extern symbol* s_provision;
-extern symbol* s_provision_mac;
 extern symbol* s_provision_ip;
 
 void        provision_init();
@@ -51,8 +54,7 @@ provision*  provision_print   (closure* c, provision* self);
 const fexp* provision_evaluate(closure* c, provision* self, const fexp* expression);
 
 // GET
-const string* provision_ip (closure* c, provision* self, const fexp* message); 
-const string* provision_mac(closure* c, provision* self, const fexp* message); 
+const fexp* provision_ip (closure* c, provision* self, const fexp* message); 
 
 
 #endif /* MOD_PROVISION_H */

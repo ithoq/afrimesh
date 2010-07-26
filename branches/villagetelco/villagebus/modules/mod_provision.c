@@ -33,6 +33,7 @@
 #include <netinet/in.h>
 
 #include "mod_provision.h"
+#include "mod_db.h"
 
 
 /* - provision ---------------------------------------------------------- */
@@ -41,7 +42,6 @@ object* _Provision = 0;
 provision* Provision  = 0;
 symbol* s_provision = 0;
 symbol* s_provision_ip  = 0;
-symbol* s_provision_mac = 0;
 
 void provision_init()
 {
@@ -52,13 +52,15 @@ void provision_init()
 
   // register local symbols
   s_provision_ip  = (symbol*)symbol_intern(0, _Provision, L"ip");
-  s_provision_mac = (symbol*)symbol_intern(0, _Provision, L"mac"); 
   send(provision_vt, s_addMethod, s_provision_ip,  provision_ip);
-  send(provision_vt, s_addMethod, s_provision_mac, provision_mac);
 
   // global module instance vars
   Provision = (provision*)send(_Provision->_vt[-1], s_allocate, sizeof(provision));
   Provision->delimiter = (string*)send(String, s_new, L":", 1); // MAC delimiter
+  Provision->device_id  = (string*)send(String, s_string_fromwchar, L"device:id");
+  Provision->device_ids = (string*)send(String, s_string_fromwchar, L"device:ids");
+  Provision->provision_device = (string*)send(String, s_string_fromwchar, L"provision:device");
+  Provision->provision_mac    = (string*)send(String, s_string_fromwchar, L"provision:mac");
 
   // register module with VillageBus 
   s_provision = (symbol*)symbol_intern(0, 0, L"provision");
@@ -100,7 +102,7 @@ const fexp* provision_evaluate(closure* c, provision* self, const fexp* expressi
  *                           char            sin_zero[8];
  *   };
  */
-const string* provision_ip (closure* c, provision* self, const fexp* message)
+const fexp* provision_ip (closure* c, provision* self, const fexp* message)
 {
   Request* request = VillageBus->request; 
 
@@ -108,7 +110,7 @@ const string* provision_ip (closure* c, provision* self, const fexp* message)
   string* mac    = (string*)send(message, s_fexp_car);
   fexp*   octets = (fexp*)  send(mac, s_string_split, self->delimiter);
   if ((size_t)send(octets, s_length) != 6) {
-    return (string*)fexp_nil;
+    return fexp_nil;
   }
 
   // get any parameters
@@ -129,40 +131,32 @@ const string* provision_ip (closure* c, provision* self, const fexp* message)
   if (address) {
 
     // a. register w/ database
+    fexp* error = (fexp*)send(DB, s_db_connect);
+    if (error != fexp_nil) {
+      return error;
+    }
+
+    // TODO - check if we are already registered
+
+    string* id = (string*)send(DB, s_db_incr, self->device_id);  // incr device:id
+    send(DB, s_db_sadd, self->device_ids, id);                   // sadd device:ids
+    string* provision_device = (string*)send(String, s_string_fromwchar, L"provision:device:%s", address);
+    string* provision_mac    = (string*)send(String, s_string_fromwchar, L"provision:mac:%s",    address);
+    send(DB, s_db_set,  provision_device, id);                   // set  provision:device:<ip> id
+    send(DB, s_db_set,  provision_mac,    mac);                  // set  provision:mac:<ip>    mac
 
     // b. register w/ notification queue
+    
 
-    /*
-      device:123:info
-      device:123:stat
-      device:124:info
-      device:124:stat
-      
-      provision:00:18:0A:01:10:2F:id = 123
-      provision:00:18:0A:01:10:2F:id = 124
-      provision:123:info             = { mac : 00:18:0A:01:10:2F, ip : 10.0.0.5 }
-      provision:123:ip               = 10.0.0.5
-      provision:123:mac              = 00:18:0A:01:10:2F
-      provision:124:info             = { mac : 10:18:0A:01:10:2F, ip : 10.0.0.6 }
-      provision:124:ip               = 10.0.0.6
-      provision:124:mac              = 10:18:0A:01:10:2F
-    */
-
-    // TODO - decide schema
-    // TODO - add missing methods to mod_db
     // TODO - do registration & notification
     // TODO - poll notification queue
     // TODO - link/register user to device
     // TODO - provision voip
 
-    // incr provision:id
-    // set  provision:id:<mac>  <id>
-    // set provision:ip:<mac>  <ip>
-    // set provision:mac:<ip>  <mac>
-    // hset provision:id:<id> mac <mac>
-    // hset provision:id:<id> ip  <ip>
+    // clean up
+    send(DB, s_db_close);
 
-    return (string*)send(String, s_string_fromwchar, L"%s", address);
+    return (fexp*)send(String, s_string_fromwchar, L"%s", address);
   }
 
   /* Strategy 2 - Sequential allocation within a given network backed
@@ -173,7 +167,7 @@ const string* provision_ip (closure* c, provision* self, const fexp* message)
        and store it in database */
 
   // convert network address to int
-  struct in_addr _in_addr;
+  /*struct in_addr _in_addr;
   if(inet_aton(network, &_in_addr) == 0) {
     wprintf(L"Error parsing %s: %s\n", network, strerror(errno));
     // TODO - error handling
@@ -191,12 +185,11 @@ const string* provision_ip (closure* c, provision* self, const fexp* message)
   if (buf == NULL) {
     wprintf(L"Error parsing int %s: %s\n", network, strerror(errno));
   }
-  printf("inet_ntop:          %s\n", buf);
+  printf("inet_ntop:          %s\n", buf); */
 
   // Check for MAC in database
   // If there, look up IP and return
   // If not, increment counter, generate IP and store in database
-  string* ret = (string*)send(String, s_string_fromwchar, L"\"10.130.1.2\"");
 
   // Strategy 3 - Dumb MAC2IP
   /*string* octet_1 = (string*)send(octets, s_fexp_nth, 3);
@@ -210,16 +203,8 @@ const string* provision_ip (closure* c, provision* self, const fexp* message)
 
   // Strategy 4 - ability to specify an external hook for IP generation
 
-  return ret;
-}
-
-
-/**
- * Given an IP address return the MAC associated with it.
- */
-const string* provision_mac(closure* c, provision* self, const fexp* message)
-{
-  return (string*)fexp_nil;
+  string* ret = (string*)send(String, s_string_fromwchar, L"\"10.130.1.20\"");
+  return (fexp*)ret;
 }
 
 

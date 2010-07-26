@@ -28,8 +28,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <credis.h>
-
 #include "mod_db.h"
 
 
@@ -38,11 +36,16 @@ vtable* db_vt = 0;
 object* _DB = 0;
 db*     DB  = 0;
 object* s_db = 0;
-symbol* s_db_keys = 0;
-object* s_db_get    = 0;
-object* s_db_lrange = 0; 
-object* s_db_getset = 0; 
-object* s_db_lpush  = 0;
+object* s_db_connect = 0;
+object* s_db_close   = 0;
+symbol* s_db_keys    = 0;
+object* s_db_get     = 0;
+object* s_db_lrange  = 0; 
+object* s_db_getset  = 0; 
+object* s_db_lpush   = 0;
+object* s_db_incr    = 0; 
+object* s_db_set     = 0; 
+object* s_db_sadd    = 0;
 
 
 void db_init()
@@ -53,16 +56,26 @@ void db_init()
   _DB = send(db_vt, s_allocate, 0);
 
   // register local symbols
-  s_db_keys   = (symbol*)symbol_intern(0, _DB, L"keys"); // TODO - symbol_intern should return symbol*
-  s_db_get    = symbol_intern(0, _DB, L"get");
-  s_db_lrange = symbol_intern(0, _DB, L"lrange");
-  s_db_getset = symbol_intern(0, _DB, L"set");
-  s_db_lpush  = symbol_intern(0, _DB, L"lpush");
-  send(db_vt, s_addMethod, s_db_keys,   db_keys);
-  send(db_vt, s_addMethod, s_db_get,    db_get);
-  send(db_vt, s_addMethod, s_db_lrange, db_lrange);
-  send(db_vt, s_addMethod, s_db_getset, db_getset);
-  send(db_vt, s_addMethod, s_db_lpush,  db_lpush);
+  s_db_connect = symbol_intern(0, _DB, L"connect");
+  s_db_close   = symbol_intern(0, _DB, L"close");
+  s_db_keys    = (symbol*)symbol_intern(0, _DB, L"keys"); // TODO - symbol_intern should return symbol*
+  s_db_get     = symbol_intern(0, _DB, L"get");
+  s_db_lrange  = symbol_intern(0, _DB, L"lrange");
+  s_db_getset  = symbol_intern(0, _DB, L"set");
+  s_db_lpush   = symbol_intern(0, _DB, L"lpush");
+  s_db_incr    = symbol_intern(0, _DB, L"incr");
+  s_db_set     = symbol_intern(0, _DB, L"_set"); // TODO - don't alias getset to set
+  s_db_sadd    = symbol_intern(0, _DB, L"sadd");
+  send(db_vt, s_addMethod, s_db_connect, db_connect);
+  send(db_vt, s_addMethod, s_db_close,   db_close);
+  send(db_vt, s_addMethod, s_db_keys,    db_keys);
+  send(db_vt, s_addMethod, s_db_get,     db_get);
+  send(db_vt, s_addMethod, s_db_lrange,  db_lrange);
+  send(db_vt, s_addMethod, s_db_getset,  db_getset);
+  send(db_vt, s_addMethod, s_db_lpush,   db_lpush);
+  send(db_vt, s_addMethod, s_db_incr,    db_incr);
+  send(db_vt, s_addMethod, s_db_set,     db_set);
+  send(db_vt, s_addMethod, s_db_sadd,    db_sadd);
 
   // global module instance vars
   DB = (db*)send(_DB->_vt[-1], s_allocate, sizeof(db));
@@ -90,14 +103,9 @@ const fexp* db_evaluate(closure* c, db* self, const fexp* expression)
   printf("\n");*/
 
   // lazily initialize redis connection
-  if ((self->handle == NULL) || (credis_ping(self->handle) != 0)) {
-    self->handle = credis_connect("localhost", 6379, 2000);
-  }
-  
-  // check connection
-  if ((self->handle == NULL) || (credis_ping(self->handle) != 0)) {
-    // TODO - try to start up redis server
-    return (fexp*)send(VillageBus, s_villagebus_error, L"Could not connect to redis server");
+  fexp* error = (fexp*)send(self, s_db_connect);
+  if (error != fexp_nil) {
+    return error;
   }
 
   // search for name in local context
@@ -129,12 +137,35 @@ const fexp* db_evaluate(closure* c, db* self, const fexp* expression)
   }
 
   // close server connection & release resources
+  send(self, s_db_close);
+
+  return reply;
+}
+
+
+const fexp* db_connect(closure* c, db* self)
+{
+  if ((self->handle == NULL) || (credis_ping(self->handle) != 0)) {
+    self->handle = credis_connect("192.168.20.225", 6379, 2000);  // TODO - get redis DB address from config
+  }
+
+  // check connection
+  if ((self->handle == NULL) || (credis_ping(self->handle) != 0)) {
+    // TODO - try to start up redis server
+    return (fexp*)send(VillageBus, s_villagebus_error, L"Could not connect to redis server");
+  }
+
+  return fexp_nil;
+}
+
+
+const fexp* db_close(closure* c, db* self)
+{
   if (self->handle != NULL) {
     credis_close(self->handle);
     self->handle = NULL;
   }
-
-  return reply;
+  return fexp_nil;
 }
 
 
@@ -289,6 +320,54 @@ const fexp* db_lpush(closure* c, db* self, const fexp* message, const unsigned c
 
   return reply;
 }
+
+
+/* - TODO --------------------------------------------------------------- */
+const string* db_incr(closure* c, db* self, const string* key)
+{  
+  string* reply;
+  char* keyc = (char*)send(key, s_string_tochar);
+  int value  = 0;
+  int rc     = credis_incr(self->handle, keyc, &value);
+  if (rc != 0) {
+    reply = (string*)send(VillageBus, s_villagebus_error, L"incr failed %ss", keyc);
+  } else {
+    reply = (string*)send(String, s_string_fromwchar, L"%d", value);
+  }
+  free(keyc);
+  return reply;
+}
+
+
+const string* db_sadd(closure* c, db* self, const string* key, const string* member)
+{
+  char* keyc    = (char*)send(key,    s_string_tochar);
+  char* memberc = (char*)send(member, s_string_tochar);
+  int rc = credis_sadd(self->handle, keyc, memberc);
+  if (rc == -1) {       // already a member of the set
+    return member;
+  } else if (rc == 0) { // not a member
+    return (string*)fexp_nil;
+  } 
+  return (string*)send(VillageBus, s_villagebus_error, L"sadd failed %s: %s", keyc, memberc);
+}
+
+
+const string* db_set (closure* c, db* self, const string* key, const string* value)
+{
+  string* reply = (string*)value;
+  char* keyc    = (char*)send(key,   s_string_tochar);
+  char* valuec  = (char*)send(value, s_string_tochar);
+  int rc        = credis_set(self->handle, keyc, valuec);
+  if (rc != 0) { 
+    reply = (string*)send(VillageBus, s_villagebus_error, L"set failed %s: %s", keyc, valuec);
+  } 
+  free(keyc);
+  free(valuec);
+  return reply;
+}
+
+
 
 
 /* - Global Handlers ---------------------------------------------------- */

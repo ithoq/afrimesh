@@ -32,6 +32,7 @@
 #ifndef MOD_DB_H
 #define MOD_DB_H
 
+#include <credis.h>
 #include <villagebus.h>
 
 /* - db ----------------------------------------------------------------- */
@@ -44,15 +45,19 @@ extern vtable* db_vt;
 extern object* _DB;
 extern db*     DB;
 extern object* s_db;
+extern object* s_db_connect;
+extern object* s_db_close;
 extern symbol* s_db_keys;
 extern object* s_db_get;   // these guys need to be symbols
 extern object* s_db_lrange; 
 extern object* s_db_getset; 
 extern object* s_db_lpush;   
+extern object* s_db_incr; 
+extern object* s_db_set; 
+extern object* s_db_sadd;
 
-void db_init();
-db*  db_print(closure* c, db* self);
-
+void        db_init();
+db*         db_print(closure* c, db* self);
 const fexp* db_evaluate(closure* c, db* self, const fexp* expression);
 
 // GET 
@@ -62,11 +67,19 @@ const fexp*   db_lrange(closure* c, db* self, const fexp* message); // list
 
 // PUT
 const string* db_getset(closure* c, db* self, const fexp* message, const unsigned char* data); // string
-//unsigned int db_incr(closure* c, db& self, const string* key);
 
 // POST
-const fexp* db_lpush(closure* c, db* self, const fexp* message, const unsigned char* data);  // list
-//const fexp* db_hset(closure* c, db* self, const string* name, const string* key, const string* value);
+const fexp*   db_lpush(closure* c, db* self, const fexp* message, const unsigned char* data);  // list
+
+// Helper
+const fexp* db_connect(closure* c, db* self);
+const fexp* db_close  (closure* c, db* self);
+
+// TODO - either rewrite these to 'fexp* message' style or write a request parser
+const string* db_incr(closure* c, db* self, const string* key);                                // counter
+const string* db_set (closure* c, db* self, const string* key, const string* value);           // string
+const string* db_sadd(closure* c, db* self, const string* key, const string* member);          // set
+
 
 #endif /* MOD_DB_H */
 

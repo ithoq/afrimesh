@@ -70,7 +70,6 @@ char*   string_tochar   (closure* c, string* self);
 string* string_add      (closure* c, string* self, const string* s);
 struct _fexp* string_split(closure* c, string* self, const string* delimiter);
 
-
 /* - number ------------------------------------------------------------- */
 // TODO - implementation - surprising how far one can get without numbers these days :)
 typedef struct _number {
