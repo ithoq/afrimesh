@@ -5,8 +5,7 @@
 VILLAGEBUS="./villagebus"
 UCI="/usr/local/bin/uci-static"
 PROVISIOND_TMP=/tmp/provisiond.tmp
-PROVISIOND_ROOT=./provisiond
-BUNDLE_DIR="$PROVISIOND_ROOT"-bundles/mp01.ip
+BUNDLE_DIR="./provisiond-bundles/mp01.ip"
 LOG=1
 
 
@@ -63,21 +62,24 @@ fi
 
 
 # - forward request to villagebus & ask for network settings ---------------
-
-log "- provisioned settings -- "
+log "- provisioning device --"
 REQUEST_METHOD=CONSOLE
+provisioned_root="192.168.20.105" # 10.0.0.1
+provisioned_id=23                 # TODO
 #provisioned_address=`$VILLAGEBUS GET "/provision/ip/$client_mac?address=$client_address&network=$client_network"`` 
 #provisioned_address=`$VILLAGEBUS GET "/provision/ip/$client_mac?address=$client_address"`
 provisioned_address=`$VILLAGEBUS GET "$PATH_INFO?$QUERY_STRING"`
-log "Device address: $provisioned_address"
+log "Provisioned root:    $provisioned_root"
+log "Provisioned id:      $provisioned_id"
+log "Provisioned address: $provisioned_address"
 
 
 # - Construct configuration bundle -----------------------------------------
 
 # copy base bundle into a temporary directory
 [ ! -d "$PROVISIOND_TMP" ] && mkdir -p "$PROVISIOND_TMP"
-cp -r "$BUNDLE_DIR" "$TARBALL_DIR"
-
+cp -r "$BUNDLE_DIR" "$TARBALL_DIR" 
+find "$TARBALL_DIR" -name .svn -exec rm -rf '{}' ';'
 # configure UCI
 UCI_CFG="$TARBALL_DIR/etc/config"
 UCI_TMP="$TARBALL_DIR/.uci-provisiond"
@@ -86,10 +88,13 @@ UCI="$UCI -c $UCI_CFG"
 
 # configure base bundle w/ provisioned values
 wifi0_device=`$UCI get wireless.@wifi-iface[0].device` 
-$UCI set network.$wifi0_device.ipaddr=$provisioned_address >> "$BUFFER" 2>&1
+$UCI set afrimesh.@settings[0].root="$provisioned_root"
+$UCI set afrimesh.@settings[0].deviceid="$provisioned_id"
+#$UCI set network.$wifi0_device.ipaddr="$provisioned_address"
+$UCI set network.$wifi0_device.ipaddr="10.0.0.2"
 
 # commit configuration to provisioning bundle
-log "provisioned the following config changes: "
+log "- The following config changes were provisioned -- "
 $UCI changes >> "$BUFFER" 2>&1
 $UCI commit  >> "$BUFFER" 2>&1
 # rm -rf $UCI_TMP

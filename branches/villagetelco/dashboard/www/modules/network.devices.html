@@ -56,11 +56,11 @@
 <script type="text/javascript"> //<![CDATA[    
 (function() {
 
-  /** includes ------------------------------------------------------------ */
+  /** includes ---------------------------------------------------------- */
   load("javascript/jquery/jquery.flot.min.js");
   /* often a good idea:  load("modules/network.devices.js"); *;/
 
-  /** construction -------------------------------------------------------- */
+  /** construction ------------------------------------------------------ */
   ready = function() { // INJ 'ready' should be the only symbol we're exposing to the global namespace
     /* often a good place to do this: populate_control(); */
     console.debug("loaded network.devices.html");
@@ -70,12 +70,9 @@
     $("div#network-devices .filter input[type=checkbox]").hide().click(function(event) {
         $(this).toggleClass("active");
         $(this).next("label").toggleClass("active");
-        //$(this).next("label").toggleClass("shadow");
-        //$(this).attr('checked') ? $(".device." + this.id).show() : $(".device." + this.id).hide();
         $(this).is(':checked') ? $(".device." + this.id).slideDown(100) : $(".device." + this.id).slideUp(100);
       });
     $("div#network-devices .filter label").addClass("round");
-    //$("div#network-devices .filter label").addClass("shadow");
     $("div#network-devices .filter input[type=checkbox]").each(function(e) { return $(this).click(); });
 
 
@@ -143,7 +140,7 @@
   };
 
 
-  /** populate control ---------------------------------------------------- */
+  /** populate control -------------------------------------------------- */
   var timer = {};
 
   function update() {
@@ -158,7 +155,7 @@
   };
 
 
-  /** done ---------------------------------------------------------------- */
+  /** done -------------------------------------------------------------- */
   console.debug("loaded network.devices.js");
  
 })();
