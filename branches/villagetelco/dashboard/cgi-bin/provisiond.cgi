@@ -2,9 +2,8 @@
 
 
 # - Configuration ----------------------------------------------------------
-#VILLAGEBUS="export REQUEST_METHOD=CONSOLE ; /Library/WebServer/CGI-Executables/villagebus"
 VILLAGEBUS="./villagebus"
-UCI="./uci-static"
+UCI="/usr/local/bin/uci-static"
 PROVISIOND_TMP=/tmp/provisiond.tmp
 PROVISIOND_ROOT=./provisiond
 BUNDLE_DIR="$PROVISIOND_ROOT"-bundles/mp01.ip
@@ -79,19 +78,21 @@ log "Device address: $provisioned_address"
 [ ! -d "$PROVISIOND_TMP" ] && mkdir -p "$PROVISIOND_TMP"
 cp -r "$BUNDLE_DIR" "$TARBALL_DIR"
 
-# set up UCI
-UCI_TMP="/tmp/.uci-provisiond"
+# configure UCI
 UCI_CFG="$TARBALL_DIR/etc/config"
-#UCI="/usr/local/bin/uci-static -c $UCI_CFG -P $UCI_TMP" # TODO - fscking UCI bug
-UCI="uci-static -c $UCI_CFG"
-log "UCI: $UCI"
+UCI_TMP="$TARBALL_DIR/.uci-provisiond"
+#UCI="$UCI -c $UCI_CFG -P $UCI_TMP" # TODO - fscking UCI bug
+UCI="$UCI -c $UCI_CFG"
 
 # configure base bundle w/ provisioned values
 wifi0_device=`$UCI get wireless.@wifi-iface[0].device` 
-$UCI set network.$wifi0_device.ipaddr="testing" >> "$BUFFER" 2>&1
+$UCI set network.$wifi0_device.ipaddr=$provisioned_address >> "$BUFFER" 2>&1
+
+# commit configuration to provisioning bundle
 log "provisioned the following config changes: "
 $UCI changes >> "$BUFFER" 2>&1
-$UCI commit >> "$BUFFER" 2>&1
+$UCI commit  >> "$BUFFER" 2>&1
+# rm -rf $UCI_TMP
 
 
 # - Send provisioning bundle back to client --------------------------------
@@ -106,5 +107,5 @@ tar -C "$TARBALL_DIR" -cf - . | gzip -f
 
 
 # - Clean up ---------------------------------------------------------------
-#[ -d "$TARBALL_DIR" ] && rm -rf "$TARBALL_DIR"
+[ -d "$TARBALL_DIR" ] && rm -rf "$TARBALL_DIR"
 close_log 
