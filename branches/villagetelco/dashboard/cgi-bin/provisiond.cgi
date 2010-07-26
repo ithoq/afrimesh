@@ -4,6 +4,7 @@
 # - Configuration ----------------------------------------------------------
 #VILLAGEBUS="export REQUEST_METHOD=CONSOLE ; /Library/WebServer/CGI-Executables/villagebus"
 VILLAGEBUS="./villagebus"
+UCI="/usr/local/bin/uci-static"
 PROVISIOND_ROOT=./provisiond-router
 PROVISIOND_TMP=/tmp/provisiond.tmp
 LOG=1
@@ -66,10 +67,10 @@ fi
 
 log "- provisioned settings -- " >> "$BUFFER"
 REQUEST_METHOD=CONSOLE
-#provision_address=`$VILLAGEBUS GET "/provision/ip/$client_mac?address=$client_address&network=$client_network"`` 
-#provision_address=`$VILLAGEBUS GET "/provision/ip/$client_mac?address=$client_address"`
-provision_address=`$VILLAGEBUS GET "$PATH_INFO?$QUERY_STRING"`
-log "Device address: $provision_address" >> "$BUFFER"
+#provisioned_address=`$VILLAGEBUS GET "/provision/ip/$client_mac?address=$client_address&network=$client_network"`` 
+#provisioned_address=`$VILLAGEBUS GET "/provision/ip/$client_mac?address=$client_address"`
+provisioned_address=`$VILLAGEBUS GET "$PATH_INFO?$QUERY_STRING"`
+log "Device address: $provisioned_address" >> "$BUFFER"
 
 
 # - Construct configuration bundle -----------------------------------------
@@ -78,11 +79,18 @@ log "Device address: $provision_address" >> "$BUFFER"
 [ ! -d "$PROVISIOND_TMP" ] && mkdir -p "$PROVISIOND_TMP"
 cp -r "$PAYLOAD_DIR" "$TARBALL_DIR"
 
+# configure base bundle w/ provisioned values
+
+
 # - Send provisioning bundle back to client --------------------------------
 echo "Content-Type: application/x-tar"
 echo
 tar -C "$TARBALL_DIR" -cf - . | gzip -f
-#tar -C "$TARBALL_DIR" -cf - . 
+
+# self-extracting bundle
+#echo "Content-Type: application/x-tar"
+#echo
+#makeself blah blah
 
 
 # - Clean up ---------------------------------------------------------------
