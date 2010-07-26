@@ -1,0 +1,8 @@
+
+config 'afrimesh' 'location'
+	option 'longitude' '28.282307206359'
+	option 'latitude' '-25.739019176411'
+
+config 'settings'
+	option 'root' '192.168.20.225'
+

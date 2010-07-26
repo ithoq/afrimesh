@@ -10,7 +10,7 @@
 
 function BootDevice(parent) {
 
-  var device = function(address, continuation) { return this.device.info(address, continuation); };
+  var device = function(address, continuation) { return this.device.status(address, continuation); };
 
 
   /* - DB Buffered -------------------------------------------------------- 
@@ -21,8 +21,8 @@ function BootDevice(parent) {
   /**
    * Returns instantaneous DB data for the device at address
    */
-  device.info = function(address, continuation) {
-    var name = afrimesh.villagebus.Name("/@root/db/device:info/" + address);
+  device.status = function(address, continuation) {
+    var name = afrimesh.villagebus.Name("/@root/db/device:status/" + address);
     name = afrimesh.villagebus.Bind(name, function(error, response) {
         if (error) return continuation(error, null);
         return continuation(error, response);
@@ -35,8 +35,10 @@ function BootDevice(parent) {
   /** 
    * Returns temporal DB data for the device at address
    */
-  device.stat = function(address, continuation, range) {
-    var name = afrimesh.villagebus.Name("/@root/db/lrange/device:stat/" + address);
+  device.interface = {};
+  // TODO - device.interface.list 
+  device.interface.history = function(address, continuation, range) {
+    var name = afrimesh.villagebus.Name("/@root/db/lrange/interface:history/" + address);
     name = afrimesh.villagebus.Bind(name, function(error, response) {
         if (error) return continuation(error, null);  // TODO - return Fail(error, continuation) maybe ?
         return continuation(error, response);

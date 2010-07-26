@@ -12,9 +12,13 @@ interface=`uci get network.$device.ifname`
 self=`uci get network.$device.ipaddr`
 #root=`uci get system.@system[0].log_ip`
 root=`uci get afrimesh.@settings[0].root`
+device_id=`uci get afrimesh.@settings[0].id`
 mac=`ifconfig $interface | grep HWaddr | awk '{ print $5 }'`
-path_info="$root/db/device/info/$self"
-path_stat="$root/db/device/stat/$self"
+path_info="$root/db/device/status/$self"
+path_stat="$root/db/interface/history/$self"
+
+# don't report status info for unprovisioned devices
+#[ -z "$device_id" ] && exit
 
 # misc information
 timestamp=`date +%s`000

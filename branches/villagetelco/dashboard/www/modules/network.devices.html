@@ -39,7 +39,7 @@
         <span>Usage</span>
         <span>Stats</span>
       </div -->
-      <div id="device-template" class="device">
+      <div id="device-template" class="device" style="display:none;">
         <span class="name"></span> 
         <span class="uptime"></span>
         <span class="traffic"></span>
@@ -80,16 +80,15 @@
 
 
     /* load data */   
-    $("#device-template").hide(); // TODO - No comment. File jquery bug.
-    afrimesh.network.info(function(error, address, device) {
+    afrimesh.network.status(function(error, address, device) {
         if (error) {
           return console.error("error: " + error); // TODO - Fail handler
         }
 
         // clone device template
-        $("#device-template").show(); // TODO - No comment. File jquery bug.
-        var clone = $("#device-template").clone().attr("id", "device-" + address).appendTo("#devicelist");
-        $("#device-template").hide(); // TODO - No comment. File jquery bug.
+        var clone = $("#device-template").clone()
+                                         .attr("id", "device-" + address)
+                                         .appendTo("#devicelist").show();
 
         // add data for device
         clone.find(".name").html(address);
@@ -97,7 +96,7 @@
         clone.find(".traffic").html(pretty_bytes(device.bytes.tx + device.bytes.rx));
 
         // add data series for plots - TODO move legend to outside div
-        afrimesh.device.stat(address, function(error, data) {
+        afrimesh.device.interface.history(address, function(error, data) {
             var score = data.map(function(entry) {
                 return [ entry.timestamp, entry.gateways[0].score ];
               });

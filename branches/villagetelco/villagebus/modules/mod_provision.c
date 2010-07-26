@@ -120,36 +120,43 @@ const string* provision_ip (closure* c, provision* self, const fexp* message)
   }
   //wprintf(L"MAC: %S ADDRESS: %s NETWORK: %s\n\n", mac->buffer, address, network);
     
+  /* Useful redis links: http://simonwillison.net/static/2010/redis-tutorial/
+                         http://code.google.com/p/redis/wiki/CommandReference
+                         http://www.slideshare.net/ezmobius/redis-remote-dictionary-server */
 
   /* Strategy 1 - If an address is specified, register w/ database and 
                   simply return it again */
   if (address) {
-    // is it there?
+
+    // a. register w/ database
+
+    // b. register w/ notification queue
+
+    /*
+      device:123:info
+      device:123:stat
+      device:124:info
+      device:124:stat
+      
+      provision:00:18:0A:01:10:2F:id = 123
+      provision:00:18:0A:01:10:2F:id = 124
+      provision:123:info             = { mac : 00:18:0A:01:10:2F, ip : 10.0.0.5 }
+      provision:123:ip               = 10.0.0.5
+      provision:123:mac              = 00:18:0A:01:10:2F
+      provision:124:info             = { mac : 10:18:0A:01:10:2F, ip : 10.0.0.6 }
+      provision:124:ip               = 10.0.0.6
+      provision:124:mac              = 10:18:0A:01:10:2F
+    */
+
+    // TODO - decide schema
+    // TODO - add missing methods to mod_db
+    // TODO - do registration & notification
+    // TODO - poll notification queue
+    // TODO - link/register user to device
+    // TODO - provision voip
 
     // incr provision:id
     // set  provision:id:<mac>  <id>
-    /*
-
-
-      http://code.google.com/p/redis/wiki/CommandReference
-      http://simonwillison.net/static/2010/redis-tutorial/
- 
-  device:123:info
-  device:123:stat
-  device:124:info
-  device:124:stat
-
-  provision:00:18:0A:01:10:2F:id = 123
-  provision:00:18:0A:01:10:2F:id = 124
-  provision:123:info             = { mac : 00:18:0A:01:10:2F, ip : 10.0.0.5 }
-  provision:123:ip               = 10.0.0.5
-  provision:123:mac              = 00:18:0A:01:10:2F
-  provision:124:info             = { mac : 10:18:0A:01:10:2F, ip : 10.0.0.6 }
-  provision:124:ip               = 10.0.0.6
-  provision:124:mac              = 10:18:0A:01:10:2F
-
-
-    */
     // set provision:ip:<mac>  <ip>
     // set provision:mac:<ip>  <mac>
     // hset provision:id:<id> mac <mac>
