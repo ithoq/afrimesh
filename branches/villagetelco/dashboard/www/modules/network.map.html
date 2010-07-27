@@ -13,6 +13,7 @@
      onmouseover="this.style.opacity=1.0;" 
      onmouseout="this.style.opacity=0.7;">
   <img src="images/network-map-legend.png" />
+  <!-- button id="stopit">Stop it!</button -->
 </div>
 
 
@@ -34,8 +35,9 @@
   <!-- div id="content" --> 
     <h3>Provisioning Request</h3>
     <b>Device Type:</b>Mesh Potato<br/>
-    <b>Device Mac:</b><span class="mac"></span><br/>    
-    Click to process request
+    <b>Device Mac:</b><span class="mac">00:11:22:33:44:55</span>
+    <hr />
+    <span class="message">A message</span>
   <!-- /div -->
 </div>
 
@@ -51,10 +53,10 @@ function() {
     console.debug("loaded network.map.html");
 
     // test notifications
-    var n1 = new_notification("00:11:22:33:44:55", "This is my message 1");
-    var n2 = new_notification("00:11:22:33:44:66", "This is my message 2");    
-    var n3 = new_notification("00:11:22:33:44:77", "This is my message 2");    
-    var n4 = new_notification("00:11:22:33:44:88", "This is my message 2");    
+    //var n1 = new_notification("00:11:22:33:44:55", "This is my message 1");
+    //var n2 = new_notification("00:11:22:33:44:66", "This is my message 2");    
+    //var n3 = new_notification("00:11:22:33:44:77", "This is my message 2");    
+    //var n4 = new_notification("00:11:22:33:44:88", "This is my message 2");    
 
     $("div#network-map").addClass("message");
     $("div#network-map").html("<p><br/><p>Loading Network Map...</p>");
@@ -104,6 +106,21 @@ function() {
       $("div#network-map").html(html);
     };
 
+    // register for provisioning notifications
+    var name = afrimesh.villagebus.mq.Bind("device:provision:*", function(error, message) {
+        if (error) return console.error("Notification: " + error);
+        console.log("New Device Provisioned!!!");
+        console.log(message);
+        var n1 = new_notification(message.mac, 
+                                  "New device #" + message.id + 
+                                  " provisioned with IP: " + message.ip);
+        // add calback to notification to do stuff and clear message from queue
+      });
+
+    $("#stopit").click(function() {
+        afrimesh.villagebus.mq.Unbind(name);
+      });
+
     return unload;
   };
 
@@ -127,6 +144,7 @@ function() {
     notification.hover(function() {
         $(this).stop().animate({ "bottom" : "20px" }, 50, function() {
             $("div#notification-overlay span.mac").html($(this).attr("id"));
+            $("div#notification-overlay span.message").html(message);
             $("div#notifications .callout").remove();
             $("div#notifications .callout-border").remove();
             $(this).append('<span class="fade callout-border"></span>');

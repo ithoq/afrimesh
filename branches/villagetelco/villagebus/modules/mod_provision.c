@@ -185,8 +185,7 @@ const fexp* provision_ip (closure* c, provision* self, const fexp* message)
                                  id->buffer, address->buffer, mac->buffer);
     send(DB, s_db_set, message_provision, notification);
 
-    // TODO - do registration & notification
-    // TODO - poll notification queue
+    // TODO - poll notification queue for new devices
     // TODO - link/register user to device
     // TODO - provision voip
     

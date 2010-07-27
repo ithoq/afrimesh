@@ -209,6 +209,56 @@ var BootVillageBus = function (afrimesh) {
   };
 
 
+
+  /** - VillageBus Message Queue ---------------------------------------- */
+  
+  villagebus.mq = {};
+
+  // notify continuation whenever new message(s) are available in the queue
+  villagebus.mq.Bind = function(name, continuation, rate) {
+    var queue = "/@root/db/keys/message:" + name + ":*";
+    continuation.mq          = { };
+    continuation.mq.timer    = undefined;
+    continuation.mq.messages = { };
+    name = (function poll(name, continuation, rate) {
+      name = afrimesh.villagebus.Bind(queue, function(error, response) {
+        if (error) return continuation(error, null);  
+        response.map(function(message) {  
+          if (continuation.mq.messages[message]) { // has this continuation received this message yet?          
+            return continuation.mq.messages[message];
+          } 
+          continuation.mq.messages[message] = true;
+          return afrimesh.villagebus.GET(afrimesh.villagebus.Bind("/@root/db/" + message, continuation));
+        });
+      });
+      name = afrimesh.villagebus.GET(name);
+      continuation.mq.timer = setTimeout(function() {
+        poll(name, continuation, rate);
+      }, (rate ? rate : 15000));
+      return name;
+    })(name, continuation, rate);
+    return continuation;
+  };
+
+  // stop notifying the continuation - TODO support multiple queues on continuations?
+  villagebus.mq.Unbind = function(continuation) {
+    console.log("UNBINDING: " + name);
+    clearTimeout(name.mq.timer);
+    return name;
+  };
+  
+
+  // add a new message to the queue
+  villagebus.mq.POST = function(name, message, continuation) {
+  };
+
+  // delete a message from the queue
+  villagebus.mq.DELETE = function(message, continuation) {
+  };
+  
+
+
+
   /** - villagebus.login ------------------------------------------------ */
   // TODO - support multiple authentication mechanisms e.g.  luci, htaccess, cert, ldap etc.
   villagebus.login = function(username, password, continuation, error) {
