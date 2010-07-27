@@ -127,7 +127,7 @@ const fexp* db_evaluate(closure* c, db* self, const fexp* expression)
     reply = (fexp*)send(self, s_db_lpush, expression, request->data);
     break;
   case GET:
-    reply = (fexp*)send(self, s_db_get, expression, request->data);
+    reply = (fexp*)send(self, s_db_get, expression);
     break;
   default:
     reply = (fexp*)send(VillageBus, 
@@ -196,22 +196,28 @@ const fexp* db_keys(closure* c, db* self, const fexp* message)
 
 
 /**
- *
+ * TODO - parameter polymorphism:
+ *          when message is a list, first item is the key
+ *          when message is a string then message is the key
  */
 const string* db_get(closure* c, db* self, const fexp* message)
 {
   object* reply = (object*)fexp_nil;
+  string* key   = (string*)send(message, s_fexp_join, self->delimiter); 
+  char* keyc    = (char*)send(key, s_string_tochar); 
 
-  string* key  = (string*)send(message, s_fexp_join, self->delimiter);  // generate a key from message
-  wprintl(L"GET /db/get/%S\n", key->buffer);
-
-  char* keyc = (char*)send(key, s_string_tochar); // TODO - redis not support UNICODE so much
   char* val;
-  if (credis_get(self->handle, keyc, &val) != 0) {
+  int rc = credis_get(self->handle, keyc, &val);
+  wprintl(L"GET /db/get/%S -> %d\n", key->buffer, rc);
+
+  if (rc == -1) {                       // key does not exist
+    reply = (object*)fexp_nil;
+  } else if (rc != 0 || val == NULL) {  // error
     reply = send(VillageBus, s_villagebus_error, L"get failed %s", keyc);
+  } else {
+    reply = send(String, s_string_fromchar, val, strlen(val));
   }
   free(keyc);
-  reply = send(String, s_string_fromchar, val, strlen(val));
   
   return (string*)reply;
 }

@@ -61,7 +61,7 @@ void provision_init()
   Provision->device_ids = (string*)send(String, s_string_fromwchar, L"device:ids");
   Provision->provision_device  = (string*)send(String, s_string_fromwchar, L"provision:device:");
   Provision->provision_mac     = (string*)send(String, s_string_fromwchar, L"provision:mac:");
-  Provision->message_provision = (string*)send(String, s_string_fromwchar, L"message:provision:");
+  Provision->message_provision = (string*)send(String, s_string_fromwchar, L"message:device:provision:");
   // register module with VillageBus 
   s_provision = (symbol*)symbol_intern(0, 0, L"provision");
   fexp* module = (fexp*)send(Fexp, s_new, s_provision, Provision);
@@ -126,25 +126,40 @@ const fexp* provision_ip (closure* c, provision* self, const fexp* message)
     if (s) network = (string*)send(String, s_string_fromwchar, L"%s", s);
   }
   //wprintf(L"MAC: %S ADDRESS: %S NETWORK: %S\n\n", mac->buffer, address->buffer, network->buffer);
-    
-  /* Useful redis links: http://simonwillison.net/static/2010/redis-tutorial/
-                         http://code.google.com/p/redis/wiki/CommandReference
-                         http://www.slideshare.net/ezmobius/redis-remote-dictionary-server */
 
-  /* Strategy 1 - If an address is specified, simply register it w/ 
-                  provisioning database and return it again */
+  /* Strategy 1 - If an address is specified, simply register it w/ the
+                  provisioning database and return it */
   if (address != (string*)fexp_nil) {
 
-    // a. register w/ database
+    fexp* reply = fexp_nil;
+
+    // connect to database
     fexp* error = (fexp*)send(DB, s_db_connect);
     if (error != fexp_nil) {
       return error;
     }
 
-    // TODO - check if we are already registered
+    // TODO - check if this mac is already linked to a device
 
-    // TODO - check if we have an outstanding provisioning request 
-
+    // check for an outstanding provisioning notification for this mac
+    fexp* f = fexp_nil;
+    string* message_provision = (string*)send(self->message_provision, 
+                                              s_string_add, mac);
+    f = (fexp*)send(f, s_fexp_cons, message_provision);
+    string* notification = (string*)send(DB, s_db_get, f);
+    if ((fexp*)notification != fexp_nil) {
+      char* notificationc = (char*)send(notification, s_string_tochar);
+      struct json_object* json = json_tokener_parse(notificationc);
+      reply = (fexp*)send(String, s_string_fromwchar, 
+                          L"%s %s %s %S", 
+                          json_object_get_string(json_object_object_get(json, "id")),
+                          json_object_get_string(json_object_object_get(json, "mac")),
+                          json_object_get_string(json_object_object_get(json, "ip")),
+                          L"10.0.0.1"); 
+      goto done;
+    }
+    
+    // register interface details with database
     string* id = (string*)send(DB, s_db_incr, self->device_id);  // incr device:id
     send(DB, s_db_sadd, self->device_ids, id);                   // sadd device:ids
     string* provision_device = (string*)send(self->provision_device,
@@ -153,31 +168,34 @@ const fexp* provision_ip (closure* c, provision* self, const fexp* message)
                                              s_string_add, address);
     send(DB, s_db_set,  provision_device, id);                   // set  provision:device:<ip> id
     send(DB, s_db_set,  provision_mac,    mac);                  // set  provision:mac:<ip>    mac
+    reply = (fexp*)send(String, s_string_fromwchar, 
+                        L"%S %S %S %S", 
+                        id->buffer, 
+                        mac->buffer, 
+                        address->buffer, 
+                        L"10.0.0.1"); 
 
-    // b. register w/ notification queue
-    string* message_provision = (string*)send(self->message_provision, 
-                                              s_string_add, mac);
-    // { device_id : 23, address : 10.0.0.5, interface : 00:11:22:33:44:55 }
-    string* data = (string*)send(String, s_string_fromwchar, 
-                                 L"{ 'id' : %S, 'ip' : '%S', 'mac' : '%S' }",
+    // register provisioning request w/ notification queue
+    notification = (string*)send(String, s_string_fromwchar, 
+                                 L"{ 'source' : 'device', "
+                                 "'name' : 'provision', "
+                                 "'id' : %S, "
+                                 "'ip' : '%S', "
+                                 "'mac' : '%S' }",
                                  id->buffer, address->buffer, mac->buffer);
-    send(DB, s_db_set, message_provision, data);
+    send(DB, s_db_set, message_provision, notification);
 
     // TODO - do registration & notification
     // TODO - poll notification queue
     // TODO - link/register user to device
     // TODO - provision voip
-
+    
+  done:
     // clean up
     send(DB, s_db_close);
 
-    // TODO send back ip, root, idp'
-    return (fexp*)send(String, s_string_fromwchar, 
-                       L"%S %S %S %S", 
-                       id->buffer, 
-                       mac->buffer, 
-                       address->buffer, 
-                       L"10.0.0.1"); // TODO - pull from site config
+    // send back id, mac, ip, root
+    return reply; // TODO - pull from site config
   }
 
 
