@@ -59,9 +59,9 @@ void provision_init()
   Provision->delimiter = (string*)send(String, s_new, L":", 1); // MAC delimiter
   Provision->device_id  = (string*)send(String, s_string_fromwchar, L"device:id");
   Provision->device_ids = (string*)send(String, s_string_fromwchar, L"device:ids");
-  Provision->provision_device = (string*)send(String, s_string_fromwchar, L"provision:device");
-  Provision->provision_mac    = (string*)send(String, s_string_fromwchar, L"provision:mac");
-
+  Provision->provision_device  = (string*)send(String, s_string_fromwchar, L"provision:device:");
+  Provision->provision_mac     = (string*)send(String, s_string_fromwchar, L"provision:mac:");
+  Provision->message_provision = (string*)send(String, s_string_fromwchar, L"message:provision:");
   // register module with VillageBus 
   s_provision = (symbol*)symbol_intern(0, 0, L"provision");
   fexp* module = (fexp*)send(Fexp, s_new, s_provision, Provision);
@@ -114,21 +114,26 @@ const fexp* provision_ip (closure* c, provision* self, const fexp* message)
   }
 
   // get any parameters
-  const char* address = NULL;
-  const char* network = "10.130.1.0";
+  string* address = (string*)fexp_nil;
+  string* network = (string*)fexp_nil;
   if (request->json) {
-    address = json_object_get_string(json_object_object_get(request->json, "address"));
-    network = json_object_get_string(json_object_object_get(request->json, "network"));
+    const char* s;
+    s = json_object_get_string(json_object_object_get(request->json, 
+                                                      "address"));
+    if (s) address = (string*)send(String, s_string_fromwchar, L"%s", s);
+    s = json_object_get_string(json_object_object_get(request->json, 
+                                                      "network"));
+    if (s) network = (string*)send(String, s_string_fromwchar, L"%s", s);
   }
-  //wprintf(L"MAC: %S ADDRESS: %s NETWORK: %s\n\n", mac->buffer, address, network);
+  //wprintf(L"MAC: %S ADDRESS: %S NETWORK: %S\n\n", mac->buffer, address->buffer, network->buffer);
     
   /* Useful redis links: http://simonwillison.net/static/2010/redis-tutorial/
                          http://code.google.com/p/redis/wiki/CommandReference
                          http://www.slideshare.net/ezmobius/redis-remote-dictionary-server */
 
-  /* Strategy 1 - If an address is specified, register w/ database and 
-                  simply return it again */
-  if (address) {
+  /* Strategy 1 - If an address is specified, simply register it w/ 
+                  provisioning database and return it again */
+  if (address != (string*)fexp_nil) {
 
     // a. register w/ database
     fexp* error = (fexp*)send(DB, s_db_connect);
@@ -138,15 +143,25 @@ const fexp* provision_ip (closure* c, provision* self, const fexp* message)
 
     // TODO - check if we are already registered
 
+    // TODO - check if we have an outstanding provisioning request 
+
     string* id = (string*)send(DB, s_db_incr, self->device_id);  // incr device:id
     send(DB, s_db_sadd, self->device_ids, id);                   // sadd device:ids
-    string* provision_device = (string*)send(String, s_string_fromwchar, L"provision:device:%s", address);
-    string* provision_mac    = (string*)send(String, s_string_fromwchar, L"provision:mac:%s",    address);
+    string* provision_device = (string*)send(self->provision_device,
+                                             s_string_add, address);
+    string* provision_mac    = (string*)send(self->provision_mac, 
+                                             s_string_add, address);
     send(DB, s_db_set,  provision_device, id);                   // set  provision:device:<ip> id
     send(DB, s_db_set,  provision_mac,    mac);                  // set  provision:mac:<ip>    mac
 
     // b. register w/ notification queue
-    
+    string* message_provision = (string*)send(self->message_provision, 
+                                              s_string_add, mac);
+    // { device_id : 23, address : 10.0.0.5, interface : 00:11:22:33:44:55 }
+    string* data = (string*)send(String, s_string_fromwchar, 
+                                 L"{ 'id' : %S, 'ip' : '%S', 'mac' : '%S' }",
+                                 id->buffer, address->buffer, mac->buffer);
+    send(DB, s_db_set, message_provision, data);
 
     // TODO - do registration & notification
     // TODO - poll notification queue
@@ -156,8 +171,15 @@ const fexp* provision_ip (closure* c, provision* self, const fexp* message)
     // clean up
     send(DB, s_db_close);
 
-    return (fexp*)send(String, s_string_fromwchar, L"%s", address);
+    // TODO send back ip, root, idp'
+    return (fexp*)send(String, s_string_fromwchar, 
+                       L"%S %S %S %S", 
+                       id->buffer, 
+                       mac->buffer, 
+                       address->buffer, 
+                       L"10.0.0.1"); // TODO - pull from site config
   }
+
 
   /* Strategy 2 - Sequential allocation within a given network backed
                   by database.
@@ -165,7 +187,6 @@ const fexp* provision_ip (closure* c, provision* self, const fexp* message)
      . If it's there return allocated IP
      . Otherwise, increment allocation counter, generate an IP
        and store it in database */
-
   // convert network address to int
   /*struct in_addr _in_addr;
   if(inet_aton(network, &_in_addr) == 0) {
@@ -186,11 +207,9 @@ const fexp* provision_ip (closure* c, provision* self, const fexp* message)
     wprintf(L"Error parsing int %s: %s\n", network, strerror(errno));
   }
   printf("inet_ntop:          %s\n", buf); */
-
   // Check for MAC in database
   // If there, look up IP and return
   // If not, increment counter, generate IP and store in database
-
   // Strategy 3 - Dumb MAC2IP
   /*string* octet_1 = (string*)send(octets, s_fexp_nth, 3);
   string* octet_2 = (string*)send(octets, s_fexp_nth, 4);
@@ -200,7 +219,6 @@ const fexp* provision_ip (closure* c, provision* self, const fexp* message)
   int n3 = wcstoimax(octet_3->buffer, NULL, 16);
   // TODO - the default for Strings in main.c should be to print as json *sigh*
   string* ret = (string*)send(String, s_string_fromwchar, L"\"10.%d.%d.%d\"", n1, n2, n3);*/
-
   // Strategy 4 - ability to specify an external hook for IP generation
 
   string* ret = (string*)send(String, s_string_fromwchar, L"\"10.130.1.20\"");

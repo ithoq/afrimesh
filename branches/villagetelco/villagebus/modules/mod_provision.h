@@ -42,6 +42,7 @@ typedef struct _provision {
   string* device_ids;
   string* provision_device;
   string* provision_mac;
+  string* message_provision;
 } provision;
 extern vtable* provision_vt;
 extern object* _Provision;
