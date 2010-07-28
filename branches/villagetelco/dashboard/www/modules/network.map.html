@@ -40,9 +40,9 @@
   <span class="text">A message</span>
   <div id="link" class="round-small" style="display:none;">
 
-    <input type="text" id="firstname" title="first name" style="width: 10em;"/>
-    <input type="text" id="lastname"  title="last name"  style="width: 10em;"/>
-    <input type="text" id="email"     title="email"      style="width: 15em;"/>
+    <input type="text" id="firstname" title="first name" value="bob"   style="width: 10em;"/>
+    <input type="text" id="lastname"  title="last name"  value="smith" style="width: 10em;"/>
+    <input type="text" id="email"     title="email"      value="bob@smith.com" style="width: 15em;"/>
     <img src="images/find.png" width="24" height="24" />
     <div style="height:5px;" />
     <input type="text" id="longitude" title="longitude"  style="width: 10em;"/>
@@ -119,7 +119,7 @@ function() {
         if (error) return console.error("Notification: " + error);
         console.log("New Device Provisioned!!!");
         console.log(notification);
-        var n1 = new_notification(notification, "Click to set map position and link owner.");
+        var n = new_notification(notification, "Click to set map position and link owner.");
       });
 
     // activate input hints
@@ -146,17 +146,47 @@ function() {
       clicked.unbind();
       $("div#notification-overlay .text").hide();
       $("div#notification-overlay #link").show();
-      $("div#notification-overlay div#link button#save").click(function() {
-          clicked.remove();
-          $("div#notification-overlay").fadeOut(100);
-          $("div#notifications .fade").fadeOut(50, function() {
-              $("div#notifications .callout").remove();
-              $("div#notifications .callout-border").remove();
-            });
+      $("div#notification-overlay div#link button#save").click(function() { // Save user info
+
           console.log("Linking device to person");
+            
+          // grab input field values
+          var person = {
+            firstname : $("div#link input#firstname").val(),
+            lastname  : $("div#link input#lastname").val(),
+            email     : $("div#link input#email").val()
+          };
+          var location = {
+            longitude : $("div#link input#longitude").val(),
+            latitude  : $("div#link input#latitude").val()
+          };
+
+          // save person info and get id
+          afrimesh.person.save(person, function(error, person) { 
+              if (error) {
+                $("div#notification-overlay div#link button#cancel").click(); // cancel save
+                return console.error("Could not save user: " + error);
+              }
+              console.log("Finished saving person");
+              // set provision:<ip>:person = person.id
+              // set device:<ip>:location  = { longitude, latitude }
+              // del message:device:<mac>:provision
+
+              // remove notification if success
+              clicked.remove();
+              $("div#notification-overlay").fadeOut(100);
+              $("div#notifications .fade").fadeOut(50, function() {
+                  $("div#notifications .callout").remove();
+                  $("div#notifications .callout-border").remove();
+                });
+
+
+            });
 
           // TODO - link/register user to device on save
           // TODO - provision voip
+
+
 
         });
       $("div#notification-overlay div#link button#cancel").click(function() {

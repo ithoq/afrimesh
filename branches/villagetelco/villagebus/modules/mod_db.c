@@ -258,6 +258,8 @@ const fexp* db_lrange(closure* c, db* self, const fexp* message)
   }
 
   // TODO IMPORTANT - all values stored in redis to be well-formed JSON please :)
+  //                  our best bet would probably be to do mandatory conversion from
+  //                  fexp*'s inside mod_db.
   int i;
   for (i = 0; i < n; i++) {
     string* item = (string*)send(String, s_string_fromchar, bufferv[i], strlen(bufferv[i]));

@@ -205,7 +205,7 @@ var BootVillageBus = function (afrimesh) {
    */
   villagebus.Fail = function(response) { 
     //console.log("Is this an error: " + show(response) + response.hasOwnProperty("error"));
-    return response.hasOwnProperty("error");
+    return (response ? response.hasOwnProperty("error") : response);
   };
 
 

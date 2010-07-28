@@ -1,0 +1,41 @@
+
+   STATUS
+     |
+   DEVICE -< INTERFACE - MAC -< IP
+     v           |
+     |        HISTORY
+     ^
+   PERSON
+     |
+   DETAILS
+
+--
+
+device:id                       COUNTER
+device:ids                      SET      # TODO
+
+# device status & history
+device:<ip>:status              STRING   { uname, idle, traffic etc. }      
+interface:<ip>:history          LIST     { pings, radio etc.         }      
+
+# provisioning  TODO - provenance be interface based on the lowliest level
+provision:<ip>:mac              STRING   mac                                
+provision:<ip>:device           STRING   device.id                          
+provision:<ip>:person           STRING   device.id                          
+
+# provisioning notifications
+message:device:<mac>:provision  STRING   { device.id, ip, mac }
+
+--
+
+person:id                       COUNTER
+person:ids                      SET     # TODO
+
+person:<email>:id               STRING  person.id
+person:<id>:details             STRING  { person.id, firstname, lastname, email }
+
+device:<ip>:location            STRING  { longitude, latitude }
+
+--
+
+

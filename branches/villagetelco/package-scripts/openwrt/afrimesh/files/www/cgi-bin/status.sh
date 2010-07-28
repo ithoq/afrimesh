@@ -18,7 +18,7 @@ path_info="$root/db/device:$self:status"
 path_stat="$root/db/interface:$self:history"
 
 # don't report status info for unprovisioned devices
-[ -z "$device_id" ] && exit
+#[ -z "$device_id" ] && exit
 
 # misc information
 timestamp=`date +%s`000

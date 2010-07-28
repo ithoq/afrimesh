@@ -18,7 +18,7 @@ function BootSettings(parent, address) {
 
   // Network roots are nodes with some level of savvy about the network. 
   // Generally, if they can't process a message they should be able to tell you who can
-  var roots = [ "192.168.20.225", "10.0.0.1" ];
+  var roots = [ "192.168.20.105", "10.0.0.1" ];
   var default_root = roots[0];
 
   /**

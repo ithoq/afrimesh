@@ -25,7 +25,8 @@ var afrimesh = undefined;
     this.storage    = BootStorage(this);
     this.network    = BootNetwork(this);
     this.device     = BootDevice(this); 
-    this.customers  = BootCustomers(this);
+    this.person     = BootPerson(this);
+    this.customers  = BootCustomers(this);  // TODO - deprecate in favor of person
     this.telephony  = BootTelephony(this);       
     this.villagebus = BootVillageBus(this);
 

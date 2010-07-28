@@ -169,15 +169,20 @@ const fexp* provision_ip (closure* c, provision* self, const fexp* message)
     string* provision_mac    = (string*)send(String, s_string_fromwchar,
                                              self->provision_mac, 
                                              address->buffer);
+
     send(DB, s_db_set,  provision_device, id);                   // set  provision:<ip>:device device.id
-    send(DB, s_db_set,  provision_mac,    mac);                  // set  provision:<ip>:mac    mac
-    reply = (fexp*)send(String, s_string_fromwchar, L"%S %S %S %S", 
+    string* json_mac = (string*)send(mac, s_tojson, false);
+    send(DB, s_db_set,  provision_mac, json_mac);                // set  provision:<ip>:mac    mac
+    reply = (fexp*)send(String, s_string_fromwchar, L"%S %S %S %S",
                         id->buffer, 
                         mac->buffer, 
                         address->buffer, 
                         L"10.0.0.1"); 
 
     // register provisioning request w/ notification queue
+    // TODO - we should really only be setting this once the device has
+    //        been provisioned, rebooted and successfully connected to
+    //        the network. This is fine for the demo though.
     notification = (string*)send(String, s_string_fromwchar, 
                                  L"{ 'source' : 'device', "
                                  "'name' : 'provision', "

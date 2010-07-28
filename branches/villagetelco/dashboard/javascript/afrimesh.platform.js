@@ -61,13 +61,6 @@
 
 })();
 
-// bootstrap afrimesh
-/*load("javascript/afrimesh.utilities.js");
-load("javascript/afrimesh.villagebus.js");
-load("javascript/afrimesh.network.js");
-load("javascript/afrimesh.customers.js");
-load("javascript/afrimesh.js");*/
-
 console.debug("loaded afrimesh.platform.js");
 
 
