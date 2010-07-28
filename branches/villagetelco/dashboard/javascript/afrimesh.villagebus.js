@@ -223,7 +223,8 @@ var BootVillageBus = function (afrimesh) {
     name = (function poll(name, continuation, rate) {
       name = afrimesh.villagebus.Bind(queue, function(error, response) {
         if (error) return continuation(error, null);  
-        response.map(function(message) {  
+        if (!response) return; // empty queue
+        response.map(function(message) {
           if (continuation.mq.messages[message]) { // has this continuation received this message yet?          
             return continuation.mq.messages[message];
           } 

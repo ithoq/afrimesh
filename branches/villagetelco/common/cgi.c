@@ -253,7 +253,7 @@ Request* cgi_request(int argc, char** argv)
   memset(request, 0, sizeof(Request));
   request->callback = L"jsonp"; // TODO - make optional ?
   request->out      = cgi_out;
-  request->state    = OUT_RAW;  
+  request->state    = OUT_RAW;
 
   char* request_method;
   char* content_type;

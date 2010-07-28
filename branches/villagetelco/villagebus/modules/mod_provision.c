@@ -161,8 +161,10 @@ const fexp* provision_ip (closure* c, provision* self, const fexp* message)
     }
     
     // register interface details with database
-    string* id = (string*)send(DB, s_db_incr, self->device_id);  // incr device:id
-    send(DB, s_db_sadd, self->device_ids, id);                   // sadd device:ids
+    fexp* device_id = fexp_nil;
+    device_id = (fexp*)send(device_id, s_fexp_cons, self->device_id);
+    string* id = (string*)send(DB, s_db_incr, device_id);  // incr device:id
+    send(DB, s_db_sadd, self->device_ids, id);             // sadd device:ids
     string* provision_device = (string*)send(String, s_string_fromwchar, 
                                              self->provision_device,
                                              address->buffer);

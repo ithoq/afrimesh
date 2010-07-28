@@ -12,26 +12,33 @@ function BootPerson(parent) {
 
   var person = {}; // function(id, continuation) { return this.person.load(id, continuation); };
 
+  // TODO - Please for fsck's sake can we have a combinator to pipeline
+  //        these (&#@$ reams&reams of continuations?
+  //        
+  //        I like Italian food as much as the next guy but there are other 
+  //        dishes than spaghetti! Maybe some nice Gnocchi?
   person.save = function(person, continuation) {
     
-    console.log("SAVING: " + show(person));
+    // TODO - some field validation plz
     if (!person ||
         (!person.email     || person.email     == "") ||
         (!person.firstname || person.firstname == "") ||
         (!person.lastname  || person.latname   == "")) {
-      return continuation(error, "Specify all the user details please.");
+      return continuation({ error : "Specify all the user details please." });
     }
 
-    // 1. look for a person with this email
+    // 1. look for an existing person with this email
     var name = afrimesh.villagebus.Bind("/@root/db/person:" + person.email + ":id", function(error, id) {
         console.log("/@root/db/person:" + person.email + ":id -> (" + error + ", " + id + ")");
         if (error) return continuation(error, id);
-        if (!id) {
-          console.error("NO ID");
-        } else {
-          console.error("HAVE ID");
+        if (!id) { 
+          return generate_id(person, function(error, person) {
+              if (error) return continuation(error, response);
+              return update_details(person, continuation);
+            });
         }
-
+        person.id = id;
+        return update_details(person, continuation);
       });
     name = afrimesh.villagebus.GET(name);
 
@@ -46,18 +53,23 @@ function BootPerson(parent) {
       return afrimesh.villagebus.GET(name);
     };
 
-    // 3. link person id & email
-    // set person:<email>:id id
-    function link_details(person, continuation) {
-      var name = afrimesh.villagebus.Bind("/@root/db/person:" + person.email + ":id", continuation);
-      return afrimesh.villagebus.PUT(name);
-    };
-
-    // 4. save the person details
+    // 3. save the person details
     // set person:<id>:details = { id, email, firstname, lastname };
     function update_details(person, continuation) {
-      var name = afrimesh.villagebus.Bind("/@root/db/person:" + person.id + ":details", continuation);
-      return afrimesh.villagebus.PUT(name);
+      var name = afrimesh.villagebus.Bind("/@root/db/person:" + person.id + ":details", function(error, response) {
+          if (error) return continuation(error, response);
+          return link_details(person, continuation);
+        });
+      return afrimesh.villagebus.PUT(name, person)
+    };
+
+    // 4. link person id & email
+    // set person:<email>:id id
+    function link_details(person, continuation) {
+      var name = afrimesh.villagebus.Bind("/@root/db/person:" + person.email + ":id", function(error, response) {
+          return continuation(error, person);
+        });
+      return afrimesh.villagebus.PUT(name, person.id); 
     };
 
   };

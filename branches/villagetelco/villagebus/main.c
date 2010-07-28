@@ -109,13 +109,15 @@ int main(int argc, char** argv)
 
   /** - print eval result (if any) -------------------------------------- */
   if (message == fexp_nil) {  // do nothing & allow handlers to manage their own output
-    request->out(request, L""); // output blank to trigger header if nothing has printed
-                                // TODO - clean all of this up somewhat, everything
-                                // is following different rules. 
-                                // We only need these three options:
-                                // 1. Output module response as JSON output
-                                // 2. Output module error as JSON error
-                                // 3. Let the module do its own output handling
+    if (request->state == OUT_HEADER) {  // we printed nothing out, so this is a true nil
+      request->out(request, L"undefined"); 
+    }
+    // TODO - clean all of this dire evil up somewhat, thing are getting 
+    //        completely out of hand w/ the output handling!!!
+    // We only need these three options:
+    // 1. Output module response as JSON output
+    // 2. Output module error as JSON error
+    // 3. Let the module do its own output handling
 
   } else if ((vtable*)send(message, s_type) == string_vt) {     // strings are printed verbatim - WTF?!?!
     request->out(request, ((string*)message)->buffer);          // not best solution. should be json.

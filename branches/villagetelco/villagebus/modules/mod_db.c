@@ -307,6 +307,24 @@ const string* db_getset(closure* c, db* self, const fexp* message, const unsigne
   return (string*)reply;
 }
 
+const string* db_incr(closure* c, db* self, const fexp* message)
+{  
+  string* reply;
+
+  string* key  = (string*)send(message, s_fexp_join, self->delimiter);  // generate a key from message
+  char* keyc = (char*)send(key, s_string_tochar);
+  int value  = 0;
+  int rc     = credis_incr(self->handle, keyc, &value);
+  if (rc != 0) {
+    reply = (string*)send(VillageBus, s_villagebus_error, L"incr failed %ss", keyc);
+  } else {
+    reply = (string*)send(String, s_string_fromwchar, L"%d", value);
+  }
+  free(keyc);
+  return reply;
+}
+
+
 
 /* - POST --------------------------------------------------------------- */
 
@@ -331,21 +349,6 @@ const fexp* db_lpush(closure* c, db* self, const fexp* message, const unsigned c
 
 
 /* - TODO --------------------------------------------------------------- */
-const string* db_incr(closure* c, db* self, const string* key)
-{  
-  string* reply;
-  char* keyc = (char*)send(key, s_string_tochar);
-  int value  = 0;
-  int rc     = credis_incr(self->handle, keyc, &value);
-  if (rc != 0) {
-    reply = (string*)send(VillageBus, s_villagebus_error, L"incr failed %ss", keyc);
-  } else {
-    reply = (string*)send(String, s_string_fromwchar, L"%d", value);
-  }
-  free(keyc);
-  return reply;
-}
-
 
 const string* db_sadd(closure* c, db* self, const string* key, const string* member)
 {

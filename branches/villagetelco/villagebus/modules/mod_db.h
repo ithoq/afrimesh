@@ -67,6 +67,7 @@ const fexp*   db_lrange(closure* c, db* self, const fexp* message); // list
 
 // PUT
 const string* db_getset(closure* c, db* self, const fexp* message, const unsigned char* data); // string
+const string* db_incr  (closure* c, db* self, const fexp* message);                            // counter
 
 // POST
 const fexp*   db_lpush(closure* c, db* self, const fexp* message, const unsigned char* data);  // list
@@ -76,7 +77,6 @@ const fexp* db_connect(closure* c, db* self);
 const fexp* db_close  (closure* c, db* self);
 
 // TODO - either rewrite these to 'fexp* message' style or write a request parser
-const string* db_incr(closure* c, db* self, const string* key);                                // counter
 const string* db_set (closure* c, db* self, const string* key, const string* value);           // string
 const string* db_sadd(closure* c, db* self, const string* key, const string* member);          // set
 
