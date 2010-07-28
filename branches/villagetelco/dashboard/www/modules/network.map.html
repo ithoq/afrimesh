@@ -13,7 +13,6 @@
      onmouseover="this.style.opacity=1.0;" 
      onmouseout="this.style.opacity=0.7;">
   <img src="images/network-map-legend.png" />
-  <!-- button id="stopit">Stop it!</button -->
 </div>
 
 
@@ -32,13 +31,25 @@
 <!-- Notifications ----------------------------------------------------- -->
 <div id="notifications"></div>
 <div id="notification-overlay" class="round-small shadow">
-  <!-- div id="content" --> 
-    <h3>Provisioning Request</h3>
-    <b>Device Type:</b>Mesh Potato<br/>
-    <b>Device Mac:</b><span class="mac">00:11:22:33:44:55</span>
-    <hr />
-    <span class="message">A message</span>
-  <!-- /div -->
+
+  <h3>A new device has been added to the mesh!</h3>
+  <b>Mesh Potato #<span class="device">23</span></b> 
+  <span class="ip">10.130.1.20</span> 
+  <i>(<span class="mac">00:11:22:33:44:55</span>)</i>
+  <hr />
+  <span class="text">A message</span>
+  <div id="link" class="round-small" style="display:none;">
+    <input type="text" id="firstname" title="first name"/>
+    <input type="text" id="lastname"  title="last name"/>
+    <input type="text" id="email"     title="email"/><br/>
+    <input type="text" id="longitude" title="longitude"/>
+    <input type="text" id="latitude"  title="latitude"/><br/>
+    <div style="text-align:right;">
+      <button id="save">save</button>
+      <button id="cancel">cancel</button>
+    </div>
+  </div>
+
 </div>
 
 
@@ -51,12 +62,6 @@ function() {
   /** construction ------------------------------------------------------ */
   ready = function() {
     console.debug("loaded network.map.html");
-
-    // test notifications
-    //var n1 = new_notification("00:11:22:33:44:55", "This is my message 1");
-    //var n2 = new_notification("00:11:22:33:44:66", "This is my message 2");    
-    //var n3 = new_notification("00:11:22:33:44:77", "This is my message 2");    
-    //var n4 = new_notification("00:11:22:33:44:88", "This is my message 2");    
 
     $("div#network-map").addClass("message");
     $("div#network-map").html("<p><br/><p>Loading Network Map...</p>");
@@ -107,19 +112,15 @@ function() {
     };
 
     // register for provisioning notifications
-    var name = afrimesh.villagebus.mq.Bind("device:provision:*", function(error, message) {
+    var name = afrimesh.villagebus.mq.Bind("device:provision:*", function(error, notification) {
         if (error) return console.error("Notification: " + error);
         console.log("New Device Provisioned!!!");
-        console.log(message);
-        var n1 = new_notification(message.mac, 
-                                  "New device #" + message.id + 
-                                  " provisioned with IP: " + message.ip);
-        // add calback to notification to do stuff and clear message from queue
+        console.log(notification);
+        var n1 = new_notification(notification, "Click to link this device to its owner");
       });
 
-    $("#stopit").click(function() {
-        afrimesh.villagebus.mq.Unbind(name);
-      });
+    // activate input hints
+    $('input[title!=""]').hint();    
 
     return unload;
   };
@@ -133,44 +134,75 @@ function() {
 
 
   /** - Map notifications ----------------------------------------------- */
-  function new_notification(mac, message) {
+  function new_notification(device, text, continuation) {
     var notification = $(document.createElement("div")).addClass("notification")
-                                                       .attr("id", mac)
+                                                       .attr("id", device.mac)
                                                        .appendTo("#notifications");
+    function click_fn() {
+      var clicked = $(this);
+      clicked.unbind();
+      $("div#notification-overlay .text").hide();
+      $("div#notification-overlay #link").show();
+      $("div#notification-overlay div#link button#save").click(function() {
+          clicked.remove();
+          $("div#notification-overlay").fadeOut(100);
+          $("div#notifications .fade").fadeOut(50, function() {
+              $("div#notifications .callout").remove();
+              $("div#notifications .callout-border").remove();
+            });
+          console.log("Linking device to person");
+          // add calback to notification to do stuff and clear message from queue
+          // TODO - link/register user to device
+          // TODO - provision voip
+        });
+      $("div#notification-overlay div#link button#cancel").click(function() {
+          $("div#notification-overlay .text").show();
+          $("div#notification-overlay #link").hide();
+          $("div#notification-overlay").fadeOut(100);
+          $("div#notifications .fade").fadeOut(50, function() {
+              $("div#notifications .callout").remove();
+              $("div#notifications .callout-border").remove();
+            });
+          clicked.click(click_fn);
+          clicked.hover(hover_fn, blur_fn);
+          notification.looped({ "bottom" : "10px" }, 
+                              { "bottom" : "0px"  }, 500);
+        });
+    };
 
+    function hover_fn() {
+      $(this).stop().animate({ "bottom" : "20px" }, 50, function() {
+          $("div#notification-overlay span.device").html(device.id);
+          $("div#notification-overlay span.ip").html(device.ip);
+          $("div#notification-overlay span.mac").html(device.mac);
+          $("div#notification-overlay span.text").html(text);
+          $("div#notifications .callout").remove();
+          $("div#notifications .callout-border").remove();
+          console.log("callout");
+          $(this).append('<span class="fade callout-border"></span>');
+          $(this).append('<span class="fade callout"></span>');
+          $("#notification-overlay").fadeIn(100);
+          $(this).find(".fade").fadeIn(150);
+          $("div#notifications .callout").fadeIn(150);
+          $("div#notifications .callout-border").fadeIn(150);
+        });
+    };
+
+    function blur_fn() {
+      $("#notification-overlay").fadeOut(150);
+      $("div#notifications .fade").fadeOut(50, function() {
+          $("div#notifications .callout").remove();
+          $("div#notifications .callout-border").remove();
+        });
+      $(this).stop().looped({ "bottom" : "10px" }, 
+                            { "bottom" : "0px"  }, 500);
+    };
+
+    // bounce notification
+    notification.click(click_fn);
+    notification.hover(hover_fn, blur_fn);
     notification.looped({ "bottom" : "10px" }, 
                         { "bottom" : "0px"  }, 500);
-
-    notification.hover(function() {
-        $(this).stop().animate({ "bottom" : "20px" }, 50, function() {
-            $("div#notification-overlay span.mac").html($(this).attr("id"));
-            $("div#notification-overlay span.message").html(message);
-            $("div#notifications .callout").remove();
-            $("div#notifications .callout-border").remove();
-            $(this).append('<span class="fade callout-border"></span>');
-            $(this).append('<span class="fade callout"></span>');
-            $("#notification-overlay").fadeIn(100);
-            $("div#notifications .fade").fadeIn(150);
-          });
-      }, function() {
-        $("#notification-overlay").fadeOut(150);
-        $("div#notifications .fade").fadeOut(100, function() {
-            $("div#notifications .callout").remove();
-            $("div#notifications .callout-border").remove();
-          });
-        $(this).stop().looped({ "bottom" : "10px" }, 
-                              { "bottom" : "0px"  }, 500);
-      });
-      
-    notification.click(function() {
-        $(this).unbind();
-        $(this).remove();
-        $("#notification-overlay").fadeOut(100);
-        $("div#notifications .fade").fadeOut(50, function() {
-            $("div#notifications .callout").remove();
-            $("div#notifications .callout-border").remove();
-          });
-      });
 
     return notification;      
   }

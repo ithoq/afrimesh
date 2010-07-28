@@ -39,18 +39,18 @@ a:hover   { text-decoration: none; }
 /* - styles --------------------------------------------------------------- */
 h1 {
   font-size: 1.85em;
-  /*padding-bottom: .75em;*/
+  padding-bottom: .75em;
 }
 
 h2 {
   font-size: 1.5em;
   font-weight: bold;
-  /*padding-bottom: .75em;*/
+  padding-bottom: .75em;
 }
 
 h3 {
   font-size: 1.25em;
-  /*padding-bottom: .75em;*/
+  padding-bottom: .75em;
 }
 
 
@@ -64,6 +64,9 @@ th     { border-bottom: 1px solid lightgray; }*/
 input[type=text], input[type=password] {  
   border: 1px solid gray;
   font-size: 1.0em;
+}
+input.blur {
+  color : gray;
 }
 
 
@@ -209,8 +212,8 @@ div#notification-overlay {
   position   : absolute; 
   right      : 10px; 
   bottom     : 95px;
-  width      : 400px;
-  height     : 100px;
+  min-width  : 300px;
+  min-height : 100px;
   padding    : 0.5em;
   background : rgba(255,255,255,0.95);
   display : none;

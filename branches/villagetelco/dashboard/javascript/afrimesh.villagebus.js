@@ -216,7 +216,7 @@ var BootVillageBus = function (afrimesh) {
 
   // notify continuation whenever new message(s) are available in the queue
   villagebus.mq.Bind = function(name, continuation, rate) {
-    var queue = "/@root/db/keys/message:" + name + ":*";
+    var queue = "/@root/db/keys/message:" + name;
     continuation.mq          = { };
     continuation.mq.timer    = undefined;
     continuation.mq.messages = { };
