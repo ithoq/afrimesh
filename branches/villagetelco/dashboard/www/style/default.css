@@ -61,6 +61,9 @@ th     { border-bottom: 1px solid lightgray; }*/
 
 
 /* - better default inputs ------------------------------------------------ */
+input {
+  vertical-align: top; /* wtf? */
+}
 input[type=text], input[type=password] {  
   border: 1px solid gray;
   font-size: 1.0em;
@@ -212,8 +215,8 @@ div#notification-overlay {
   position   : absolute; 
   right      : 10px; 
   bottom     : 95px;
-  min-width  : 300px;
-  min-height : 100px;
+  min-width  : 150px;
+  min-height : 50px;
   padding    : 0.5em;
   background : rgba(255,255,255,0.95);
   display : none;

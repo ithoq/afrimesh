@@ -59,9 +59,9 @@ void provision_init()
   Provision->delimiter = (string*)send(String, s_new, L":", 1); // MAC delimiter
   Provision->device_id  = (string*)send(String, s_string_fromwchar, L"device:id");
   Provision->device_ids = (string*)send(String, s_string_fromwchar, L"device:ids");
-  Provision->provision_device  = (string*)send(String, s_string_fromwchar, L"provision:device:");
-  Provision->provision_mac     = (string*)send(String, s_string_fromwchar, L"provision:mac:");
-  Provision->message_provision = (string*)send(String, s_string_fromwchar, L"message:device:provision:");
+  Provision->provision_device  = L"provision:%S:device";
+  Provision->provision_mac     = L"provision:%S:mac";
+  Provision->message_provision = L"message:device:%S:provision";
   // register module with VillageBus 
   s_provision = (symbol*)symbol_intern(0, 0, L"provision");
   fexp* module = (fexp*)send(Fexp, s_new, s_provision, Provision);
@@ -143,8 +143,9 @@ const fexp* provision_ip (closure* c, provision* self, const fexp* message)
 
     // check for an outstanding provisioning notification for this mac
     fexp* f = fexp_nil;
-    string* message_provision = (string*)send(self->message_provision, 
-                                              s_string_add, mac);
+    string* message_provision = (string*)send(String, s_string_fromwchar, 
+                                              self->message_provision, 
+                                              mac->buffer);
     f = (fexp*)send(f, s_fexp_cons, message_provision);
     string* notification = (string*)send(DB, s_db_get, f);
     if ((fexp*)notification != fexp_nil) {
@@ -162,14 +163,15 @@ const fexp* provision_ip (closure* c, provision* self, const fexp* message)
     // register interface details with database
     string* id = (string*)send(DB, s_db_incr, self->device_id);  // incr device:id
     send(DB, s_db_sadd, self->device_ids, id);                   // sadd device:ids
-    string* provision_device = (string*)send(self->provision_device,
-                                             s_string_add, address);
-    string* provision_mac    = (string*)send(self->provision_mac, 
-                                             s_string_add, address);
-    send(DB, s_db_set,  provision_device, id);                   // set  provision:device:<ip> id
-    send(DB, s_db_set,  provision_mac,    mac);                  // set  provision:mac:<ip>    mac
-    reply = (fexp*)send(String, s_string_fromwchar, 
-                        L"%S %S %S %S", 
+    string* provision_device = (string*)send(String, s_string_fromwchar, 
+                                             self->provision_device,
+                                             address->buffer);
+    string* provision_mac    = (string*)send(String, s_string_fromwchar,
+                                             self->provision_mac, 
+                                             address->buffer);
+    send(DB, s_db_set,  provision_device, id);                   // set  provision:<ip>:device device.id
+    send(DB, s_db_set,  provision_mac,    mac);                  // set  provision:<ip>:mac    mac
+    reply = (fexp*)send(String, s_string_fromwchar, L"%S %S %S %S", 
                         id->buffer, 
                         mac->buffer, 
                         address->buffer, 

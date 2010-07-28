@@ -22,7 +22,7 @@ function BootDevice(parent) {
    * Returns instantaneous DB data for the device at address
    */
   device.status = function(address, continuation) {
-    var name = afrimesh.villagebus.Name("/@root/db/device:status/" + address);
+    var name = afrimesh.villagebus.Name("/@root/db/device:" + address + "/status");
     name = afrimesh.villagebus.Bind(name, function(error, response) {
         if (error) return continuation(error, null);
         return continuation(error, response);
@@ -38,7 +38,7 @@ function BootDevice(parent) {
   device.interface = {};
   // TODO - device.interface.list 
   device.interface.history = function(address, continuation, range) {
-    var name = afrimesh.villagebus.Name("/@root/db/lrange/interface:history/" + address);
+    var name = afrimesh.villagebus.Name("/@root/db/lrange/interface:" + address + "/history");
     name = afrimesh.villagebus.Bind(name, function(error, response) {
         if (error) return continuation(error, null);  // TODO - return Fail(error, continuation) maybe ?
         return continuation(error, response);

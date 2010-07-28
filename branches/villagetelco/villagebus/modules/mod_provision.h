@@ -40,9 +40,9 @@ typedef struct _provision {
   string* delimiter;
   string* device_id;
   string* device_ids;
-  string* provision_device;
-  string* provision_mac;
-  string* message_provision;
+  wchar_t* provision_device;
+  wchar_t* provision_mac;
+  wchar_t* message_provision;
 } provision;
 extern vtable* provision_vt;
 extern object* _Provision;

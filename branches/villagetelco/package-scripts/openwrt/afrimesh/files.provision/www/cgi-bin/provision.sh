@@ -42,6 +42,8 @@ pubkey=`dropbearkey -y -f /etc/dropbear/dropbear_rsa_host_key | head -2 | tail -
 #   Router rsa public key
 #   List of interfaces to provision
 #
+# TODO - actually send and use the json request :)
+#
 json="{ \
   'self'       : '$self', \
   'pubkey'     : '$pubkey', \

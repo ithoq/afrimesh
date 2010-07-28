@@ -39,11 +39,14 @@
   <hr />
   <span class="text">A message</span>
   <div id="link" class="round-small" style="display:none;">
-    <input type="text" id="firstname" title="first name"/>
-    <input type="text" id="lastname"  title="last name"/>
-    <input type="text" id="email"     title="email"/><br/>
-    <input type="text" id="longitude" title="longitude"/>
-    <input type="text" id="latitude"  title="latitude"/><br/>
+
+    <input type="text" id="firstname" title="first name" style="width: 10em;"/>
+    <input type="text" id="lastname"  title="last name"  style="width: 10em;"/>
+    <input type="text" id="email"     title="email"      style="width: 15em;"/>
+    <img src="images/find.png" width="24" height="24" />
+    <div style="height:5px;" />
+    <input type="text" id="longitude" title="longitude"  style="width: 10em;"/>
+    <input type="text" id="latitude"  title="latitude"   style="width: 10em;"/>
     <div style="text-align:right;">
       <button id="save">save</button>
       <button id="cancel">cancel</button>
@@ -112,11 +115,11 @@ function() {
     };
 
     // register for provisioning notifications
-    var name = afrimesh.villagebus.mq.Bind("device:provision:*", function(error, notification) {
+    var name = afrimesh.villagebus.mq.Bind("device:*:provision", function(error, notification) {
         if (error) return console.error("Notification: " + error);
         console.log("New Device Provisioned!!!");
         console.log(notification);
-        var n1 = new_notification(notification, "Click to link this device to its owner");
+        var n1 = new_notification(notification, "Click to set map position and link owner.");
       });
 
     // activate input hints
@@ -151,9 +154,10 @@ function() {
               $("div#notifications .callout-border").remove();
             });
           console.log("Linking device to person");
-          // add calback to notification to do stuff and clear message from queue
-          // TODO - link/register user to device
+
+          // TODO - link/register user to device on save
           // TODO - provision voip
+
         });
       $("div#notification-overlay div#link button#cancel").click(function() {
           $("div#notification-overlay .text").show();

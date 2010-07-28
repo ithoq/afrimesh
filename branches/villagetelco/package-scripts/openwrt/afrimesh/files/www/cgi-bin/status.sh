@@ -14,11 +14,11 @@ self=`uci get network.$device.ipaddr`
 root=`uci get afrimesh.@settings[0].root`
 device_id=`uci get afrimesh.@settings[0].deviceid`
 mac=`ifconfig $interface | grep HWaddr | awk '{ print $5 }'`
-path_info="$root/db/device/status/$self"
-path_stat="$root/db/interface/history/$self"
+path_info="$root/db/device:$self:status"
+path_stat="$root/db/interface:$self:history"
 
 # don't report status info for unprovisioned devices
-#[ -z "$device_id" ] && exit
+[ -z "$device_id" ] && exit
 
 # misc information
 timestamp=`date +%s`000
