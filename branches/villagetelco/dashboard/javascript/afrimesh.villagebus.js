@@ -151,6 +151,12 @@ var BootVillageBus = function (afrimesh) {
     return villagebus.Send(name, args);
   };
 
+  villagebus.DELETE = function(name, args, raw) {
+    name      = jsonp_to_json(name, null, raw);
+    name.type = "DELETE";
+    return villagebus.Send(name, args);
+  };
+
   // jsonp does not support POST so we need to adjust our strategy to use JSON 
   function jsonp_to_json(name, data, raw) {
     if (data) {
@@ -248,14 +254,20 @@ var BootVillageBus = function (afrimesh) {
     return name;
   };
   
+  // delete message(s) from the queue
+  // TODO - notify everyone subscribed to the queue
+  // e.g. del message:device:<mac>:provision
+  villagebus.mq.DELETE = function(name, continuation) {
+    name = afrimesh.villagebus.Bind("/@root/db/message:" + name, continuation);
+    return afrimesh.villagebus.DELETE(name);  //TODO crap, seems like jQuery DELETE support is utterly borkened
+    //name = afrimesh.villagebus.Bind("/@root/db/del/message:" + name, continuation);
+    //return afrimesh.villagebus.GET(name);
+  };
 
   // add a new message to the queue
   villagebus.mq.POST = function(name, message, continuation) {
   };
 
-  // delete a message from the queue
-  villagebus.mq.DELETE = function(message, continuation) {
-  };
   
 
 

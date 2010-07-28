@@ -74,8 +74,22 @@ function BootPerson(parent) {
 
   };
 
-  person.load = function(email) {
+  person.load = function(email, continuation) {
   };
+
+
+  /**
+   * Link the given device ip to a person id
+   *
+   * set provision:<device.ip>:person = person.id
+   */
+  person.link = function(person, device, continuation) {
+    var name = afrimesh.villagebus.Bind("/@root/db/provision:" + device.ip + ":person", function(error, response) {
+        return continuation(error, person);
+      });
+    return afrimesh.villagebus.PUT(name, person.id);     
+  };
+
 
   /*
   customers.status  = function(continuation) {

@@ -46,6 +46,7 @@ object* s_db_lpush   = 0;
 object* s_db_incr    = 0; 
 object* s_db_set     = 0; 
 object* s_db_sadd    = 0;
+object* s_db_del     = 0;
 
 
 void db_init()
@@ -66,6 +67,7 @@ void db_init()
   s_db_incr    = symbol_intern(0, _DB, L"incr");
   s_db_set     = symbol_intern(0, _DB, L"_set"); // TODO - don't alias getset to set
   s_db_sadd    = symbol_intern(0, _DB, L"sadd");
+  s_db_del     = symbol_intern(0, _DB, L"del");
   send(db_vt, s_addMethod, s_db_connect, db_connect);
   send(db_vt, s_addMethod, s_db_close,   db_close);
   send(db_vt, s_addMethod, s_db_keys,    db_keys);
@@ -76,6 +78,7 @@ void db_init()
   send(db_vt, s_addMethod, s_db_incr,    db_incr);
   send(db_vt, s_addMethod, s_db_set,     db_set);
   send(db_vt, s_addMethod, s_db_sadd,    db_sadd);
+  send(db_vt, s_addMethod, s_db_del,     db_del);
 
   // global module instance vars
   DB = (db*)send(_DB->_vt[-1], s_allocate, sizeof(db));
@@ -129,6 +132,9 @@ const fexp* db_evaluate(closure* c, db* self, const fexp* expression)
   case GET:
     reply = (fexp*)send(self, s_db_get, expression);
     break;
+  case DELETE:
+    reply = (fexp*)send(self, s_db_del, expression);
+    break;
   default:
     reply = (fexp*)send(VillageBus, 
                         s_villagebus_error, 
@@ -176,12 +182,10 @@ const fexp* db_close(closure* c, db* self)
  */
 const fexp* db_keys(closure* c, db* self, const fexp* message)
 {
-  fexp* reply = fexp_nil;
-
-  string* key  = (string*)send(message, s_fexp_join, self->delimiter);  // generate a key from message
+  fexp*   reply = fexp_nil;
+  string* key   = (string*)send(message, s_fexp_join, self->delimiter);  // generate a key from message
+  char*   keyc  = (char*)send(key, s_string_tochar); // TODO - redis not support UNICODE so much
   wprintl(L"GET /db/keys/%S\n", key->buffer);
-  char*  keyc = (char*)send(key, s_string_tochar); // TODO - redis not support UNICODE so much
-
   char** bufferv;
   int i;
   for (i = 0; i < credis_keys(self->handle, keyc, &bufferv); i++) {
@@ -190,7 +194,6 @@ const fexp* db_keys(closure* c, db* self, const fexp* message)
     reply = (fexp*)send(reply, s_fexp_cons, item);
   }
   free(keyc);
-
   return reply;
 }
 
@@ -204,21 +207,18 @@ const string* db_get(closure* c, db* self, const fexp* message)
 {
   object* reply = (object*)fexp_nil;
   string* key   = (string*)send(message, s_fexp_join, self->delimiter); 
-  char* keyc    = (char*)send(key, s_string_tochar); 
-
-  char* val;
+  char*   keyc  = (char*)send(key, s_string_tochar); 
+  char*   val;
   int rc = credis_get(self->handle, keyc, &val);
   wprintl(L"GET /db/get/%S -> %d\n", key->buffer, rc);
-
   if (rc == -1) {                       // key does not exist
     reply = (object*)fexp_nil;
   } else if (rc != 0 || val == NULL) {  // error
     reply = send(VillageBus, s_villagebus_error, L"get failed %s", keyc);
-  } else {
+  } else {                              // success
     reply = send(String, s_string_fromchar, val, strlen(val));
   }
   free(keyc);
-  
   return (string*)reply;
 }
 
@@ -346,6 +346,25 @@ const fexp* db_lpush(closure* c, db* self, const fexp* message, const unsigned c
 
   return reply;
 }
+
+
+/* - DELETE ------------------------------------------------------------- */
+const fexp* db_del(closure* c, db* self, const fexp* message)
+{
+  fexp*   reply = fexp_nil;
+  string* key   = (string*)send(message, s_fexp_join, self->delimiter); 
+  char*   keyc  = (char*)send(key, s_string_tochar); 
+  int     rc    = credis_del(self->handle, keyc);
+  wprintl(L"DELETE /db/del/%S -> %d\n", key->buffer, rc);
+  if (rc == 0) {           // success             
+  } else if (rc == -1) {   // key does not exist
+  } else {                 // error
+    reply = (fexp*)send(VillageBus, s_villagebus_error, L"del failed %s", keyc);
+  }
+  free(keyc);
+  return reply;
+}
+
 
 
 /* - TODO --------------------------------------------------------------- */

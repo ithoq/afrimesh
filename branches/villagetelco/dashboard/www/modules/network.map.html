@@ -39,7 +39,6 @@
   <hr />
   <span class="text">A message</span>
   <div id="link" class="round-small" style="display:none;">
-
     <input type="text" id="firstname" title="first name" value="bob"   style="width: 10em;"/>
     <input type="text" id="lastname"  title="last name"  value="smith" style="width: 10em;"/>
     <input type="text" id="email"     title="email"      value="bob@smith.com" style="width: 15em;"/>
@@ -52,7 +51,6 @@
       <button id="cancel">cancel</button>
     </div>
   </div>
-
 </div>
 
 
@@ -141,52 +139,64 @@ function() {
     var notification = $(document.createElement("div")).addClass("notification")
                                                        .attr("id", device.mac)
                                                        .appendTo("#notifications");
+
+    function link_person_to_device(person, device, continuation) {
+      afrimesh.person.save(person, function(error, person) {  // save person info and get id
+          if (error) return continuation(error, person);
+          console.log("Linking device " + device.ip + " to person: " + person.id);
+          afrimesh.person.link(person, device, continuation);
+        });
+    };
+
+    function remove_notification(notification, device, continuation) {
+      // del message:device:<mac>:provision
+      afrimesh.villagebus.mq.DELETE("device:" + device.mac + ":provision", function(error, response) {
+          if (error) {
+            $("div#notification-overlay div#link button#cancel").click(); // cancel save
+            return continuation(error, response);
+          }
+          notification.remove();
+          $("div#notification-overlay").fadeOut(100);
+          $("div#notifications .fade").fadeOut(50, function() {
+              $("div#notifications .callout").remove();
+              $("div#notifications .callout-border").remove();
+            });
+          return continuation(error, response);
+        });
+    };
+
+    // User clicked on notification
     function click_fn() {
       var clicked = $(this);
       clicked.unbind();
       $("div#notification-overlay .text").hide();
       $("div#notification-overlay #link").show();
-      $("div#notification-overlay div#link button#save").click(function() { // Save user info
 
-          // grab input field values
+      // Save
+      $("div#notification-overlay div#link button#save").click(function() { // Save user info
           var person = {
             firstname : $("div#link input#firstname").val(),
             lastname  : $("div#link input#lastname").val(),
             email     : $("div#link input#email").val()
           };
+          link_person_to_device(person, device, function(error, result) {
+              if (error) return console.error("Could not link person to device: " + error);
+              remove_notification(clicked, device, function(error, result) {
+                  if (error) return console.error("Could not delete provisioning notification: " + error);
+                  console.log("Finished linking person to device.");
+                });
+            });
+          // TODO - save location
           var location = {
             longitude : $("div#link input#longitude").val(),
             latitude  : $("div#link input#latitude").val()
           };
-
-          // save person info and get id
-          afrimesh.person.save(person, function(error, person) { 
-              if (error) {
-                $("div#notification-overlay div#link button#cancel").click(); // cancel save
-                return console.error("Could not save user: " + error);
-              }
-              console.log("Finished saving person");
-              // set provision:<ip>:person = person.id
-              // set device:<ip>:location  = { longitude, latitude }
-              // del message:device:<mac>:provision
-
-              // remove notification if success
-              clicked.remove();
-              $("div#notification-overlay").fadeOut(100);
-              $("div#notifications .fade").fadeOut(50, function() {
-                  $("div#notifications .callout").remove();
-                  $("div#notifications .callout-border").remove();
-                });
-
-
-            });
-
-          // TODO - link/register user to device on save
-          // TODO - provision voip
-
-
-
+          // TODO set device:<ip>:location  = { longitude, latitude }
+          //afrimesh.device.location.set(address, location.longitude, location.latitude, function(error, result) {
+          //  });
         });
+ 
+      // cancel
       $("div#notification-overlay div#link button#cancel").click(function() {
           $("div#notification-overlay .text").show();
           $("div#notification-overlay #link").hide();

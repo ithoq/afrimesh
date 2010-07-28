@@ -123,7 +123,8 @@ var Map = undefined;
       feature.id = router.address;
       feature.router = router;
       the_map.routers.addFeatures([feature]);
-      afrimesh.device.location(router.address, function (longitude, latitude) {
+      afrimesh.device.location(router.address, function (error, longitude, latitude) {
+          if (error) return console.error(error);
           feature.geometry = new Point(longitude, latitude);
           the_map.routers.redraw();
         });

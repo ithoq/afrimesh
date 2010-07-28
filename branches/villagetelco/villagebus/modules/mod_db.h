@@ -55,6 +55,7 @@ extern object* s_db_lpush;
 extern object* s_db_incr; 
 extern object* s_db_set; 
 extern object* s_db_sadd;
+extern object* s_db_del; 
 
 void        db_init();
 db*         db_print(closure* c, db* self);
@@ -71,6 +72,9 @@ const string* db_incr  (closure* c, db* self, const fexp* message);             
 
 // POST
 const fexp*   db_lpush(closure* c, db* self, const fexp* message, const unsigned char* data);  // list
+
+// DELETE
+const fexp* db_del(closure* c, db* self, const fexp* message); // any
 
 // Helper
 const fexp* db_connect(closure* c, db* self);

@@ -97,9 +97,10 @@ function BootDevice(parent) {
    * Device location
    */
   device.location = function(address, continuation) {
+    // set on device
     return device.configuration(address, "afrimesh.location", function (error, config) {
         if (error) return continuation(error, null); // TODO - return Fail(error, continuation) maybe ? 
-        return continuation(config.afrimesh.location.longitude, config.afrimesh.location.latitude);
+        return continuation(null, config.afrimesh.location.longitude, config.afrimesh.location.latitude); // TODO - fix
       });
   };
   device.location.set = function(address, longitude, latitude, continuation) {
