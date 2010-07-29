@@ -263,13 +263,13 @@ const fexp* provision_handset(closure* c, provision* self, const fexp* message)
   // TODO - check if this handset is already linked to a device
 
   // TODO - Read IP address for TRUNK from VTE server UCI config 
-  string* trunk = (string*)send(String, s_new, L"192.168.20.230"); 
+  string* trunk = (string*)send(String, s_string_fromwchar, L"10.0.0.1"); 
   
   // TODO - Tell A2Billing @ trunk about this handset
 
   // TODO - Ask A2Billing for a username&secret
-  string* username = (string*)send(String, s_new, L"7001");
-  string* secret   = (string*)send(String, s_new, L"secret");
+  string* username = (string*)send(String, s_string_fromwchar, L"potato");
+  string* secret   = (string*)send(String, s_string_fromwchar, L"potato");
 
   // connect to data store
   fexp* error = (fexp*)send(DB, s_db_connect);
@@ -280,7 +280,6 @@ const fexp* provision_handset(closure* c, provision* self, const fexp* message)
   // register handset details with data store
   fexp*   handset    = (fexp*)send(fexp_nil, s_fexp_cons, self->handset_id);
   string* handset_id = (string*)send(DB, s_db_incr, handset);  // incr handset:id
-
   string* provision_handset = (string*)send(String, s_string_fromwchar, 
                                             self->provision_handset,
                                             device->buffer);
@@ -289,16 +288,16 @@ const fexp* provision_handset(closure* c, provision* self, const fexp* message)
   // TODO - register provisioning request w/ notification queue ?
 
   // Return IP address, username, secret & any other config for the given handset
-  fexp* reply = (fexp*)send(String, s_string_fromwchar, L"%S %S %S %S",
-                            handset_id->buffer, 
-                            trunk->buffer, 
-                            username->buffer, 
-                            secret->buffer); 
+  string* reply = (string*)send(String, s_string_fromwchar, L"%S %S %S %S",
+                                handset_id->buffer,
+                                trunk->buffer,
+                                username->buffer, 
+                                secret->buffer);
  done:
   // clean up
   send(DB, s_db_close);
   
-  return reply; 
+  return (fexp*)reply; 
 }
 
 

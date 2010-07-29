@@ -1,5 +1,9 @@
 #!/usr/bin/env sh
 
+# - die if initial device provisioning has not taken place -----------------
+[ -z `uci get afrimesh.@settings[0].deviceid 2> /dev/null` ] && exit
+
+
 # - factory setup ----------------------------------------------------------
 factory_provisiond="/cgi-bin/provisiond-handset"
 
@@ -12,14 +16,11 @@ a2billing=""  # TODO - when the user punches in a2billing code, is it saved on p
               #        or will it be saved by the remote and waiting for us?
 
 # - 1. Build handset provisioning request ----------------------------------
-#
-json="{ 'self'      : '$self' 
-        'a2billing' : '$a2billing' }"
+json="{ 'self' : '$self', 'a2billing' : '$a2billing' }"
 name="/provision/handset/$device"
 
 
 # - 2. Send handset provisioning request to mesh root ----------------------
-#
 REQUEST="POST $factory_provisiond$name HTTP/1.0
 Content-Type:   application/json
 Content-Length: ${#json}
@@ -27,9 +28,7 @@ Content-Length: ${#json}
 $json"
 echo "- sending provisioning request -------------------------"
 echo "$REQUEST"
-echo "--------------------------------------------------------"
 echo
-echo "- provisiond reply -------------------------------------"
 echo -n "$REQUEST" | nc $root 80 | sed '/HTTP.*OK/,/Content-Type: application\/x-tar/d; 1d' >& /tmp/provision-handset.tar.gz
 echo "--------------------------------------------------------"
 echo

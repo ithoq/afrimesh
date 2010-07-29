@@ -62,7 +62,9 @@ fi
 # - forward request to villagebus & ask for handset settings ---------------
 log "- provisioning handset --"
 REQUEST_METHOD=CONSOLE
-provisioned=(`$VILLAGEBUS GET "$PATH_INFO?$QUERY_STRING"`)
+REPLY=`$VILLAGEBUS GET "$PATH_INFO?$QUERY_STRING"`
+log "Raw villagebus reply: $REPLY"
+provisioned=($REPLY)
 provisioned_id=${provisioned[0]} 
 provisioned_trunk=${provisioned[1]} 
 provisioned_username=${provisioned[2]}

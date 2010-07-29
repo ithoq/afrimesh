@@ -11,33 +11,33 @@
 
 --
 
+# - object ids
 device:id                       COUNTER
 device:ids                      SET      # TODO
+person:id                       COUNTER
+person:ids                      SET      # TODO
+handset:id                      COUNTER  # NEW
+handset:ids                     SET      # TODO
 
-# device status & history
+# - device status & history
 device:<ip>:status              STRING   { uname, idle, traffic etc. }      
 interface:<ip>:history          LIST     { pings, radio etc.         }      
 
-# provisioning  TODO - provenance be interface based on the lowliest level
+# - provisioning  TODO - provenance be interface based on the lowliest level
 provision:<ip>:mac              STRING   mac                                
 provision:<ip>:device           STRING   device.id                          
-provision:<ip>:person           STRING   device.id 
-                         
-provision:<device>:handset      STRING   handset.id
+provision:<ip>:person           STRING   person.id 
+provision:<device.id>:handset   STRING   handset.id   #NEW
 
-# provisioning notifications
-message:device:<mac>:provision  STRING   { device.id, ip, mac }
+# - device
+device:<ip>:location            STRING  { longitude, latitude }  $TODO
 
---
-
-person:id                       COUNTER
-person:ids                      SET     # TODO
-
+# - person
 person:<email>:id               STRING  person.id
 person:<id>:details             STRING  { person.id, firstname, lastname, email }
 
-device:<ip>:location            STRING  { longitude, latitude }
+# - handset
+handset:<id>:??? <------- HERE
 
---
-
-
+# notifications
+message:device:<mac>:provision  STRING  { device.id, ip, mac }

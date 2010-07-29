@@ -1,5 +1,9 @@
 #!/usr/bin/env sh
 
+# - die if we are already provisioned --------------------------------------
+[ ! -z `uci get afrimesh.@settings[0].deviceid 2> /dev/null` ] && exit
+
+
 # - factory setup ----------------------------------------------------------
 factory_ssid=batman
 factory_channel=5
@@ -26,7 +30,8 @@ eth0_mac=`ifconfig $eth0_interface | grep HWaddr | awk '{ print $5 }'`
 
 # - villagebus configuration -----------------------------------------------
 self=$wifi0_address
-root=$factory_root
+root=`uci get afrimesh.@settings[0].root`
+[ -z $root ] && root=$factory_root
 
 
 # - router pubkey ----------------------------------------------------------
@@ -86,9 +91,7 @@ Content-Length: ${#json}
 $json"
 echo "- sending provisioning request -------------------------"
 echo "$REQUEST"
-echo "--------------------------------------------------------"
 echo
-echo "- provisiond reply -------------------------------------"
 echo -n "$REQUEST" | nc $root 80 | sed '/HTTP.*OK/,/Content-Type: application\/x-tar/d; 1d' >& /tmp/provision.tar.gz
 echo "--------------------------------------------------------"
 echo
