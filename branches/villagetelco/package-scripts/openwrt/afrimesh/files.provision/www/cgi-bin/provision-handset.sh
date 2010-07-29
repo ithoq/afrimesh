@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 # - die if initial device provisioning has not taken place -----------------
-[ -z `uci get afrimesh.@settings[0].deviceid 2> /dev/null` ] && exit
+[ -z `uci get afrimesh.settings.deviceid 2> /dev/null` ] && exit
 
 
 # - factory setup ----------------------------------------------------------
@@ -10,8 +10,8 @@ factory_provisiond="/cgi-bin/provisiond-handset"
 
 # - villagebus configuration -----------------------------------------------
 self=$wifi0_address
-root=`uci get afrimesh.@settings[0].root`
-device=`uci get afrimesh.@settings[0].deviceid`
+root=`uci get afrimesh.settings.root`
+device=`uci get afrimesh.settings.deviceid`
 a2billing=""  # TODO - when the user punches in a2billing code, is it saved on phone
               #        or will it be saved by the remote and waiting for us?
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 # - die if we are already provisioned --------------------------------------
-[ ! -z `uci get afrimesh.@settings[0].deviceid 2> /dev/null` ] && exit
+[ ! -z `uci get afrimesh.settings.deviceid 2> /dev/null` ] && exit
 
 
 # - factory setup ----------------------------------------------------------
@@ -30,7 +30,7 @@ eth0_mac=`ifconfig $eth0_interface | grep HWaddr | awk '{ print $5 }'`
 
 # - villagebus configuration -----------------------------------------------
 self=$wifi0_address
-root=`uci get afrimesh.@settings[0].root`
+root=`uci get afrimesh.settings.root`
 [ -z $root ] && root=$factory_root
 
 
