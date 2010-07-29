@@ -41,7 +41,8 @@ vtable* provision_vt = 0;
 object* _Provision = 0;
 provision* Provision  = 0;
 symbol* s_provision = 0;
-symbol* s_provision_ip  = 0;
+symbol* s_provision_interface = 0;
+symbol* s_provision_handset   = 0;
 
 void provision_init()
 {
@@ -51,17 +52,21 @@ void provision_init()
   _Provision = send(provision_vt, s_allocate, 0);
 
   // register local symbols
-  s_provision_ip  = (symbol*)symbol_intern(0, _Provision, L"ip");
-  send(provision_vt, s_addMethod, s_provision_ip,  provision_ip);
+  s_provision_interface  = (symbol*)symbol_intern(0, _Provision, L"interface");
+  s_provision_handset = (symbol*)symbol_intern(0, _Provision, L"handset");
+  send(provision_vt, s_addMethod, s_provision_interface,  provision_interface);
+  send(provision_vt, s_addMethod, s_provision_handset,    provision_handset);
 
   // global module instance vars
   Provision = (provision*)send(_Provision->_vt[-1], s_allocate, sizeof(provision));
-  Provision->delimiter = (string*)send(String, s_new, L":", 1); // MAC delimiter
-  Provision->device_id  = (string*)send(String, s_string_fromwchar, L"device:id");
-  Provision->device_ids = (string*)send(String, s_string_fromwchar, L"device:ids");
+  Provision->delimiter   = (string*)send(String, s_new, L":", 1); // MAC delimiter
+  Provision->device_id   = (string*)send(String, s_string_fromwchar, L"device:id");
+  Provision->handset_id  = (string*)send(String, s_string_fromwchar, L"handset:id");
   Provision->provision_device  = L"provision:%S:device";
   Provision->provision_mac     = L"provision:%S:mac";
-  Provision->message_provision = L"message:device:%S:provision";
+  Provision->provision_handset = L"provision:%S:handset";
+  Provision->message_device    = L"message:device:%S:provision";
+  Provision->message_handset   = L"message:handset:%S:provision";
   // register module with VillageBus 
   s_provision = (symbol*)symbol_intern(0, 0, L"provision");
   fexp* module = (fexp*)send(Fexp, s_new, s_provision, Provision);
@@ -102,7 +107,7 @@ const fexp* provision_evaluate(closure* c, provision* self, const fexp* expressi
  *                           char            sin_zero[8];
  *   };
  */
-const fexp* provision_ip (closure* c, provision* self, const fexp* message)
+const fexp* provision_interface (closure* c, provision* self, const fexp* message)
 {
   Request* request = VillageBus->request; 
 
@@ -143,10 +148,10 @@ const fexp* provision_ip (closure* c, provision* self, const fexp* message)
 
     // check for an outstanding provisioning notification for this mac
     fexp* f = fexp_nil;
-    string* message_provision = (string*)send(String, s_string_fromwchar, 
-                                              self->message_provision, 
+    string* message_device = (string*)send(String, s_string_fromwchar, 
+                                              self->message_device, 
                                               mac->buffer);
-    f = (fexp*)send(f, s_fexp_cons, message_provision);
+    f = (fexp*)send(f, s_fexp_cons, message_device);
     string* notification = (string*)send(DB, s_db_get, f);
     wprintl(L"GOT NOTIFICATION: %S\n", notification->buffer);
     if ((fexp*)notification != fexp_nil) {
@@ -166,22 +171,20 @@ const fexp* provision_ip (closure* c, provision* self, const fexp* message)
     fexp* device_id = fexp_nil;
     device_id = (fexp*)send(device_id, s_fexp_cons, self->device_id);
     string* id = (string*)send(DB, s_db_incr, device_id);  // incr device:id
-    //send(DB, s_db_sadd, self->device_ids, id);             // TODO -sadd device:ids
     string* provision_device = (string*)send(String, s_string_fromwchar, 
                                              self->provision_device,
                                              address->buffer);
     string* provision_mac    = (string*)send(String, s_string_fromwchar,
                                              self->provision_mac, 
                                              address->buffer);
-
     send(DB, s_db_set,  provision_device, id);                   // set  provision:<ip>:device device.id
     string* json_mac = (string*)send(mac, s_tojson, false);
     send(DB, s_db_set,  provision_mac, json_mac);                // set  provision:<ip>:mac    mac
     reply = (fexp*)send(String, s_string_fromwchar, L"%S %S %S %S",
                         id->buffer, 
                         mac->buffer, 
-                        address->buffer, 
-                        L"10.0.0.1"); 
+                        address->buffer,  
+                        L"10.0.0.1");    // TODO - read from VTE server UCI config
 
     // register provisioning request w/ notification queue
     // TODO - we should really only be setting this once the device has
@@ -194,7 +197,7 @@ const fexp* provision_ip (closure* c, provision* self, const fexp* message)
                                  "'ip' : '%S', "
                                  "'mac' : '%S' }",
                                  id->buffer, address->buffer, mac->buffer);
-    send(DB, s_db_set, message_provision, notification);
+    send(DB, s_db_set, message_device, notification);
 
   done:
     // clean up
@@ -250,7 +253,54 @@ const fexp* provision_ip (closure* c, provision* self, const fexp* message)
 }
 
 
- 
+const fexp* provision_handset(closure* c, provision* self, const fexp* message)
+{
+  // get parameters
+  string* device = (string*)send(message, s_fexp_car); 
+  // string* a2billing = TODO - read json request for a2billing.id ? Else ask Redis?
+  wprintl(L"GET /provision/handset/%S\n", device->buffer);
+
+  // TODO - check if this handset is already linked to a device
+
+  // TODO - Read IP address for TRUNK from VTE server UCI config 
+  string* trunk = (string*)send(String, s_new, L"192.168.20.230"); 
+  
+  // TODO - Tell A2Billing @ trunk about this handset
+
+  // TODO - Ask A2Billing for a username&secret
+  string* username = (string*)send(String, s_new, L"7001");
+  string* secret   = (string*)send(String, s_new, L"secret");
+
+  // connect to data store
+  fexp* error = (fexp*)send(DB, s_db_connect);
+  if (error != fexp_nil) {
+    return error;
+  }
+
+  // register handset details with data store
+  fexp*   handset    = (fexp*)send(fexp_nil, s_fexp_cons, self->handset_id);
+  string* handset_id = (string*)send(DB, s_db_incr, handset);  // incr handset:id
+
+  string* provision_handset = (string*)send(String, s_string_fromwchar, 
+                                            self->provision_handset,
+                                            device->buffer);
+  send(DB, s_db_set, provision_handset, handset_id);           // set provision:<device>:handset <handset.id>
+
+  // TODO - register provisioning request w/ notification queue ?
+
+  // Return IP address, username, secret & any other config for the given handset
+  fexp* reply = (fexp*)send(String, s_string_fromwchar, L"%S %S %S %S",
+                            handset_id->buffer, 
+                            trunk->buffer, 
+                            username->buffer, 
+                            secret->buffer); 
+ done:
+  // clean up
+  send(DB, s_db_close);
+  
+  return reply; 
+}
+
 
 
 /* - Global Handlers ---------------------------------------------------- */

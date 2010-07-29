@@ -34,7 +34,9 @@
 
 #include <villagebus.h>
 
-/* - telephony ---------------------------------------------------------------- */
+// TODO -> s/mod_telephony/mod_handset
+
+/* - telephony ---------------------------------------------------------- */
 typedef struct _telephony {
   vtable* _vt[0];
 } telephony;
@@ -43,6 +45,7 @@ extern object*    _Telephony;
 extern telephony* Telephony;
 extern symbol*    s_telephony;
 extern symbol*    s_telephony_sip;
+extern symbol*    s_telephony_callme;
 
 // base
 void        telephony_init();
@@ -51,6 +54,7 @@ const fexp* telephony_evaluate(closure* c, telephony* self, const fexp* expressi
 
 // names
 const fexp* telephony_sip_asterisk(closure* c, telephony* self, const fexp* message);
+const fexp* telephony_callme      (closure* c, telephony* self, const fexp* message);
 
 // utilities
 struct json_object* asterisk_sip_peers_parser(const char* line, size_t length);

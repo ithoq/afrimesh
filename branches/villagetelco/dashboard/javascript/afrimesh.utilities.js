@@ -464,10 +464,10 @@ console = window.console; //TODO CLEAN
       blurClass = 'blur';
     }
     return this.each(function () {
-      var $input = jQuery(this),
-      title = $input.attr('title'),
-      $form = jQuery(this.form),
-      $win = jQuery(window);
+      var $input = jQuery(this);
+      var title  = $input.attr('title');
+      var $form  = jQuery(this.form);
+      var $win   = jQuery(window);
       function remove() {
         if ($input.val() === title && $input.hasClass(blurClass)) {
           $input.val('').removeClass(blurClass);
@@ -485,7 +485,13 @@ console = window.console; //TODO CLEAN
     });
   };
 
-
+  // TODO - use form.submit to save forms so that fn.hint can do this for you
+  jQuery.fn.hintval = function () {
+    var $input = jQuery(this);
+    var title  = $input.attr('title');
+    var value  = $input.val();
+    return (title == value) ? "" : value;
+  };
 
 
 console.debug("loaded afrimesh.utilities.js");

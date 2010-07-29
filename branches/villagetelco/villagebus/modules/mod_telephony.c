@@ -38,7 +38,8 @@ vtable*    telephony_vt = 0;
 object*    _Telephony   = 0;
 telephony* Telephony    = 0;
 symbol*    s_telephony  = 0;
-symbol*    s_telephony_sip = 0;
+symbol*    s_telephony_sip    = 0;
+symbol*    s_telephony_callme = 0;
 
 void telephony_init() 
 {
@@ -48,8 +49,10 @@ void telephony_init()
   _Telephony = send(telephony_vt, s_allocate, 0);
 
   // register local symbols
-  s_telephony_sip = (symbol*)symbol_intern(0, _Telephony, L"sip"); 
+  s_telephony_sip    = (symbol*)symbol_intern(0, _Telephony, L"sip"); 
+  s_telephony_callme = (symbol*)symbol_intern(0, _Telephony, L"callme"); 
   send(telephony_vt, s_addMethod, s_telephony_sip, telephony_sip_asterisk);
+  send(telephony_vt, s_addMethod, s_telephony_callme, telephony_callme);
 
   // global module instance vars
   Telephony = (telephony*)send(_Telephony->_vt[-1], s_allocate, sizeof(telephony));
@@ -117,6 +120,17 @@ const fexp* telephony_sip_asterisk(closure* c, telephony* self, const fexp* mess
   return (fexp*)send(VillageBus, s_villagebus_error, L"Unknown asterisk sip command: %s", command);
 }
 
+
+/**
+ */
+const fexp* telephony_callme(closure* c, telephony* self, const fexp* message)
+{
+  // get parameters
+  string* handset = (string*)send(message, s_fexp_car); 
+  wprintl(L"GET /telephony/callme/%S\n", handset->buffer);
+
+  return fexp_nil;
+}
 
 
 /* - utilities ---------------------------------------------------------- */

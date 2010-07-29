@@ -4,7 +4,7 @@
 VILLAGEBUS="./villagebus"
 UCI="/usr/local/bin/uci-static"
 PROVISIOND_TMP=/tmp/provisiond.tmp
-BUNDLE_DIR="./provisiond-bundles/mp01.interface"
+BUNDLE_DIR="./provisiond-bundles/mp01.handset"
 LOG=1
 LOGFILE="/tmp/provisiond.log"
 
@@ -39,10 +39,10 @@ else
     close_log
     exit
 fi
-device_ip=`echo "$QUERY_STRING" | grep -oE "(^|[?&])address=[^&]+" | sed "s/%20/ /g" | cut -f 2- -d "="`
-device_mac=${PATH_INFO#/provision/interface/}
+handset_id=${PATH_INFO#/provision/handset/}
+# a2billing_id="" TODO 
+TARBALL_DIR="$PROVISIOND_TMP/handset-${handset_id//:/_}.$$"
 
-TARBALL_DIR="$PROVISIOND_TMP/device-${device_mac//:/_}.$$"
 
 # Log client request
 if [ "$LOG" = "1" ] ; then
@@ -53,24 +53,24 @@ if [ "$LOG" = "1" ] ; then
     log "QUERY_STRING:   $QUERY_STRING"
     log "CONTENT_TYPE:   $CONTENT_TYPE"
     log "CONTENT_LENGTH: $CONTENT_LENGTH"
-    #log "POST_DATA:      $POST_DATA"
+    log "POST_DATA:      $POST_DATA"
     log "BUNDLE_DIR:     $BUNDLE_DIR"
     log "TARBALL_DIR:    $TARBALL_DIR"
 fi
 
 
-# - forward request to villagebus & ask for network settings ---------------
-log "- provisioning device --"
+# - forward request to villagebus & ask for handset settings ---------------
+log "- provisioning handset --"
 REQUEST_METHOD=CONSOLE
 provisioned=(`$VILLAGEBUS GET "$PATH_INFO?$QUERY_STRING"`)
 provisioned_id=${provisioned[0]} 
-provisioned_mac=${provisioned[1]} 
-provisioned_ip=${provisioned[2]} 
-provisioned_root=${provisioned[3]}
-log "Provisioned device:    $provisioned_id"
-log "Provisioned interface: $provisioned_mac"
-log "Provisioned ip:        $provisioned_ip"
-log "Provisioned root:      $provisioned_root"
+provisioned_trunk=${provisioned[1]} 
+provisioned_username=${provisioned[2]}
+provisioned_secret=${provisioned[3]} 
+log "Provisioned handset:  $provisioned_id"
+log "Provisioned trunk:    $provisioned_trunk"
+log "Provisioned username: $provisioned_username"
+log "Provisioned secret:   $provisioned_secret"
 
 
 # - Construct configuration bundle -----------------------------------------
@@ -87,10 +87,9 @@ cp -r "$BUNDLE_DIR" "$TARBALL_DIR"
 find "$TARBALL_DIR" -name .svn -exec rm -rf '{}' ';'
 
 # configure base bundle w/ provisioned values
-wifi0_device=`$UCI get wireless.@wifi-iface[0].device` 
-$UCI set network.$wifi0_device.ipaddr="$provisioned_ip"
-$UCI set afrimesh.@settings[0].deviceid="$provisioned_id"
-$UCI set afrimesh.@settings[0].root="$provisioned_root"
+$UCI set asterisk.sippotato.host="$provisioned_trunk"
+$UCI set asterisk.sippotato.username="$provisioned_username"
+$UCI set asterisk.sippotato.secret="$provisioned_secret"
 
 # commit configuration to provisioning bundle
 log "- The following config changes were provisioned -- "

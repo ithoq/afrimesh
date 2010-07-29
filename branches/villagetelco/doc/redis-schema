@@ -21,7 +21,9 @@ interface:<ip>:history          LIST     { pings, radio etc.         }
 # provisioning  TODO - provenance be interface based on the lowliest level
 provision:<ip>:mac              STRING   mac                                
 provision:<ip>:device           STRING   device.id                          
-provision:<ip>:person           STRING   device.id                          
+provision:<ip>:person           STRING   device.id 
+                         
+provision:<device>:handset      STRING   handset.id
 
 # provisioning notifications
 message:device:<mac>:provision  STRING   { device.id, ip, mac }

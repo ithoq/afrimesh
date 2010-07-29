@@ -19,12 +19,14 @@ function BootPerson(parent) {
   //        dishes than spaghetti! Maybe some nice Gnocchi?
   person.save = function(person, continuation) {
     
+    console.log("SAVING PERSON: " + show(person));
+
     // TODO - some field validation plz
     if (!person ||
         (!person.email     || person.email     == "") ||
         (!person.firstname || person.firstname == "") ||
         (!person.lastname  || person.latname   == "")) {
-      return continuation({ error : "Specify all the user details please." });
+      return continuation("Specify all the user details please.", null);
     }
 
     // 1. look for an existing person with this email

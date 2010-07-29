@@ -194,8 +194,9 @@ endef
 define Package/afrimesh-provision/install
 	$(INSTALL_DIR)  $(1)/etc/init.d
 	$(INSTALL_DIR)  $(1)/www/cgi-bin
-	$(INSTALL_BIN)  ./files.provision/etc/init.d/provision     $(1)/etc/init.d/provision
-	$(INSTALL_BIN)  ./files.provision/www/cgi-bin/provision.sh $(1)/www/cgi-bin/provision
+	$(INSTALL_BIN)  ./files.provision/etc/init.d/provision             $(1)/etc/init.d/provision
+	$(INSTALL_BIN)  ./files.provision/www/cgi-bin/provision.sh         $(1)/www/cgi-bin/provision
+	$(INSTALL_BIN)  ./files.provision/www/cgi-bin/provision-handset.sh $(1)/www/cgi-bin/provision-handset
 endef
 
 

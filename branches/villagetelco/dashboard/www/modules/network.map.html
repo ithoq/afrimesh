@@ -39,9 +39,9 @@
   <hr />
   <span class="text">A message</span>
   <div id="link" class="round-small" style="display:none;">
-    <input type="text" id="firstname" title="first name" value="bob"   style="width: 10em;"/>
-    <input type="text" id="lastname"  title="last name"  value="smith" style="width: 10em;"/>
-    <input type="text" id="email"     title="email"      value="bob@smith.com" style="width: 15em;"/>
+    <input type="text" id="firstname" title="first name" value=""   style="width: 10em;"/>
+    <input type="text" id="lastname"  title="last name"  value="" style="width: 10em;"/>
+    <input type="text" id="email"     title="email"      value="" style="width: 15em;"/>
     <img src="images/find.png" width="24" height="24" />
     <div style="height:5px;" />
     <input type="text" id="longitude" title="longitude"  style="width: 10em;"/>
@@ -135,7 +135,6 @@ function() {
   console.debug("loaded network.map.js");
 
 
-
   /** - Map notifications ----------------------------------------------- */
   function new_notification(device, text, continuation) {
     var notification = $(document.createElement("div")).addClass("notification")
@@ -181,7 +180,6 @@ function() {
       // add a drag handler for the router feature & update location fields
       var feature = network_map.router({ address : device.ip });
       feature = network_map.on_drag_feature(feature, function(longitude, latitude) {
-          console.log("DRAGGED: " + longitude + "," + latitude);
           $("div#link input#longitude").val(longitude);
           $("div#link input#latitude").val(latitude);
         });
@@ -193,9 +191,9 @@ function() {
       $("div#notification-overlay div#link button#save").click(function() { // Save user info
           network_map.reset_drag_feature(feature);
           var person = {
-            firstname : $("div#link input#firstname").val(),
-            lastname  : $("div#link input#lastname").val(),
-            email     : $("div#link input#email").val()
+            firstname : $("div#link input#firstname").hintval(), // TODO if we used submit hint would clear the fields
+            lastname  : $("div#link input#lastname").hintval(),
+            email     : $("div#link input#email").hintval()
           };
           link_person_to_device(person, device, function(error, result) {
               if (error) return console.error("Could not link person to device: " + error);
@@ -237,7 +235,6 @@ function() {
           $("div#notification-overlay span.text").html(text);
           $("div#notifications .callout").remove();
           $("div#notifications .callout-border").remove();
-          console.log("callout");
           $(this).append('<span class="fade callout-border"></span>');
           $(this).append('<span class="fade callout"></span>');
           $("#notification-overlay").fadeIn(100);

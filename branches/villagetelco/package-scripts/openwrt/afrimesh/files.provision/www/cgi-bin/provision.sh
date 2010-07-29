@@ -5,7 +5,7 @@ factory_ssid=batman
 factory_channel=5
 factory_network=10.0.0.0
 factory_netmask=255.0.0.0
-factory_roots="10.0.0.1 10.0.0.254"
+factory_root="10.0.0.1"
 factory_provisiond="/cgi-bin/provisiond"
 
 
@@ -26,9 +26,7 @@ eth0_mac=`ifconfig $eth0_interface | grep HWaddr | awk '{ print $5 }'`
 
 # - villagebus configuration -----------------------------------------------
 self=$wifi0_address
-# TODO - get from factory root
-#root=`uci get afrimesh.@settings[0].root`
-root="192.168.20.105"
+root=$factory_root
 
 
 # - router pubkey ----------------------------------------------------------
@@ -58,8 +56,8 @@ json="{ \
                      'address'  : '$eth0_address', \
                      'mac'      : '$eth0_mac' } ] \
 }"
-#search="/provision/ip/$wifi0_mac?address=$self&network=$self_network&pubkey=$pubkey"
-search="/provision/ip/$wifi0_mac?address=$self"
+#name="/provision/interface/$wifi0_mac?address=$self&network=$self_network&pubkey=$pubkey"
+name="/provision/interface/$wifi0_mac?address=$self"
 
 
 # 1. Do we have an active network on either the wifi or ethernet interfaces?
@@ -69,7 +67,7 @@ search="/provision/ip/$wifi0_mac?address=$self"
 #   router's network interfaces is a provisioning server that can talk 
 #   to that configuration. 
 # 
-# 1a. TODO - If configuration differs form factory, try again w/ factory
+# 1a. TODO - If configuration differs from factory, try again w/ factory
 #            config?
 #
 # 1b. TODO - Find likely SSID's in adhoc mode and try to climb onto
@@ -79,15 +77,13 @@ search="/provision/ip/$wifi0_mac?address=$self"
 # 2a. Ask batmand for the mesh gateway
 
 
-
 # - 3. Send provisioning request to mesh root ------------------------------
 
-REQUEST="POST $factory_provisiond$search HTTP/1.0
+REQUEST="POST $factory_provisiond$name HTTP/1.0
 Content-Type:   application/json
 Content-Length: ${#json}
 
 $json"
-
 echo "- sending provisioning request -------------------------"
 echo "$REQUEST"
 echo "--------------------------------------------------------"
@@ -96,6 +92,7 @@ echo "- provisiond reply -------------------------------------"
 echo -n "$REQUEST" | nc $root 80 | sed '/HTTP.*OK/,/Content-Type: application\/x-tar/d; 1d' >& /tmp/provision.tar.gz
 echo "--------------------------------------------------------"
 echo
+
 
 # 4. - Execute provisiond reply --------------------------------------------
 #
@@ -115,7 +112,11 @@ echo
 
 #tar xvzf /tmp/provision.tar.gz -C /
 
+
+# 6. Kick of VOIP provisioning 
+#
+#    TODO - this would normally be supplied as part of 5 kicking in on reboot
+#
+
+
 echo "fin"
-
-
-

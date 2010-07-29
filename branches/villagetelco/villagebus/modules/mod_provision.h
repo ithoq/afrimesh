@@ -39,23 +39,27 @@ typedef struct _provision {
   vtable* _vt[0];
   string* delimiter;
   string* device_id;
-  string* device_ids;
+  string* handset_id;
   wchar_t* provision_device;
   wchar_t* provision_mac;
-  wchar_t* message_provision;
+  wchar_t* provision_handset;
+  wchar_t* message_device;
+  wchar_t* message_handset;
 } provision;
 extern vtable* provision_vt;
 extern object* _Provision;
 extern provision* Provision;
 extern symbol* s_provision;
-extern symbol* s_provision_ip;
+extern symbol* s_provision_interface;
+extern symbol* s_provision_handset;
 
 void        provision_init();
 provision*  provision_print   (closure* c, provision* self);
 const fexp* provision_evaluate(closure* c, provision* self, const fexp* expression);
 
 // GET
-const fexp* provision_ip (closure* c, provision* self, const fexp* message); 
+const fexp* provision_interface(closure* c, provision* self, const fexp* message); 
+const fexp* provision_handset (closure* c, provision* self, const fexp* message); 
 
 
 #endif /* MOD_PROVISION_H */
