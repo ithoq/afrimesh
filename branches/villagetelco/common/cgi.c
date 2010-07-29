@@ -311,10 +311,11 @@ Request* cgi_request(int argc, char** argv)
     cgi_href_buffer = NULL;
   }
   if (path_info) {                                      // web
-    size_t buffer_size = (strlen(path_info)+1) * sizeof(wchar_t);
+    size_t buffer_size = strlen(path_info);
     if (query_string) {
       buffer_size += strlen(query_string);
     }
+    buffer_size = (buffer_size + 1) * sizeof(wchar_t);
     cgi_href_buffer = (wchar_t*)malloc(buffer_size);
     memset(cgi_href_buffer, 0, buffer_size);
     swprintf(cgi_href_buffer, buffer_size, L"%s%s%s", path_info, (query_string ? "?" : ""), (query_string ? query_string : ""));
