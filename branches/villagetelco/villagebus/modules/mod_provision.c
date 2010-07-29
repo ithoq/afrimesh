@@ -148,7 +148,9 @@ const fexp* provision_ip (closure* c, provision* self, const fexp* message)
                                               mac->buffer);
     f = (fexp*)send(f, s_fexp_cons, message_provision);
     string* notification = (string*)send(DB, s_db_get, f);
+    wprintl(L"GOT NOTIFICATION: %S\n", notification->buffer);
     if ((fexp*)notification != fexp_nil) {
+      wprintl(L"WE HAVE ONE ALREADY, don't make a new notification\n");
       char* notificationc = (char*)send(notification, s_string_tochar);
       struct json_object* json = json_tokener_parse(notificationc);
       reply = (fexp*)send(String, s_string_fromwchar, 

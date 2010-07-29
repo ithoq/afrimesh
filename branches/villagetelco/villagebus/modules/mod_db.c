@@ -210,7 +210,7 @@ const string* db_get(closure* c, db* self, const fexp* message)
   char*   keyc  = (char*)send(key, s_string_tochar); 
   char*   val;
   int rc = credis_get(self->handle, keyc, &val);
-  wprintl(L"GET /db/get/%S -> %d\n", key->buffer, rc);
+  wprintl(L"GET /db/get/%S -> %d %s\n", key->buffer, rc, val);
   if (rc == -1) {                       // key does not exist
     reply = (object*)fexp_nil;
   } else if (rc != 0 || val == NULL) {  // error

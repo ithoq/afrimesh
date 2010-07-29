@@ -12,6 +12,7 @@ var Map = undefined;
 
   /** Includes ---------------------------------------------------------- */
 
+
   /** Map --------------------------------------------------------------- */
   function _Map(id, longitude, latitude, extent, zoom, update_target) {
 
@@ -61,17 +62,11 @@ var Map = undefined;
       map.routes = map.getLayersByName("Mesh Links")[0];
       map.routers  = map.getLayersByName("Mesh Routers")[0];
 
-      var dragger = new OpenLayers.Control.DragFeature(map.routers);
-      dragger.onComplete = on_position;
-      map.addControl(dragger);
-      dragger.activate();
-      /**var click_selector = new OpenLayers.Control.SelectFeature(map.routers);
-      click_selector.multiple = false;
-      click_selector.toggle = true;
-      click_selector.onSelect = on_select_router;
-      click_selector.onUnselect = on_unselect_router;
-      map.addControl(click_selector);
-      click_selector.activate();*/
+      map.dragger = new OpenLayers.Control.DragFeature(map.routers);
+      map.dragger.onComplete = on_position;
+      map.addControl(map.dragger);
+      map.dragger.activate();
+
       var router_hover_selector = new OpenLayers.Control.SelectFeature(map.routers, { 
         multiple : false, 
         hover    : false });
@@ -79,14 +74,6 @@ var Map = undefined;
       router_hover_selector.onUnselect = on_unselect_router;
       map.addControl(router_hover_selector);
       router_hover_selector.activate();
-      
-      /*var route_hover_selector = new OpenLayers.Control.SelectFeature(map.routes,
-                                                                { multiple : false,
-                                                                  hover    : true });
-      route_hover_selector.onSelect = on_select_route;
-      route_hover_selector.onUnselect = on_unselect_route;
-      map.addControl(route_hover_selector);
-      route_hover_selector.activate();*/
 
       return map;
     };
@@ -97,6 +84,65 @@ var Map = undefined;
      */
     this.zoom = function(level) {
       the_map.zoomTo(level);
+    };
+
+    /**
+     * Map center
+     */
+    this.center = function(longitude, latitude) {
+      if (!longitude) {
+        return the_map.getCenter();
+      }
+      if (the_map.zoom < 10) {
+        the_map.zoomTo(10);
+      }
+      the_map.panTo(LonLat(longitude, latitude));
+    };
+
+    /**
+     * Register a callback for dragging a specific feature
+     */
+    this.on_drag_feature = function(feature, callback) {
+
+      // add onDrag handler that responds to this router address
+      var address = feature.router.address;
+      the_map.dragger.onDrag = function(feature) {
+        if (feature.router.address != address) { return; }
+        var location = new OpenLayers.LonLat(feature.geometry.x, feature.geometry.y).transform(epsg_900913, epsg_4326);
+        return callback(location.lon, location.lat);
+      };
+
+      // disable routes layer to reduce visual clutter
+      the_map.routes.display(false);
+
+      // highlight it on the map
+      feature.pulse = (function() {
+        var scale  = 1.0;
+        var inc    = 0.1;
+        function pulse() {
+          if (scale >= 1.3 || scale <= 0.9) inc = - inc;
+          scale += inc;
+          feature.style.pointRadius   = 10.0 * scale;
+          feature.style.fillOpacity   = 1.0 * (1.9 - scale);
+          the_map.routers.drawFeature(feature);
+        };
+        return setInterval(pulse, 100);
+      })();
+
+      return feature;
+    };
+
+    /**
+     * Disable callback
+     */
+    this.reset_drag_feature = function(feature) {
+      the_map.dragger.onDrag = undefined;
+      clearTimeout(feature.pulse);
+      feature.style.pointRadius = 10.0;
+      feature.style.fillOpacity = 1.0;
+      the_map.routers.drawFeature(feature);
+      on_position_update_routes(feature);
+      the_map.routes.display(true);
     };
 
 
@@ -273,10 +319,9 @@ var Map = undefined;
 
 
     function on_select_route(feature) {
-    }
+    };
     function on_unselect_route(feature) {
-    }
-
+    };
 
     function on_position(feature) {
       // update router location config
@@ -285,8 +330,17 @@ var Map = undefined;
           if (error) return console.error("Could not update router location for " + feature.router.address + ": " + error);
           console.debug("Updated router location for:" + feature.router.address);
         });
-      
+
+      // don't update route geometry!
+      if (the_map.dragger.onDrag) { 
+        return; 
+      }
+
       // update route geometry
+      on_position_update_routes(feature);      
+    };
+
+    function on_position_update_routes(feature) {
       feature.router.routes.map(function(route) {
           if (route.gateway) { return; } // skip gateways for now
           var feature_destination = the_map.routers.getFeatureById(route.neighbour);
@@ -302,6 +356,8 @@ var Map = undefined;
           console.debug("Updated route geometry for: " + (route.router + "->" + route.neighbour));
         });
     };
+
+
 
   };
   Map = _Map;

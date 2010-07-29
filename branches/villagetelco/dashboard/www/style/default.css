@@ -209,7 +209,7 @@ div.notification {
   border   : 0px solid black;
   width    : 48px; 
   height   : 48px;
-  background-image : url(../images/node.png);
+  background-image : url(../images/node-composite.png);
 }
 div#notification-overlay {
   position   : absolute; 

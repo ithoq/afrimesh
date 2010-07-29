@@ -45,7 +45,8 @@
     <img src="images/find.png" width="24" height="24" />
     <div style="height:5px;" />
     <input type="text" id="longitude" title="longitude"  style="width: 10em;"/>
-    <input type="text" id="latitude"  title="latitude"   style="width: 10em;"/>
+    <input type="text" id="latitude"  title="latitude"   style="width: 10em;"/><br/>
+    <span style="font-size:0.8em;"><i>drag device to set location</i></span>
     <div style="text-align:right;">
       <button id="save">save</button>
       <button id="cancel">cancel</button>
@@ -61,6 +62,7 @@ function() {
   /** includes ---------------------------------------------------------- */
 
   /** construction ------------------------------------------------------ */
+  var network_map = undefined;
   ready = function() {
     console.debug("loaded network.map.html");
 
@@ -84,12 +86,12 @@ function() {
       load("modules/network.map.js");
       $("div#network-map").html("");
       $("div#network-map").removeClass("message");
-      var network_map = new Map("network-map",  // TODO - consider caching the map :)
-                                parseFloat(afrimesh.settings.location.longitude),
-                                parseFloat(afrimesh.settings.location.latitude),
-                                parseFloat(afrimesh.settings.map.extent),
-                                parseInt(afrimesh.settings.map.zoom),
-                                60.0 * 1000.0);
+      network_map = new Map("network-map",  // TODO - consider caching the map :)
+                            parseFloat(afrimesh.settings.location.longitude),
+                            parseFloat(afrimesh.settings.location.latitude),
+                            parseFloat(afrimesh.settings.map.extent),
+                            parseInt(afrimesh.settings.map.zoom),
+                            60.0 * 1000.0);
       console.debug("location.longitude -> " + afrimesh.settings.location.longitude);
       console.debug("location.latitude -> " + afrimesh.settings.location.latitude);
       console.debug("map.extent -> " + afrimesh.settings.map.extent);
@@ -169,11 +171,27 @@ function() {
     function click_fn() {
       var clicked = $(this);
       clicked.unbind();
+
+      // show details editor
       $("div#notification-overlay .text").hide();
       $("div#notification-overlay #link").show();
 
+      // TODO - the router could be rebooting and not added to the map, add router manually in this case
+
+      // add a drag handler for the router feature & update location fields
+      var feature = network_map.router({ address : device.ip });
+      feature = network_map.on_drag_feature(feature, function(longitude, latitude) {
+          console.log("DRAGGED: " + longitude + "," + latitude);
+          $("div#link input#longitude").val(longitude);
+          $("div#link input#latitude").val(latitude);
+        });
+
+      // position router to a neutral position 
+      feature.move(network_map.center());      
+
       // Save
       $("div#notification-overlay div#link button#save").click(function() { // Save user info
+          network_map.reset_drag_feature(feature);
           var person = {
             firstname : $("div#link input#firstname").val(),
             lastname  : $("div#link input#lastname").val(),
@@ -192,12 +210,11 @@ function() {
             latitude  : $("div#link input#latitude").val()
           };
           // TODO set device:<ip>:location  = { longitude, latitude }
-          //afrimesh.device.location.set(address, location.longitude, location.latitude, function(error, result) {
-          //  });
         });
  
       // cancel
       $("div#notification-overlay div#link button#cancel").click(function() {
+          network_map.reset_drag_feature(feature);
           $("div#notification-overlay .text").show();
           $("div#notification-overlay #link").hide();
           $("div#notification-overlay").fadeOut(100);
