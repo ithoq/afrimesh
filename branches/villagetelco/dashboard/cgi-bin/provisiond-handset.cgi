@@ -8,6 +8,13 @@ BUNDLE_DIR="./provisiond-bundles/mp01.handset"
 LOG=1
 LOGFILE="/tmp/provisiond.log"
 
+
+# - Platform insanity ------------------------------------------------------
+TAR=tar
+[ `uname` == "Darwin" ] && TAR=/opt/local/bin/gnutar 
+# there's this crazy busybox bug you see... https://dev.openwrt.org/ticket/6649
+
+
 # - Logging ----------------------------------------------------------------
 BUFFER="$LOGFILE.$$"
 function log {
@@ -88,7 +95,8 @@ UCI="$UCI -c $UCI_CFG"
 cp -r "$BUNDLE_DIR" "$TARBALL_DIR" 
 find "$TARBALL_DIR" -name .svn -exec rm -rf '{}' ';'
 
-# configure base bundle w/ provisioned values
+# configure base bundle w/ provisioned values 
+# TODO set handset.id - anyone notice a flaw w/ tarballs & multiple provisioning phases? :)
 $UCI set asterisk.sippotato.host="$provisioned_trunk"
 $UCI set asterisk.sippotato.username="$provisioned_username"
 $UCI set asterisk.sippotato.secret="$provisioned_secret"
@@ -99,11 +107,17 @@ $UCI changes >> "$BUFFER" 2>&1
 $UCI commit  >> "$BUFFER" 2>&1
 # rm -rf $UCI_TMP
 
+# tar it up and calculate size
+$TAR -C "$TARBALL_DIR" -cf - . | gzip -f > "$TARBALL_DIR.tar.gz"
+content_length=`wc -c $TARBALL_DIR.tar.gz | awk '{ print $1 }'`
+
 
 # - Send provisioning bundle back to client --------------------------------
 echo "Content-Type: application/x-tar"
+echo "Content-Length: $content_length"
 echo
-tar -C "$TARBALL_DIR" -cf - . | gzip -f
+cat "$TARBALL_DIR.tar.gz"
+
 
 # self-extracting bundle
 #echo "Content-Type: application/x-tar"
@@ -112,5 +126,5 @@ tar -C "$TARBALL_DIR" -cf - . | gzip -f
 
 
 # - Clean up ---------------------------------------------------------------
-[ -d "$TARBALL_DIR" ] && rm -rf "$TARBALL_DIR"
+[ -d "$TARBALL_DIR" ] && rm -rf "$TARBALL_DIR" "$TARBALL_DIR.tar.gz"
 close_log 

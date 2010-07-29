@@ -83,18 +83,30 @@ name="/provision/interface/$wifi0_mac?address=$self"
 
 
 # - 3. Send provisioning request to mesh root ------------------------------
-
+BUNDLE="/tmp/provision.tar.gz"
+BUNDLETMP="$BUNDLE.$$"
 REQUEST="POST $factory_provisiond$name HTTP/1.0
 Content-Type:   application/json
 Content-Length: ${#json}
 
 $json"
 echo "- sending provisioning request -------------------------"
+echo "root: $root"
+echo ""
 echo "$REQUEST"
 echo
-echo -n "$REQUEST" | nc $root 80 | sed '/HTTP.*OK/,/Content-Type: application\/x-tar/d; 1d' >& /tmp/provision.tar.gz
 echo "--------------------------------------------------------"
+#echo -n "$REQUEST" | nc $root 80 | sed '/HTTP.*OK/,/Content-Type: application\/x-tar/d; 1d' > $BUNDLE
+#echo -n "$REQUEST" | nc $root 80 | sed '1,/^.$/d' > $BUNDLE
+echo -n "$REQUEST" | nc $root 80 >& $BUNDLE
 echo
+
+# strip content out of HTTP reply
+file_size=`wc -c $BUNDLE | awk '{ print $1 }'` 
+content_length=`head -n 10 $BUNDLE | grep "Content-Length: " | awk '{ print $2 }'`
+header_size=`expr $file_size - $content_length`
+dd if=$BUNDLE of=$BUNDLETMP bs=1 skip=$header_size 2> /dev/null
+mv $BUNDLETMP $BUNDLE
 
 
 # 4. - Execute provisiond reply --------------------------------------------
@@ -113,7 +125,7 @@ echo
 #   Unpack configuration
 #   Reboot
 
-#tar xvzf /tmp/provision.tar.gz -C /
+#tar xvzf $BUNDLE -C /
 
 
 # 6. Kick of VOIP provisioning 
