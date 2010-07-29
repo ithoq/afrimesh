@@ -26,6 +26,7 @@ function BootPerson(parent) {
         (!person.email     || person.email     == "") ||
         (!person.firstname || person.firstname == "") ||
         (!person.lastname  || person.latname   == "")) {
+      console.log("error saving person");
       return continuation("Specify all the user details please.", null);
     }
 

@@ -30,13 +30,14 @@
 
 <!-- Notifications ----------------------------------------------------- -->
 <div id="notifications"></div>
-<div id="notification-overlay" class="round-small shadow">
+<div id="notify" class="round-small shadow">
 
   <h3>A new device has been added to the mesh!</h3>
   <b>Mesh Potato #<span class="device">23</span></b> 
   <span class="ip">10.130.1.20</span> 
   <i>(<span class="mac">00:11:22:33:44:55</span>)</i>
   <hr />
+  <span id="error" style="color:red; font-size:0.8em; line-height:2.0em;"></span>
   <span class="text">A message</span>
   <div id="link" class="round-small" style="display:none;">
     <input type="text" id="firstname" title="first name" value=""   style="width: 10em;"/>
@@ -137,7 +138,7 @@ function() {
 
   /** - Map notifications ----------------------------------------------- */
   function new_notification(device, text, continuation) {
-    var notification = $(document.createElement("div")).addClass("notification")
+    var notification = $(document.createElement("div")).addClass("icon")
                                                        .attr("id", device.mac)
                                                        .appendTo("#notifications");
 
@@ -153,11 +154,11 @@ function() {
       // del message:device:<mac>:provision
       afrimesh.villagebus.mq.DELETE("device:" + device.mac + ":provision", function(error, response) {
           if (error) {
-            $("div#notification-overlay div#link button#cancel").click(); // cancel save
+            $("div#notify div#link button#cancel").click(); // cancel save
             return continuation(error, response);
           }
           notification.remove();
-          $("div#notification-overlay").fadeOut(100);
+          $("div#notify").fadeOut(100);
           $("div#notifications .fade").fadeOut(50, function() {
               $("div#notifications .callout").remove();
               $("div#notifications .callout-border").remove();
@@ -172,8 +173,8 @@ function() {
       clicked.unbind();
 
       // show details editor
-      $("div#notification-overlay .text").hide();
-      $("div#notification-overlay #link").show();
+      $("div#notify .text").hide();
+      $("div#notify #link").show();
 
       // TODO - the router could be rebooting and not added to the map, add router manually in this case
 
@@ -188,34 +189,46 @@ function() {
       feature.move(network_map.center());      
 
       // Save
-      $("div#notification-overlay div#link button#save").click(function() { // Save user info
+      $("div#notify div#link button#save").click(function() { // Save user info
           network_map.reset_drag_feature(feature);
           var person = {
             firstname : $("div#link input#firstname").hintval(), // TODO if we used submit hint would clear the fields
             lastname  : $("div#link input#lastname").hintval(),
             email     : $("div#link input#email").hintval()
           };
-          link_person_to_device(person, device, function(error, result) {
-              if (error) return console.error("Could not link person to device: " + error);
-              remove_notification(clicked, device, function(error, result) {
-                  if (error) return console.error("Could not delete provisioning notification: " + error);
-                  console.log("Finished linking person to device.");
-                });
-            });
-          // TODO - save location
           var location = {
             longitude : $("div#link input#longitude").val(),
             latitude  : $("div#link input#latitude").val()
           };
+          link_person_to_device(person, device, function(error, result) {
+              if (error) return $("div#notify #error").html("Could not link person to device: " + error);
+              remove_notification(clicked, device, function(error, result) {
+                  if (error) $("div#notify #error").html("Could not delete provisioning notification: " + error);
+                  console.log("Finished linking person to device.");
+                  $("div#notify #error").html("");
+                  $("div#link input#firstname").val("").blur();
+                  $("div#link input#lastname").val("").blur();
+                  $("div#link input#email").val("").blur();
+                  $("div#link input#latitude").val("").blur();
+                  $("div#link input#longitude").val("").blur();
+                });
+            });
+          // TODO - save location
           // TODO set device:<ip>:location  = { longitude, latitude }
         });
  
       // cancel
-      $("div#notification-overlay div#link button#cancel").click(function() {
+      $("div#notify div#link button#cancel").click(function() {
+          $("div#notify #error").html("");
+          $("div#link input#firstname").val("").blur();
+          $("div#link input#lastname").val("").blur();
+          $("div#link input#email").val("").blur();
+          $("div#link input#latitude").val("").blur();
+          $("div#link input#longitude").val("").blur();
           network_map.reset_drag_feature(feature);
-          $("div#notification-overlay .text").show();
-          $("div#notification-overlay #link").hide();
-          $("div#notification-overlay").fadeOut(100);
+          $("div#notify .text").show();
+          $("div#notify #link").hide();
+          $("div#notify").fadeOut(100);
           $("div#notifications .fade").fadeOut(50, function() {
               $("div#notifications .callout").remove();
               $("div#notifications .callout-border").remove();
@@ -229,15 +242,15 @@ function() {
 
     function hover_fn() {
       $(this).stop().animate({ "bottom" : "20px" }, 50, function() {
-          $("div#notification-overlay span.device").html(device.id);
-          $("div#notification-overlay span.ip").html(device.ip);
-          $("div#notification-overlay span.mac").html(device.mac);
-          $("div#notification-overlay span.text").html(text);
+          $("div#notify span.device").html(device.id);
+          $("div#notify span.ip").html(device.ip);
+          $("div#notify span.mac").html(device.mac);
+          $("div#notify span.text").html(text);
           $("div#notifications .callout").remove();
           $("div#notifications .callout-border").remove();
           $(this).append('<span class="fade callout-border"></span>');
           $(this).append('<span class="fade callout"></span>');
-          $("#notification-overlay").fadeIn(100);
+          $("#notify").fadeIn(100);
           $(this).find(".fade").fadeIn(150);
           $("div#notifications .callout").fadeIn(150);
           $("div#notifications .callout-border").fadeIn(150);
@@ -245,7 +258,7 @@ function() {
     };
 
     function blur_fn() {
-      $("#notification-overlay").fadeOut(150);
+      $("#notify").fadeOut(150);
       $("div#notifications .fade").fadeOut(50, function() {
           $("div#notifications .callout").remove();
           $("div#notifications .callout-border").remove();
