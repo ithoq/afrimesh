@@ -1,0 +1,14 @@
+
+config 'wifi-device' 'wifi0'
+	option 'type' 'atheros'
+	option 'disabled' '0'
+	option 'channel' '5'
+
+config 'wifi-iface'
+	option 'device' 'wifi0'
+	option 'encryption' 'none'
+	option 'ssid' 'batman'
+	option 'mode' 'adhoc'
+	option 'bssid' 'BB:BB:BB:BB:BB:BB'
+	option 'network' 'wifi0'
+

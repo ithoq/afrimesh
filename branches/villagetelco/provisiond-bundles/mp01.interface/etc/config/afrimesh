@@ -1,0 +1,9 @@
+
+config 'afrimesh' 'location'
+	option 'longitude' '28.282307206359'
+	option 'latitude' '-25.739019176411'
+
+config 'settings'
+	option 'root'     '10.0.0.1'
+  option 'deviceid' ''
+
