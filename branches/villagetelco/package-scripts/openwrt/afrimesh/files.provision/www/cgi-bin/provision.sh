@@ -33,6 +33,7 @@ echo "root: $root"
 echo "self: $self"
 echo "interface:  $wifi0_mac"
 
+
 # - die if we are already provisioned --------------------------------------
 name="/cgi-bin/villagebus/db/provision:$self:mac"
 REQUEST="GET $name HTTP/1.0
@@ -43,11 +44,14 @@ provisioned_mac=`echo -n "$REQUEST" | nc $root 80 | grep jsonp | cut -d\" -f 2`
 echo "provisioned: $provisioned_mac"
 echo
 [ "$wifi0_mac" == "$provisioned_mac" ] && { 
+    uci del afrimesh.settings.deviceid
+    uci commit
     logger "$wifi0_mac ($self) already provisioned, exiting."
-    echo "$wifi0_mac ($self) already provisioned, exiting." 
+    echo "$wifi0_mac ($self) already provisioned, exiting."
     echo
     exit  
 }
+
 
 # - router pubkey ----------------------------------------------------------
 pubkey=`dropbearkey -y -f /etc/dropbear/dropbear_rsa_host_key | head -2 | tail -1`
@@ -106,13 +110,13 @@ Content-Length: ${#json}
 
 $json"
 echo -n "$REQUEST" | nc $root 80 >& $BUNDLE
-logger "$wifi0_mac ($self) sent provisioning request"
+logger "$wifi0_mac ($self) sent interface provisioning request"
 echo "- sent provisioning request -----------------------------------------"
 echo "name: $name"
 echo
 
 
-# strip content out of HTTP reply
+# - strip content out of HTTP reply ----------------------------------------
 file_size=`wc -c $BUNDLE | awk '{ print $1 }'` 
 content_length=`head -n 10 $BUNDLE | grep "Content-Length: " | awk '{ print $2 }'`
 header_size=`expr $file_size - $content_length`
@@ -133,23 +137,22 @@ echo
 #   Network rsa public key
 #   Configuration tarball
 #   Checksum?
-
-# 5. Configure
-#
-#   Check checksum
-#   Unpack configuration
-#   Reboot
-
 echo "- unpacked provisioning bundle -------------------------------------"
-tar tvzf $BUNDLE -C /
+tar xvzf $BUNDLE -C /
 rm $BUNDLE
 echo
 
-# 6. Kick off VOIP provisioning 
+
+# - Kick off VOIP provisioning ---------------------------------------------
 #
-#    TODO - this would normally be supplied as part of 5 kicking in on reboot
-#
+/www/cgi-bin/provision-handset >& /tmp/provision-handset.log
+
+
+# TODO - not rebooting quite yet for the purposes of the Steve Demo
 logger "$wifi0_mac ($self) provisioning complete. Restarting." 
 echo "$wifi0_mac ($self) provisioning complete. Restarting." 
+echo "fin"
 echo
 echo
+
+

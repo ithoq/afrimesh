@@ -1,9 +1,5 @@
 #!/usr/bin/env sh
 
-# - die if initial device provisioning has not taken place -----------------
-[ -z `uci get afrimesh.settings.deviceid 2> /dev/null` ] && exit
-
-
 # - factory setup ----------------------------------------------------------
 factory_provisiond="/cgi-bin/provisiond-handset"
 
@@ -12,14 +8,29 @@ factory_provisiond="/cgi-bin/provisiond-handset"
 wifi0_device=`uci get wireless.@wifi-iface[0].device`
 wifi0_interface=`uci get network.$wifi0_device.ifname`
 wifi0_address=`uci get network.$wifi0_device.ipaddr`
+wifi0_mac=`ifconfig $wifi0_interface | grep HWaddr | awk '{ print $5 }'`
 
 
 # - villagebus configuration -----------------------------------------------
+echo "- initialize device provisioning ------------------------------------"
 self=$wifi0_address
 root=`uci get afrimesh.settings.root`
 device=`uci get afrimesh.settings.deviceid`
 a2billing=""  # TODO - when the user punches in a2billing code, is it saved on phone
               #        or will it be saved by the remote and waiting for us?
+echo "root:      $root"
+echo "self:      $self"
+echo "device:    $device"
+echo "a2billing: $a2billing"
+
+
+# - die if initial device provisioning has not taken place -----------------
+[ -z `uci get afrimesh.settings.deviceid 2> /dev/null` ] && { 
+    logger "$wifi0_mac ($self) has not yet been provisioned, exiting."
+    echo "$wifi0_mac ($self) has not yet been provisioned, exiting." 
+    echo
+    exit  
+}
 
 
 # - 1. Build handset provisioning request ----------------------------------
@@ -35,21 +46,23 @@ Content-Type:   application/json
 Content-Length: ${#json}
 
 $json"
-echo "- sending provisioning request -------------------------"
-echo "root: $root"
-echo ""
-echo "$REQUEST"
-echo
-echo "--------------------------------------------------------"
 echo -n "$REQUEST" | nc $root 80 >& $BUNDLE
+logger "device# $device ($self) sent handset provisioning request"
+echo "- sent provisioning request -----------------------------------------"
+echo "name: $name"
+echo "request: $REQUEST"
 echo
 
-# strip content out of HTTP reply
+
+# - strip content out of HTTP reply ----------------------------------------
 file_size=`wc -c $BUNDLE | awk '{ print $1 }'` 
 content_length=`head -n 10 $BUNDLE | grep "Content-Length: " | awk '{ print $2 }'`
 header_size=`expr $file_size - $content_length`
 dd if=$BUNDLE of=$BUNDLETMP bs=1 skip=$header_size 2> /dev/null
 mv $BUNDLETMP $BUNDLE
+echo "- processing handset provisioning bundle ----------------------------"
+echo "content_length: $content_length"
+echo
 
 
 # 3. - Execute provisiond reply --------------------------------------------
@@ -58,11 +71,17 @@ mv $BUNDLETMP $BUNDLE
 #      all router-side provisioning operations. Usually this file is simply
 #      a self extracting tarfile.
 #   
-#tar xvzf /tmp/provision.tar.gz -C /
+echo "- unpacked provisioning bundle -------------------------------------"
+tar xvzf $BUNDLE -C /
+rm $BUNDLE
+echo
 
 
 # 4. - Restart telephony ---------------------------------------------------
-# /etc/init.d/asterisk restart
+logger "device# $device ($self) handset provisioning complete. Restarting." 
+echo "device# $device ($self) handset provisioning complete. Restarting." 
+echo
+/etc/init.d/asterisk restart
 
 
 # 5. - Send an ack to the provisioning server ------------------------------
@@ -72,14 +91,13 @@ name="/cgi-bin/villagebus/telephony/callme/$self" # Blondie!!!
 REQUEST="GET $name HTTP/1.0
 
 "
-echo "- sending callme request -------------------------"
-echo "$REQUEST"
-echo "--------------------------------------------------------"
-echo
-echo "- reply ------------------------------------------------"
 echo -n "$REQUEST" | nc $root 80 
-echo "--------------------------------------------------------"
-echo
+logger "device# $device sent callback request"
+echo "- handset provisioned, sent callback request ------------------------"
+echo "name:     " $name
+echo "trunk:    " `uci get asterisk.sippotato.host`
+echo "username: " `uci get asterisk.sippotato.username`
+echo "secret:   " `uci get asterisk.sippotato.secret`
 
 
 # 6. Die. Server will phone back w/ confirmation
@@ -88,6 +106,7 @@ echo
 #          
 
 echo "fin"
-
+echo
+echo
 
 

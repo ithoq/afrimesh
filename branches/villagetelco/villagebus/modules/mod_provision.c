@@ -35,6 +35,7 @@
 #include "mod_provision.h"
 #include "mod_db.h"
 
+#define PROVISION_DEFAULT_ROOT L"192.168.20.105"
 
 /* - provision ---------------------------------------------------------- */
 vtable* provision_vt = 0;
@@ -163,7 +164,7 @@ const fexp* provision_interface (closure* c, provision* self, const fexp* messag
                           json_object_get_string(json_object_object_get(json, "id")),
                           json_object_get_string(json_object_object_get(json, "mac")),
                           json_object_get_string(json_object_object_get(json, "ip")),
-                          L"10.0.0.1"); 
+                          PROVISION_DEFAULT_ROOT); 
       goto done;
     }
     
@@ -184,7 +185,7 @@ const fexp* provision_interface (closure* c, provision* self, const fexp* messag
                         id->buffer, 
                         mac->buffer, 
                         address->buffer,  
-                        L"10.0.0.1");    // TODO - read from VTE server UCI config
+                        PROVISION_DEFAULT_ROOT);    // TODO - read from VTE server UCI config
 
     // register provisioning request w/ notification queue
     // TODO - we should really only be setting this once the device has
@@ -263,7 +264,7 @@ const fexp* provision_handset(closure* c, provision* self, const fexp* message)
   // TODO - check if this handset is already linked to a device
 
   // TODO - Read IP address for TRUNK from VTE server UCI config 
-  string* trunk = (string*)send(String, s_string_fromwchar, L"10.0.0.1"); 
+  string* trunk = (string*)send(String, s_string_fromwchar, PROVISION_DEFAULT_ROOT); 
   
   // TODO - Tell A2Billing @ trunk about this handset
 
