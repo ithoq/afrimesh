@@ -1,9 +1,5 @@
 #!/usr/bin/env sh
 
-# - die if we are already provisioned --------------------------------------
-[ ! -z `uci get afrimesh.settings.deviceid 2> /dev/null` ] && exit
-
-
 # - factory setup ----------------------------------------------------------
 factory_ssid=batman
 factory_channel=5
@@ -29,10 +25,29 @@ eth0_mac=`ifconfig $eth0_interface | grep HWaddr | awk '{ print $5 }'`
 
 
 # - villagebus configuration -----------------------------------------------
+echo "- initialize device provisioning ------------------------------------"
 self=$wifi0_address
 root=`uci get afrimesh.settings.root`
 [ -z $root ] && root=$factory_root
+echo "root: $root"
+echo "self: $self"
+echo "interface:  $wifi0_mac"
 
+# - die if we are already provisioned --------------------------------------
+name="/cgi-bin/villagebus/db/provision:$self:mac"
+REQUEST="GET $name HTTP/1.0
+
+"
+provisioned_mac=`echo -n "$REQUEST" | nc $root 80 | grep jsonp | cut -d\" -f 2`
+
+echo "provisioned: $provisioned_mac"
+echo
+[ "$wifi0_mac" == "$provisioned_mac" ] && { 
+    logger "$wifi0_mac ($self) already provisioned, exiting."
+    echo "$wifi0_mac ($self) already provisioned, exiting." 
+    echo
+    exit  
+}
 
 # - router pubkey ----------------------------------------------------------
 pubkey=`dropbearkey -y -f /etc/dropbear/dropbear_rsa_host_key | head -2 | tail -1`
@@ -90,16 +105,12 @@ Content-Type:   application/json
 Content-Length: ${#json}
 
 $json"
-echo "- sending provisioning request -------------------------"
-echo "root: $root"
-echo ""
-echo "$REQUEST"
-echo
-echo "--------------------------------------------------------"
-#echo -n "$REQUEST" | nc $root 80 | sed '/HTTP.*OK/,/Content-Type: application\/x-tar/d; 1d' > $BUNDLE
-#echo -n "$REQUEST" | nc $root 80 | sed '1,/^.$/d' > $BUNDLE
 echo -n "$REQUEST" | nc $root 80 >& $BUNDLE
+logger "$wifi0_mac ($self) sent provisioning request"
+echo "- sent provisioning request -----------------------------------------"
+echo "name: $name"
 echo
+
 
 # strip content out of HTTP reply
 file_size=`wc -c $BUNDLE | awk '{ print $1 }'` 
@@ -107,6 +118,10 @@ content_length=`head -n 10 $BUNDLE | grep "Content-Length: " | awk '{ print $2 }
 header_size=`expr $file_size - $content_length`
 dd if=$BUNDLE of=$BUNDLETMP bs=1 skip=$header_size 2> /dev/null
 mv $BUNDLETMP $BUNDLE
+echo "- processing provisioning bundle ------------------------------------"
+echo "content_length: $content_length"
+echo
+
 
 
 # 4. - Execute provisiond reply --------------------------------------------
@@ -125,13 +140,16 @@ mv $BUNDLETMP $BUNDLE
 #   Unpack configuration
 #   Reboot
 
-#tar xvzf $BUNDLE -C /
+echo "- unpacked provisioning bundle -------------------------------------"
+tar tvzf $BUNDLE -C /
+rm $BUNDLE
+echo
 
-
-# 6. Kick of VOIP provisioning 
+# 6. Kick off VOIP provisioning 
 #
 #    TODO - this would normally be supplied as part of 5 kicking in on reboot
 #
-
-
-echo "fin"
+logger "$wifi0_mac ($self) provisioning complete. Restarting." 
+echo "$wifi0_mac ($self) provisioning complete. Restarting." 
+echo
+echo
