@@ -30,7 +30,12 @@
       <input type="text"   id="lastname"  title="last name"  style="width: 10em;"/>
       <input type="text"   id="email"     title="email"      style="width: 15em;"/>
       <br/>
-      <textarea id="address" title="street address" cols="30" rows="4" />
+      <textarea id="address" title="street address" cols="30" rows="4"></textarea>
+      <span class="mydevices button round-small" style="display:inline-block;">
+        <span id="ip"></span><br/>
+        <i><span id="mac"></span></i><br/><br/>
+        <b>deprovision</b>
+      </span>
       <div style="text-align:right;">
         <button id="save">save</button>
         <button id="cancel">cancel</button>
@@ -42,8 +47,8 @@
       <div id="account-template" style="display:none;"> 
         <span class="expand">+</span>
         <span id="person">unknown</span> 
-        <span id="device">0.0.0.0</span>
-        <span id="handset">0</span>
+        <span id="device"></span>
+        <span id="handset"></span>
       </div>
     </div>
   </div>
@@ -107,7 +112,8 @@
         firstname : account.find("input#firstname").hintval(),
         lastname  : account.find("input#lastname").hintval(),
         email     : account.find("input#email").hintval(),
-        address   : account.find("textarea#address").hintval()
+        address   : account.find("textarea#address").hintval(),
+        device    : account.source.device
       };
       console.log("Saving: " + show(person));
 
@@ -116,10 +122,17 @@
           console.log("Save success");
           $("#accountlist").find(".account").remove(); // TODO - a bit drastic :)
           populate_control();
-          //console.log("Linking device " + device.ip + " to person: " + person.id);
-          //afrimesh.person.link(person, device, continuation);
         }, account.source);
 
+    };
+
+    function on_deprovision(account, device) {
+      afrimesh.network.release(device, function(error, response) {
+          if (error) return console.error("Could not release device: " + error);
+          account.source.device = undefined;
+          account.find("span.mydevices").remove();
+          on_save_person(account);
+        });
     };
 
     function insert_entry(person) {
@@ -128,8 +141,10 @@
                                         .attr("id", person.id)
                                         .appendTo("#accountlist").show();
       clone.find("#person").html(person.firstname + " " + person.lastname);
-      //clone.find("#handset").html(i);
-      //clone.find("#device").html("10.0.0." + i);
+      if (person.device) {
+        clone.find("#device").html(person.device.ip + " <i>(" + person.device.mac + ")</i>");
+        clone.find("#handset").html(person.device.id);
+      }
       clone.find(".expand").toggle(function() { on_show_editor(clone, person); }, 
                                    function() { on_hide_editor(clone); });
     };
@@ -147,6 +162,13 @@
       clone.find("input#lastname").hintval(person.lastname);
       clone.find("input#email").hintval(person.email);
       clone.find("textarea#address").hintval(person.address);
+      if (person.device) {
+        clone.find("span.mydevices #ip").html(person.device.ip);
+        clone.find("span.mydevices #mac").html("(" + person.device.mac + ")");
+        clone.find("span.mydevices").click(function() { on_deprovision(clone, person.device); });
+      } else {
+        clone.find("span.mydevices").hide();
+      }
       clone.find("button#save")  .click(function() { on_save_person(clone);  });
       clone.find("button#cancel").click(function() { account.find(".expand").click(); });
       return clone;

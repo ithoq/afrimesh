@@ -34,6 +34,17 @@ function BootNetwork(parent) {
   };
 
 
+  /**
+   * Deprovisions the given device from the network
+   */
+  network.release = function(device, continuation) {
+    var name = afrimesh.villagebus.Name("/@root/provision/release/" + device.ip); 
+    name = afrimesh.villagebus.Bind(name, continuation);
+    name = afrimesh.villagebus.DELETE(name);
+    return name;
+  };
+
+
   /* - network monitoring ----------------------------------------------- */
 
   /**

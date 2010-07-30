@@ -143,6 +143,7 @@ function() {
                                                        .appendTo("#notifications");
 
     function link_person_to_device(person, device, continuation) {
+      person.device = device;
       afrimesh.person.save(person, function(error, person) {  // save person info and get id
           if (error) return continuation(error, person);
           console.log("Linking device " + device.ip + " to person: " + person.id);

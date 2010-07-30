@@ -70,6 +70,7 @@ textarea {
   /*padding: 0px;*/
   margin: 0px;
   /*margin-bottom: 10px;*/
+  display:inline;
 }
 input[type=text], input[type=password], textarea {  
   border: 1px solid gray;

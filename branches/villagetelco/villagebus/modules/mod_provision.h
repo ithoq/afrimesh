@@ -43,6 +43,7 @@ typedef struct _provision {
   wchar_t* provision_device;
   wchar_t* provision_mac;
   wchar_t* provision_handset;
+  wchar_t* provision_person;
   wchar_t* message_device;
   wchar_t* message_handset;
 } provision;
@@ -52,6 +53,7 @@ extern provision* Provision;
 extern symbol* s_provision;
 extern symbol* s_provision_interface;
 extern symbol* s_provision_handset;
+extern symbol* s_provision_release;
 
 void        provision_init();
 provision*  provision_print   (closure* c, provision* self);
@@ -59,7 +61,10 @@ const fexp* provision_evaluate(closure* c, provision* self, const fexp* expressi
 
 // GET
 const fexp* provision_interface(closure* c, provision* self, const fexp* message); 
-const fexp* provision_handset (closure* c, provision* self, const fexp* message); 
+const fexp* provision_handset  (closure* c, provision* self, const fexp* message); 
+
+// DELETE
+const fexp* provision_release(closure* c, provision* self, const fexp* message);
 
 
 #endif /* MOD_PROVISION_H */

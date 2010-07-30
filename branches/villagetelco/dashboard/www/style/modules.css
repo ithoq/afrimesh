@@ -237,6 +237,15 @@ div#accounts-manage .editor {
   padding-right  : 0.25em;
   padding-bottom : 0.25em;
 }
+div#accounts-manage span.mydevices {
+  font-weight:normal; 
+  font-size:0.9em; 
+  text-align:center; 
+  /*display:inline-block;*/
+}
+div#accounts-manage span.mydevices span {
+  display:inline;
+}
 
 /* - network devices module --------------------------------------------- */
 div#network-devices {

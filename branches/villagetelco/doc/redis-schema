@@ -30,7 +30,7 @@ provision:<ip>:person           STRING   person.id
 provision:<device.id>:handset   STRING   handset.id   #NEW
 
 # - device
-device:<ip>:location            STRING  { longitude, latitude }  $TODO
+device:<ip>:location            STRING  { longitude, latitude }  #TODO
 
 # - person
 person:<email>:id               STRING  person.id

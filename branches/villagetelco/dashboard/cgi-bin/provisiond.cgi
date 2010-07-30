@@ -78,6 +78,7 @@ log "Provisioned device:    $provisioned_id"
 log "Provisioned interface: $provisioned_mac"
 log "Provisioned ip:        $provisioned_ip"
 log "Provisioned root:      $provisioned_root"
+# TODO - check return values
 
 
 # - Construct configuration bundle -----------------------------------------

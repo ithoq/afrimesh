@@ -44,6 +44,8 @@ provision* Provision  = 0;
 symbol* s_provision = 0;
 symbol* s_provision_interface = 0;
 symbol* s_provision_handset   = 0;
+symbol* s_provision_release   = 0;
+
 
 void provision_init()
 {
@@ -54,9 +56,11 @@ void provision_init()
 
   // register local symbols
   s_provision_interface  = (symbol*)symbol_intern(0, _Provision, L"interface");
-  s_provision_handset = (symbol*)symbol_intern(0, _Provision, L"handset");
+  s_provision_handset    = (symbol*)symbol_intern(0, _Provision, L"handset");
+  s_provision_release    = (symbol*)symbol_intern(0, _Provision, L"release");
   send(provision_vt, s_addMethod, s_provision_interface,  provision_interface);
   send(provision_vt, s_addMethod, s_provision_handset,    provision_handset);
+  send(provision_vt, s_addMethod, s_provision_release,    provision_release);
 
   // global module instance vars
   Provision = (provision*)send(_Provision->_vt[-1], s_allocate, sizeof(provision));
@@ -66,8 +70,10 @@ void provision_init()
   Provision->provision_device  = L"provision:%S:device";
   Provision->provision_mac     = L"provision:%S:mac";
   Provision->provision_handset = L"provision:%S:handset";
+  Provision->provision_person  = L"provision:%S:person";
   Provision->message_device    = L"message:device:%S:provision";
   Provision->message_handset   = L"message:handset:%S:provision";
+
   // register module with VillageBus 
   s_provision = (symbol*)symbol_intern(0, 0, L"provision");
   fexp* module = (fexp*)send(Fexp, s_new, s_provision, Provision);
@@ -148,14 +154,14 @@ const fexp* provision_interface (closure* c, provision* self, const fexp* messag
     // TODO - check if this mac is already linked to a device
 
     // check for an outstanding provisioning notification for this mac
-    fexp* f = fexp_nil;
-    string* message_device = (string*)send(String, s_string_fromwchar, 
-                                              self->message_device, 
-                                              mac->buffer);
-    f = (fexp*)send(f, s_fexp_cons, message_device);
-    string* notification = (string*)send(DB, s_db_get, f);
-    wprintl(L"GOT NOTIFICATION: %S\n", notification->buffer);
-    if ((fexp*)notification != fexp_nil) {
+    fexp* message_device = fexp_nil;
+    string* s = (string*)send(String, s_string_fromwchar, 
+                              self->message_device, 
+                              mac->buffer);
+    message_device = (fexp*)send(message_device, s_fexp_cons, s);
+    string* notification = (string*)send(DB, s_db_get, message_device);
+    //wprintl(L"GOT NOTIFICATION: %S\n", notification->buffer);
+    if (notification != (string*)fexp_nil) {
       wprintl(L"WE HAVE ONE ALREADY, don't make a new notification\n");
       char* notificationc = (char*)send(notification, s_string_tochar);
       struct json_object* json = json_tokener_parse(notificationc);
@@ -198,8 +204,11 @@ const fexp* provision_interface (closure* c, provision* self, const fexp* messag
                                  "'ip' : '%S', "
                                  "'mac' : '%S' }",
                                  id->buffer, address->buffer, mac->buffer);
-    send(DB, s_db_set, message_device, notification);
-
+    s = (string*)send(String, s_string_fromwchar, 
+                      self->message_device, 
+                      mac->buffer);
+    send(DB, s_db_set, s, notification);
+    
   done:
     // clean up
     send(DB, s_db_close);
@@ -301,6 +310,67 @@ const fexp* provision_handset(closure* c, provision* self, const fexp* message)
   return (fexp*)reply; 
 }
 
+
+
+/* - DELETE ------------------------------------------------------------- */
+const fexp* provision_release(closure* c, provision* self, const fexp* message)
+{
+  fexp* reply = fexp_nil;
+
+  // parse arguments
+  string* address = (string*)send(message, s_fexp_car);
+
+  // connect to database
+  fexp* error = (fexp*)send(DB, s_db_connect);
+  if (error != fexp_nil) {
+    return error;
+  }
+
+  // build queries
+  fexp* provision_device = fexp_nil;
+  fexp* provision_mac    = fexp_nil;
+  fexp* provision_person = fexp_nil;
+  string* s;
+  s = (string*)send(String, s_string_fromwchar, 
+                    self->provision_device, address->buffer);
+  provision_device = (fexp*)send(provision_device, s_fexp_cons, s);
+  s = (string*)send(String, s_string_fromwchar, 
+                    self->provision_mac, address->buffer);
+  provision_mac    = (fexp*)send(provision_mac, s_fexp_cons, s);
+  s = (string*)send(String, s_string_fromwchar, 
+                    self->provision_person, address->buffer);
+  provision_person = (fexp*)send(provision_person, s_fexp_cons, s);
+
+  // get provision:<ip>:device - TODO - pass in device rather than address 
+  string* device = (string*)send(DB, s_db_get, provision_device);
+
+  // del provision:<device.id>:handset
+  if (device != (string*)fexp_nil) {
+    fexp* provision_handset = fexp_nil;
+    s = (string*)send(String, s_string_fromwchar,
+                      self->provision_handset, device->buffer);
+    provision_handset = (fexp*)send(provision_handset, s_fexp_cons, s);
+    send(DB, s_db_del, provision_handset);
+  } else {
+    wprintl(L"could not resolve device id for: %S", address->buffer);
+  }
+
+  // del provision:<ip>:device
+  send(DB, s_db_del, provision_device);
+
+  // del provision:<ip>:mac
+  send(DB, s_db_del, provision_mac);
+
+  // del provision:<ip>:person
+  send(DB, s_db_del, provision_person);
+
+ done:
+  // clean up
+  send(DB, s_db_close);
+  
+  // send back id, mac, ip, root
+  return reply; // TODO - pull from site config
+}
 
 
 /* - Global Handlers ---------------------------------------------------- */

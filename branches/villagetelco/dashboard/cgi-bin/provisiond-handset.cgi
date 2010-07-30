@@ -80,6 +80,7 @@ log "Provisioned handset:  $provisioned_id"
 log "Provisioned trunk:    $provisioned_trunk"
 log "Provisioned username: $provisioned_username"
 log "Provisioned secret:   $provisioned_secret"
+# TODO - check return values
 
 
 # - Construct configuration bundle -----------------------------------------
