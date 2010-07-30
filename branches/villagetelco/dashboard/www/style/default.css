@@ -63,12 +63,19 @@ th     { border-bottom: 1px solid lightgray; }*/
 /* - better default inputs ------------------------------------------------ */
 input {
   vertical-align: top; /* wtf? */
+  margin: 0px;
+  margin-bottom: 10px;
 }
-input[type=text], input[type=password] {  
+textarea {
+  /*padding: 0px;*/
+  margin: 0px;
+  /*margin-bottom: 10px;*/
+}
+input[type=text], input[type=password], textarea {  
   border: 1px solid gray;
   font-size: 1.0em;
 }
-input.blur {
+input.blur, textarea.blur {
   color : gray;
 }
 

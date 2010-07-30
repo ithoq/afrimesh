@@ -486,11 +486,15 @@ console = window.console; //TODO CLEAN
   };
 
   // TODO - use form.submit to save forms so that fn.hint can do this for you
-  jQuery.fn.hintval = function () {
+  jQuery.fn.hintval = function (value) {
     var $input = jQuery(this);
-    var title  = $input.attr('title');
-    var value  = $input.val();
-    return (title == value) ? "" : value;
+    if (!value) {
+      var title  = $input.attr('title');
+      var value  = $input.val();
+      return (title == value) ? "" : value;
+    }
+    $input.val(value);
+    $input.removeClass("blur");
   };
 
 

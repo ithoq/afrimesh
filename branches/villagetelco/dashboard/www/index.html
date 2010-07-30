@@ -26,9 +26,10 @@
     <script type="text/javascript" src="javascript/afrimesh.storage.js"></script>
     <script type="text/javascript" src="javascript/afrimesh.network.js"></script>
     <script type="text/javascript" src="javascript/afrimesh.device.js"></script>
+    <script type="text/javascript" src="javascript/afrimesh.community.js"></script>
     <script type="text/javascript" src="javascript/afrimesh.person.js"></script>
     <script type="text/javascript" src="javascript/afrimesh.customers.js"></script> <!-- TODO deprecate -->
-    <script type="text/javascript" src="javascript/afrimesh.telephony.js"></script>
+    <script type="text/javascript" src="javascript/afrimesh.telephony.js"></script> <!-- TODO s/telephony/handset -->
     <script type="text/javascript" src="javascript/afrimesh.settings.js"></script>
     <script type="text/javascript" src="javascript/afrimesh.js"></script>
 
@@ -97,7 +98,7 @@
         $("#message-loading").html("");
 
         /* TODO - debug */
-        $("ul#dock li#health").click();
+        $("ul#dock li#accounts").click();
 
         console.debug("$(document).ready() -------------------- end");
       });

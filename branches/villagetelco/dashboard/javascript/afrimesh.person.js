@@ -17,38 +17,57 @@ function BootPerson(parent) {
   //        
   //        I like Italian food as much as the next guy but there are other 
   //        dishes than spaghetti! Maybe some nice Gnocchi?
-  person.save = function(person, continuation) {
+  person.save = function(person, continuation, source) {
     
-    console.log("SAVING PERSON: " + show(person));
-
     // TODO - some field validation plz
     if (!person ||
         (!person.email     || person.email     == "") ||
         (!person.firstname || person.firstname == "") ||
-        (!person.lastname  || person.latname   == "")) {
+        (!person.lastname  || person.lastname  == "")) {
       console.log("error saving person");
       return continuation("Specify all the user details please.", null);
     }
 
-    // 1. look for an existing person with this email
-    var name = afrimesh.villagebus.Bind("/@root/db/person:" + person.email + ":id", function(error, id) {
-        console.log("/@root/db/person:" + person.email + ":id -> (" + error + ", " + id + ")");
-        if (error) return continuation(error, id);
-        if (!id) { 
-          return generate_id(person, function(error, person) {
-              if (error) return continuation(error, response);
-              return update_details(person, continuation);
-            });
-        }
-        person.id = id;
-        return update_details(person, continuation);
-      });
-    name = afrimesh.villagebus.GET(name);
+    console.log("SAVING PERSON: " + show(person));
+    console.log("SOURCE: " + show(source));
 
-    // 2. generate a person id if there is no record associated with this email
+    // If the person has an id it already exists & we need to:
+    //   set person:<id>:details 
+    //   if email has changed
+    //     del person:<old email>:id 
+    //     set person:<new email>:id   // automatically done by update()
+    if (person.id) {
+      return update(person, function(error, person) {
+        if (error) return continuation(error, person);
+        return (person.email == source.email) 
+            ? continuation(error, person)
+            : nuke_email(source, continuation);
+      });
+    }
+
+    // If the person has no id we need to
+    //   get person:<email>:id 
+    //   if email has an id
+    //     set  person:<id>:details
+    //   else it's a new record
+    //     incr person:id
+    //     set person:<id>:details
+    //     set person:<email>:id      // automatically done by update()
+    return load_email(person, function(error, person) {
+      if (person.id) {
+        return update(person, continuation);
+      }
+      return new_id(person, function(error, person) {
+        if (error) return continuation(error, response);
+        return update(person, continuation);
+      });      
+    });
+    
+    
+    // Generate a person id if there is no record associated with this email
     // <id> = incr person:id
     // sadd <id> person:ids    TODO
-    function generate_id(person, continuation) {
+    function new_id(person, continuation) {
       var name = afrimesh.villagebus.Bind("/@root/db/incr/person:id", function(error, id) {
           person.id = id;
           return continuation(error, person); 
@@ -56,24 +75,45 @@ function BootPerson(parent) {
       return afrimesh.villagebus.GET(name);
     };
 
-    // 3. save the person details
+    // Save the person details
     // set person:<id>:details = { id, email, firstname, lastname };
-    function update_details(person, continuation) {
+    function update(person, continuation) {
       var name = afrimesh.villagebus.Bind("/@root/db/person:" + person.id + ":details", function(error, response) {
           if (error) return continuation(error, response);
-          return link_details(person, continuation);
+          return index_email(person, continuation);
         });
       return afrimesh.villagebus.PUT(name, person)
     };
 
-    // 4. link person id & email
+    // Link person id & email
     // set person:<email>:id id
-    function link_details(person, continuation) {
+    function index_email(person, continuation) {
       var name = afrimesh.villagebus.Bind("/@root/db/person:" + person.email + ":id", function(error, response) {
           return continuation(error, person);
         });
       return afrimesh.villagebus.PUT(name, person.id); 
     };
+
+    // Remove Link between person id & email
+    // del person:<email>:id
+    function nuke_email(person, continuation) {
+      var name = afrimesh.villagebus.Bind("/@root/db/person:" + person.email + ":id", function(error, response) {
+          return continuation(error, person);
+        });
+      return afrimesh.villagebus.DELETE(name); 
+    };
+
+    // find person with this email
+    function load_email(person, continuation) {
+      var name = afrimesh.villagebus.Bind("/@root/db/person:" + person.email + ":id", function(error, id) {
+        console.log("/@root/db/person:" + person.email + ":id -> (" + error + ", " + id + ")");
+        if (error) return continuation(error, id);
+        person.id = id;
+        return continuation(error, person);
+      });
+      return afrimesh.villagebus.GET(name);
+    };
+   
 
   };
 

@@ -145,7 +145,6 @@ function BootNetwork(parent) {
         return continuation(null, routers);
       });
   };
-
   
   return network;
 };

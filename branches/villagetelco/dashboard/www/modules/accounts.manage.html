@@ -10,38 +10,40 @@
 <div id="accounts-manage">
 
   <!-- search control -->
+  <div style="border: 0px solid red;">
   <input type="text" 
-         style="width:400px; height:30px; padding-left:10px;"
+         style="width:400px; height:30px; padding-left:10px; vertical-align:middle;"
          name="seach" id="search" 
          value="" title="Search on account info ..." />
   &nbsp;
-  <span id="account-create" class="round button">New Account</span>
+  <span id="account-create" class="round button" style="vertical-align:middle;">New Account</span>
+  </div>
   <hr />
 
   <!-- account list -->
   <div class="scrollview" style="top:5.0em;">
 
-    <!-- account editor -->
+    <!-- account editor template -->
     <div id="editor-template" class="round-small editor">
-      <input type="text" title="first name"/>
-      <input type="text" title="last name"/>
-      <input type="text" title="email"/><br/>
-      <input type="text" title="street address"/><br/>
-      <input type="text" title="suburb"/><br/>
-      <input type="text" title="city"/><br/>
+      <input type="hidden" id="id" />
+      <input type="text"   id="firstname" title="first name" style="width: 10em;"/>
+      <input type="text"   id="lastname"  title="last name"  style="width: 10em;"/>
+      <input type="text"   id="email"     title="email"      style="width: 15em;"/>
+      <br/>
+      <textarea id="address" title="street address" cols="30" rows="4" />
+      <div style="text-align:right;">
+        <button id="save">save</button>
+        <button id="cancel">cancel</button>
+      </div>
     </div>
 
-
+    <!-- account summary template -->
     <div id="accountlist" class="accounts">
       <div id="account-template" style="display:none;"> 
-      <!-- div id="account-template" class="account" --> 
         <span class="expand">+</span>
-        <span class="name">Antoine van Gelder</span> 
-        <span class="device">10.0.0.2</span>
-        <span class="voipnumber">42</span>
-        <!-- span class="address">33 Riverside Drive, Kommetjie</span>
-             <span class="balance"></span>
-             <span class="contact">antoine@7degrees.co.za</span -->
+        <span id="person">unknown</span> 
+        <span id="device">0.0.0.0</span>
+        <span id="handset">0</span>
       </div>
     </div>
   </div>
@@ -63,7 +65,7 @@
     console.debug("loaded accounts.manage.html");
 
     /* set up search box */
-    $('input[title!=""]').hint();    
+    //$('input[title!=""]').hint();    
     $("div#accounts-manage input#search").bind("keyup", function(event) {
         if (this.value == "") { 
           return $("div.account").show();
@@ -75,40 +77,87 @@
         return false;
       });
 
-    /* set up new account button */
-    $("#account-create").click(function() {
-        $("#editor-template").show();
-        
-      });
 
     /* load data */   
-    var names = [ "antoine", "Bob", "Joe Smith", "Janet Smith" ];
-    for (i = 0; i < 50; i++) {
-      // clone account template
+    function populate_control() {
+      afrimesh.community.neighbors(function(error, person) {
+          if (error) return console.error("Missing community: " + error);
+          insert_entry(person);
+        });
+      
+    };
+    populate_control();
+
+    $("#account-create").click(function() {
+        var clone = $("#account-template").clone()
+                                          .addClass("account")
+                                          .attr("id", 0)
+                                          .prependTo("#accountlist").show();
+        var person = {}; //{ id:0, firstname:"", lastname:"", email:"", address:"" };
+        var editor = on_show_editor(clone, person);
+        editor.find("button#cancel").click(function() { 
+            editor.remove(); 
+            clone.remove(); 
+          });
+      });    
+
+    function on_save_person(account) {
+      var person = {
+        id        : account.find("input#id").val(),
+        firstname : account.find("input#firstname").hintval(),
+        lastname  : account.find("input#lastname").hintval(),
+        email     : account.find("input#email").hintval(),
+        address   : account.find("textarea#address").hintval()
+      };
+      console.log("Saving: " + show(person));
+
+      afrimesh.person.save(person, function(error, person) {  // save person info and get id
+          if (error) return console.error("Could not save: " + error); // Show error in editor
+          console.log("Save success");
+          $("#accountlist").find(".account").remove(); // TODO - a bit drastic :)
+          populate_control();
+          //console.log("Linking device " + device.ip + " to person: " + person.id);
+          //afrimesh.person.link(person, device, continuation);
+        }, account.source);
+
+    };
+
+    function insert_entry(person) {
       var clone = $("#account-template").clone()
                                         .addClass("account")
-                                        .attr("id", i)
-                                        //.attr("name", names[i % names.length].toUpperCase())
+                                        .attr("id", person.id)
                                         .appendTo("#accountlist").show();
-      // add data for account
-      clone.find(".name").html(names[i % names.length]);
-      clone.find(".voipnumber").html(i);
-      clone.find(".device").html("10.0.0." + i);
-      //clone.find(".uptime").html(pretty_seconds(device.uptime));
-      //clone.find(".traffic").html(pretty_bytes(device.bytes.tx + device.bytes.rx));
-      clone.click(function() {
-          $(this).unbind();
-          console.log("Editing account: " + $(this).find(".name").html());
-          var clone = $("#editor-template").clone()
-                                           .attr("id", "");
-          //clone.insertAfter(this).show();
-          clone.appendTo($(this).find(".name")).show();
-          $(this).find(".name").css("background", "#eee");
-          $(this).find(".name").addClass("round-small");
-          $(this).find(".expand").html("-");
-          $('input[title!=""]').hint();    
-        });
-    }
+      clone.find("#person").html(person.firstname + " " + person.lastname);
+      //clone.find("#handset").html(i);
+      //clone.find("#device").html("10.0.0." + i);
+      clone.find(".expand").toggle(function() { on_show_editor(clone, person); }, 
+                                   function() { on_hide_editor(clone); });
+    };
+    function on_show_editor(account, person) {
+      var clone = $("#editor-template").clone()
+                                       .attr("id",    "editor");
+      clone.appendTo($(account).find("#person")).show();
+      $(account).find("#person").addClass("round-small expanded");
+      $(account).find(".expand").html("-");
+      $("input[title!='']").hint(); $("textarea[title!='']").hint();    
+      // set field values
+      clone.source = person;
+      clone.find("input#id").val(person.id);
+      clone.find("input#firstname").hintval(person.firstname);
+      clone.find("input#lastname").hintval(person.lastname);
+      clone.find("input#email").hintval(person.email);
+      clone.find("textarea#address").hintval(person.address);
+      clone.find("button#save")  .click(function() { on_save_person(clone);  });
+      clone.find("button#cancel").click(function() { account.find(".expand").click(); });
+      return clone;
+    };
+    function on_hide_editor(account) {
+      $(account).find(".expand").html("+");
+      $(account).find("#person").removeClass("round-small expanded");
+      $(account).find("#person #editor").remove();
+      return account;
+    };
+    /* -- */
 
 
     return unload;
