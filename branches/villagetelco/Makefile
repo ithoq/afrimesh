@@ -28,7 +28,7 @@
 #
 
 # - configuration ----------------------------------------------------------
-VERSION=0.9-r809
+VERSION=0.9-r890
 RELEASE=1
 
 MODULES=\
