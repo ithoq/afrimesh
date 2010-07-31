@@ -223,19 +223,19 @@ div#accounts-manage div.account span.expanded {
   background : #eee;
 }
 div#accounts-manage div.account span.expand {
-  width       : 1px;
   color       : darkgray;
-  font-weight : bold;
   font-family : "Courier New", "Courier", "Lucida Sans Mono";
   font-size   : 1.0em;
+  font-weight : bold;
+  width       : 1px;
 }
 div#accounts-manage .editor {
-  display        : none;
   background     : #eee;
   border         : 0px solid red;
+  display        : none;
   padding        : 0.5em;
-  padding-right  : 0.25em;
   padding-bottom : 0.25em;
+  padding-right  : 0.25em;
 }
 div#accounts-manage span.mydevices {
   font-weight:normal; 
