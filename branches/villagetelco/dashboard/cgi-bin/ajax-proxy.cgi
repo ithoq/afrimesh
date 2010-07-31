@@ -14,6 +14,16 @@ if [ "$LOG" = "1" ] ; then
     echo "=================================================================="  >> "$BUFFER"
 fi
 
+# platform issues
+UNAME=`uname`
+NC=nc
+if [ "$UNAME" = "Linux" ]; then
+    # by default Linux nc is not waiting for a reply
+    # before closing the connection
+    # -q has it wait up till 15 seconds to hear back
+    # TODO - this is going to wreak havoc on OpenWRT *sigh*
+    NC="nc -q 15"
+fi
 
 # - read client request ----------------------------------------------------
 QUERY=$QUERY_STRING
@@ -68,13 +78,14 @@ else
 "
 fi
 if [ "$LOG" = "1" ] ; then
-    echo "- client request --------------------------------- " >> "$BUFFER"
+    echo "- making remote request --------------------------------- " >> "$BUFFER"
     echo "$REQUEST"  >> "$BUFFER"
     echo             >> "$BUFFER"
 fi
 
 # invoke remote request 
-RESPONSE=`echo -n "$REQUEST" | nc $REMOTE_HOST $REMOTE_PORT`
+RESPONSE=`echo -n "$REQUEST" | $NC $REMOTE_HOST $REMOTE_PORT`
+#echo "|$RESPONSE|" >> "$BUFFER"
 
 # check response headers 
 RESPONSE_HEADER=`echo "$RESPONSE" | head -n 1`
@@ -90,10 +101,10 @@ fi
 # - forward response to client ---------------------------------------------
 echo -n "$RESPONSE_BODY"
 if [ "$LOG" = "1" ] ; then
-    echo "- remote response -------------------------------- " >> "$BUFFER"
+    echo "- remote responsed -------------------------------- " >> "$BUFFER"
     echo "$RESPONSE_HEADER" >> "$BUFFER"
     echo "--"               >> "$BUFFER"
-    echo "$RESPONSE_BODY"   >> "$BUFFER"
+    #echo "$RESPONSE_BODY"   >> "$BUFFER"
     echo                    >> "$BUFFER"
     # Append log buffer to actual log & nuke buffer
     cat "$BUFFER" >> "$LOGFILE"
