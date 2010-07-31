@@ -18,7 +18,8 @@ function BootSettings(parent, address) {
 
   // Network roots are nodes with some level of savvy about the network. 
   // Generally, if they can't process a message they should be able to tell you who can
-  var roots = [ "192.168.20.105", "10.0.0.1" ];
+  // TODO - check if 'address' is a valid root, fallback to other roots otherwise
+  var roots = [ address, "10.130.1.1" ];
   var default_root = roots[0];
 
   /**
@@ -63,8 +64,8 @@ function BootSettings(parent, address) {
     "afrimesh|settings|network|wireless|ssid"     : { remote : "wireless|@wifi-iface[0]|ssid",  init : "?" },
     "afrimesh|settings|network|wireless|bssid"    : { remote : "wireless|@wifi-iface[0]|bssid", init : "??:??:??:??:??:??" },
 
-    "afrimesh|settings|network|mesh|accounting_server" : { remote : "afrimesh|dashboard|accounting_server", init : "10.0.0.1" },  
-    "afrimesh|settings|network|mesh|vis_server"        : { remote : "batmand|general|visualisation_srv", init : "10.0.0.1" },  
+    "afrimesh|settings|network|mesh|accounting_server" : { remote : "afrimesh|dashboard|accounting_server", init : "10.130.1.1" },  
+    "afrimesh|settings|network|mesh|vis_server"        : { remote : "batmand|general|visualisation_srv", init : "10.130.1.1" },  
     "afrimesh|settings|network|mesh|routing_class"     : { remote : "batmand|general|routing_class",     init : "" },  
     "afrimesh|settings|network|mesh|gateway_class"     : { remote : "batmand|general|gateway_class",     init : "" },  
 
@@ -82,7 +83,7 @@ function BootSettings(parent, address) {
     "afrimesh|settings|internet_gateway|bandwidth|down" : {  remote : "afrimesh|gateway|bandwidth_down", init : "512" },
     "afrimesh|settings|internet_gateway|bandwidth|up"   : {  remote : "afrimesh|gateway|bandwidth_up",   init : "256" },
     
-    "afrimesh|settings|radius|server"   : {  remote : "afrimesh|radius|server",   init : "10.0.0.1" },
+    "afrimesh|settings|radius|server"   : {  remote : "afrimesh|radius|server",   init : "10.130.1.1" },
     "afrimesh|settings|radius|radtype"  : {  remote : "afrimesh|radius|radtype",  init : "1" },
     "afrimesh|settings|radius|database" : {  remote : "afrimesh|radius|database", init : "radius" },
     "afrimesh|settings|radius|username" : {  remote : "afrimesh|radius|username", init : "radius" },

@@ -28,7 +28,7 @@
 #
 
 # - configuration ----------------------------------------------------------
-VERSION=0.9-r890
+VERSION=1.0pre-r894
 RELEASE=1
 
 MODULES=\
@@ -82,18 +82,18 @@ FLAVOR=BSD
 CFLAGS+=-m32
 endif
 
-DASHBOARD_WWW=$(WWW_ROOT)/afrimesh.vt # TODO - fix before release!
+DASHBOARD_WWW=$(WWW_ROOT)/afrimesh 
 
 
 # - common -----------------------------------------------------------------
 INSTALL=cp -rf
 MKDIR=mkdir -p
 
-MFLAGS += \
+MFLAGS= \
   FLAVOR=$(FLAVOR) \
 	VERSION=$(VERSION) \
-	CFLAGS=$(CFLAGS) \
-	LDFLAGS=$(LDFLAGS) 
+	CFLAGS="$(CFLAGS)" \
+	LDFLAGS="$(LDFLAGS)" 
 
 # - targets -----------------------------------------------------------------
 all: 
@@ -116,12 +116,15 @@ install-www:
 	@echo "Installing dashboard cgi scripts in: $(DASHBOARD_CGI)"
 	@if ! test -d $(DASHBOARD_CGI) ; then mkdir -p $(DASHBOARD_CGI) ; fi
 	$(INSTALL) ./package-scripts/openwrt/afrimesh/files.portal/www/cgi-bin/uam.pl $(DASHBOARD_CGI)
-	$(INSTALL) dashboard/cgi-bin/ajax-proxy.cgi       $(DASHBOARD_CGI)
-	$(INSTALL) dashboard/cgi-bin/mesh-topology.kml    $(DASHBOARD_CGI)
+	$(INSTALL) dashboard/cgi-bin/ajax-proxy.cgi          $(DASHBOARD_CGI)
+	$(INSTALL) dashboard/cgi-bin/provisiond.cgi          $(DASHBOARD_CGI)
+	$(INSTALL) dashboard/cgi-bin/provisiond-handset.cgi  $(DASHBOARD_CGI)
+	$(INSTALL) dashboard/cgi-bin/mesh-topology.kml       $(DASHBOARD_CGI)
+	chmod 0755 $(DASHBOARD_CGI)/*.cgi
 	chmod 0755 $(DASHBOARD_CGI)/mesh-topology.kml
-	-$(INSTALL) utilities/urldecode                   $(DASHBOARD_CGI)
-	-$(INSTALL) villagebus/villagebus                 $(DASHBOARD_CGI)
-	-$(INSTALL) village-bus-radius/village-bus-radius $(DASHBOARD_CGI)
+	-$(INSTALL) utilities/urldecode                      $(DASHBOARD_CGI)
+	-$(INSTALL) villagebus/villagebus                    $(DASHBOARD_CGI)
+	#-$(INSTALL) village-bus-radius/village-bus-radius $(DASHBOARD_CGI)
 	find $(DASHBOARD_WWW) -name "*~"   | xargs rm -f
 	find $(DASHBOARD_WWW) -name ".svn" | xargs rm -rf
 	find $(DASHBOARD_CGI) -name "*~"   | xargs rm -f
@@ -143,7 +146,7 @@ install-config:
 	}
 
 clean : # clean-www
-	cd village-bus-radius ; $(MAKE) clean
+	#cd village-bus-radius ; $(MAKE) clean
 	cd villagebus         ; $(MAKE) clean
 	cd utilities          ; $(MAKE) clean
 
@@ -162,7 +165,8 @@ distclean : clean
 sources : clean
 	echo "Assembling local sources"
 	rm -rf /tmp/afrimesh-$(VERSION).tar.gz
-	cp -r ../trunk /tmp/afrimesh-$(VERSION)
+	#cp -r ../trunk /tmp/afrimesh-$(VERSION)
+	cp -r . /tmp/afrimesh-$(VERSION)
 	rm -rf /tmp/afrimesh-$(VERSION)/upstream
 	find /tmp/afrimesh-$(VERSION) -name "*~"   | xargs rm -f
 	find /tmp/afrimesh-$(VERSION) -name "#*#"   | xargs rm -f

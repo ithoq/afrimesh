@@ -32,8 +32,8 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ------------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=809
-PKG_VERSION:=0.9-r$(PKG_REV)
+PKG_REV:=894
+PKG_VERSION:=1.0pre-r$(PKG_REV)
 PKG_RELEASE:=1
 
 
@@ -147,34 +147,48 @@ define Build/Compile
 endef
 
 
-# - villagetelco-node ---------------------------------------------------------
-define Package/villagetelco-node
+# - villagetelco-device ---------------------------------------------------------
+define Package/villagetelco-device
 	SECTION:=admin
 	CATEGORY:=Administration
-	DEPENDS:=+afrimesh-base +afrimesh-batman +afrimesh-provision
-	TITLE:=VillageTelco firmware for OpenWRT routers
+	DEPENDS:=+libuci +libjson +netcat
+#+busybox +libuci +libjson +ntpclient +mini-httpd
+	TITLE:=Basically afrimesh-base and afrimesh-provision
 	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
 endef
 
-define Package/villagetelco-node/description
+define Package/villagetelco-device/description
 	Build OpenWRT router firmware that can join a VillageTelco mesh
 endef
 
-define Package/villagetelco-node/install
+define Package/villagetelco-device/install
 	$(INSTALL_DIR)  $(1)/etc
 	$(INSTALL_DIR)  $(1)/etc/config
 	$(INSTALL_DIR)  $(1)/etc/init.d
+	$(INSTALL_DIR)  $(1)/etc/crontabs
+	$(INSTALL_DIR)  $(1)/www/cgi-bin
 
+	mkdir -p $(1)/CONTROL
+	echo "/etc/config/afrimesh" >> $(1)/CONTROL/conffiles
+	$(INSTALL_CONF) ./files.villagetelco/etc/config/afrimesh           $(1)/etc/config
+	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/villagebus/villagebus             $(1)/www/cgi-bin/villagebus
+	$(INSTALL_BIN)  ./files/etc/crontabs/afrimesh                      $(1)/etc/crontabs/root
+	$(INSTALL_BIN)  ./files/www/cgi-bin/status.sh                      $(1)/www/cgi-bin/status
+	$(INSTALL_BIN)  ./files.provision/etc/init.d/provision             $(1)/etc/init.d/provision
+	$(INSTALL_BIN)  ./files.provision/www/cgi-bin/provision.sh         $(1)/www/cgi-bin/provision
+	$(INSTALL_BIN)  ./files.provision/www/cgi-bin/provision-handset.sh $(1)/www/cgi-bin/provision-handset
+
+	# TODO 
+	#$(INSTALL_BIN)  ./files.villagetelco/etc/init.d/fallback-ip  $(1)/etc/init.d
 	#$(INSTALL_DATA) ./files.villagetelco/etc/config/network      $(1)/etc/config
 	#$(INSTALL_DATA) ./files.villagetelco/etc/config/wireless     $(1)/etc/config
-	$(INSTALL_BIN)  ./files.villagetelco/etc/init.d/fallback-ip  $(1)/etc/init.d
 
 	# - runonce --
 	# Packages not part of the base distribution tend to overwrite anything we install above
-	#$(INSTALL_DATA) ./files.villagetelco/etc/firewall.user.runonce   $(1)/etc/firewall.user.villagetelco-node
-	#$(INSTALL_DATA) ./files.villagetelco/etc/config/firewall.runonce $(1)/etc/config/firewall.villagetelco-node
-	#$(INSTALL_DATA) ./files.villagetelco/etc/config/batmand.runonce  $(1)/etc/config/batmand.villagetelco-node
-	$(INSTALL_BIN)  ./files.villagetelco/etc/init.d/runonce          $(1)/etc/init.d/runonce.villagetelco-node
+	#$(INSTALL_DATA) ./files.villagetelco/etc/firewall.user.runonce   $(1)/etc/firewall.user.villagetelco-device
+	#$(INSTALL_DATA) ./files.villagetelco/etc/config/firewall.runonce $(1)/etc/config/firewall.villagetelco-device
+	#$(INSTALL_DATA) ./files.villagetelco/etc/config/batmand.runonce  $(1)/etc/config/batmand.villagetelco-device
+	$(INSTALL_BIN)  ./files.villagetelco/etc/init.d/runonce          $(1)/etc/init.d/runonce.villagetelco-device
 endef
 
 
@@ -182,7 +196,7 @@ endef
 define Package/afrimesh-provision
 	SECTION:=admin
 	CATEGORY:=Administration
-	DEPENDS:=+afrimesh-base
+	DEPENDS:=+afrimesh-batman
 	TITLE:=Mesh router auto-provisioning support
 	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
 endef
@@ -197,6 +211,9 @@ define Package/afrimesh-provision/install
 	$(INSTALL_BIN)  ./files.provision/etc/init.d/provision             $(1)/etc/init.d/provision
 	$(INSTALL_BIN)  ./files.provision/www/cgi-bin/provision.sh         $(1)/www/cgi-bin/provision
 	$(INSTALL_BIN)  ./files.provision/www/cgi-bin/provision-handset.sh $(1)/www/cgi-bin/provision-handset
+
+	# - runonce --
+	$(INSTALL_BIN)  ./files.provision/etc/init.d/runonce          		 $(1)/etc/init.d/runonce.afrimesh-provision
 endef
 
 
@@ -473,10 +490,10 @@ $(eval $(call BuildPackage,afrimesh-base))
 $(eval $(call BuildPackage,afrimesh-batman))
 $(eval $(call BuildPackage,afrimesh-olsr))
 $(eval $(call BuildPackage,afrimesh-provision))
-$(eval $(call BuildPackage,villagetelco-node))
 $(eval $(call BuildPackage,afrimesh-gateway))
 $(eval $(call BuildPackage,afrimesh-portal))
 $(eval $(call BuildPackage,afrimesh-webif))
 $(eval $(call BuildPackage,afrimesh-potato))
 $(eval $(call BuildPackage,afrimesh-dashboard))
 
+$(eval $(call BuildPackage,villagetelco-device))

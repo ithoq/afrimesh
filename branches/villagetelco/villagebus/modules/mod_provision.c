@@ -35,7 +35,7 @@
 #include "mod_provision.h"
 #include "mod_db.h"
 
-#define PROVISION_DEFAULT_ROOT L"192.168.20.105"
+#define PROVISION_DEFAULT_ROOT L"10.130.1.1"
 
 /* - provision ---------------------------------------------------------- */
 vtable* provision_vt = 0;

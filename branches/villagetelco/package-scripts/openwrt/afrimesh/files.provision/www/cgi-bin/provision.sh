@@ -1,11 +1,13 @@
 #!/usr/bin/env sh
 
-# - factory setup ----------------------------------------------------------
-factory_ssid=batman
-factory_channel=5
-factory_network=10.0.0.0
-factory_netmask=255.0.0.0
-factory_root="10.0.0.1"
+# - factory setup ---------------------------------------------------------
+factory_mode=ahdemo
+factory_ssid=potato
+factory_bssid="01:CA:FF:EE:BA:BE"
+factory_channel=1
+factory_network=10.130.1.0
+factory_netmask=255.255.255.0
+factory_root="10.130.1.1"
 factory_provisiond="/cgi-bin/provisiond"
 
 

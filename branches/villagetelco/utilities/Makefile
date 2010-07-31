@@ -44,4 +44,4 @@ urldecode : urldecode.c
 
 
 clean : 
-	rm -f *.o *~ urldecode
+	rm -rf *.o *~ urldecode *.dSYM

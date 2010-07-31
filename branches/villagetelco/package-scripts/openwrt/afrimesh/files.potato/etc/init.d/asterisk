@@ -36,7 +36,7 @@ append_sip_entry() {
   append sipconf "\n\n[$cfg]"
   append_sip_parm "$cfg" "context"     "default"
   append_sip_parm "$cfg" "type"        "peer"
-  append_sip_parm "$cfg" "host"        "10.0.0.1"
+  append_sip_parm "$cfg" "host"        "10.13.1.1"
   append_sip_parm "$cfg" "port"        "5060"
   append_sip_parm "$cfg" "username"    ""
   append_sip_parm "$cfg" "username"    ""         "authuser"

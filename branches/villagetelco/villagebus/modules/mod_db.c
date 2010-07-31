@@ -152,7 +152,7 @@ const fexp* db_evaluate(closure* c, db* self, const fexp* expression)
 const fexp* db_connect(closure* c, db* self)
 {
   if ((self->handle == NULL) || (credis_ping(self->handle) != 0)) {
-    self->handle = credis_connect("192.168.20.225", 6379, 2000);  // TODO - get redis DB address from config
+    self->handle = credis_connect("localhost", 6379, 2000);  // TODO - get redis DB address from config
   }
 
   // check connection
