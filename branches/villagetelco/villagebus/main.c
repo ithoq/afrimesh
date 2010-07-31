@@ -60,7 +60,10 @@ int main(int argc, char** argv)
   /** - parse request --------------------------------------------------- */
   cgi_init();
   Request* request = cgi_request(argc, argv);
-  if (request->method == SYMBOL_UNKNOWN) {
+  wprintl(L"Parsed request: %p\n", request);
+  if (request == NULL) {
+    return exit_failure(request, L"{ \"error\" : \"Could not parse request\" }");
+  } else if (request->method == SYMBOL_UNKNOWN) {
     return exit_failure(request, L"{ \"error\" : \"usage: villagebus [GET|PUT|POST] name\" }");
   } else if (request->pathname == NULL) {
     return exit_failure(request, L"{ \"error\" : \"name not found\" }");

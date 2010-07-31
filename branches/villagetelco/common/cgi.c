@@ -285,9 +285,6 @@ Request* cgi_request(int argc, char** argv)
   if (content_length)  wprintl(L" CONTENT_LENGTH: %s\n", content_length);
   if (query_string)    wprintl(L"   QUERY_STRING: %s\n", query_string); 
 
-
-
-
   /* parse request - Method */
   if (request_method == NULL && argc >= 1 && argv[1]) {    // command line
     request_method = argv[1];
@@ -310,12 +307,13 @@ Request* cgi_request(int argc, char** argv)
     free(cgi_href_buffer);
     cgi_href_buffer = NULL;
   }
+
   if (path_info) {                                      // web
-    size_t buffer_size = strlen(path_info);
+    size_t buffer_size = strlen(path_info) + 1;
     if (query_string) {
-      buffer_size += strlen(query_string);
+      buffer_size += strlen(query_string) + 1;
     }
-    buffer_size = (buffer_size + 1) * sizeof(wchar_t);
+    buffer_size = (buffer_size) * sizeof(wchar_t);
     cgi_href_buffer = (wchar_t*)malloc(buffer_size);
     memset(cgi_href_buffer, 0, buffer_size);
     swprintf(cgi_href_buffer, buffer_size, L"%s%s%s", path_info, (query_string ? "?" : ""), (query_string ? query_string : ""));
@@ -323,6 +321,7 @@ Request* cgi_request(int argc, char** argv)
     request->pathname = wcsdupchar(path_info);
     request->search   = query_string ? wcsdupchar(query_string) : NULL;
     request->json     = query_string ? search_to_json(query_string, strlen(query_string)) : NULL;
+
   } else if (argc >= 2 && argv[2]) {                     // command line
     request->href     = wcsdupchar(argv[2]);
     size_t length = strlen(argv[2]);

@@ -13,8 +13,8 @@ factory_netmask=255.255.255.0
 # local config
 wifi0_device=wifi0
 wifi0_interface=ath0
-wifi0_mac=`ifconfig $wifi0_interface | grep HWaddr | awk '{ print $5 }'`
-#TODO - get from MAC wifi0_address=10.130.1.20
+#wifi0_mac=`ifconfig $wifi0_interface | grep HWaddr | awk '{ print $5 }'`
+wifi0_address=10.130.1.33   # TODO - get from MAC 
 factory_root=$(uci get afrimesh.settings.root)
 
 
@@ -30,10 +30,12 @@ start () {
   uci set network.$wifi0_device.ifname=$wifi0_interface
   uci set network.$wifi0_device.proto=static
   uci set network.$wifi0_device.netmask=$factory_netmask
-  #TODO uci set network.$wifi0_device.ipaddr=$wifi0_address
+  uci set network.$wifi0_device.ipaddr=$wifi0_address
 
+  # TODO initial startup seems to nuke this :-/
   uci set wireless.$wifi0_device.disabled=0
   uci set wireless.$wifi0_device.channel=$factory_channel
+  uci set wireless.@wifi-iface[0].encryption=none
   uci set wireless.@wifi-iface[0].ssid=$factory_ssid
   uci set wireless.@wifi-iface[0].mode=$factory_mode
   uci set wireless.@wifi-iface[0].bssid=$factory_bssid

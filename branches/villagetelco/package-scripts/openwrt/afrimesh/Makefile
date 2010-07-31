@@ -30,9 +30,9 @@
 include $(TOPDIR)/rules.mk
 
 
-# - configuration ------------------------------------------------------------
+# - configuration ----------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=894
+PKG_REV:=895
 PKG_VERSION:=1.0pre-r$(PKG_REV)
 PKG_RELEASE:=1
 
@@ -41,16 +41,14 @@ PKG_RELEASE:=1
 #      https://dev.openwrt.org/ticket/3815
 #      http://forum.openwrt.org/viewtopic.php?id=18090
 ##PKG_SOURCE_MIRROR=0
-
-
-# - to use local sources, disable PKG_SOURCE_URL & set LOCAL_SOURCES ---------
+# - to use local sources, disable PKG_SOURCE_URL & set LOCAL_SOURCES -------
 LOCAL_SOURCES:=~/afrimesh
 ifeq "$(wildcard $(LOCAL_SOURCES) )"  ""
 PKG_SOURCE_URL:=http://afrimesh.googlecode.com/svn/trunk
 endif
 
 
-# - sources ------------------------------------------------------------------
+# - sources ----------------------------------------------------------------
 PKG_SOURCE_PROTO:=svn
 PKG_SOURCE_VERSION:=$(PKG_REV)
 PKG_SOURCE_SUBDIR:=$(if $(PKG_BRANCH),$(PKG_BRANCH),$(PKG_NAME))-$(PKG_VERSION)
@@ -58,34 +56,7 @@ PKG_SOURCE:=$(PKG_SOURCE_SUBDIR).tar.gz
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_SOURCE_SUBDIR)
 
 
-# - build configuration ------------------------------------------------------
-PKG_EXTRA_CFLAGS=\
-	-D_METAPACK \
-	-DOPENWRT \
-	-I$(PKG_BUILD_DIR) \
-	-I$(PKG_BUILD_DIR)/common \
-  -I$(STAGING_DIR)/usr/include \
-  -I$(STAGING_DIR)/include-host \
-	-I$(STAGING_DIR_HOST)/include \
-	-include endian.h \
-	-DAFRIMESH_VERSION="\"$(VERSION)\"" \
-	-DDISABLE_LOG 
-
-TARGET_CFLAGS += $(FPIC)
-
-MAKE_ARGS += \
-	CC='$(TARGET_CC) $(PKG_EXTRA_CFLAGS) $(TARGET_CFLAGS_EXTRA) ' \
-	CFLAGS='$(TARGET_CFLAGS)' \
-	LDFLAGS='$(TARGET_LDFLAGS)' \
-	FLAVOR='LINUX'
-
-MAKE_VILLAGEBUS_ARGS += \
-	CC='$(TARGET_CC) $(PKG_EXTRA_CFLAGS) $(TARGET_CFLAGS_EXTRA) ' \
-	CFLAGS='$(TARGET_CFLAGS)' \
-	LDFLAGS='$(TARGET_LDFLAGS) -ljson -luci' \
-	FLAVOR='LINUX'
-
-# - afrimesh-base ------------------------------------------------------------
+# - afrimesh-base ----------------------------------------------------------
 include $(INCLUDE_DIR)/package.mk
 define Package/afrimesh-base
 	SECTION:=admin
@@ -126,24 +97,28 @@ define Package/afrimesh-base/install
 endef
 
 
-# - build rules --------------------------------------------------------------
-define Build/Prepare
-	-$(call Build/Prepare/Default)
-	if [ -z "$(PKG_SOURCE_URL)" ]; then \
-		echo "Building from local sources" ; \
-		rm -rf $(PKG_BUILD_DIR)	  ; \
-		mkdir  $(PKG_BUILD_DIR)   ; \
-    $(LOCAL_SOURCES)/clean.sh ; \
-		$(CP) $(LOCAL_SOURCES)/*  $(PKG_BUILD_DIR) ; \
-	fi
+# - afrimesh-provision -----------------------------------------------------
+define Package/afrimesh-provision
+	SECTION:=admin
+	CATEGORY:=Administration
+	DEPENDS:=+afrimesh-batman
+	TITLE:=Mesh router auto-provisioning support
+	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
 endef
 
-define Build/Configure
+define Package/afrimesh-provision/description
+	Mesh router auto-provisioning support
 endef
 
-define Build/Compile
-	cd $(PKG_BUILD_DIR)/utilities  ; VERSION=$(PKG_VERSION) make $(MAKE_ARGS) 
-	cd $(PKG_BUILD_DIR)/villagebus ; VERSION=$(PKG_VERSION) make $(MAKE_VILLAGEBUS_ARGS) 
+define Package/afrimesh-provision/install
+	$(INSTALL_DIR)  $(1)/etc/init.d
+	$(INSTALL_DIR)  $(1)/www/cgi-bin
+	$(INSTALL_BIN)  ./files.provision/etc/init.d/provision             $(1)/etc/init.d/provision
+	$(INSTALL_BIN)  ./files.provision/www/cgi-bin/provision.sh         $(1)/www/cgi-bin/provision
+	$(INSTALL_BIN)  ./files.provision/www/cgi-bin/provision-handset.sh $(1)/www/cgi-bin/provision-handset
+
+	# - runonce --
+	$(INSTALL_BIN)  ./files.provision/etc/init.d/runonce          		 $(1)/etc/init.d/runonce.afrimesh-provision
 endef
 
 
@@ -152,7 +127,7 @@ define Package/villagetelco-device
 	SECTION:=admin
 	CATEGORY:=Administration
 	DEPENDS:=+libuci +libjson +netcat
-#+busybox +libuci +libjson +ntpclient +mini-httpd
+#+ntpclient +mini-httpd
 	TITLE:=Basically afrimesh-base and afrimesh-provision
 	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
 endef
@@ -192,32 +167,7 @@ define Package/villagetelco-device/install
 endef
 
 
-# - afrimesh-provision -------------------------------------------------------
-define Package/afrimesh-provision
-	SECTION:=admin
-	CATEGORY:=Administration
-	DEPENDS:=+afrimesh-batman
-	TITLE:=Mesh router auto-provisioning support
-	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
-endef
-
-define Package/afrimesh-provision/description
-	Mesh router auto-provisioning support
-endef
-
-define Package/afrimesh-provision/install
-	$(INSTALL_DIR)  $(1)/etc/init.d
-	$(INSTALL_DIR)  $(1)/www/cgi-bin
-	$(INSTALL_BIN)  ./files.provision/etc/init.d/provision             $(1)/etc/init.d/provision
-	$(INSTALL_BIN)  ./files.provision/www/cgi-bin/provision.sh         $(1)/www/cgi-bin/provision
-	$(INSTALL_BIN)  ./files.provision/www/cgi-bin/provision-handset.sh $(1)/www/cgi-bin/provision-handset
-
-	# - runonce --
-	$(INSTALL_BIN)  ./files.provision/etc/init.d/runonce          		 $(1)/etc/init.d/runonce.afrimesh-provision
-endef
-
-
-# - afrimesh-batman ----------------------------------------------------------
+# - afrimesh-batman --------------------------------------------------------
 define Package/afrimesh-batman
 	SECTION:=admin
 	CATEGORY:=Administration
@@ -234,7 +184,7 @@ define Package/afrimesh-batman/install
 endef
 
 
-# - afrimesh-olsr ------------------------------------------------------------
+# - afrimesh-olsr ----------------------------------------------------------
 define Package/afrimesh-olsr
 	SECTION:=admin
 	CATEGORY:=Administration
@@ -251,7 +201,7 @@ define Package/afrimesh-olsr/install
 endef
 
 
-# - afrimesh-gateway----------------------------------------------------------
+# - afrimesh-gateway--------------------------------------------------------
 define Package/afrimesh-gateway
 	SECTION:=admin
 	CATEGORY:=Administration
@@ -292,7 +242,7 @@ endef
 
 
 
-# - afrimesh-webif -----------------------------------------------------------
+# - afrimesh-webif ---------------------------------------------------------
 define Package/afrimesh-webif
 	SECTION:=admin
 	CATEGORY:=Administration
@@ -361,12 +311,11 @@ define Package/afrimesh-portal/install
 endef
 
 
-# - afrimesh-dashboard -------------------------------------------------------
+# - afrimesh-dashboard -----------------------------------------------------
 define Package/afrimesh-dashboard
 	SECTION:=admin
 	CATEGORY:=Administration
 	DEPENDS:=+afrimesh-base +afrimesh-pmacctd +afrimesh-pmacct-client
-#+curl-nossl 
 	TITLE:=Mesh management dashboard
 endef
 
@@ -406,8 +355,7 @@ define Package/afrimesh-dashboard/install
 endef
 
 
-# - afrimesh-potato -----------------------------------------------------------
-# +curl-nossl +luci-admin-full 
+# - afrimesh-potato --------------------------------------------------------
 define Package/afrimesh-potato
 	SECTION:=admin
 	CATEGORY:=Administration
@@ -485,7 +433,53 @@ define Package/afrimesh-potato/postinst
 endef
 
 
+# - build configuration ----------------------------------------------------
+PKG_EXTRA_CFLAGS=\
+	-D_METAPACK \
+	-DOPENWRT \
+	-I$(PKG_BUILD_DIR) \
+	-I$(PKG_BUILD_DIR)/common \
+  -I$(STAGING_DIR)/usr/include \
+  -I$(STAGING_DIR)/include-host \
+	-I$(STAGING_DIR_HOST)/include \
+	-include endian.h \
+	-DAFRIMESH_VERSION="\"$(VERSION)\"" \
+	-DDISABLE_LOG 
+TARGET_CFLAGS += $(FPIC)
+MAKE_ARGS += \
+	CC='$(TARGET_CC) $(PKG_EXTRA_CFLAGS) $(TARGET_CFLAGS_EXTRA) ' \
+	CFLAGS='$(TARGET_CFLAGS)' \
+	LDFLAGS='$(TARGET_LDFLAGS)' \
+	FLAVOR='LINUX'
+MAKE_VILLAGEBUS_ARGS += \
+	CC='$(TARGET_CC) $(PKG_EXTRA_CFLAGS) $(TARGET_CFLAGS_EXTRA) ' \
+	CFLAGS='$(TARGET_CFLAGS)' \
+	LDFLAGS='$(TARGET_LDFLAGS) -ljson -luci' \
+	FLAVOR='LINUX'
 
+
+# - build rules ------------------------------------------------------------
+define Build/Prepare
+	-$(call Build/Prepare/Default)
+	if [ -z "$(PKG_SOURCE_URL)" ]; then \
+		echo "Building from local sources" ; \
+		rm -rf $(PKG_BUILD_DIR)	  ; \
+		mkdir  $(PKG_BUILD_DIR)   ; \
+    $(LOCAL_SOURCES)/clean.sh ; \
+		$(CP) $(LOCAL_SOURCES)/*  $(PKG_BUILD_DIR) ; \
+	fi
+endef
+
+define Build/Configure
+endef
+
+define Build/Compile
+	cd $(PKG_BUILD_DIR)/utilities  ; VERSION=$(PKG_VERSION) make $(MAKE_ARGS) 
+	cd $(PKG_BUILD_DIR)/villagebus ; VERSION=$(PKG_VERSION) make $(MAKE_VILLAGEBUS_ARGS) 
+endef
+
+
+# - eval packages ----------------------------------------------------------
 $(eval $(call BuildPackage,afrimesh-base))
 $(eval $(call BuildPackage,afrimesh-batman))
 $(eval $(call BuildPackage,afrimesh-olsr))
@@ -495,5 +489,4 @@ $(eval $(call BuildPackage,afrimesh-portal))
 $(eval $(call BuildPackage,afrimesh-webif))
 $(eval $(call BuildPackage,afrimesh-potato))
 $(eval $(call BuildPackage,afrimesh-dashboard))
-
 $(eval $(call BuildPackage,villagetelco-device))

@@ -143,7 +143,7 @@ struct json_object* asterisk_sip_peers_parser(const char* line, size_t length)
   char* latency;
   const char* cursor = line;
   if (strncasecmp(line, "Name/username", 13) == 0 ||
-      strcasestr (line, "[Monitored:")       != NULL)  {
+      strcasestr(line, "[Monitored:")        != 0)  {
     return NULL;
   }  
   /*        1         2         3         4         5         6         7         8

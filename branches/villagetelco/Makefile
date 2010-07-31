@@ -28,7 +28,7 @@
 #
 
 # - configuration ----------------------------------------------------------
-VERSION=1.0pre-r894
+VERSION=1.0pre-r895
 RELEASE=1
 
 MODULES=\
@@ -197,6 +197,7 @@ packages-linux : source-packages-linux binary-packages-linux
 source-packages-linux : prep-linux
 	@echo "Building Debian/Ubuntu source packages"
 	cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; debuild -S
+	cd $(PKG_BUILD_DIR)/villagetelco-dashboard-$(VERSION) ; debuild -S
 
 binary-packages-linux : prep-linux
 	@echo "Building Debian/Ubuntu packages"
@@ -205,6 +206,7 @@ binary-packages-linux : prep-linux
 	mkdir -p $(PKG_BUILD_DIR)/hook.d
 	cp package-scripts/debian/pbuilder-update-$(PPA)-keys.sh $(PKG_BUILD_DIR)/hook.d/D70update-ppa-keys
 	cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; pdebuild 
+	cd $(PKG_BUILD_DIR)/villagetelco-dashboard-$(VERSION) ; pdebuild 
 	@echo "Built: "
 	ls -al /var/cache/pbuilder/result
 
@@ -229,6 +231,13 @@ prep-linux : clean-linux sources #hooks-linux
 	cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; dh_make -c BSD -e antoine@7degrees.co.za -s --createorig
 	rm -rf $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION)/debian/*
 	cp -a package-scripts/debian/afrimesh-dashboard/* $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION)/debian
+	# VTE package
+	cd $(PKG_BUILD_DIR) ; tar xzvf afrimesh-$(VERSION).tar.gz
+	cd $(PKG_BUILD_DIR) ; mv afrimesh-$(VERSION) villagetelco-dashboard-$(VERSION)
+	cd $(PKG_BUILD_DIR)/villagetelco-dashboard-$(VERSION) ; dh_make -c BSD -e antoine@7degrees.co.za -s --createorig
+	rm -rf $(PKG_BUILD_DIR)/villagetelco-dashboard-$(VERSION)/debian/*
+	cp -a package-scripts/debian/villagetelco-dashboard/* $(PKG_BUILD_DIR)/villagetelco-dashboard-$(VERSION)/debian
+
 
 #hooks-linux :
 #	@echo "Installing hooks to install unofficial packages needed to build Afrimesh"
