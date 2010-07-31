@@ -191,6 +191,7 @@ launchpad-linux : source-packages-linux
 	@echo "Pushing packages to launchpad.net ppa"
 	# TODO run lintian & linda
 	dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/afrimesh-dashboard_$(VERSION)-$(RELEASE)_source.changes
+	dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/villagetelco-dashboard_$(VERSION)-$(RELEASE)_source.changes
 
 packages-linux : source-packages-linux binary-packages-linux
 
