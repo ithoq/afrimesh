@@ -75,6 +75,11 @@ const fexp* config_evaluate(closure* c, config* self, const fexp* message)
   // evaluate request 
   Request* request = VillageBus->request;
   switch (request->method) {
+  case POST:  // semantically this should only ever respond to PUT but some web 
+              // servers (*cough* anything under OpenWRT *cough*) often don't 
+              // support PUT :-/
+    message = config_put(c, self, message, request->data);
+    break;
   case PUT:
     message = config_put(c, self, message, request->data);
     break;

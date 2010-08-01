@@ -88,7 +88,8 @@ function BootDevice(parent) {
         if (error) return continuation(error, null); // TODO - return Fail(error, continuation) maybe ?
         return continuation(error, response);
       });
-    name = afrimesh.villagebus.PUT(name, entries);
+    //name = afrimesh.villagebus.PUT(name, entries);
+    name = afrimesh.villagebus.POST(name, entries); // Only OpenWRT webserver currently supporting PUT is my hacked mini-httpd :-/
     return name;
   };
 
