@@ -64,12 +64,10 @@ th     { border-bottom: 1px solid lightgray; }*/
 input {
   vertical-align: top; /* wtf? */
   margin: 0px;
-  margin-bottom: 10px;
 }
 textarea {
   /*padding: 0px;*/
   margin: 0px;
-  /*margin-bottom: 10px;*/
   display:inline;
 }
 input[type=text], input[type=password], textarea {  

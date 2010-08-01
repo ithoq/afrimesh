@@ -28,7 +28,7 @@
 #
 
 # - configuration ----------------------------------------------------------
-VERSION=1.0pre-r898
+VERSION=1.0pre-r900
 RELEASE=1
 
 MODULES=\

@@ -237,6 +237,9 @@ div#accounts-manage .editor {
   padding-bottom : 0.25em;
   padding-right  : 0.25em;
 }
+div#accounts-manage .editor input {
+  margin-bottom: 10px;
+}
 div#accounts-manage span.mydevices {
   font-weight:normal; 
   font-size:0.9em; 
@@ -380,7 +383,7 @@ dl.sort dd { background-color:red;  }
 
 /* - setting module ------------------------------------------------------- */
 form.two-column {
-  /*border: 1px solid lightgray;*/
+  border: 0px solid green;
   margin: 0px;  
   padding: 0px; 
 }
@@ -389,7 +392,7 @@ form.two-column td {
   padding: 0px; 
 }
 form.two-column fieldset {
-  /*border:1px solid blue;*/
+  border:0px solid blue;
   padding-bottom: 0.5em;
   width: 400px; 
 }
@@ -405,17 +408,17 @@ form.two-column#potato fieldset:last-child {
   padding-bottom: 0px;
 }
 form.two-column button {
-  /*border: 1px solid blue;*/
+  border: 0px solid red;
   vertical-align: bottom;
 }
 form.two-column legend {
-  /*border: 1px solid red;*/
+  border: 0px solid brown;
   font-size: 1.5em;
   padding-top: 0px;
   padding-bottom: .25em;
 }
 form.two-column .label {
-  /*border:1px solid green;*/
+  border:0px solid green;
   color: darkgray; 
   width: 180px; /* 120 for potato */
   float: left;
