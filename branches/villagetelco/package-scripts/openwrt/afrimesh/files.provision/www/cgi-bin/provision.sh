@@ -46,13 +46,15 @@ provisioned_mac=`echo -n "$REQUEST" | nc $root 80 | grep jsonp | cut -d\" -f 2`
 echo "provisioned: $provisioned_mac"
 echo
 [ "$wifi0_mac" == "$provisioned_mac" ] && { 
-    uci del afrimesh.settings.deviceid
-    uci commit
     logger "$wifi0_mac ($self) already provisioned, exiting."
     echo "$wifi0_mac ($self) already provisioned, exiting."
     echo
     exit  
 }
+
+# nuke any existing deviceid
+uci del afrimesh.settings.deviceid
+uci commit
 
 
 # - router pubkey ----------------------------------------------------------
