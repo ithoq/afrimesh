@@ -23,8 +23,7 @@ wlanmode=`uci get wireless.@wifi-iface[0].mode`
 device=`uci get wireless.@wifi-iface[0].device`
 interface=`uci get network.$device.ifname`
 self=`uci get network.$device.ipaddr`
-#root=`uci get afrimesh.settings.root`
-root=192.168.20.112
+root=`uci get afrimesh.settings.root`
 device_id=`uci get afrimesh.settings.deviceid`
 mac=`ifconfig $interface | grep HWaddr | awk '{ print $5 }'`
 path_status="$root/db/device:$self:status"
@@ -126,6 +125,8 @@ json="{ 'timestamp' : $timestamp, \
         'location'  : { 'longitude' : '$longitude', 'latitude' : '$latitude' }, \
         'bytes'     : $bytes, \
         'gateways'  : [ $failures ] }"
+json=`echo -e $json` # echo -e on Linux seems to be nuking whitespace, which is throwing off the
+                     # Content-Length calc :-/ Ffffffffffuuuuuuuuuuuuuuuuuuu!!!!!!!!!!
 HTTP="PUT $villagebus/$path_status HTTP/1.0\n"
 CONTENT_TYPE="Content-Type: text/plain\n"
 CONTENT_LENGTH="Content-Length: ${#json}\n"
@@ -136,7 +137,11 @@ $CONTENT_LENGTH\
 \n\
 $json"
 log "sending report for instantaneous data --------------------------------"
-echo -n -e $REQUEST | nc $root 80 >> "$BUFFER" 2>&1
+if [ "$LOG" = "1" ] ; then
+    echo -n -e $REQUEST | nc $root 80 >> "$BUFFER" 2>&1
+else
+    echo -n -e $REQUEST | nc $root 80 >& /dev/null
+fi
 log "--"
 
 # construct & send HTTP request for temporal data
@@ -145,6 +150,8 @@ json="{ 'self'      : '$self', \
         'timestamp' : $timestamp, \
         'radio'     : $radio, \
         'gateways'  : [ $gateways ] }"
+json=`echo -e $json` # echo -e on Linux seems to be nuking whitespace, which is throwing off the
+                     # Content-Length calc :-/ Ffffffffffuuuuuuuuuuuuuuuuuuu!!!!!!!!!!
 HTTP="POST $villagebus/$path_history HTTP/1.0\n"
 CONTENT_TYPE="Content-Type: text/plain\n"
 CONTENT_LENGTH="Content-Length: ${#json}\n"
@@ -155,7 +162,11 @@ $CONTENT_LENGTH\
 \n\
 $json"
 log "sending report for temporal data -------------------------------------"
-echo -n -e $REQUEST | nc $root 80 >> "$BUFFER" 2>&1
+if [ "$LOG" = "1" ] ; then
+    echo -n -e $REQUEST | nc $root 80 >> "$BUFFER" 2>&1
+else
+    echo -n -e $REQUEST | nc $root 80 >& /dev/null
+fi
 log "--"
 
 log "status report complete"
