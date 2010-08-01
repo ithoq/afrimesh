@@ -31,6 +31,8 @@
   uci del afrimesh.settings.deviceid
   uci commit
 
+* Manually deprovision everyone & reset dashboard
+  redis-cli flushdb
 
 * Starting from a virgin Ubuntu 10.04 w/ all updates installed
 ** install batmand & vis & NAT gateway
@@ -39,8 +41,8 @@
    sudo su -
    iptables --flush
    iptables --table nat --flush
-   iptables --table nat --append POSTROUTING --out-interface eth1 -j MASQUERADE
-   iptables --append FORWARD --in-interface eth0 -j ACCEPT
+   iptables --table nat --append POSTROUTING --out-interface eth1 -j MASQUERADE   # vm eth1 is netbook eth0
+   iptables --append FORWARD --in-interface eth0 -j ACCEPT   # vm eth0 is netbook wlan0 or ath0
    echo 1 > /proc/sys/net/ipv4/ip_forward
    apt-get install batmand
    /usr/sbin/batmand -d1 -s 10.130.1.1 -g 100mbit eth0
@@ -56,6 +58,7 @@
    sudo apt-get update
    sudo apt-get install apache2 snmp snmpd pmacct libcredis redis-server uci
    sudo dpkg -i ~/Desktop/villagetelco-dashboard*_i386.deb
+   sudo chmod a+rw /var/log/messages
    
 ** configure pmacct
    /etc/pmacctd/pmacctd.conf :
@@ -85,19 +88,19 @@
   reset
 
 ** Configuration  (telnet 192.168.1.20)
+   opkg install http://192.168.1.9/~antoine/firmware.potato/packages/mips/netcat_0.7.1-1_mips.ipk
+   opkg install http://192.168.1.9/~antoine/firmware.potato/packages/mips/villagetelco-device_1.0pre-r907-1_mips.ipk
+     (Answer 'Y' when asked to replace /etc/config/afrimesh)   
+   /etc/init.d/provision enable
+
+   chmod -R a+rw /etc/config
    #uci set wireless.@wifi-iface[0].mode=adhoc # ???
    uci set network.wifi0.ipaddr=10.130.1.10
+   uci set batmand.general.routing_class=3
+   uci set batmand.general.visualisation_srv=10.130.1.1
+   uci set system.@system[0].log_ip=10.130.1.1
    uci commit
-   
-   opkg install http://192.168.1.9/~antoine/firmware.potato/packages/mips/netcat_0.7.1-1_mips.ipk
-   opkg install http://192.168.1.9/~antoine/firmware.potato/packages/mips/villagetelco-device_1.0pre-r904-1_mips.ipk
-   (Answer 'Y' when asked to replace /etc/config/afrimesh)
-   
    reboot
-
-** TODO Outstanding issues for MP01
-  -> can't set location - mini-httpd related?
-  -> provision not being enabled?
 
 
 * Starting from a virgin Meraki Mini w/ stock Kamikaze + afrimesh-base, afrimesh-provision, afrimesh-batman
@@ -126,6 +129,3 @@
   uci set wireless.@wifi-iface[0].network=$wifi0_device
   uci commit
   reboot
-
-
-

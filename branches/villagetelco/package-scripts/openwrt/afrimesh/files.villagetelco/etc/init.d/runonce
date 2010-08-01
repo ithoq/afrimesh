@@ -23,7 +23,7 @@ start () {
     #/etc/init.d/httpd enable
 
     # permissions - TODO something a bit less extreme :)
-    chmod 0666 /etc/config/*
+    chmod -R a+rw /etc/config
 
     # cleanup
     rm -rf /etc/init.d/runonce.villagetelco-device

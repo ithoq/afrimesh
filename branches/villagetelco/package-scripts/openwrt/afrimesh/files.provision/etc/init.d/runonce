@@ -49,7 +49,7 @@ start () {
     uci commit
 
     # permissions - TODO something a bit less extreme :)
-    chmod 0666 /etc/config/*
+    chmod -R a+rw /etc/config
 
     # firewall
     /etc/init.d/firewall disable
