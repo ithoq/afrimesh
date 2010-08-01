@@ -15,7 +15,7 @@ config 'sip' 'sippotato'
 	option 'dtmfmode' 'rfc2833'
 	option 'register' 'yes'
 	option 'insecure' 'invite'
-	option 'host'     '10.0.0.1'
+	option 'host'     '10.130.1.1'
 	option 'username' 'potato'
 	option 'secret'   'potato'
 

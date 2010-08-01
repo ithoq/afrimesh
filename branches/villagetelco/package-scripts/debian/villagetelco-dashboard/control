@@ -8,7 +8,7 @@ Homepage: http://villagetelco.org
 
 Package: villagetelco-dashboard
 Architecture: any
-Depends: apache2, snmp, wget, pmacct, libcredis, redis-server, ${shlibs:Depends}, ${misc:Depends}
-Description: Easy management for B.A.T.M.A.N. wireless mesh networks
- an easy-to-use, scalable, standards-based, wireless, local, do-it-yourself,
- telephone company toolkit
+Depends: apache2, batmand, snmp, wget, pmacct, libcredis, redis-server, ${shlibs:Depends}, ${misc:Depends}
+Description: The VillageTelco Dashboard
+ VillageTelco is an easy-to-use, scalable, standards-based, wireless,
+ local, do-it-yourself, telephone company toolkit.

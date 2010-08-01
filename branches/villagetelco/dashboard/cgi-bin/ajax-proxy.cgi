@@ -1,4 +1,6 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
+
+# TODO - OpenWRT only has sh, but sh on other platforms doesn't support '-n' flag on echo :-/
 
 # TODO - hasn't anyone written a nice, portable, secure ajax-proxy ?
 
@@ -33,7 +35,7 @@ if [ "$REQUEST_METHOD" = "POST" ] || [ "$REQUEST_METHOD" = "PUT" ]; then
     QUERY=`echo "$RAW_QUERY" | sed "s/\"/"\\\\\'"/g"`
 fi
 URL=`echo "$QUERY_STRING" | grep -oE "(^|[?&])url=[^&]+" | sed "s/%20/ /g" | cut -f 2- -d "="`
-
+CALLBACK=`echo "$QUERY_STRING" | grep -oE "(^|[?&])callback=[^&]+" | sed "s/%20/ /g" | cut -f 2- -d "="`
 
 # - parse remote url -------------------------------------------------------
 REMOTE_HOST=`echo $URL | sed -e 's/http:\/\///;s|\/.*||;s|\:.*||'`
@@ -50,10 +52,12 @@ REMOTE_PORT=`echo $URL | sed -e 's/http:\/\/.*://;s/[^0-9].*//'`
 REMOTE_PATH=`echo $URL | sed -e 's/http:\/\/[^\/]*//g'`
 [ -z $REMOTE_PORT ] && REMOTE_PORT="80"
 [ -z $REMOTE_PATH ] && REMOTE_PATH="/"
+[ ! -z $CALLBACK ]  && REMOTE_PATH="$REMOTE_PATH?callback=$CALLBACK"
 
 # log client request
 if [ "$LOG" = "1" ] ; then
     echo "ajax-proxy.cgi - URL:            $URL"            >> "$BUFFER"
+    echo "ajax-proxy.cgi - CALLBACK:       $CALLBACK"       >> "$BUFFER"
     echo "ajax-proxy.cgi - REMOTE_HOST:    $REMOTE_HOST"    >> "$BUFFER"
     echo "ajax-proxy.cgi - REMOTE_PORT:    $REMOTE_PORT"    >> "$BUFFER"
     echo "ajax-proxy.cgi - REMOTE_PATH:    $REMOTE_PATH"    >> "$BUFFER"
@@ -104,7 +108,7 @@ if [ "$LOG" = "1" ] ; then
     echo "- remote responsed -------------------------------- " >> "$BUFFER"
     echo "$RESPONSE_HEADER" >> "$BUFFER"
     echo "--"               >> "$BUFFER"
-    #echo "$RESPONSE_BODY"   >> "$BUFFER"
+    echo "$RESPONSE_BODY"   >> "$BUFFER"
     echo                    >> "$BUFFER"
     # Append log buffer to actual log & nuke buffer
     cat "$BUFFER" >> "$LOGFILE"

@@ -147,7 +147,7 @@ echo
 
 # - Kick off VOIP provisioning ---------------------------------------------
 #
-/www/cgi-bin/provision-handset >& /tmp/provision-handset.log
+/www/cgi-bin/provision-handset >> /tmp/provision-handset.log 2>&1
 
 
 # TODO - not rebooting quite yet for the purposes of the Steve Demo

@@ -4,6 +4,6 @@ config 'afrimesh' 'location'
 	option 'latitude' '-25.739019176411'
 
 config 'afrimesh' 'settings'
-	option 'root'     '10.0.0.1'
+	option 'root'     '10.130.1.1'
   option 'deviceid' ''
 

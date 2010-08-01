@@ -27,8 +27,8 @@ var BootVillageBus = function (afrimesh) {
   };
 
   /** - ajax_proxy ------------------------------------------------------ */
-  villagebus.ajax_proxy = function() { 
-    return "http://" + afrimesh.settings.address + afrimesh.settings.ajax_proxy; 
+  villagebus.ajax_proxy = function(prefix) { 
+    return prefix + afrimesh.settings.address + afrimesh.settings.ajax_proxy; 
   };
 
   /** - villagebus.api -------------------------------------------------- */
@@ -51,21 +51,44 @@ var BootVillageBus = function (afrimesh) {
     });
   var channel = afrimesh.villagebus.GET(name, "*");
   var response = Read(channel); */ 
+
+  /* TODO - A short note on the use of ajax_proxy below:
+       I'm applying proxy universally for purposes of the SteveDemo
+       as there's not necesarily routing between the mesh, the dashboard
+       and the viewer.
+       What needs to happen here in future is that we should _ONLY_
+       be proxying if an address below is not directly accessible from 
+       the browser. HOW to do that is utterly beyond me right now but
+       I'm sure there's a nice solution. 
+       Also see the work I'm going to be doing w/ Keith & the CloudBoard
+     */
+  function proxy(host, path) {
+    var url = "/" + host + path;
+    if (host != afrimesh.settings.address) {  // address may or may not be routable - TODO we vant to be sure!
+      return afrimesh.villagebus.ajax_proxy("/") + "http:/" + url;
+    }
+    return url;
+  };
   villagebus.Name = function(name) {
     //console.log("NAMING: " + name);
     name = name.split('/').map(function(node) {   // perform path transformations for network locations
       if (node == "@root") {
-        return "/" + afrimesh.settings.root + "/cgi-bin/villagebus";
+        //return "/" + afrimesh.settings.root + "/cgi-bin/villagebus";
+        return proxy(afrimesh.settings.root, "/cgi-bin/villagebus");
       } else if (node == "@self") {
         return "/" + afrimesh.settings.address + "/cgi-bin/villagebus"; 
       } else if (node == "@topology") {
-        return "/" + afrimesh.settings.network.mesh.vis_server + ":2005";  
+        //return "/" + afrimesh.settings.network.mesh.vis_server + ":2005";  
+        return proxy(afrimesh.settings.network.mesh.vis_server, ":2005");
       } else if (node == "@pmacct") {
-        return "/" + afrimesh.settings.network.mesh.accounting_server + "/cgi-bin/villagebus";  
+        //return "/" + afrimesh.settings.network.mesh.accounting_server + "/cgi-bin/villagebus";  
+        return proxy(afrimesh.settings.network.mesh.accounting_server, "/cgi-bin/villagebus");
       } else if (node == "@radius") {
-        return "/" + afrimesh.settings.radius.server + "/cgi-bin/village-bus-radius";
+        //return "/" + afrimesh.settings.radius.server + "/cgi-bin/village-bus-radius";
+        return proxy(afrimesh.settings.radius.server, "/cgi-bin/village-bus-radius");
       } else if (node[0] == '@') {
-        return "/" + node.substring(1) + "/cgi-bin/villagebus"; 
+        //return "/" + node.substring(1) + "/cgi-bin/villagebus"; 
+        return proxy(node.substring(1), "/cgi-bin/villagebus");
       }
       return node;
     }).join('/');
@@ -180,7 +203,16 @@ var BootVillageBus = function (afrimesh) {
       }
     };
     if (parseURL(name.url).hostname != afrimesh.settings.address) {
-      name.url = afrimesh.villagebus.ajax_proxy() + name.url;
+      var proxy = afrimesh.villagebus.ajax_proxy("http://");
+      console.log("JSONP_TO_JSON IS PROXYING: " + name.url);
+      if (name.url.indexOf(proxy) == 0) {
+        console.log("JSONP_TO_JSON HOWEVER CHANGED ITS MIND");
+      } else {
+        name.url = proxy + name.url;
+        console.log("JSONP_TO_JSON SUBSEQUENTLY PRODUCED: " + name.url);
+      }
+    } else {
+      console.log("JSONP_TO_JSON IS FEELING NO NEED TO PROXY: " + name.url);
     }
     return name;
   };

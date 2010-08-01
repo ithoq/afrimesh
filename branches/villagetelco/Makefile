@@ -82,7 +82,8 @@ FLAVOR=BSD
 CFLAGS+=-m32
 endif
 
-DASHBOARD_WWW=$(WWW_ROOT)/afrimesh 
+DASHBOARD_WWW=$(WWW_ROOT)/afrimesh
+#DASHBOARD_WWW=$(WWW_ROOT)/afrimesh.vt
 
 
 # - common -----------------------------------------------------------------
@@ -117,10 +118,13 @@ install-www:
 	@if ! test -d $(DASHBOARD_CGI) ; then mkdir -p $(DASHBOARD_CGI) ; fi
 	$(INSTALL) ./package-scripts/openwrt/afrimesh/files.portal/www/cgi-bin/uam.pl $(DASHBOARD_CGI)
 	$(INSTALL) dashboard/cgi-bin/ajax-proxy.cgi          $(DASHBOARD_CGI)
-	$(INSTALL) dashboard/cgi-bin/provisiond.cgi          $(DASHBOARD_CGI)
-	$(INSTALL) dashboard/cgi-bin/provisiond-handset.cgi  $(DASHBOARD_CGI)
+	$(INSTALL) dashboard/cgi-bin/provisiond.cgi          $(DASHBOARD_CGI)/provisiond
+	$(INSTALL) dashboard/cgi-bin/provisiond-handset.cgi  $(DASHBOARD_CGI)/provisiond-handset
+	$(INSTALL) ./provisiond-bundles      	               $(DASHBOARD_CGI)
 	$(INSTALL) dashboard/cgi-bin/mesh-topology.kml       $(DASHBOARD_CGI)
 	chmod 0755 $(DASHBOARD_CGI)/*.cgi
+	chmod 0755 $(DASHBOARD_CGI)/provisiond
+	chmod 0755 $(DASHBOARD_CGI)/provisiond-handset
 	chmod 0755 $(DASHBOARD_CGI)/mesh-topology.kml
 	-$(INSTALL) utilities/urldecode                      $(DASHBOARD_CGI)
 	-$(INSTALL) villagebus/villagebus                    $(DASHBOARD_CGI)
@@ -197,7 +201,7 @@ packages-linux : source-packages-linux binary-packages-linux
 
 source-packages-linux : prep-linux
 	@echo "Building Debian/Ubuntu source packages"
-	cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; debuild -S
+	#REENABLE cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; debuild -S
 	cd $(PKG_BUILD_DIR)/villagetelco-dashboard-$(VERSION) ; debuild -S
 
 binary-packages-linux : prep-linux
@@ -206,7 +210,7 @@ binary-packages-linux : prep-linux
 	echo "HOOKDIR=$(PKG_BUILD_DIR)/hook.d" >> ~/.pbuilderrc
 	mkdir -p $(PKG_BUILD_DIR)/hook.d
 	cp package-scripts/debian/pbuilder-update-$(PPA)-keys.sh $(PKG_BUILD_DIR)/hook.d/D70update-ppa-keys
-	cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; pdebuild 
+	#REENABLE cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; pdebuild 
 	cd $(PKG_BUILD_DIR)/villagetelco-dashboard-$(VERSION) ; pdebuild 
 	@echo "Built: "
 	ls -al /var/cache/pbuilder/result
@@ -227,11 +231,11 @@ prep-linux : clean-linux sources #hooks-linux
 	@echo "Initializing linux package scripts for build"
 	mkdir -p $(PKG_BUILD_DIR)
 	cd $(PKG_BUILD_DIR) ; cp /tmp/afrimesh-$(VERSION).tar.gz .
-	cd $(PKG_BUILD_DIR) ; tar xzvf afrimesh-$(VERSION).tar.gz
-	cd $(PKG_BUILD_DIR) ; mv afrimesh-$(VERSION) afrimesh-dashboard-$(VERSION)
-	cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; dh_make -c BSD -e antoine@7degrees.co.za -s --createorig
-	rm -rf $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION)/debian/*
-	cp -a package-scripts/debian/afrimesh-dashboard/* $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION)/debian
+	#RE cd $(PKG_BUILD_DIR) ; tar xzvf afrimesh-$(VERSION).tar.gz
+	#RE cd $(PKG_BUILD_DIR) ; mv afrimesh-$(VERSION) afrimesh-dashboard-$(VERSION)
+	#RE cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; dh_make -c BSD -e antoine@7degrees.co.za -s --createorig
+	#RE rm -rf $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION)/debian/*
+	#RE cp -a package-scripts/debian/afrimesh-dashboard/* $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION)/debian
 	# VTE package
 	cd $(PKG_BUILD_DIR) ; tar xzvf afrimesh-$(VERSION).tar.gz
 	cd $(PKG_BUILD_DIR) ; mv afrimesh-$(VERSION) villagetelco-dashboard-$(VERSION)

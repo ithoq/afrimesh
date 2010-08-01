@@ -2,7 +2,7 @@
 config 'system'
 	option 'hostname' 'OpenWrt'
 	option 'timezone' 'UTC'
-	option 'log_ip' '192.168.20.225'
+	option 'log_ip' '10.130.1.1'
 
 config 'button'
 	option 'button' 'reset'

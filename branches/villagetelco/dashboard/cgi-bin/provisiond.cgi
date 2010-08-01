@@ -1,8 +1,9 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 # - Configuration ----------------------------------------------------------
 VILLAGEBUS="./villagebus"
-UCI="/usr/local/bin/uci-static"
+#UCI="/usr/local/bin/uci-static"
+UCI="uci"
 PROVISIOND_TMP=/tmp/provisiond.tmp
 BUNDLE_DIR="./provisiond-bundles/mp01.interface"
 LOG=1

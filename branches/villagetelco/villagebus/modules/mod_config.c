@@ -64,6 +64,7 @@ void config_init()
 const fexp* config_evaluate(closure* c, config* self, const fexp* message)
 {
   // TODO - VillageBus->request context should be coming in via the closure
+  //wprintf(L"mod_config: "); send(message, s_print); wprintf(L"\n");
 
   // lazily initialize uci context
   self->context = uci_alloc_context();
