@@ -299,8 +299,8 @@ const string* db_incr(closure* c, db* self, const fexp* message)
 const unsigned char* fix_timestamps(const unsigned char* data) 
 {
   struct json_object* json = json_tokener_parse((unsigned char*)data);
-  if (json == NULL) { // if it doesn't segfault :-)
-    wprintl(L"fix_timestamps utterly failed to convert |%s| to json\n", data);
+  if (json == NULL || !json_object_is_type(json, json_type_object)) { // if it doesn't segfault :-)
+    wprintl(L"fix_timestamps utterly failed to convert |%s| to a json object\n", data);
     return data;
   }
   struct json_object* timestamp = json_object_object_get(json, "timestamp");
