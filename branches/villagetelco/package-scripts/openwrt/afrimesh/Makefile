@@ -140,6 +140,7 @@ define Package/villagetelco-device/install
 	$(INSTALL_DIR)  $(1)/etc/config
 	$(INSTALL_DIR)  $(1)/etc/init.d
 	$(INSTALL_DIR)  $(1)/etc/crontabs
+	$(INSTALL_DIR)  $(1)/usr/lib/asterisk/sounds
 	$(INSTALL_DIR)  $(1)/www/cgi-bin
 
 	mkdir -p $(1)/CONTROL
