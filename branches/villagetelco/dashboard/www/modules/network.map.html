@@ -128,16 +128,16 @@ function() {
         if (error) return console.error("Call notification error: " + error);
         console.error("I has call: " + show(notification));
         var feature = network_map.router(notification.self);
-        console.log("CALL HAS FEATURE: " + feature.geometry.x);
-        // TODO move this to network.map.js
-        var b = feature.geometry.getBounds();
-        console.log("bounds: " + b);
-        var p = b.getCenterPixel().x;
-        console.log("pixel: " + show(p));
-        /*afrimesh.villagebus.mq.DELETE("handset:" + notification.self + ":call", function(error, response) {
+        if (!feature) {
+          console.debug("Could not find map feature associated with address: " + notification.self);
+          return;
+        }
+        var html = "Called <b>10.130.1." + notification.extension + "</b>";
+        network_map.popup(feature, html);
+        afrimesh.villagebus.mq.DELETE("handset:" + notification.self + ":call", function(error, response) {
             if (error) return console.error("Could not remove notification: " + notification);
             console.debug("notification removed: " + notification);
-          }, name);*/
+          }, name);
       });
 
     // activate input hints

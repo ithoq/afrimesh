@@ -266,7 +266,7 @@ var BootVillageBus = function (afrimesh) {
           if (continuation.mq.cache[message]) { // has this continuation received this message yet?          
             return continuation.mq.cache[message];
           } 
-          //continuation.mq.cache[message] = true;
+          continuation.mq.cache[message] = true;
           return afrimesh.villagebus.GET(afrimesh.villagebus.Bind("/@root/db/" + message, continuation));
         });
       });

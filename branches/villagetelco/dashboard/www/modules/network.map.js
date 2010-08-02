@@ -99,6 +99,29 @@ var Map = undefined;
       the_map.panTo(LonLat(longitude, latitude));
     };
 
+
+    /** 
+     * add a temporary popup for feature
+     */
+    this.popup = function(feature, html, delay) {
+      var popup = new OpenLayers.Popup.AnchoredBubble("call",
+                                                      feature.geometry.getBounds().getCenterLonLat(),
+                                                      new OpenLayers.Size(1, 1), 
+                                                      html, 
+                                                      null, 
+                                                      false);
+      popup.setBackgroundColor("white");
+      popup.setOpacity(0.95);
+      popup.autoSize = true;
+      the_map.addPopup(popup);
+      setTimeout(function() {
+          console.log("Nuking popup");
+          the_map.removePopup(popup);
+          popup.destroy();
+        }, (delay ? delay : 5000));
+    };
+
+
     /**
      * Register a callback for dragging a specific feature
      */
