@@ -2,6 +2,7 @@
   . This document
   . Ubuntu binaries:  
     villagetelco-dashboard.deb
+    vis-i386-lucid
   . Atheros binaries: 
     firmware image
   . MP01 binaries:    
@@ -74,13 +75,13 @@
    
 ** Configuration  (telnet 192.168.1.20)
    opkg install http://192.168.1.9/~antoine/firmware.potato/packages/mips/netcat_0.7.1-1_mips.ipk
-   opkg install http://192.168.1.9/~antoine/firmware.potato/packages/mips/villagetelco-device_1.0pre-r907-1_mips.ipk
+   opkg install http://192.168.1.9/~antoine/firmware.potato/packages/mips/villagetelco-device_1.0pre-r918-1_mips.ipk
    (Answer 'Y' when asked to replace /etc/config/afrimesh)   
    /etc/init.d/provision enable
 
    chmod -R a+rw /etc/config
    #uci set wireless.@wifi-iface[0].mode=adhoc # ???
-   uci set network.wifi0.ipaddr=10.130.1.21
+   uci set network.wifi0.ipaddr=10.130.1.102
    uci set batmand.general.routing_class=3
    uci set batmand.general.visualisation_srv=10.130.1.1
    uci set system.@system[0].log_ip=10.130.1.1

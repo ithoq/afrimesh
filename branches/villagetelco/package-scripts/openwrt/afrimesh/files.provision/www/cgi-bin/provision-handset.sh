@@ -106,6 +106,9 @@ echo "secret:   " `uci get asterisk.sippotato.secret`
 #   TODO - should we keep trying periodically till we are phoned back?
 #   
 
+# Give asterisk plenty of time to wake up
+sleep 30
+
 # TODO - for demo I'll just originate the call locally for now
 /usr/sbin/asterisk -rx "originate MP/1 application Playback callme"
 

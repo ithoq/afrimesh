@@ -137,7 +137,7 @@ const fexp* provision_interface (closure* c, provision* self, const fexp* messag
                                                       "network"));
     if (s) network = (string*)send(String, s_string_fromwchar, L"%s", s);
   }
-  //wprintf(L"MAC: %S ADDRESS: %S NETWORK: %S\n\n", mac->buffer, address->buffer, network->buffer);
+  wprintl(L"PROVISIONING WITH MAC: %S ADDRESS: %S NETWORK: %S\n\n", mac->buffer, address->buffer, network->buffer);
 
   /* Strategy 1 - If an address is specified, simply register it w/ the
                   provisioning database and return it */
