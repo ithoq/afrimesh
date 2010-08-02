@@ -128,7 +128,7 @@ function() {
     var name = afrimesh.villagebus.mq.Bind("handset:*:call", function(error, notification) {
         if (error) return console.error("Call notification error: " + error);
         console.error("I has call: " + show(notification));
-        var feature = network_map.router(notification.self);
+        var feature = network_map.router({ address : notification.self });
         if (!feature) {
           console.debug("Could not find map feature associated with address: " + notification.self);
           return;
@@ -189,11 +189,11 @@ function() {
     // User clicked on notification
     function click_fn() {
       // TODO - the router could be rebooting and not added to the map, add router manually in this case
-      var feature = network_map.router(device.ip);
-      if (!feature) {
+      var feature = network_map.router({ address : device.ip });
+      if (!feature || !feature.geometry) {
         // TODO - abort! abort! abort!
        console.error("Invalid feature for notification!!");
-       $("div#notify #error").html("Invalid feature for notification");
+       //$("div#notify #error").html("Invalid feature for notification");
        return;
       }
 
@@ -216,6 +216,7 @@ function() {
       console.log(center);
       center.lat = center.lat + 300;
       feature.move(center);
+      console.log("MOVED");
       //feature.move({ lon : center.lon, lat : center.lat });
 
       // Save

@@ -64,16 +64,27 @@ var Map = undefined;
 
       map.dragger = new OpenLayers.Control.DragFeature(map.routers);
       map.dragger.onComplete = on_position;
+      map.dragger.onDrag = function() {}
+      map.dragger.isOnDrag = false;
       map.addControl(map.dragger);
       map.dragger.activate();
+      
+      // Aaaaaaaaaaaaaaaauuuuuuuuuuurgh - http://openlayers.org/pipermail/users/2010-May/017742.html
+      map.dragger.handlers['drag'].stopDown = false;
+      map.dragger.handlers['drag'].stopUp = false;
+      map.dragger.handlers['drag'].stopClick = false;
+      map.dragger.handlers['feature'].stopDown = false;
+      map.dragger.handlers['feature'].stopUp = false;
+      map.dragger.handlers['feature'].stopClick = false;
 
-      var router_hover_selector = new OpenLayers.Control.SelectFeature(map.routers, { 
+      var router_click_selector = new OpenLayers.Control.SelectFeature(map.routers, { 
         multiple : false, 
         hover    : false });
-      router_hover_selector.onSelect = on_select_router;
-      router_hover_selector.onUnselect = on_unselect_router;
-      map.addControl(router_hover_selector);
-      router_hover_selector.activate();
+      router_click_selector.onSelect = on_select_router;
+      router_click_selector.onUnselect = on_unselect_router;
+      map.addControl(router_click_selector);
+      router_click_selector.activate();
+
 
       return map;
     };
@@ -134,6 +145,7 @@ var Map = undefined;
         var location = new OpenLayers.LonLat(feature.geometry.x, feature.geometry.y).transform(epsg_900913, epsg_4326);
         return callback(location.lon, location.lat);
       };
+      the_map.dragger.isOnDrag = true;
 
       // disable routes layer to reduce visual clutter
       the_map.routes.display(false);
@@ -159,7 +171,8 @@ var Map = undefined;
      * Disable callback
      */
     this.reset_drag_feature = function(feature) {
-      the_map.dragger.onDrag = undefined;
+      the_map.dragger.onDrag = function() {}
+      the_map.dragger.isOnDrag = false;
       clearTimeout(feature.pulse);
       feature.style.pointRadius = 10.0;
       feature.style.fillOpacity = 1.0;
@@ -175,16 +188,16 @@ var Map = undefined;
      */
     this.routers = the_map.routers;
     this.router = function(router) {
-      // TODO polymorphism please for all callers
-      if (isString(router)) {
-        var feature = the_map.routers.getFeatureById(router);
-        console.log("Returning feature: " + router + " -> " + feature);
-        return feature; 
-      }
       var feature = the_map.routers.getFeatureById(router.address);
       if (feature) {
+        //console.log("Returning feature: " + router.address + " -> " + feature.router.address);
+        //console.log(feature.router);
         return feature;
-      } // TODO check that it's a complete router object before adding it
+      } 
+      if (!router.hasOwnProperty("routes")) { // TODO check that it's a complete router object before adding it
+        console.error("Phony router, trying our best...");
+        router.routes = [];
+      }
       return add_router(router);
     };
     function add_router(router) {
@@ -361,7 +374,7 @@ var Map = undefined;
         });
 
       // don't update route geometry!
-      if (the_map.dragger.onDrag) { 
+      if (the_map.dragger.isOnDrag) { 
         return; 
       }
 

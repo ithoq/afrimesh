@@ -258,7 +258,7 @@ const fexp* provision_interface (closure* c, provision* self, const fexp* messag
   string* ret = (string*)send(String, s_string_fromwchar, L"\"10.%d.%d.%d\"", n1, n2, n3);*/
   // Strategy 4 - ability to specify an external hook for IP generation
 
-  string* ret = (string*)send(String, s_string_fromwchar, L"\"10.130.1.20\"");
+  string* ret = (string*)send(String, s_string_fromwchar, L"\"10.130.1.250\"");
   return (fexp*)ret;
 }
 
