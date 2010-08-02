@@ -14,7 +14,7 @@ LOGFILE="/tmp/provisiond.log"
 TAR=tar
 [ `uname` == "Darwin" ] && TAR=/opt/local/bin/gnutar 
 # there's this crazy busybox bug you see... https://dev.openwrt.org/ticket/6649
-                                      
+# TODO - so it effects FreeBSD too 
 
 # - Logging ----------------------------------------------------------------
 BUFFER="$LOGFILE.$$"
@@ -92,12 +92,17 @@ UCI="$UCI -c $UCI_CFG"
 
 # copy base bundle into a temporary directory
 [ ! -d "$PROVISIOND_TMP" ] && mkdir -p "$PROVISIOND_TMP"
-cp -r "$BUNDLE_DIR" "$TARBALL_DIR" 
-find "$TARBALL_DIR" -name .svn -exec rm -rf '{}' ';'
+# TODO - only provisioning /etc/config/afrimesh for the purposes of the demo
+#cp -r "$BUNDLE_DIR" "$TARBALL_DIR" 
+#find "$TARBALL_DIR" -name .svn -exec rm -rf '{}' ';'
+mkdir -p "$TARBALL_DIR/etc/config" 
+cp -r "$BUNDLE_DIR/etc/config/afrimesh" "$TARBALL_DIR/etc/config" 
+cp -r "$BUNDLE_DIR/etc/config/system"   "$TARBALL_DIR/etc/config" 
+
 
 # configure base bundle w/ provisioned values
 wifi0_device=`$UCI get wireless.@wifi-iface[0].device` 
-$UCI set network.$wifi0_device.ipaddr="$provisioned_ip"
+#$UCI set network.$wifi0_device.ipaddr="$provisioned_ip"
 $UCI set afrimesh.settings.deviceid="$provisioned_id"
 $UCI set afrimesh.settings.root="$provisioned_root"
 

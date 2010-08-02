@@ -18,4 +18,3 @@ config 'sip' 'sippotato'
 	option 'host'     '10.130.1.1'
 	option 'username' 'potato'
 	option 'secret'   'potato'
-

@@ -81,7 +81,7 @@ echo
 logger "device# $device ($self) handset provisioning complete. Restarting." 
 echo "device# $device ($self) handset provisioning complete. Restarting." 
 echo
-/etc/init.d/asterisk restart
+#/etc/init.d/asterisk restart
 
 
 # 5. - Send an ack to the provisioning server ------------------------------
@@ -103,7 +103,10 @@ echo "secret:   " `uci get asterisk.sippotato.secret`
 # 6. Die. Server will phone back w/ confirmation
 #
 #   TODO - should we keep trying periodically till we are phoned back?
-#          
+#   
+
+# TODO - for demo I'll just originate the call locally for now
+/usr/sbin/asterisk -rx "originate MP/1 application Playback callme"
 
 echo "fin"
 echo

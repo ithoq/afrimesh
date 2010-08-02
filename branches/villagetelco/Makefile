@@ -82,8 +82,8 @@ FLAVOR=BSD
 CFLAGS+=-m32
 endif
 
-DASHBOARD_WWW=$(WWW_ROOT)/afrimesh
-#DASHBOARD_WWW=$(WWW_ROOT)/afrimesh.vt
+#DASHBOARD_WWW=$(WWW_ROOT)/afrimesh
+DASHBOARD_WWW=$(WWW_ROOT)/afrimesh.vt
 
 
 # - common -----------------------------------------------------------------

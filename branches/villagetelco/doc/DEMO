@@ -12,19 +12,48 @@
 
 
 * Outstanding
-** TODO Google earth export doesn't work
-** TODO Maybe pulse routers a bit to the side or above the main gateway location? :)
-** TODO Trying to provision a router before it's been picked up by the map causes shit
-   Either create dummy routers if they're not there yet and/or force faster vis updates?
-** TODO modules/mod_provision.c  #define PROVISION_DEFAULT_ROOT 192.168.20.105
-** TODO modules/mod_db.c         credis_connect("localhost", 6379, 2000);
-** TODO status.sh                Find a way to set the timestamp on the server side OR workaround for crap timestamps
-** TODO permissions in /tmp/.uci + custom .uci bug
-** TODO Adapt instructions for netbook -> mostly s/eth0/ath0 s/eth1/eth0
+** TODO Initiate call and play recording "callme!" when handset provisioning is done
+   originate MP/1 application Playback callme
+   /usr/lib/asterisk/sounds/callme.gsm
+
+
+
+
+** TODO Map popups when making a call
+
+** TODO status.sh - Find a way to set the timestamp on the server side OR workaround for crap timestamps
+
+** Annoying bugs
+*** TODO popups are going missing
+*** TODO Trying to provision a router before it's been picked up by the map causes shit
+    Either create dummy routers if they're not there yet and/or force faster vis updates?
+*** TODO Google earth export doesn't work
+
 ** TODO Disable radius section entirely
-** TODO Local map server
-** TODO Tooltips are a bit far right w/ z-index borked
-** TODO Vanilla OpenWRT doesn't want to config wireless during runonce
+** TODO Spec redis server
+
+** C Stuff
+*** TODO modules/mod_provision.c  #define PROVISION_DEFAULT_ROOT 192.168.20.105
+*** TODO modules/mod_db.c         credis_connect("localhost", 6379, 2000);
+*** TODO permissions in /tmp/.uci + custom .uci bug
+
+** TODO Firefox & other layout problems:
+   Toolbar icons aligned left
+   Settings screen Internet gateway is align bottom for some reason
+   Settings screen sections are wrapping
+   Accounts street address is courier font?!
+   Maybe pulse routers a bit to the side or above the main gateway location? :)
+   Tooltips are a bit far right w/ z-index borked
+   doctype + js + syntax error !?
+
+** Remember!!!
+*** TODO s/afrimesh.vt/afrimesh
+*** TODO Set status.sh cron to every 1 minute for the demo
+
+** Notfixnow
+*** TODO Local map server
+*** TODO Vanilla OpenWRT doesn't want to config wireless during runonce
+
 
 
 * Manually deprovision a device
@@ -41,11 +70,11 @@
    sudo su -
    iptables --flush
    iptables --table nat --flush
-   iptables --table nat --append POSTROUTING --out-interface eth1 -j MASQUERADE   # vm eth1 is netbook eth0
-   iptables --append FORWARD --in-interface eth0 -j ACCEPT   # vm eth0 is netbook wlan0 or ath0
+   iptables --table nat --append POSTROUTING --out-interface eth0 -j MASQUERADE   # vm eth1 is netbook eth0
+   iptables --append FORWARD --in-interface wlan0 -j ACCEPT   # vm eth0 is netbook wlan0 or ath0
    echo 1 > /proc/sys/net/ipv4/ip_forward
    apt-get install batmand
-   /usr/sbin/batmand -d1 -s 10.130.1.1 -g 100mbit eth0
+   /usr/sbin/batmand -d1 -s 10.130.1.1 -g 100mbit wlan0
 
 ** Install afrimesh-dashboard from apt (make sure ppa:afrimesh/ppa is _UNINSTALLED_)
    sudo apt-add-repository ppa:antoine-7degrees/ppa
@@ -66,7 +95,7 @@
      aggregate: dst_host,dst_mac
      !pcap_filter: net 127.0.0.0/8
      pcap_filter: net 10.130.1.0/24
-     interface: eth0
+     interface: wlan0   # eth0 on VM
   sudo /etc/init.d/pmacct restart
 
 ** configure snmpd 
@@ -95,13 +124,26 @@
 
    chmod -R a+rw /etc/config
    #uci set wireless.@wifi-iface[0].mode=adhoc # ???
-   uci set network.wifi0.ipaddr=10.130.1.10
+   uci set network.wifi0.ipaddr=10.130.1.21
    uci set batmand.general.routing_class=3
    uci set batmand.general.visualisation_srv=10.130.1.1
    uci set system.@system[0].log_ip=10.130.1.1
    uci commit
    reboot
 
+--
+   uci set wireless.wifi0.channel=5
+   uci set wireless.@wifi-iface[0].ssid=batman
+   uci set wireless.@wifi-iface[0].bssid=BB:BB:BB:BB:BB:BB
+   uci set network.wifi0.ipaddr=10.130.1.21
+   uci set network.wifi0.netmask=255.0.0.0
+   uci set batmand.general.routing_class=3
+   uci set batmand.general.visualisation_srv=192.168.20.225
+   uci set system.@system[0].log_ip=192.168.20.225
+   uci set afrimesh.settings.root=192.168.20.225
+   uci del afrimesh.settings.deviceid
+   uci commit
+   reboot
 
 * Starting from a virgin Meraki Mini w/ stock Kamikaze + afrimesh-base, afrimesh-provision, afrimesh-batman
 

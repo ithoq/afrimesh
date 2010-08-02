@@ -127,7 +127,6 @@ define Package/villagetelco-device
 	SECTION:=admin
 	CATEGORY:=Administration
 	DEPENDS:=+libuci +libjson +netcat
-#+ntpclient +mini-httpd
 	TITLE:=Basically afrimesh-base and afrimesh-provision
 	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
 endef
@@ -145,13 +144,14 @@ define Package/villagetelco-device/install
 
 	mkdir -p $(1)/CONTROL
 	echo "/etc/config/afrimesh" >> $(1)/CONTROL/conffiles
-	$(INSTALL_CONF) ./files.villagetelco/etc/config/afrimesh           $(1)/etc/config
-	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/villagebus/villagebus             $(1)/www/cgi-bin/villagebus
-	$(INSTALL_BIN)  ./files/etc/crontabs/afrimesh                      $(1)/etc/crontabs/root
-	$(INSTALL_BIN)  ./files/www/cgi-bin/status.sh                      $(1)/www/cgi-bin/status
-	$(INSTALL_BIN)  ./files.provision/etc/init.d/provision             $(1)/etc/init.d/provision
-	$(INSTALL_BIN)  ./files.provision/www/cgi-bin/provision.sh         $(1)/www/cgi-bin/provision
-	$(INSTALL_BIN)  ./files.provision/www/cgi-bin/provision-handset.sh $(1)/www/cgi-bin/provision-handset
+	$(INSTALL_CONF) ./files.villagetelco/etc/config/afrimesh              $(1)/etc/config
+	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/villagebus/villagebus                $(1)/www/cgi-bin/villagebus
+	$(INSTALL_BIN)  ./files/etc/crontabs/afrimesh                         $(1)/etc/crontabs/root
+	$(INSTALL_BIN)  ./files/www/cgi-bin/status.sh                         $(1)/www/cgi-bin/status
+	$(INSTALL_BIN)  ./files.provision/etc/init.d/provision                $(1)/etc/init.d/provision
+	$(INSTALL_BIN)  ./files.provision/usr/lib/asterisk/sounds/callme.gsm  $(1)/usr/lib/asterisk/sounds
+	$(INSTALL_BIN)  ./files.provision/www/cgi-bin/provision.sh            $(1)/www/cgi-bin/provision
+	$(INSTALL_BIN)  ./files.provision/www/cgi-bin/provision-handset.sh    $(1)/www/cgi-bin/provision-handset
 
 	# TODO 
 	#$(INSTALL_BIN)  ./files.villagetelco/etc/init.d/fallback-ip  $(1)/etc/init.d
