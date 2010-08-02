@@ -189,7 +189,7 @@ function() {
     // User clicked on notification
     function click_fn() {
       // TODO - the router could be rebooting and not added to the map, add router manually in this case
-      var feature = network_map.router({ address : device.ip }, routes : []);
+      var feature = network_map.router({ address : device.ip, routes : [] });
       if (!feature || !feature.geometry) {
         // TODO - abort! abort! abort!
        console.error("Invalid feature for notification!!");
