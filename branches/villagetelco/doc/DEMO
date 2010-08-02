@@ -32,6 +32,7 @@
 *** TODO permissions in /tmp/.uci + custom .uci bug
 
 ** TODO Firefox & other layout problems:
+   zindex of toolbar callout on firefox z-index / off-by-1 ?
    Toolbar icons aligned left
    Settings screen Internet gateway is align bottom for some reason
    Settings screen sections are wrapping
@@ -42,7 +43,7 @@
 
 ** Remember!!!
 *** TODO s/afrimesh.vt/afrimesh
-*** TODO Set status.sh cron to every 1 minute for the demo
+*** DONE Set status.sh cron to every 1 minute for the demo
 
 ** Notfixnow
 *** TODO Local map server

@@ -152,10 +152,16 @@ var Map = undefined;
      */
     this.routers = the_map.routers;
     this.router = function(router) {
+      // TODO polymorphism please for all callers
+      if (isString(router)) {
+        var feature = the_map.routers.getFeatureById(router);
+        console.log("Returning feature: " + router + " -> " + feature);
+        return feature; 
+      }
       var feature = the_map.routers.getFeatureById(router.address);
       if (feature) {
         return feature;
-      }
+      } // TODO check that it's a complete router object before adding it
       return add_router(router);
     };
     function add_router(router) {

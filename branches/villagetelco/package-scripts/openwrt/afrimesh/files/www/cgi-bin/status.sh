@@ -118,6 +118,7 @@ json="{ 'timestamp' : $timestamp, \
         'mac'       : '$mac', \
         'self'      : '$self', \
         'root'      : '$root', \
+        'device_id' : '$device_id',
         'version'   : '$version', \
         'uname'     : '$uname', \
         'uptime'    : $uptime, \

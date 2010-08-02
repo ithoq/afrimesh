@@ -117,10 +117,27 @@ function() {
 
     // register for provisioning notifications
     var name = afrimesh.villagebus.mq.Bind("device:*:provision", function(error, notification) {
-        if (error) return console.error("Notification: " + error);
+        if (error) return console.error("Provision notification error: " + error);
         console.log("New Device Provisioned!!!");
         console.log(notification);
         var n = new_notification(notification, "Click to set map position and link owner.");
+      });
+
+    // register for call notifications
+    var name = afrimesh.villagebus.mq.Bind("handset:*:call", function(error, notification) {
+        if (error) return console.error("Call notification error: " + error);
+        console.error("I has call: " + show(notification));
+        var feature = network_map.router(notification.self);
+        console.log("CALL HAS FEATURE: " + feature.geometry.x);
+        // TODO move this to network.map.js
+        var b = feature.geometry.getBounds();
+        console.log("bounds: " + b);
+        var p = b.getCenterPixel().x;
+        console.log("pixel: " + show(p));
+        /*afrimesh.villagebus.mq.DELETE("handset:" + notification.self + ":call", function(error, response) {
+            if (error) return console.error("Could not remove notification: " + notification);
+            console.debug("notification removed: " + notification);
+          }, name);*/
       });
 
     // activate input hints
@@ -170,6 +187,15 @@ function() {
 
     // User clicked on notification
     function click_fn() {
+      // TODO - the router could be rebooting and not added to the map, add router manually in this case
+      var feature = network_map.router(device.ip);
+      if (!feature) {
+        // TODO - abort! abort! abort!
+       console.error("Invalid feature for notification!!");
+       $("div#notify #error").html("Invalid feature for notification");
+       return;
+      }
+
       var clicked = $(this);
       clicked.unbind();
 
@@ -177,10 +203,7 @@ function() {
       $("div#notify .text").hide();
       $("div#notify #link").show();
 
-      // TODO - the router could be rebooting and not added to the map, add router manually in this case
-
       // add a drag handler for the router feature & update location fields
-      var feature = network_map.router({ address : device.ip });
       feature = network_map.on_drag_feature(feature, function(longitude, latitude) {
           $("div#link input#longitude").val(longitude);
           $("div#link input#latitude").val(latitude);

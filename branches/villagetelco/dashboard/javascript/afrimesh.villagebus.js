@@ -255,18 +255,18 @@ var BootVillageBus = function (afrimesh) {
   // notify continuation whenever new message(s) are available in the queue
   villagebus.mq.Bind = function(name, continuation, rate) {
     var queue = "/@root/db/keys/message:" + name;
-    continuation.mq          = { };
-    continuation.mq.timer    = undefined;
-    continuation.mq.messages = { };
+    continuation.mq       = { };
+    continuation.mq.timer = undefined;
+    continuation.mq.cache = { };
     name = (function poll(name, continuation, rate) {
       name = afrimesh.villagebus.Bind(queue, function(error, response) {
         if (error) return continuation(error, null);  
         if (!response) return; // empty queue
         response.map(function(message) {
-          if (continuation.mq.messages[message]) { // has this continuation received this message yet?          
-            return continuation.mq.messages[message];
+          if (continuation.mq.cache[message]) { // has this continuation received this message yet?          
+            return continuation.mq.cache[message];
           } 
-          continuation.mq.messages[message] = true;
+          //continuation.mq.cache[message] = true;
           return afrimesh.villagebus.GET(afrimesh.villagebus.Bind("/@root/db/" + message, continuation));
         });
       });
@@ -279,22 +279,25 @@ var BootVillageBus = function (afrimesh) {
     return continuation;
   };
 
+  // delete message(s) from the queue
+  // TODO - notify everyone subscribed to the queue
+  // e.g. del message:device:<mac>:provision
+  villagebus.mq.DELETE = function(name, continuation, queue) {
+    name = "message:" + name;
+    if (queue && queue.mq && queue.mq.cache) {
+      queue.mq.cache[name] = false;
+    }
+    name = afrimesh.villagebus.Bind("/@root/db/" + name, continuation);
+    return afrimesh.villagebus.DELETE(name);  
+  };
+
   // stop notifying the continuation - TODO support multiple queues on continuations?
   villagebus.mq.Unbind = function(continuation) {
     console.log("UNBINDING: " + name);
     clearTimeout(name.mq.timer);
+    name.mq.cache = {};
     return name;
-  };
-  
-  // delete message(s) from the queue
-  // TODO - notify everyone subscribed to the queue
-  // e.g. del message:device:<mac>:provision
-  villagebus.mq.DELETE = function(name, continuation) {
-    name = afrimesh.villagebus.Bind("/@root/db/message:" + name, continuation);
-    return afrimesh.villagebus.DELETE(name);  //TODO crap, seems like jQuery DELETE support is utterly borkened
-    //name = afrimesh.villagebus.Bind("/@root/db/del/message:" + name, continuation);
-    //return afrimesh.villagebus.GET(name);
-  };
+  };  
 
   // add a new message to the queue
   villagebus.mq.POST = function(name, message, continuation) {
