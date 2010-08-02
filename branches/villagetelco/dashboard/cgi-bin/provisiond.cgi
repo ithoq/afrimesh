@@ -102,7 +102,7 @@ find "$TARBALL_DIR" -name .svn -exec rm -rf '{}' ';'
 
 # configure base bundle w/ provisioned values
 wifi0_device=`$UCI get wireless.@wifi-iface[0].device` 
-#$UCI set network.$wifi0_device.ipaddr="$provisioned_ip"
+$UCI set network.$wifi0_device.ipaddr="$provisioned_ip"
 $UCI set afrimesh.settings.deviceid="$provisioned_id"
 $UCI set afrimesh.settings.root="$provisioned_root"
 
