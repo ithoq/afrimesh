@@ -196,6 +196,7 @@ var Map = undefined;
       } 
       if (!router.hasOwnProperty("routes")) { // TODO check that it's a complete router object before adding it
         console.error("Phony router, trying our best...");
+        console.log(router);
         router.routes = [];
       }
       return add_router(router);
