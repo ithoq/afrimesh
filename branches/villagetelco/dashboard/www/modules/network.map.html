@@ -17,7 +17,8 @@
 
 
 <!-- http://bbs.keyhole.com/ubb/ubbthreads.php?ubb=showflat&Number=283026 -->
-<form class="export" 
+<form id="network-map-export" 
+      class="export" 
       action="/cgi-bin/mesh-topology.kml" 
       method="POST" target="_blank">
   <input id="export-map-data" type="hidden" name="data" />
@@ -210,7 +211,12 @@ function() {
         });
 
       // position router to a neutral position 
-      feature.move(network_map.center());      
+      var center = network_map.center();
+      console.log("CENTERING");
+      console.log(center);
+      center.lat = center.lat + 300;
+      feature.move(center);
+      //feature.move({ lon : center.lon, lat : center.lat });
 
       // Save
       $("div#notify div#link button#save").click(function() { // Save user info
@@ -362,8 +368,9 @@ function() {
     my_kml_data += "</Folder>";
     my_kml_data += "</Document>";
     my_kml_data += "</kml>";
-    console.debug(my_kml_data);
-    $("#export-map-data").val(my_kml_data); 
+    //console.debug(my_kml_data);
+    console.log("EXPORTING KML");
+    $("form#network-map-export input#export-map-data").val(my_kml_data); 
     //window.location = 'data:application/vnd.google-earth.kml+xml,' + escape(my_kml_data);
     //$.post("/~sprinter/cgi-bin/mesh-topology.kml?Content-type=application/vnd.google-earth.kml+xml", my_kml_data);
   };

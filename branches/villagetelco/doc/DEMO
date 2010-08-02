@@ -14,41 +14,39 @@
 * Outstanding
 ** DONE Initiate call and play recording "callme!" when handset provisioning is done
 ** DONE Send notifications when making a call
-** TODO Map popups when making a call
+** DONE Map popups when making a call
 ** TODO status.sh - Find a way to set the timestamp on the server side OR workaround for crap timestamps
 
 ** Annoying bugs
 *** TODO popups are going missing
 *** TODO Trying to provision a router before it's been picked up by the map causes shit
     Either create dummy routers if they're not there yet and/or force faster vis updates?
-*** TODO Google earth export doesn't work
-
-** TODO Disable radius section entirely
-** TODO Spec redis server
+*** DONE Google earth export doesn't work
 
 ** C Stuff
 *** TODO modules/mod_provision.c  #define PROVISION_DEFAULT_ROOT 192.168.20.105
 *** TODO modules/mod_db.c         credis_connect("localhost", 6379, 2000);
 *** TODO permissions in /tmp/.uci + custom .uci bug
 
-** TODO Firefox & other layout problems:
-   zindex of toolbar callout on firefox z-index / off-by-1 ?
-   Toolbar icons aligned left
-   Settings screen Internet gateway is align bottom for some reason
-   Settings screen sections are wrapping
-   Accounts street address is courier font?!
-   Maybe pulse routers a bit to the side or above the main gateway location? :)
-   Tooltips are a bit far right w/ z-index borked
-   doctype + js + syntax error !?
-
 ** Remember!!!
 *** TODO s/afrimesh.vt/afrimesh
 *** DONE Set status.sh cron to every 1 minute for the demo
 
+** DONE Disable radius section entirely
+** DONE Firefox & other layout problems:
+   DONE zindex of toolbar callout on firefox z-index / off-by-1 ?
+   DONE Toolbar icons aligned left
+   DONE Settings screen Internet gateway is align bottom for some reason
+   DONE Settings screen sections are wrapping
+   SHRUG Accounts street address is courier font?!
+   DONE Tooltips are a bit far right w/ z-index borked
+   DONE Maybe pulse routers a bit to the side or above the main gateway location? :)
+
 ** Notfixnow
 *** TODO Local map server
 *** TODO Vanilla OpenWRT doesn't want to config wireless during runonce
-
+*** TODO doctype + js + syntax error !?
+*** TODO Spec redis server
 
 
 * Manually deprovision a device

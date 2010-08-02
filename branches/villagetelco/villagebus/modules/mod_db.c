@@ -276,37 +276,6 @@ const fexp* db_lrange(closure* c, db* self, const fexp* message)
 
 /* - PUT ---------------------------------------------------------------- */
 
-/**
- *
- */
-const string* db_getset(closure* c, db* self, const fexp* message, const unsigned char* data)
-{
-  object* reply = (object*)fexp_nil;
-
-  // generate key
-  string* skey  = (string*)send(message, s_fexp_join, self->delimiter);  // generate a key from message
-  char*   key   = (char*)send(skey, s_string_tochar); // TODO - redis not support UNICODE so much
-
-  // make query
-  wprintl(L"PUT /db/getset/%S %s\n", skey->buffer, data);
-  char* val;
-  int rc = credis_getset(self->handle, key, data, &val);
-  
-  /* credis is a bit crummy here... getset on new keys return rc==-1 && val==NULL, 
-     on existing keys rc==0 && val=data */
-  if (rc == -1) {
-    val = (char*)data;
-  } else if (rc != 0) {
-    reply = send(VillageBus, s_villagebus_error, L"getset failed %s: %s", key, data);
-    free(key);
-    return (string*)reply;
-  }
-  free(key);
-  reply = send(String, s_string_fromchar, val, strlen(val));
-  
-  return (string*)reply;
-}
-
 const string* db_incr(closure* c, db* self, const fexp* message)
 {  
   string* reply;
@@ -325,6 +294,60 @@ const string* db_incr(closure* c, db* self, const fexp* message)
 }
 
 
+// TODO - we need a better solution
+#include <time.h>
+const unsigned char* fix_timestamps(const unsigned char* data) 
+{
+  struct json_object* json = json_tokener_parse((unsigned char*)data);
+  if (json == NULL) { // if it doesn't segfault :-)
+    wprintl(L"fix_timestamps utterly failed to convert |%s| to json\n", data);
+    return data;
+  }
+  struct json_object* timestamp = json_object_object_get(json, "timestamp");
+  if (timestamp == NULL) {
+    wprintl(L"fix_timestamps has come to the conclusion that |%s| probably has no timestamp\n", data);
+  }
+  time_t t;
+  t = time(&t);
+  timestamp = json_object_new_int(t);
+  json_object_object_add(json, "timestamp", timestamp);
+  return json_object_get_string(json);
+}
+
+
+/**
+ *
+ */
+const string* db_getset(closure* c, db* self, const fexp* message, const unsigned char* data)
+{
+  object* reply = (object*)fexp_nil;
+
+  // generate key
+  string* skey  = (string*)send(message, s_fexp_join, self->delimiter);  // generate a key from message
+  char*   key   = (char*)send(skey, s_string_tochar); // TODO - redis not support UNICODE so much
+
+  // make query
+  wprintl(L"PUT /db/getset/%S %s\n", skey->buffer, data);
+  char* val;
+  const unsigned char* fixed = fix_timestamps(data);
+  int rc = credis_getset(self->handle, key, fixed, &val);
+  
+  /* credis is a bit crummy here... getset on new keys return rc==-1 && val==NULL, 
+     on existing keys rc==0 && val=data */
+  if (rc == -1) {
+    val = (char*)data;
+  } else if (rc != 0) {
+    reply = send(VillageBus, s_villagebus_error, L"getset failed %s: %s", key, data);
+    free(key);
+    return (string*)reply;
+  }
+  free(key);
+  reply = send(String, s_string_fromchar, val, strlen(val));
+  
+  return (string*)reply;
+}
+
+
 
 /* - POST --------------------------------------------------------------- */
 
@@ -339,7 +362,8 @@ const fexp* db_lpush(closure* c, db* self, const fexp* message, const unsigned c
   wprintl(L"POST /db/lpush/%S %s\n", key->buffer, data);
 
   char* keyc = (char*)send(key, s_string_tochar); // TODO - redis not support UNICODE so much
-  if (credis_lpush(self->handle, keyc, data) != 0) {
+  const unsigned char* fixed = fix_timestamps(data);
+  if (credis_lpush(self->handle, keyc, fixed) != 0) {
     reply = (fexp*)send(VillageBus, s_villagebus_error, L"lpush failed %s: %s", keyc, data);
   }
   free(keyc);

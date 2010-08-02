@@ -95,13 +95,13 @@
         // add data series for plots - TODO move legend to outside div
         afrimesh.device.interface.history(address, function(error, data) {
             var score = data.map(function(entry) {
-                return [ entry.timestamp, entry.gateways[0].score ];
+                return [ entry.timestamp*1000, entry.gateways[0].score ];
               });
             var gateway = data.map(function(entry) {
-                return [ entry.timestamp, -entry.gateways[0].ping.gateway ];
+                return [ entry.timestamp*1000, -entry.gateways[0].ping.gateway ];
               });
             var nexthop = data.map(function(entry) {
-                return [ entry.timestamp, -entry.gateways[0].ping.nexthop ];
+                return [ entry.timestamp*1000, -entry.gateways[0].ping.nexthop ];
               });
             console.log(address + " has " + score.length + " entries");
             $.plot(clone.find("#graph"),                                 // - element --
