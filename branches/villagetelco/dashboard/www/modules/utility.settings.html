@@ -12,10 +12,9 @@
       OnSubmit="return false;"
       OnKeyPress="return disable_key(13, event);">
 
-  <table border="0">
-    <tr valign="top">
-
-      <td>
+  <table style="border:0px solid green;">
+    <tr>
+      <td style="vertical-align:top;">
         <fieldset>
           <legend>Mesh</legend>
           <div class="label">Visualization Server</div>
@@ -39,9 +38,17 @@
             <p class="learnmore"></p>
             <p id="accounting_server|error" style="color:#FF0000;"></p>
           </div>
+          <!-- div class="label">Database Server</div>
+          <input id="afrimesh|settings|network|mesh|redis_server" style="background:#FFAAAA;" type="text" />
+          <div class="tooltip"><h3>Database Server</h3>
+            <p class="explain"></p>
+            <p class="typical"></p>
+            <p class="learnmore"></p>
+            <p id="redis_server|error" style="color:#FF0000;"></p>
+          </div -->
         </fieldset>
 
-        <fieldset>
+        <!-- fieldset>
              <legend>Access Control</legend>
              <div class="label">Radius Server</div>
              <input id="afrimesh|settings|radius|server" style="background:#FFAAAA;" type="text"></input>
@@ -54,11 +61,6 @@
                <option value="1">mysql</option>
                <option value="2">memcachedb</option>
              </select>
-             <!-- div class="label">Database</div>
-             <input id="afrimesh|settings|radius|database" type="text" />
-             <div class="tooltip"><h3>database</h3>
-               <p class="explain">Enter the RADIUS authentication database here.</p>
-             </div -->
              <div class="label">Username</div>
              <input id="afrimesh|settings|radius|username" type="text" />
              <div class="tooltip"><h3>username</h3>
@@ -69,10 +71,15 @@
              <div class="tooltip"><h3>password</h3>
                <p class="explain">Enter your password for authentication on the RADIUS database here.</p>
              </div>
-        </fieldset>          
+        </fieldset -->
+        <!-- div class="label">Database</div>
+             <input id="afrimesh|settings|radius|database" type="text" />
+             <div class="tooltip"><h3>database</h3>
+               <p class="explain">Enter the RADIUS authentication database here.</p>
+        </div -->
       </td>
 
-      <td>        
+      <td style="vertical-align:top;">
         <fieldset>
           <legend>Internet Gateway</legend>
           <div class="label">IP Address</div>
@@ -176,9 +183,9 @@
     /** install tooltips -------------------------------------------------- */
     $("input.[id*=afrimesh]").tooltip({
         position : ['bottom', 'right'],   // place tooltip on the right edge 
-        offset   : [-20, 20],             // a little tweaking of the position 
+        offset   : [-49, -85],            // a little tweaking of the position 
         effect   : 'toggle',              // use a simple show/hide effect 
-        opacity  : 0.8                    // custom opacity setting 
+        opacity  : 1.0                    // custom opacity setting 
       });
 
     /** style controls ----------------------------------------------------- */
@@ -225,7 +232,7 @@
         update_map_server();
       });
     $("input.[id*=afrimesh|settings|radius|server]").bind("blur", function(event) { 
-        update_radius_server();
+        //update_radius_server();
       });
     $("input.[id*=afrimesh|settings|internet_gateway|address]").bind("blur", function(event) { 
         populate_select_interface();
@@ -247,7 +254,7 @@
     update_map_server();
 
      /** query RADIUS server and mysql database for availability ----- */
-    update_radius_server();
+    //update_radius_server();
 
     return unload;
   };

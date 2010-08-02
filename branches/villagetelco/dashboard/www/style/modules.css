@@ -237,8 +237,9 @@ div#accounts-manage .editor {
   padding-bottom : 0.25em;
   padding-right  : 0.25em;
 }
-div#accounts-manage .editor input {
+div#accounts-manage .editor input, textarea {
   margin-bottom: 10px;
+  padding-left:0.25em;
 }
 div#accounts-manage span.mydevices {
   font-weight:normal; 
@@ -435,12 +436,14 @@ form.two-column .iax_trunk, .sip_trunk, .gateway_class, .routing_class {
 form.two-column input, select {
   /*border:1px solid green;*/
   margin-bottom: .5em;
+  width: 200px;  /* FireFox is sizing these rather large by default */
 }
 form.two-column input[type=checkbox] {  /* aaaaaaaaaargh */
 }
 form.two-column #location {
   width:  600px;
   height: 300px;
+  z-index: -1;
 }
 form.two-column #location.message {
   /*border: 1px dashed gray;*/

@@ -128,11 +128,14 @@ ul#dock {
   bottom      : 10px; 
   width       : 60px;
   background  : rgba(64,64,64,0.8); 
+  /*text-align  : left;*/
 } 
 ul#dock.dockleft {
-  left        : 0px; 
-  border      : 2px solid white;
-  border-left : 0px;
+  left          : 0px; 
+  border-top    : 2px solid white;
+  border-bottom : 2px solid white;
+  border-right  : 2px solid white;
+  border-left   : 0px;
   border-top-left-radius         : 0.0em;
   -khtml-border-top-left-radius  : 0.0em;
   -moz-border-radius-topleft     : 0.0em;
@@ -172,11 +175,12 @@ ul#dock hr {
   padding  : 0px;
 }
 ul#dock li {
-  border     : 0px solid red;
-  display    : block;
+  border   : 0px solid red;
 }
 ul#dock li img {
-  border     : 0px solid green;
+  border       : 0px solid green;
+  display      : block;
+  padding-left : 6px;
 }
 ul#dock li:hover {
 }
@@ -191,7 +195,7 @@ ul#dock .callout {
   border-bottom : 15px solid rgba(255,255,255,0.0);
 }
 ul#dock .callout-border {
-  z-index       : 1;
+  z-index       : 0;
   position      : absolute;
   top           : 10px;
   right         : -21px;
@@ -294,12 +298,12 @@ ul#dock [tooltip]:focus:after {
 
 /* Utility->Settings tooltips - TODO replace w/ Toolbar tooltips */
 div.tooltip {
-  background-color : black; 
-  padding          : 10px;
-  margin-right     : 20px;
+  background-color : rgba(0,0,0,0.75); 
+  padding          : 0.5em;
+  /*margin-right     : 1.0em;*/
   display          : none; 
   max-width        : 300px;
-
+  z-index          : 1000;
   border-radius : 0.5em;
   -khtml-border-radius  : 0.5em;
   -moz-border-radius    : 0.5em;
@@ -312,6 +316,7 @@ div.tooltip {
   -webkit-border-top-left-radius : 0.0em;
 }
 div.tooltip h3 {   
+  color:lightgray;
 }
 div.tooltip p {   
   color : orange; 
