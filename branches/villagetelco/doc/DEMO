@@ -12,15 +12,9 @@
 
 
 * Outstanding
-** TODO Initiate call and play recording "callme!" when handset provisioning is done
-   originate MP/1 application Playback callme
-   /usr/lib/asterisk/sounds/callme.gsm
-
-
-
-
+** DONE Initiate call and play recording "callme!" when handset provisioning is done
+** DONE Send notifications when making a call
 ** TODO Map popups when making a call
-
 ** TODO status.sh - Find a way to set the timestamp on the server side OR workaround for crap timestamps
 
 ** Annoying bugs
@@ -140,7 +134,7 @@
    uci set batmand.general.routing_class=3
    uci set batmand.general.visualisation_srv=192.168.20.225
    uci set system.@system[0].log_ip=192.168.20.225
-   uci set afrimesh.settings.root=192.168.20.225
+   uci set afrimesh.settings.root=192.168.20.105
    uci del afrimesh.settings.deviceid
    uci commit
    reboot

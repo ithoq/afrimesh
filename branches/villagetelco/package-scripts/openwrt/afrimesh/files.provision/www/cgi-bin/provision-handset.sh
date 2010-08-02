@@ -82,12 +82,13 @@ logger "device# $device ($self) handset provisioning complete. Restarting."
 echo "device# $device ($self) handset provisioning complete. Restarting." 
 echo
 #/etc/init.d/asterisk restart
+killall -9 asterisk ; sleep 2; /etc/init.d/asterisk start
 
 
 # 5. - Send an ack to the provisioning server ------------------------------
 # 
 # TODO use handset id
-name="/cgi-bin/villagebus/telephony/callme/$self" # Blondie!!!
+name="/cgi-bin/villagebus/telephony/callme/$self" 
 REQUEST="GET $name HTTP/1.0
 
 "
