@@ -82,7 +82,7 @@ logger "device# $device ($self) handset provisioning complete. Restarting."
 echo "device# $device ($self) handset provisioning complete. Restarting." 
 echo
 #/etc/init.d/asterisk restart
-killall -9 asterisk ; sleep 5; /usr/sbin/asterisk
+#killall -9 asterisk ; sleep 15; /usr/sbin/asterisk; sleep 15
 
 
 # 5. - Send an ack to the provisioning server ------------------------------
@@ -107,10 +107,13 @@ echo "secret:   " `uci get asterisk.sippotato.secret`
 #   
 
 # Give asterisk plenty of time to wake up
-sleep 30
+#sleep 30
 
 # TODO - for demo I'll just originate the call locally for now
 /usr/sbin/asterisk -rx "originate MP/1 application Playback callme"
+
+
+killall -9 asterisk ; sleep 15; /usr/sbin/asterisk; sleep 15
 
 echo "fin"
 echo
