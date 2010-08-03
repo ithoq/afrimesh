@@ -201,7 +201,8 @@ packages-linux : source-packages-linux binary-packages-linux
 
 source-packages-linux : prep-linux
 	@echo "Building Debian/Ubuntu source packages"
-	#REENABLE cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; debuild -S
+	#REENABLE 
+	cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; debuild -S
 	cd $(PKG_BUILD_DIR)/villagetelco-dashboard-$(VERSION) ; debuild -S
 
 binary-packages-linux : prep-linux
@@ -210,7 +211,8 @@ binary-packages-linux : prep-linux
 	echo "HOOKDIR=$(PKG_BUILD_DIR)/hook.d" >> ~/.pbuilderrc
 	mkdir -p $(PKG_BUILD_DIR)/hook.d
 	cp package-scripts/debian/pbuilder-update-$(PPA)-keys.sh $(PKG_BUILD_DIR)/hook.d/D70update-ppa-keys
-	#REENABLE cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; pdebuild 
+	#REENABLE 
+	cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; pdebuild 
 	cd $(PKG_BUILD_DIR)/villagetelco-dashboard-$(VERSION) ; pdebuild 
 	@echo "Built: "
 	ls -al /var/cache/pbuilder/result
@@ -231,11 +233,16 @@ prep-linux : clean-linux sources #hooks-linux
 	@echo "Initializing linux package scripts for build"
 	mkdir -p $(PKG_BUILD_DIR)
 	cd $(PKG_BUILD_DIR) ; cp /tmp/afrimesh-$(VERSION).tar.gz .
-	#RE cd $(PKG_BUILD_DIR) ; tar xzvf afrimesh-$(VERSION).tar.gz
-	#RE cd $(PKG_BUILD_DIR) ; mv afrimesh-$(VERSION) afrimesh-dashboard-$(VERSION)
-	#RE cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; dh_make -c BSD -e antoine@7degrees.co.za -s --createorig
-	#RE rm -rf $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION)/debian/*
-	#RE cp -a package-scripts/debian/afrimesh-dashboard/* $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION)/debian
+	#RE 
+	cd $(PKG_BUILD_DIR) ; tar xzvf afrimesh-$(VERSION).tar.gz
+	#RE 
+	cd $(PKG_BUILD_DIR) ; mv afrimesh-$(VERSION) afrimesh-dashboard-$(VERSION)
+	#RE 
+	cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; dh_make -c BSD -e antoine@7degrees.co.za -s --createorig
+	#RE 
+	rm -rf $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION)/debian/*
+	#RE 
+	cp -a package-scripts/debian/afrimesh-dashboard/* $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION)/debian
 	# VTE package
 	cd $(PKG_BUILD_DIR) ; tar xzvf afrimesh-$(VERSION).tar.gz
 	cd $(PKG_BUILD_DIR) ; mv afrimesh-$(VERSION) villagetelco-dashboard-$(VERSION)
