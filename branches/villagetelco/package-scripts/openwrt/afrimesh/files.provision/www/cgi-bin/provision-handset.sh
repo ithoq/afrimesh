@@ -82,7 +82,7 @@ logger "device# $device ($self) handset provisioning complete. Restarting."
 echo "device# $device ($self) handset provisioning complete. Restarting." 
 echo
 #/etc/init.d/asterisk restart
-killall -9 asterisk ; sleep 2; /etc/init.d/asterisk start
+killall -9 asterisk ; sleep 3; /usr/sbin/asterisk
 
 
 # 5. - Send an ack to the provisioning server ------------------------------
