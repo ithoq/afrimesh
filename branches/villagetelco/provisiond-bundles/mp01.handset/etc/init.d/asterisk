@@ -134,19 +134,19 @@ reload() {
 
 start() {
   # configure
-  root=$(uci get afrimesh.settings.root)
+  #root=$(uci get afrimesh.settings.root)
 
   # die if there is no mesh root server set
-  [ -z $root ] && {
-    echo "no root server found for mesh"
-    exit 1
-   }
+  #[ -z $root ] && {
+  #  echo "no root server found for mesh"
+  #  exit 1
+  # }
 
   # wait for mesh before starting asterisk
-  while true; do
-    ping -c 5 -w 10 $root >& /dev/null ; [ $? = 0 ] && break 
-    sleep 5
-  done
+  #while true; do
+  #  ping -c 5 -w 10 $root >& /dev/null ; [ $? = 0 ] && break 
+  #  sleep 5
+  #done
 
   # create asterisk directories
   [ -f $DEFAULT ] && . $DEFAULT
