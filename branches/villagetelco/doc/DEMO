@@ -75,7 +75,7 @@
    
 ** Configuration  (telnet 192.168.1.20)
    opkg install http://192.168.1.9/~antoine/firmware.potato/packages/mips/netcat_0.7.1-1_mips.ipk
-   opkg install http://192.168.1.9/~antoine/firmware.potato/packages/mips/villagetelco-device_1.0pre-r918-1_mips.ipk
+   opkg install http://192.168.1.9/~antoine/firmware.potato/packages/mips/villagetelco-device_1.0pre-r926-1_mips.ipk
    (Answer 'Y' when asked to replace /etc/config/afrimesh)   
    /etc/init.d/provision enable
 

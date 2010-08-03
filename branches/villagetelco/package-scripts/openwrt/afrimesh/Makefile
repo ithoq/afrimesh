@@ -32,7 +32,7 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ----------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=925
+PKG_REV:=926
 PKG_VERSION:=1.0pre-r$(PKG_REV)
 PKG_RELEASE:=1
 
@@ -88,6 +88,7 @@ define Package/afrimesh-base/install
 	echo "/etc/config/afrimesh" >> $(1)/CONTROL/conffiles
 	$(INSTALL_CONF) ./files/etc/config/afrimesh             $(1)/etc/config
 	$(INSTALL_BIN)  ./files/etc/crontabs/afrimesh           $(1)/etc/crontabs/root
+	$(INSTALL_BIN)  ./files/www/cgi-bin/notify.sh           $(1)/www/cgi-bin/notify
 	$(INSTALL_BIN)  ./files/www/cgi-bin/status.sh           $(1)/www/cgi-bin/status
 	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/villagebus/villagebus  $(1)/www/cgi-bin/villagebus
 
@@ -148,6 +149,7 @@ define Package/villagetelco-device/install
 	$(INSTALL_CONF) ./files.villagetelco/etc/config/afrimesh              $(1)/etc/config
 	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/villagebus/villagebus                $(1)/www/cgi-bin/villagebus
 	$(INSTALL_BIN)  ./files/etc/crontabs/afrimesh                         $(1)/etc/crontabs/root
+	$(INSTALL_BIN)  ./files/www/cgi-bin/notify.sh               			    $(1)/www/cgi-bin/notify
 	$(INSTALL_BIN)  ./files/www/cgi-bin/status.sh                         $(1)/www/cgi-bin/status
 	$(INSTALL_BIN)  ./files.provision/etc/init.d/provision                $(1)/etc/init.d/provision
 	$(INSTALL_BIN)  ./files.provision/usr/lib/asterisk/sounds/callme.gsm  $(1)/usr/lib/asterisk/sounds
