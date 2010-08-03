@@ -45,3 +45,6 @@ echo -e $REQUEST
 echo "- fin --"
 echo
 
+# exit success
+exit 0
+
