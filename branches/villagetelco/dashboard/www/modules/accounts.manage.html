@@ -70,7 +70,7 @@
     console.debug("loaded accounts.manage.html");
 
     /* set up search box */
-    //$('input[title!=""]').hint();    
+    $('input[title!=""]').hint();    
     $("div#accounts-manage input#search").bind("keyup", function(event) {
         if (this.value == "") { 
           return $("div.account").show();
