@@ -1,3 +1,14 @@
+* Fixes
+** TODO Instructions for setting provisioning defaults
+** TODO CallMe not working
+** TODO Phone calls not working
+** TODO Dbl account creation bug
+** TODO Set initial dashboard location
+** TODO Reset map after dashboard loc
+** TODO Move nodes closer after major dashboard loc reset?
+
+
+
 * Demo Kit For Steve
   . This document
   . Ubuntu binaries:  
