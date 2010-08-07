@@ -96,7 +96,7 @@
 
    chmod -R a+rw /etc/config
    #uci set wireless.@wifi-iface[0].mode=adhoc # ???
-   uci set network.wifi0.ipaddr=10.130.1.101
+   uci set network.wifi0.ipaddr=10.130.1.102
    uci set batmand.general.routing_class=3
    uci set batmand.general.visualisation_srv=10.130.1.1
    uci set system.@system[0].log_ip=10.130.1.1
