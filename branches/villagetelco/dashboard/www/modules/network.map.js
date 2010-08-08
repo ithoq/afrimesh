@@ -100,12 +100,12 @@ var Map = undefined;
     /**
      * Map center
      */
-    this.center = function(longitude, latitude) {
+    this.center = function(longitude, latitude, zoom) {
       if (!longitude) {
         return the_map.getCenter();
       }
-      if (the_map.zoom < 10) {
-        the_map.zoomTo(10);
+      if (zoom) {
+        the_map.zoomTo(zoom);
       }
       the_map.panTo(LonLat(longitude, latitude));
     };

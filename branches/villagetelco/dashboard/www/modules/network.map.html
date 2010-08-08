@@ -66,7 +66,7 @@ var network_map = undefined; // TODO - better solution for visibility to utility
 
   /** construction ------------------------------------------------------ */
   //var network_map = undefined;
-  ready = function() {
+  ready = function(continuation) {
     console.debug("loaded network.map.html");
 
     $("div#network-map").addClass("message");
@@ -109,6 +109,10 @@ var network_map = undefined; // TODO - better solution for visibility to utility
           console.log("Zoooooooooooom");
           network_map.zoom(2);
         });    
+
+      if (continuation) { // TODO - 
+        continuation();
+      }
     };
 
     function load_error(message) {

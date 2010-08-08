@@ -279,7 +279,7 @@ var LocationMap = null;
     var latitude = parseFloat($("input.[id*=afrimesh|settings|location|latitude]").val());
     console.debug(longitude + ", " + latitude);
     this.location_map.center(longitude, latitude);
-    network_map.center(longitude, latitude);
+    network_map.center(longitude, latitude, 14);
   };
   
   /** create a map which can be used to set the router location --------- */
@@ -337,13 +337,12 @@ var LocationMap = null;
     /**
      * Recenter map on coordinates
      */
-    this.center = function(longitude, latitude) {
+    this.center = function(longitude, latitude, zoom) {
       var feature = this.router({ address : afrimesh.settings.address });
       var location = new LonLat(longitude, latitude);
       feature.move(location);
-      //the_map.setCenter(LonLat(longitude, latitude), the_map.zoom);
-      if (the_map.zoom < 10) {
-        the_map.zoomTo(10);
+      if (zoom) {
+        the_map.zoomTo(zoom);
       }
       the_map.panTo(LonLat(longitude, latitude));
     };
