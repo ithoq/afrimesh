@@ -248,8 +248,8 @@ var network_map = undefined; // TODO - better solution for visibility to utility
 
     /** - event handler: click notification ----------------------------- */
     function click_fn(clicked, device) {
-      //var feature = network_map.router({ address : device.ip });
-      var feature = network_map.router({ address : device.ip, routes : [] });
+      var feature = network_map.router({ address : device.ip });
+      //var feature = network_map.router({ address : device.ip, routes : [] });
       if (!feature || !feature.geometry) { // TODO - the router could be rebooting, add router manually in this case
         console.error("Invalid feature for notification!!");
         $("div#popup #error").html("The device is still restarting. Please wait.");
