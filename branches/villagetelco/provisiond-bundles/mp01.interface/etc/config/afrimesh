@@ -1,7 +1,7 @@
 
 config 'afrimesh' 'location'
-	option 'longitude' '28.282307206359'
-	option 'latitude' '-25.739019176411'
+	option 'longitude' ''
+	option 'latitude' ''
 
 config 'afrimesh' 'settings'
 	option 'root'     '10.130.1.1'

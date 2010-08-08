@@ -20,7 +20,7 @@
     villagetelco-device.ipkg
     netcat.ipkg
   
-* HOWTO Manually deprovision everyone & reset dashboard
+* HOWTO Manually deprovision everyone & reset dashboard location
   redis-cli flushdb
   uci del afrimesh.location.latitude
   uci del afrimesh.location.longitude
