@@ -1,12 +1,12 @@
-* Fixes
-** TODO Instructions for setting provisioning defaults
-** TODO Dbl account creation bug
+* Changelog for r948
 ** TODO Set initial dashboard location
 ** TODO Reset map after dashboard loc
 ** TODO Move nodes closer after major dashboard loc reset?
 ** DONE Home button to close map 
 ** DONE CallMe not working
 ** DONE Phone calls not working
+** DONE Instructions for setting provisioning defaults
+** DONE Double account creation bug
 
 * Demo Kit For Steve
   . This document
@@ -20,12 +20,17 @@
     villagetelco-device.ipkg
     netcat.ipkg
   
-* HOWTO Manually deprovision a specific device
-  uci del afrimesh.settings.deviceid
-  uci commit
-
 * HOWTO Manually deprovision everyone & reset dashboard
   redis-cli flushdb
+  uci del afrimesh.location.latitude
+  uci del afrimesh.location.longitude
+  uci commit
+
+* HOWTO Modify default provisioned settings for device network interface:
+  Edit: /usr/lib/cgi-bin/provisiond-bundles/mp01.interface
+
+* HOWTO Modify default provisioned settings for device handset:
+  Edit: /usr/lib/cgi-bin/provisiond-bundles/mp01.handset
 
 * Starting from a virgin Ubuntu 10.04 w/ all updates installed
 ** install batmand & vis & NAT gateway
@@ -52,10 +57,8 @@
    sudo apt-get install apache2 snmp snmpd pmacct libcredis redis-server uci
    sudo dpkg -i ~/Desktop/villagetelco-dashboard*_i386.deb
    sudo chmod a+rw /var/log/messages
-   sudo chmod -R a+rw /tmp/.uci  
-   sudo chmod 0777 /tmp/.uci
-   sudo chmod -R a+rw /etc/config
-   sudo chmod 0777 /etc/config
+   sudo chmod -R a+rw /etc/config /tmp/.uci
+   sudo chmod 0777 /etc/config /tmp/.uci
    uci set afrimesh.settings.foo=bar  
    uci commit                         
    

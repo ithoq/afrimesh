@@ -75,10 +75,14 @@ provisioned_id=${provisioned[0]}
 provisioned_mac=${provisioned[1]} 
 provisioned_ip=${provisioned[2]} 
 provisioned_root=${provisioned[3]}
+provisioned_lon=`$UCI get afrimesh.location.longitude`
+provisioned_lat=`$UCI get afrimesh.location.latitude`
 log "Provisioned device:    $provisioned_id"
 log "Provisioned interface: $provisioned_mac"
 log "Provisioned ip:        $provisioned_ip"
 log "Provisioned root:      $provisioned_root"
+log "Provisioned lon:       $provisioned_lon"
+log "Provisioned lat:       $provisioned_lat"
 # TODO - check return values
 
 
@@ -99,12 +103,13 @@ find "$TARBALL_DIR" -name .svn -exec rm -rf '{}' ';'
 #cp -r "$BUNDLE_DIR/etc/config/afrimesh" "$TARBALL_DIR/etc/config" 
 #cp -r "$BUNDLE_DIR/etc/config/system"   "$TARBALL_DIR/etc/config" 
 
-
 # configure base bundle w/ provisioned values
 wifi0_device=`$UCI get wireless.@wifi-iface[0].device` 
 $UCI set network.$wifi0_device.ipaddr="$provisioned_ip"
 $UCI set afrimesh.settings.deviceid="$provisioned_id"
 $UCI set afrimesh.settings.root="$provisioned_root"
+$UCI set afrimesh.location.longitude="$provisioned_lon"
+$UCI set afrimesh.location.latitude="$provisioned_lat"
 
 # commit configuration to provisioning bundle
 log "- The following config changes were provisioned -- "

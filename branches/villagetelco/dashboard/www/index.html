@@ -91,10 +91,19 @@
         add_dock_item("settings", "utility.settings");
 
         /** set default page */
+        if (!afrimesh.settings.location.latitude ||
+            !afrimesh.settings.location.longitude) {
+          console.log("Mesh has not yet been geo located");
+          afrimesh.settings.location.longitude = 0.0;
+          afrimesh.settings.location.latitude = 0.0;
+          afrimesh.settings.map.zoom = 2;
+          $("ul#dock li#settings").click();
+        }
         $("div#map").load("modules/network.map.html", function(page) { 
             //$("div#map").fadeIn("slow"); 
             unloader = ready(); // UDE fades mess with load completion and require a ready() method :(
           });
+
 
         /** loading complete, we can now remove our message */
         $("#message-loading").html("");

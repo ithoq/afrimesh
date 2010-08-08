@@ -279,6 +279,7 @@ var LocationMap = null;
     var latitude = parseFloat($("input.[id*=afrimesh|settings|location|latitude]").val());
     console.debug(longitude + ", " + latitude);
     this.location_map.center(longitude, latitude);
+    network_map.center(longitude, latitude);
   };
   
   /** create a map which can be used to set the router location --------- */
@@ -290,7 +291,8 @@ var LocationMap = null;
           displayProjection : epsg_4326,
           units             : "m",
           transitionEffect  : "resize",
-          controls          : [ new OpenLayers.Control.Navigation(),
+          controls          : [ new OpenLayers.Control.Navigation({ 
+                                  zoomWheelEnabled : false }),
                                 new OpenLayers.Control.PanPanel(),
                                 new OpenLayers.Control.ZoomPanel() ],
           //numZoomLevels     : 20,
@@ -322,6 +324,7 @@ var LocationMap = null;
             afrimesh.device.location.set(feature.router.address, location.lon, location.lat, function (error, response) {
                 if (error) return console.error("Could not update router location for " + feature.router.address + ": " + error);
                 console.debug("Updated router location for:" + feature.router.address);
+                update_location();
               });
           };
         }

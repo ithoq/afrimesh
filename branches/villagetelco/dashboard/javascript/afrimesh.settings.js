@@ -69,8 +69,10 @@ function BootSettings(parent, address) {
     "afrimesh|settings|network|mesh|routing_class"     : { remote : "batmand|general|routing_class",     init : "" },  
     "afrimesh|settings|network|mesh|gateway_class"     : { remote : "batmand|general|gateway_class",     init : "" },  
 
-    "afrimesh|settings|location|longitude" : {  remote : "afrimesh|location|longitude", init : "18.339733" },
-    "afrimesh|settings|location|latitude"  : {  remote : "afrimesh|location|latitude",  init : "-34.138061" },
+    //"afrimesh|settings|location|longitude" : {  remote : "afrimesh|location|longitude", init : "18.339733" },
+    //"afrimesh|settings|location|latitude"  : {  remote : "afrimesh|location|latitude",  init : "-34.138061" },
+    "afrimesh|settings|location|longitude" : {  remote : "afrimesh|location|longitude", init : undefined },
+    "afrimesh|settings|location|latitude"  : {  remote : "afrimesh|location|latitude",  init : undefined },
 
     "afrimesh|settings|map|server" : {  remote : "afrimesh|map|server", init : "openstreetmap.org" },
     "afrimesh|settings|map|extent" : {  remote : "afrimesh|map|extent", init : "0.025" },

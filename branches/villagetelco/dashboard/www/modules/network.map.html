@@ -38,8 +38,8 @@
   <span class="ip">10.130.1.20</span> 
   <i>(<span class="mac">00:11:22:33:44:55</span>)</i>
   <hr />
+  <span class="text">A message</span><br/>
   <span id="error" style="color:red; font-size:0.8em; line-height:2.0em;"></span>
-  <span class="text">A message</span>
   <div id="link" class="round-small" style="display:none;">
     <input type="text" id="firstname" title="first name" value="" style="width: 10em;"/>
     <input type="text" id="lastname"  title="last name"  value="" style="width: 10em;"/>
@@ -58,13 +58,14 @@
 
 
 
-<script type="text/javascript">( //<![CDATA[    
-function() {
+<script type="text/javascript">//<![CDATA[    
+var network_map = undefined; // TODO - better solution for visibility to utility.settings.update_location
+(function() {
 
   /** includes ---------------------------------------------------------- */
 
   /** construction ------------------------------------------------------ */
-  var network_map = undefined;
+  //var network_map = undefined;
   ready = function() {
     console.debug("loaded network.map.html");
 
@@ -315,6 +316,7 @@ function() {
       console.log("BLUR: " + this);
       if ($(this).hasClass("inactive")) { console.log("INACTIVE BLUR"); return; }
       $(this).unbind("click");
+      $("div#popup #error").html("");
       $("#popup").fadeOut(150);
       $("div#notifications .fade").fadeOut(50, function() {
           $("div#notifications .callout").remove();

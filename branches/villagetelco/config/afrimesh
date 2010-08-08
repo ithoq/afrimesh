@@ -11,8 +11,8 @@ config 'afrimesh' 'support'
 	option 'irc'    'http://webchat.freenode.net/?channels=villagetelco'
 
 config 'afrimesh' 'location'
-	option 'longitude' '28.2794963'
-	option 'latitude' '-25.7452802'
+	option 'longitude' ''
+	option 'latitude' ''
 
 config 'afrimesh' 'map'
 	option 'aerial' 'false'
