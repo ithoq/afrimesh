@@ -28,7 +28,7 @@
 #
 
 # - configuration ----------------------------------------------------------
-VERSION=1.0pre-r945
+VERSION=1.0pre-r946
 RELEASE=1
 
 MODULES=\

@@ -1,13 +1,12 @@
 * Fixes
 ** TODO Instructions for setting provisioning defaults
-** TODO CallMe not working
-** TODO Phone calls not working
 ** TODO Dbl account creation bug
 ** TODO Set initial dashboard location
 ** TODO Reset map after dashboard loc
 ** TODO Move nodes closer after major dashboard loc reset?
-
-
+** DONE Home button to close map 
+** DONE CallMe not working
+** DONE Phone calls not working
 
 * Demo Kit For Steve
   . This document
@@ -90,10 +89,10 @@
    
 ** Configuration  (telnet 192.168.1.20)
    opkg install http://192.168.20.105/~antoine/firmware.potato/packages/mips/netcat_0.7.1-1_mips.ipk
-   opkg install http://192.168.20.105/~antoine/firmware.potato/packages/mips/villagetelco-device_1.0pre-r945-1_mips.ipk
+   opkg install http://192.168.20.105/~antoine/firmware.potato/packages/mips/villagetelco-device_1.0pre-r946-1_mips.ipk
 
    opkg install http://192.168.1.9/~antoine/firmware.potato/packages/mips/netcat_0.7.1-1_mips.ipk
-   opkg install http://192.168.1.9/~antoine/firmware.potato/packages/mips/villagetelco-device_1.0pre-r945-1_mips.ipk
+   opkg install http://192.168.1.9/~antoine/firmware.potato/packages/mips/villagetelco-device_1.0pre-r946-1_mips.ipk
 
    (Answer 'Y' when asked to replace /etc/config/afrimesh)   
    /etc/init.d/provision enable

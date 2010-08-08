@@ -133,15 +133,16 @@
         hide
       </li-->
       <hr/>
+      <li id="home" tooltip="Home" onClick='$("#overlay #close").click();'>
+        <img src="icons/home.png" width="48" height="48" /> 
+      </li>
+
+      <hr/>
+      <hr/>
+      <hr/>
       <li id="accounts" tooltip="People">
         <img src="icons/users.png" width="48" height="48" /> 
       </li>
-      <hr/>
-      <!-- li id="calls" tooltip="Calltime">
-        <img src="icons/calls.png" width="48" height="48" />
-      </li -->
-      <hr/>
-      <hr/>
       <hr/>
       <li id="devices" tooltip="Network Health">
         <img src="icons/devices.png" width="48" height="48" />
@@ -168,7 +169,8 @@
     <!-- the content overlay ------------------------------------------- -->
     <!-- see http://www.schillmania.com/content/entries/2009/css3-and-the-future/ -->
     <div id="overlay" class="round shadow">
-      <img src="style/images/close-overlay.png" 
+      <img id="close" 
+           src="style/images/close-overlay.png" 
            style="position:absolute; top:5px; right:15px;"
            onClick='$("#overlay").fadeOut(250);
                     $("ul#dock .callout").remove();

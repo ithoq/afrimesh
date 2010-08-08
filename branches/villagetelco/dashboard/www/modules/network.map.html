@@ -31,7 +31,7 @@
 
 <!-- Notifications ----------------------------------------------------- -->
 <div id="notifications"></div>
-<div id="notify" class="round-small shadow">
+<div id="popup" class="round-small shadow">
 
   <h3>A new device has been added to the mesh!</h3>
   <b>Mesh Potato #<span class="device">23</span></b> 
@@ -160,6 +160,8 @@ function() {
                                                        .attr("id", device.mac)
                                                        .appendTo("#notifications");
 
+
+    /** - link person to device ----------------------------------------- */
     function link_person_to_device(person, device, continuation) {
       person.device = device;
       afrimesh.person.save(person, function(error, person) {  // save person info and get id
@@ -169,127 +171,151 @@ function() {
         });
     };
 
-    function remove_notification(notification, device, continuation) {
+
+    /** - remove notification ------------------------------------------- */
+    function remove_notification(clicked, device, continuation) {
       // del message:device:<mac>:provision
       afrimesh.villagebus.mq.DELETE("device:" + device.mac + ":provision", function(error, response) {
           if (error) {
-            $("div#notify div#link button#cancel").click(); // cancel save
+            $("div#popup div#link button#cancel").click(); // cancel save
             return continuation(error, response);
           }
-          notification.remove();
-          $("div#notify").fadeOut(100);
+          $(clicked).remove();
+          $("div#popup").fadeOut(100);
           $("div#notifications .fade").fadeOut(50, function() {
               $("div#notifications .callout").remove();
               $("div#notifications .callout-border").remove();
             });
           return continuation(error, response);
-        });
+        }); // TODO - pass name so we can invalidate cache
     };
 
-    // User clicked on notification
-    function click_fn() {
-      // TODO - the router could be rebooting and not added to the map, add router manually in this case
-      var feature = network_map.router({ address : device.ip });//, routes : [] });
-      if (!feature) {// || !feature.geometry) {
-        // TODO - abort! abort! abort!
-       console.error("Invalid feature for notification!!");
-       //$("div#notify #error").html("Invalid feature for notification");
-       return;
+
+    /** - event handler: save link -------------------------------------- */
+    function save_fn(clicked, device, feature) {
+      console.log("Saving: " + show(device));
+      var person = {
+        firstname : $("div#link input#firstname").hintval(), // TODO if we used submit hint would clear the fields
+        lastname  : $("div#link input#lastname").hintval(),
+        email     : $("div#link input#email").hintval()
+      };
+      var location = {
+        longitude : $("div#link input#longitude").val(),
+        latitude  : $("div#link input#latitude").val()
+      };
+      link_person_to_device(person, device, function(error, result) {
+          if (error) return $("div#popup #error").html("Could not link person to device: " + error);
+          remove_notification(clicked, device, function(error, result) {
+              if (error) $("div#popup #error").html("Could not delete provisioning notification: " + error);
+              cancel_fn(clicked, feature); // clean everything up - TODO figure something out for the error handlers
+              console.log("Finished linking person to device.");
+            });
+        });
+      // TODO - save location
+      // TODO set device:<ip>:location  = { longitude, latitude }
+    };
+
+
+    /** - event handler: cancel link ------------------------------------ */
+    function cancel_fn(clicked, feature) {
+      $("div#popup div#link button#save").unbind();
+      $("div#popup div#link button#cancel").unbind();
+      $("div#popup div#link input#firstname").val("").blur();
+      $("div#popup div#link input#lastname").val("").blur();
+      $("div#popup div#link input#email").val("").blur();
+      $("div#popup div#link input#latitude").val("").blur();
+      $("div#popup div#link input#longitude").val("").blur();
+      $("div#popup #error").html("");
+      $("div#popup #link").hide();
+      $("div#popup .text").show();
+      network_map.reset_drag_feature(feature);
+      /*$("div#popup").fadeOut(100);
+      $("div#notifications .fade").fadeOut(50, function() {
+          $("div#notifications .callout").remove();
+          $("div#notifications .callout-border").remove();
+        });
+      notification.looped({ "bottom" : "10px" }, 
+                          { "bottom" : "0px"  }, 500);*/
+      $("div#notifications div.icon").removeClass("inactive"); // reenable event handlers for notifications
+      $(clicked).trigger("mouseout"); // restart animations
+    };
+
+
+    /** - event handler: click notification ----------------------------- */
+    function click_fn(clicked, device) {
+      //var feature = network_map.router({ address : device.ip });
+      var feature = network_map.router({ address : device.ip, routes : [] });
+      if (!feature || !feature.geometry) { // TODO - the router could be rebooting, add router manually in this case
+        console.error("Invalid feature for notification!!");
+        $("div#popup #error").html("The device is still restarting. Please wait.");
+        return;
       }
+      console.log("FEATURE: " + show(feature.router));
 
-      var clicked = $(this);
-      clicked.unbind();
+      // 1. disable _all_ notification event handlers
+      $(clicked).unbind("click");
+      $("div#notifications div.icon").addClass("inactive");
+      
+      // 2. show account linker popup
+      $("div#popup .text").hide();
+      $("div#popup #link").show();
 
-      // show details editor
-      $("div#notify .text").hide();
-      $("div#notify #link").show();
-
-      // add a drag handler for the router feature & update location fields
+      // 3. Add a drag handler & move router to friendly location
       feature = network_map.on_drag_feature(feature, function(longitude, latitude) {
           $("div#link input#longitude").val(longitude);
           $("div#link input#latitude").val(latitude);
         });
-
-      // position router to a neutral position 
       var center = network_map.center();
-      console.log("CENTERING");
-      console.log(center);
       center.lat = center.lat + 300;
       feature.move(center);
-      console.log("MOVED");
-      //feature.move({ lon : center.lon, lat : center.lat });
 
-      // Save
-      $("div#notify div#link button#save").click(function() { // Save user info
-          network_map.reset_drag_feature(feature);
-          var person = {
-            firstname : $("div#link input#firstname").hintval(), // TODO if we used submit hint would clear the fields
-            lastname  : $("div#link input#lastname").hintval(),
-            email     : $("div#link input#email").hintval()
-          };
-          var location = {
-            longitude : $("div#link input#longitude").val(),
-            latitude  : $("div#link input#latitude").val()
-          };
-          link_person_to_device(person, device, function(error, result) {
-              if (error) return $("div#notify #error").html("Could not link person to device: " + error);
-              remove_notification(clicked, device, function(error, result) {
-                  if (error) $("div#notify #error").html("Could not delete provisioning notification: " + error);
-                  console.log("Finished linking person to device.");
-                  $("div#notify #error").html("");
-                  $("div#link input#firstname").val("").blur();
-                  $("div#link input#lastname").val("").blur();
-                  $("div#link input#email").val("").blur();
-                  $("div#link input#latitude").val("").blur();
-                  $("div#link input#longitude").val("").blur();
-                });
-            });
-          // TODO - save location
-          // TODO set device:<ip>:location  = { longitude, latitude }
+      // 4. bind to save & cancel
+      $("div#popup div#link button#save").click(function() { 
+          save_fn(clicked, device, feature); 
         });
- 
-      // cancel
-      $("div#notify div#link button#cancel").click(function() {
-          $("div#notify #error").html("");
-          $("div#link input#firstname").val("").blur();
-          $("div#link input#lastname").val("").blur();
-          $("div#link input#email").val("").blur();
-          $("div#link input#latitude").val("").blur();
-          $("div#link input#longitude").val("").blur();
-          network_map.reset_drag_feature(feature);
-          $("div#notify .text").show();
-          $("div#notify #link").hide();
-          $("div#notify").fadeOut(100);
-          $("div#notifications .fade").fadeOut(50, function() {
-              $("div#notifications .callout").remove();
-              $("div#notifications .callout-border").remove();
-            });
-          clicked.click(click_fn);
-          clicked.hover(hover_fn, blur_fn);
-          notification.looped({ "bottom" : "10px" }, 
-                              { "bottom" : "0px"  }, 500);
+      $("div#popup div#link button#cancel").click(function() { 
+          cancel_fn(clicked, feature); 
         });
     };
 
+
+    /** - event handler: hover notification --------------------------------
+     * 1. Stop bouncing
+     * 2. Populate notify popup 
+     * 3. Activate callout & notify popup
+     * 4. Show notify popup & callout
+     * 5. Bind a click handler
+     */
     function hover_fn() {
+      if ($(this).hasClass("inactive")) { console.log("INACTIVE HOVER"); return; }
       $(this).stop().animate({ "bottom" : "20px" }, 50, function() {
-          $("div#notify span.device").html(device.id);
-          $("div#notify span.ip").html(device.ip);
-          $("div#notify span.mac").html(device.mac);
-          $("div#notify span.text").html(text);
+          $("div#popup span.device").html(device.id);
+          $("div#popup span.ip").html(device.ip);
+          $("div#popup span.mac").html(device.mac);
+          $("div#popup span.text").html(text);
           $("div#notifications .callout").remove();
           $("div#notifications .callout-border").remove();
           $(this).append('<span class="fade callout-border"></span>');
           $(this).append('<span class="fade callout"></span>');
-          $("#notify").fadeIn(100);
+          $("#popup").fadeIn(100);
           $(this).find(".fade").fadeIn(150);
           $("div#notifications .callout").fadeIn(150);
           $("div#notifications .callout-border").fadeIn(150);
         });
+      $(this).click(function() { click_fn(this, device); });
     };
 
+
+    /** - event handler: blur notification ---------------------------------
+     * 1. Unbind the click handler
+     * 2. Fade notify popup & callout
+     * 3. Start bouncing again
+     */
     function blur_fn() {
-      $("#notify").fadeOut(150);
+      console.log("BLUR: " + this);
+      if ($(this).hasClass("inactive")) { console.log("INACTIVE BLUR"); return; }
+      $(this).unbind("click");
+      $("#popup").fadeOut(150);
       $("div#notifications .fade").fadeOut(50, function() {
           $("div#notifications .callout").remove();
           $("div#notifications .callout-border").remove();
@@ -298,11 +324,9 @@ function() {
                             { "bottom" : "0px"  }, 500);
     };
 
-    // bounce notification
-    notification.click(click_fn);
+    // set up notification
     notification.hover(hover_fn, blur_fn);
-    notification.looped({ "bottom" : "10px" }, 
-                        { "bottom" : "0px"  }, 500);
+    notification.trigger("mouseout");
 
     return notification;      
   }
