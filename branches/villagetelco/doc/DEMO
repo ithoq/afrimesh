@@ -9,6 +9,7 @@
     firmware (vanilla rv233)
     villagetelco-device.ipkg
     netcat.ipkg
+
   
 * HOWTO Manually deprovision everyone & reset dashboard location
   redis-cli flushdb
@@ -16,11 +17,14 @@
   uci del afrimesh.location.longitude
   uci commit
 
+
 * HOWTO Modify default provisioned settings for device network interface:
   Edit: /usr/lib/cgi-bin/provisiond-bundles/mp01.interface
 
+
 * HOWTO Modify default provisioned settings for device handset:
   Edit: /usr/lib/cgi-bin/provisiond-bundles/mp01.handset
+
 
 * Starting from a virgin Ubuntu 10.04 w/ all updates installed
 ** install batmand & vis & NAT gateway
@@ -70,6 +74,12 @@
    sudo /etc/init.d/snmpd restart
    Test with: snmpwalk -v 2c -c public 10.130.1.1 .1.3.6.1.2.1.2.2.1.2
 
+** configure rsyslogd
+  /etc/default/rsyslog
+    #RSYSLOGD_OPTIONS="-c4"
+    RSYSLOGD_OPTIONS="-c2 -r"
+  sudo service rsyslog restart
+
 
 * Starting from a virgin MP01 w/ stock VT Firmware (r233) + afrimesh-potato
 ** Flash router:
@@ -94,6 +104,7 @@
    uci set system.@system[0].log_ip=10.130.1.1
    uci commit
    reboot
+
 
 * Starting from a virgin Meraki Mini w/ stock Kamikaze + afrimesh-base, afrimesh-provision, afrimesh-batman
 ** Flash router w/ firmware
@@ -121,6 +132,3 @@
    uci commit
    reboot
   
-
-
-   scp antoine@192.168.1.9:~/.ssh/id_rsa.pub /etc/dropbear/authorized_keys

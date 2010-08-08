@@ -158,6 +158,8 @@
           row += "<tr class='notice'>";
         } else if (entry.level.indexOf(".warn") != -1) {
           row += "<tr class='warn'>";
+        } else if (entry.level.indexOf("unknown.err") != -1) {
+          row += "<tr class='unknown'>";
         } else if (entry.level.indexOf(".err") != -1) {
           row += "<tr class='err'>";
         } else {
