@@ -34,4 +34,5 @@ function BootCommunity(parent) {
 
   return community;
 };
+exports.BootCommunity = BootCommunity;
 console.debug("loaded afrimesh.community.js");

@@ -188,6 +188,7 @@ function BootDevice(parent) {
 
   return device;
 };
+exports.BootDevice = BootDevice;
 console.debug("loaded afrimesh.device.js");
 
 

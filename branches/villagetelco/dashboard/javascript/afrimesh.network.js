@@ -159,6 +159,7 @@ function BootNetwork(parent) {
   
   return network;
 };
+exports.BootNetwork = BootNetwork;
 console.debug("loaded afrimesh.network.js");
 
 

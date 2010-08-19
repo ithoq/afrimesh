@@ -70,7 +70,6 @@ var BootVillageBus = function (afrimesh) {
     return url;
   };
   villagebus.Name = function(name) {
-    //console.log("NAMING: " + name);
     name = name.split('/').map(function(node) {   // perform path transformations for network locations
       if (node == "@root") {
         //return "/" + afrimesh.settings.root + "/cgi-bin/villagebus";
@@ -420,6 +419,7 @@ var BootVillageBus = function (afrimesh) {
 
   return villagebus;
 };
+exports.BootVillageBus = BootVillageBus;
 console.debug("loaded afrimesh.villagebus.js");
 
 

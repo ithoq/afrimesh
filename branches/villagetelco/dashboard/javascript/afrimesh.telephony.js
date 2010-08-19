@@ -36,6 +36,7 @@ function BootTelephony(parent) {
 
   return telephony;
 };
+exports.BootTelephony = BootTelephony;
 console.debug("loaded afrimesh.telephony.js");
 
 

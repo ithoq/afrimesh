@@ -177,3 +177,5 @@ function BootSettings(parent, address) {
 
   return settings;
 };
+exports.BootSettings = BootSettings;
+console.debug("loaded afrimesh.settings.js");

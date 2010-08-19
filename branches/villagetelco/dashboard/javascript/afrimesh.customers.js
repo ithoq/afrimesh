@@ -65,6 +65,7 @@ function BootCustomers(parent) {
 
   return customers;
 };
+exports.BootCustomers = BootCustomers;
 console.debug("loaded afrimesh.customers.js");
 
 

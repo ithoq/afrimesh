@@ -16,28 +16,19 @@
     <link rel="stylesheet" type="text/css" href="style/modules.css"> 
 
     <!-- includes ------------------------------------------------------ -->
-    <script type="text/javascript" src="javascript/jquery/jquery.min.js"></script>
+    <!-- script type="text/javascript" src="javascript/jquery/jquery.min.js"></script -->
     <!-- script type="text/javascript" src="http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js"></script -->
-    <script type="text/javascript" src="javascript/json.org/json2.min.js"></script>  <!-- TODO update!!! -->
+    <!-- script type="text/javascript" src="javascript/json.org/json2.min.js"></script -->  <!-- TODO update!!! -->
 
     <!-- afrimesh -->
-    <script type="text/javascript" src="javascript/afrimesh.utilities.js"></script>
-    <script type="text/javascript" src="javascript/afrimesh.platform.js"></script>
-    <script type="text/javascript" src="javascript/afrimesh.villagebus.js"></script>
-    <script type="text/javascript" src="javascript/afrimesh.storage.js"></script>
-    <script type="text/javascript" src="javascript/afrimesh.network.js"></script>
-    <script type="text/javascript" src="javascript/afrimesh.device.js"></script>
-    <script type="text/javascript" src="javascript/afrimesh.community.js"></script>
-    <script type="text/javascript" src="javascript/afrimesh.person.js"></script>
-    <script type="text/javascript" src="javascript/afrimesh.customers.js"></script> <!-- TODO deprecate -->
-    <script type="text/javascript" src="javascript/afrimesh.telephony.js"></script> <!-- TODO s/telephony/handset -->
-    <script type="text/javascript" src="javascript/afrimesh.settings.js"></script>
     <script type="text/javascript" src="javascript/afrimesh.js"></script>
 
     <!-- One-time initialization/bootstrap ----------------------------- -->
     <script type="text/javascript">  //<![CDATA[    
-      $(document).ready(function() {
+      //$(document).ready(function() {
+      afrimesh.ready(function() {
 
+        console.log("START AFRIMESH DASHBOARD INITIALIZATION");
 
         /** TODO - rename overlay window, move to network.maps */
         /* evil_display_overlay = function(url) {
@@ -119,7 +110,7 @@
         /* TODO - debug */
         //$("ul#dock li#settings").click();
 
-        console.debug("$(document).ready() -------------------- end");
+        console.log("FIN AFRIMESH DASHBOARD INITIALIZATION");
       });
 
      //]]></script>
