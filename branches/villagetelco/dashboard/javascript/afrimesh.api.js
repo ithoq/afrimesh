@@ -21,15 +21,12 @@ if (typeof XMLHttpRequest == "undefined") {
 
 
 /** - require ----------------------------------------------------------- */
-// Also see: http://unixpapa.com/js/dyna.html
+var exports = {};
 function _require(names, async, continuation) {
   if (typeof names === "string") {
     return _getScript(names, async, continuation);
-  } else if (Object.prototype.toString.call(names) === "[object Array]") {
-    console.log("Loading multiple names: " + names);
-  } else {
-    console.log("Invalid name: " + names);
-    return;
+  } else if (Object.prototype.toString.call(names) != "[object Array]") {
+    return console.log("Invalid name: " + names);
   }
   var pool = [];
   for (var n in names) {
@@ -37,29 +34,27 @@ function _require(names, async, continuation) {
   }
   function poll(p) {
     var done = p.every(function(request) { return request.done == true; })
-    if (done) return continuation();
+    if (done) return continuation(exports);
     setTimeout(function() { poll(p); }, 100);
   };
   poll(pool);
-
 };
 
-function _getScript(name, async, continuation) {
+// Also see: http://unixpapa.com/js/dyna.html
+function _getScript(name, async, continuation) { 
   var request = new XMLHttpRequest();    
   if (!request) {
     return console.log("Can't load: " + name);
   }
   request.onreadystatechange = function() {
-    /*console.log("readyState: " + request.readyState);
-    if (request.readyState > 1) {
-      console.log("status: " + request.status);
-    }*/
     if (request.readyState == 4 && request.status == 200) {
       var result = eval(request.responseText);
       request.done = true;
       if (continuation) {
         continuation(request.responseText);
       }
+    } else {
+      // TODO - error handling
     }
   };
   request.open("GET", name, async); 
@@ -97,9 +92,12 @@ $(document).ready(function() {
               "javascript/afrimesh.telephony.js", 
               "javascript/afrimesh.settings.js" ], 
              true, 
-             function(data) {
+             function(exports, data) {
                  //_require("javascript/afrimesh.js", false);
-                 //afrimesh.storage = BootStorage(afrimesh);
+                 //console.log("BootStorage: " + BootStorage);
+                 console.log(exports);
+                 console.log("this.BootStorage: " + typeof exports.BootStorage);
+                 afrimesh.storage = exports.BootStorage(afrimesh);
                  afrimesh._ready(); 
                });
   });

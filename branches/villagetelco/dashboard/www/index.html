@@ -150,7 +150,9 @@
         hide
       </li-->
       <hr/>
-      <li id="home" tooltip="Home" onClick='$("#overlay #close").click();'>
+      <li id="home" tooltip="Home" onClick='$("#overlay").fadeOut(250);
+                                            $("ul#dock .callout").remove();
+                                            $("ul#dock .callout-border").remove();'>
         <img src="icons/home.png" width="48" height="48" /> 
       </li>
 
@@ -186,12 +188,10 @@
     <!-- the content overlay ------------------------------------------- -->
     <!-- see http://www.schillmania.com/content/entries/2009/css3-and-the-future/ -->
     <div id="overlay" class="round shadow">
-      <img id="close" 
+      <!-- img id="close" 
            src="style/images/close-overlay.png" 
            style="position:absolute; top:5px; right:15px;"
-           onClick='$("#overlay").fadeOut(250);
-                    $("ul#dock .callout").remove();
-                    $("ul#dock .callout-border").remove();'/>
+           onClick='$("#home").click();'/ -->
       <div id="content" style="border:0px solid black;">
         please wait a moment...
       </div>

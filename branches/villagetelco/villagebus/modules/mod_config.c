@@ -243,7 +243,7 @@ int uci_show_package(struct uci_context* context, const char* package)
   int num_sections = 0;
   struct uci_ptr ptr;
   if (uci_lookup_ptr(context, &ptr, (char*)package, true) != UCI_OK) {
-    printl("uci_show: could not lookup package\n");
+    printl("uci_show: could not lookup package: %s\n", package);
     uci_perror(context, "village-bus-uci");
   }
 
