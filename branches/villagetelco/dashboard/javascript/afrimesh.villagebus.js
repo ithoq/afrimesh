@@ -9,6 +9,7 @@
 
 
 /**
+ * @namespace
  * All interaction with external systems, both local and on the network
  * occur via the VillageBus
  *
@@ -108,6 +109,11 @@ var BootVillageBus = function (afrimesh) {
     return name;
   };
   
+  /**
+   * Bind name to a continuation
+   * @name Bind
+   * @function
+   */
   villagebus.Bind = function(name, continuation) { // TODO -> Bind(name1, name2)
     if (isString(name)) {
       name = villagebus.Name(name);

@@ -102,6 +102,9 @@ all:
 	export DEPROOT=$(DEPROOT); cd villagebus ; $(MFLAGS) $(MODULES) $(MAKE) 
 	export DEPROOT=$(DEPROOT); cd utilities  ; $(MFLAGS) $(MAKE) 
 
+doc:
+	cd dashboard/javascript ; jsdoc -d=foo -a .
+
 install: install-www install-config
 
 install-www: 
