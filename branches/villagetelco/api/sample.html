@@ -1,0 +1,45 @@
+<html>
+  <head>
+    <style>
+      /* {
+        margin: 0px;
+        padding: 0px;
+        border: 0;
+        outline: 0;
+        font-size: 100%;
+        vertical-align: baseline;
+        background: transparent;
+      }*/
+      body {
+        font-family: Helvetica, Verdana, Arial, Sans;
+      }
+    </style>
+    <script type="text/javascript" src="javascript/afrimesh.js"></script>
+    <script type="text/javascript">  //<![CDATA[    
+      afrimesh.ready(function() {
+          console.log("afrimesh ready");
+
+          $("div#topology button").click(function() {
+              console.log("boink");
+              afrimesh.network.routers(function(error, routers) { 
+                  if (error) return console.error("Error getting network devices list: " + error);
+                  console.log("Got routers: ");
+                  console.log(routers);
+                });
+            });
+
+        });
+    //]]></script>
+  </head>
+
+  <body>
+    <h1>Afrimesh API Sample</h1>
+
+    <div id="topology">
+      <button>topology</button>
+    </div>
+    
+
+  </body>
+
+</html>
