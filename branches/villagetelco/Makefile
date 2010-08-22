@@ -28,7 +28,7 @@
 #
 
 # - configuration ----------------------------------------------------------
-VERSION=1.0pre-r954
+VERSION=1.0pre-r963
 RELEASE=1
 
 MODULES=\
@@ -103,7 +103,7 @@ all:
 	export DEPROOT=$(DEPROOT); cd utilities  ; $(MFLAGS) $(MAKE) 
 
 doc:
-	cd dashboard/javascript ; jsdoc -d=foo -a .
+	cd dashboard/javascript ; jsdoc -d=foo -a -p .
 
 install: install-www install-config
 
@@ -198,7 +198,7 @@ launchpad-linux : source-packages-linux
 	@echo "Pushing packages to launchpad.net ppa"
 	# TODO run lintian & linda
 	dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/afrimesh-dashboard_$(VERSION)-$(RELEASE)_source.changes
-	dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/villagetelco-dashboard_$(VERSION)-$(RELEASE)_source.changes
+	#dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/villagetelco-dashboard_$(VERSION)-$(RELEASE)_source.changes
 
 packages-linux : source-packages-linux binary-packages-linux
 
@@ -206,7 +206,7 @@ source-packages-linux : prep-linux
 	@echo "Building Debian/Ubuntu source packages"
 	#REENABLE 
 	cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; debuild -S
-	cd $(PKG_BUILD_DIR)/villagetelco-dashboard-$(VERSION) ; debuild -S
+	#cd $(PKG_BUILD_DIR)/villagetelco-dashboard-$(VERSION) ; debuild -S
 
 binary-packages-linux : prep-linux
 	@echo "Building Debian/Ubuntu packages"

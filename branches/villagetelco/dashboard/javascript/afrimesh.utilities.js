@@ -8,15 +8,6 @@
  */
 //(function() {
 
-  /** - Add any missing pieces -------------------------------------------- */
-  if (typeof(window.console) == "undefined") {  // Some browsers really have no console at all
-    window.console = { debug   : function(){},
-                       warning : function(){},
-                       error   : function(){},
-                       log     : function(){}   };
-    console = window.console;
-  }
-
 
   /** - Make Javascript a better Lisp ------------------------------------- */
   function car(array) { return (array.length > 0) ? array[0]       : []; };

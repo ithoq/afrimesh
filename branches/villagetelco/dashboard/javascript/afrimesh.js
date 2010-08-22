@@ -3,6 +3,17 @@
  */
 
 
+/** - Console ----------------------------------------------------------- */
+if (typeof(window.console) == "undefined") {  // Some browsers really have no console at all
+  window.console = { debug   : function(){},
+                     warning : function(){},
+                     error   : function(){},
+                     log     : function(){} };
+  console = window.console;
+}
+
+
+
 /** - XMLHttpRequest ---------------------------------------------------- */
 if (typeof XMLHttpRequest == "undefined") {
   XMLHttpRequest = function () {
@@ -60,10 +71,6 @@ function _getScript(name, async, continuation) {
 }
 
 
-/** - jquery ------------------------------------------------------------ */
-_require("javascript/jquery/jquery.min.js",  false);
-              
-
 /** - afrimesh ---------------------------------------------------------- */
 var afrimesh = {};
 console.log("Window Location: " + window.location.hostname);
@@ -85,8 +92,8 @@ afrimesh.ready = function(f) {
 
 
 /** - bootstrap --------------------------------------------------------- */
-$(document).ready(function() {
-    console.log("jquery ready");
+_require("javascript/jquery/jquery.min.js",  true, function() {
+  $(document).ready(function() {
     jQuery.getScript("javascript/json.org/json2.min.js"); // TODO
     jQuery.getScript("javascript/afrimesh.utilities.js"); // TODO 
     jQuery.getScript("javascript/afrimesh.platform.js");  // TODO
@@ -102,22 +109,23 @@ $(document).ready(function() {
               "javascript/afrimesh.settings.js" ], 
              true, 
              function(exports, data) {
-                 // register API modules
-                 afrimesh.storage    = exports.BootStorage(afrimesh);
-                 afrimesh.network    = exports.BootNetwork(afrimesh);
-                 afrimesh.device     = exports.BootDevice(afrimesh); 
-                 afrimesh.community  = exports.BootCommunity(afrimesh);
-                 afrimesh.person     = exports.BootPerson(afrimesh);
-                 afrimesh.customers  = exports.BootCustomers(afrimesh);
-                 afrimesh.telephony  = exports.BootTelephony(afrimesh);       
-                 afrimesh.villagebus = exports.BootVillageBus(afrimesh);
-
-                 // override default settings with live settings from the server
-                 console.log("Booting config from: " + afrimesh.settings.address);
-                 afrimesh.settings = exports.BootSettings(afrimesh, afrimesh.settings.address); 
-                 console.log("afrimesh.settings.address : " + afrimesh.settings.address);
-                 console.debug("completed afrimesh node bootstrap");
-                 afrimesh._ready(); 
-               });
+               // register API modules
+               afrimesh.storage    = exports.BootStorage(afrimesh);
+               afrimesh.network    = exports.BootNetwork(afrimesh);
+               afrimesh.device     = exports.BootDevice(afrimesh); 
+               afrimesh.community  = exports.BootCommunity(afrimesh);
+               afrimesh.person     = exports.BootPerson(afrimesh);
+               afrimesh.customers  = exports.BootCustomers(afrimesh);
+               afrimesh.telephony  = exports.BootTelephony(afrimesh);       
+               afrimesh.villagebus = exports.BootVillageBus(afrimesh);
+               
+               // override default settings with live settings from the server
+               console.log("Booting config from: " + afrimesh.settings.address);
+               afrimesh.settings = exports.BootSettings(afrimesh, afrimesh.settings.address); 
+               console.log("afrimesh.settings.address : " + afrimesh.settings.address);
+               console.debug("completed afrimesh node bootstrap");
+               afrimesh._ready(); 
+             });
   });
+});
 console.debug("loaded afrimesh.js");
