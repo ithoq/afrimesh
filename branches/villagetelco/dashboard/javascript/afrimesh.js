@@ -93,6 +93,7 @@ afrimesh.ready = function(f) {
 
 /** - bootstrap --------------------------------------------------------- */
 _require("javascript/jquery/jquery.min.js",  true, function() {
+
   $(document).ready(function() {
     jQuery.getScript("javascript/json.org/json2.min.js"); // TODO
     jQuery.getScript("javascript/afrimesh.utilities.js"); // TODO 
