@@ -40,7 +40,7 @@ define Package/fabfi-olsrd
 endef
 
 define Package/fabfi-olsrd/conffiles
-/etc/config/fabfi-olsrd
+/etc/config/olsrd
 endef
 
 define Package/fabfi-olsrd-mod-arprefresh
@@ -122,7 +122,7 @@ define Package/fabfi-olsrd-mod-watchdog
 endef
 
 define Package/fabfi-olsrd-mod-secure/conffiles
-/etc/olsrd.d/fabfi-olsrd_secure_key
+/etc/olsrd.d/olsrd_secure_key
 endef
 
 MAKE_FLAGS+= \
