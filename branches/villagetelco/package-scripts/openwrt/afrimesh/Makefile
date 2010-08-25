@@ -170,6 +170,48 @@ define Package/villagetelco-device/install
 endef
 
 
+# - fabfi-device ---------------------------------------------------------
+define Package/fabfi-device
+	SECTION:=admin
+	CATEGORY:=Administration
+	DEPENDS:=+libuci +libjson +netcat
+	TITLE:=Basically afrimesh-base and afrimesh-provision
+	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
+endef
+
+define Package/fabfi-device/description
+	Afrimesh enable a FabFi router
+endef
+
+define Package/fabfi-device/install
+	$(INSTALL_DIR)  $(1)/etc
+	$(INSTALL_DIR)  $(1)/etc/config
+	$(INSTALL_DIR)  $(1)/etc/init.d
+	$(INSTALL_DIR)  $(1)/etc/crontabs
+	$(INSTALL_DIR)  $(1)/www/cgi-bin
+
+	mkdir -p $(1)/CONTROL
+	echo "/etc/config/afrimesh" >> $(1)/CONTROL/conffiles
+	$(INSTALL_CONF) ./files.fabfi/etc/config/afrimesh                     $(1)/etc/config
+	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/villagebus/villagebus                $(1)/www/cgi-bin/villagebus
+	$(INSTALL_BIN)  ./files/etc/crontabs/afrimesh                         $(1)/etc/crontabs/root
+	$(INSTALL_BIN)  ./files/www/cgi-bin/notify.sh               			    $(1)/www/cgi-bin/notify
+	$(INSTALL_BIN)  ./files/www/cgi-bin/status.sh                         $(1)/www/cgi-bin/status
+	#$(INSTALL_BIN)  ./files.provision/etc/init.d/provision                $(1)/etc/init.d/provision
+	#$(INSTALL_BIN)  ./files.provision/www/cgi-bin/provision.sh            $(1)/www/cgi-bin/provision
+	#$(INSTALL_BIN)  ./files.provision/www/cgi-bin/provision-handset.sh    $(1)/www/cgi-bin/provision-handset
+
+	# TODO 
+	#$(INSTALL_BIN)  ./files.fabfi/etc/init.d/fallback-ip  $(1)/etc/init.d
+	#$(INSTALL_DATA) ./files.fabfi/etc/config/network      $(1)/etc/config
+	#$(INSTALL_DATA) ./files.fabfi/etc/config/wireless     $(1)/etc/config
+
+	# - runonce --
+	# Packages not part of the base distribution tend to overwrite anything we install above
+	$(INSTALL_BIN)  ./files.fabfi/etc/init.d/runonce          $(1)/etc/init.d/runonce.fabfi-device
+endef
+
+
 # - afrimesh-batman --------------------------------------------------------
 define Package/afrimesh-batman
 	SECTION:=admin
@@ -191,7 +233,7 @@ endef
 define Package/afrimesh-olsr
 	SECTION:=admin
 	CATEGORY:=Administration
-	DEPENDS:=+afrimesh-base +olsr
+	DEPENDS:=+afrimesh-base +olsrd
 	TITLE:=Easy management for OLSR wireless mesh networks
 	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
 endef
@@ -287,7 +329,7 @@ define Package/afrimesh-webif/install
 endef
 
 
-# - afrimesh-portal ----------------------------------------------------------
+# - afrimesh-portal --------------------------------------------------------
 define Package/afrimesh-portal
 	SECTION:=admin
 	CATEGORY:=Administration
@@ -492,4 +534,6 @@ $(eval $(call BuildPackage,afrimesh-portal))
 $(eval $(call BuildPackage,afrimesh-webif))
 $(eval $(call BuildPackage,afrimesh-potato))
 $(eval $(call BuildPackage,afrimesh-dashboard))
+$(eval $(call BuildPackage,fabfi-device))
 $(eval $(call BuildPackage,villagetelco-device))
+

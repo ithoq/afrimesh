@@ -75,8 +75,8 @@ function _getScript(name, async, continuation) {
 var afrimesh = {};
 console.log("Window Location: " + window.location.hostname);
 afrimesh.settings = { 
-  //address      : window.location.hostname ? window.location.hostname : "196.211.3.106",
-  address      : window.location.hostname ? window.location.hostname : "192.168.20.225",
+  address      : window.location.hostname ? window.location.hostname : "196.211.3.106",
+  //address      : window.location.hostname ? window.location.hostname : "192.168.20.225",
   ajax_proxy   : "/cgi-bin/ajax-proxy.cgi?url="
 };
 console.log("afrimesh.settings.address : " + afrimesh.settings.address);
@@ -93,7 +93,6 @@ afrimesh.ready = function(f) {
 
 /** - bootstrap --------------------------------------------------------- */
 _require("javascript/jquery/jquery.min.js",  true, function() {
-
   $(document).ready(function() {
     jQuery.getScript("javascript/json.org/json2.min.js"); // TODO
     jQuery.getScript("javascript/afrimesh.utilities.js"); // TODO 
