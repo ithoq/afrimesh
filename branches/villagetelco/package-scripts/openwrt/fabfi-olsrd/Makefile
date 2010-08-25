@@ -61,6 +61,12 @@ define Package/fabfi-olsrd-mod-bmf
   TITLE:=Basic multicast forwarding plugin
 endef
 
+define Package/fabfi-olsrd-mod-cl-roam
+  $(call Package/fabfi-olsrd/template)
+  DEPENDS:=fabfi-olsrd
+  TITLE:=Roaming client plugin
+endef
+
 define Package/fabfi-olsrd-mod-dyn-gw
   $(call Package/fabfi-olsrd/template)
   DEPENDS:=fabfi-olsrd
@@ -158,6 +164,11 @@ define Package/fabfi-olsrd-mod-bmf/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/bmf/olsrd_bmf.so.* $(1)/usr/lib/
 endef
 
+define Package/fabfi-olsrd-mod-cl-roam/install
+	$(INSTALL_DIR) $(1)/usr/lib
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/cl_roam/olsrd_cl_roam.so.* $(1)/usr/lib/
+endef
+
 define Package/fabfi-olsrd-mod-dyn-gw/install
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lib/dyn_gw/olsrd_dyn_gw.so.* $(1)/usr/lib/
@@ -214,6 +225,7 @@ $(eval $(call BuildPackage,fabfi-olsrd))
 $(eval $(call BuildPackage,fabfi-olsrd-mod-arprefresh))
 $(eval $(call BuildPackage,fabfi-olsrd-mod-dot-draw))
 $(eval $(call BuildPackage,fabfi-olsrd-mod-bmf))
+$(eval $(call BuildPackage,fabfi-olsrd-mod-cl-roam))
 $(eval $(call BuildPackage,fabfi-olsrd-mod-dyn-gw))
 $(eval $(call BuildPackage,fabfi-olsrd-mod-dyn-gw-plain))
 $(eval $(call BuildPackage,fabfi-olsrd-mod-httpinfo))
