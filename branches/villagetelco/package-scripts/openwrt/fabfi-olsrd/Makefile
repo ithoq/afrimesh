@@ -137,7 +137,7 @@ MAKE_FLAGS+= \
 	DESTDIR="$(PKG_INSTALL_DIR)" \
 	STRIP="true" \
 	INSTALL_LIB="true" \
-	SUBDIRS="arprefresh bmf dot_draw dyn_gw dyn_gw_plain httpinfo mdns nameservice quagga secure txtinfo watchdog" \
+	SUBDIRS="arprefresh bmf cl_roam dot_draw dyn_gw dyn_gw_plain httpinfo mdns nameservice quagga secure txtinfo watchdog" \
 	all libs install install_libs
 
 define Package/fabfi-olsrd/install
