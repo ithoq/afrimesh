@@ -7,7 +7,7 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=afrimesh-chilli
+PKG_NAME:=awesome-chilli
 PKG_VERSION:=1.2.4
 PKG_RELEASE:=1
 
@@ -21,39 +21,48 @@ PKG_INSTALL:=1
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/afrimesh-chilli
+define Package/awesome-chilli
   SUBMENU:=Captive Portals
   SECTION:=net
   CATEGORY:=Network
   DEPENDS:=+kmod-tun +librt
-  TITLE:=Wireless LAN HotSpot controller (Coova Chilli Version)
-  URL:=http://www.coova.org/CoovaChilli
+  TITLE:=Wireless LAN HotSpot controller (Afrimesh Version)
+  URL:=http://afrimesh.org
 endef
 
-define Package/afrimesh-chilli/description
-	CoovaChilli is an open source access controller for wireless LAN
-	access points and is based on ChilliSpot. It is used for authenticating
-	users of a wireless (or wired) LAN. It supports web based login (UAM)
-	which is today's standard for public HotSpots and it supports Wireless
-	Protected Access (WPA) which is the standard of the future.
-	Authentication,	authorization and accounting (AAA) is handled by your
-	favorite radius server.
+define Package/awesome-chilli/description
+	A sane OpenWRT packaging for coova-chilli which reduces risk of heart 
+	attacks and/or creeping insanity.
 endef
 
-define Package/afrimesh-chilli/conffiles
+define Package/awesome-chilli/conffiles
 /etc/chilli.conf
-/etc/chilli/defaults
+/etc/config/chilli
 endef
 
-define Package/afrimesh-chilli/install
+define Package/awesome-chilli/install
 	$(INSTALL_DIR) $(1)/etc
-	$(INSTALL_CONF) $(PKG_INSTALL_DIR)/etc/chilli.conf $(1)/etc/
+	$(INSTALL_DIR) $(1)/etc/config
+	$(INSTALL_DIR) $(1)/etc/init.d
+	$(INSTALL_CONF) ./files/etc/chilli.conf   $(1)/etc/
+	$(INSTALL_CONF) ./files/etc/config/chilli $(1)/etc/config/
+	$(INSTALL_BIN)  ./files/etc/init.d/chilli $(1)/etc/init.d/
+
 	$(INSTALL_DIR) $(1)/etc/chilli
+	$(INSTALL_DIR) $(1)/etc/chilli/www
 	$(CP) $(PKG_INSTALL_DIR)/etc/chilli/* $(1)/etc/chilli/
+	$(INSTALL_BIN)  ./files/etc/chilli/www/config.sh $(1)/etc/chilli/www/
+
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/chilli* $(1)/usr/sbin/
 	$(INSTALL_DIR) $(1)/usr/lib/
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/lib*.so.* $(1)/usr/lib/
+
+	$(INSTALL_DIR) $(1)/www
+	$(INSTALL_DIR) $(1)/www/uam
+	$(CP) ./files/www/uam/index.html $(1)/www/uam/
+	$(CP) ./files/www/uam/chilli.js  $(1)/www/uam/
+	$(CP) ./files/www/uam/coova.jpg  $(1)/www/uam/
 endef
 
-$(eval $(call BuildPackage,afrimesh-chilli))
+$(eval $(call BuildPackage,awesome-chilli))
