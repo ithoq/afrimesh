@@ -32,7 +32,7 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ----------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=954
+PKG_REV:=963
 PKG_VERSION:=1.0pre-r$(PKG_REV)
 PKG_RELEASE:=1
 
@@ -44,7 +44,8 @@ PKG_RELEASE:=1
 # - to use local sources, disable PKG_SOURCE_URL & set LOCAL_SOURCES -------
 LOCAL_SOURCES:=~/afrimesh
 ifeq "$(wildcard $(LOCAL_SOURCES) )"  ""
-PKG_SOURCE_URL:=http://afrimesh.googlecode.com/svn/trunk
+#PKG_SOURCE_URL:=http://afrimesh.googlecode.com/svn/trunk
+PKG_SOURCE_URL:=http://afrimesh.googlecode.com/svn/branches/villagetelco
 endif
 
 
@@ -180,7 +181,7 @@ define Package/fabfi-device
 endef
 
 define Package/fabfi-device/description
-	Afrimesh enable a FabFi router
+	Afrimesh-enable a FabFi router
 endef
 
 define Package/fabfi-device/install
