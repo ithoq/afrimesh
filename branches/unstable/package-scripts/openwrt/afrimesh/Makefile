@@ -45,7 +45,7 @@ PKG_RELEASE:=1
 LOCAL_SOURCES:=~/afrimesh
 ifeq "$(wildcard $(LOCAL_SOURCES) )"  ""
 #PKG_SOURCE_URL:=http://afrimesh.googlecode.com/svn/trunk
-PKG_SOURCE_URL:=http://afrimesh.googlecode.com/svn/branches/villagetelco
+PKG_SOURCE_URL:=http://afrimesh.googlecode.com/svn/branches/unstable
 endif
 
 
