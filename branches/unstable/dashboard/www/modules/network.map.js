@@ -25,15 +25,18 @@ var Map = undefined;
         projection        : epsg_900913,
         displayProjection : epsg_4326,
         units             : "m",
-        numZoomLevels     : 20,
+        //numZoomLevels     : 20,
         controls          : [ new OpenLayers.Control.Navigation({ 
                                 zoomWheelEnabled : false }),
                               new OpenLayers.Control.PanPanel(),
                               new OpenLayers.Control.ZoomPanel() ],
         //theme             : "style/map.default.css"  
-        theme             : "style/map.css?version=43"  // Ffffffffffuuuuuuuuuu!!!! Damn you Safaris!!!!
+        theme             : "style/map.css?version=43",  // Ffffffffffuuuuuuuuuu!!!! Damn you Safaris!!!!
+        //allOverlays: true,
+        //maxExtent: new OpenLayers.Bounds(1549471.9221, 6403610.94, 1550001.32545, 6404015.8)
       };
       var map = new OpenLayers.Map(id, options);
+
       var mapnik = new OpenLayers.Layer.OSM.Mapnik("Street Map");
       var relief = undefined;
       console.debug("map server: " + afrimesh.settings.map.server);
@@ -51,6 +54,42 @@ var Map = undefined;
       } else {
         map.addLayers([ relief, mapnik ]);
       }
+
+      // grid
+      var range = 20000000;
+      var step = 1000000;
+      var grid_data = [];
+      for (var x = -range; x <= range; x += step) {
+        grid_data.push([ [ x, -range ], [ x,  range ] ]);
+      }
+      for (var y = -range; y <= range; y += step) {
+        grid_data.push([ [ -range, y ], [  range, y ] ]);
+      }
+      var grid_json = {
+        type     : "FeatureCollection", 
+        features : [ { geometry : {
+          type : "GeometryCollection", 
+          geometries : [ { type        : "MultiLineString", 
+                           coordinates : grid_data }, 
+                         { type        : "Point", 
+                           coordinates : [ 0, 0 ] } ] }, 
+                       type : "Feature", 
+                       properties : {}} ]
+      };
+      var geojson_format = new OpenLayers.Format.GeoJSON();
+      var styles = new OpenLayers.StyleMap({
+        "default" : {
+          strokeWidth: 1,
+          strokeColor: "#666666",
+          strokeOpacity: 0.1,
+          pointRadius: 3.0, 
+          fillColor: "#ffcc66",
+        } });
+      var grid = new OpenLayers.Layer.Vector("Grid", { styleMap : styles }); 
+      map.addLayer(grid);
+      grid.addFeatures(geojson_format.read(grid_json));
+
+      // controls
       map.addControl(new OpenLayers.Control.Attribution());
       map.addControl(new OpenLayers.Control.MousePosition());
       map.addControl(new OpenLayers.Control.LayerSwitcher({activeColor:"black"}));
@@ -68,7 +107,7 @@ var Map = undefined;
       map.dragger.isOnDrag = false;
       map.addControl(map.dragger);
       map.dragger.activate();
-      
+
       // Aaaaaaaaaaaaaaaauuuuuuuuuuurgh - http://openlayers.org/pipermail/users/2010-May/017742.html
       map.dragger.handlers['drag'].stopDown = false;
       map.dragger.handlers['drag'].stopUp = false;
@@ -85,7 +124,6 @@ var Map = undefined;
       map.addControl(router_click_selector);
       router_click_selector.activate();
 
-
       return map;
     };
 
@@ -93,7 +131,7 @@ var Map = undefined;
     /** 
      * Zoom map
      */
-    this.zoom = function(level) {
+    this.zoom = function(level) { 
       the_map.zoomTo(level);
     };
 
@@ -207,7 +245,7 @@ var Map = undefined;
                         strokeOpacity: 1.0,
                         strokeColor: "black",
                         strokeWidth: 1.0,
-                        pointRadius: 10.0 };
+                        pointRadius: 8.0 };
       feature.style.fillColor = router.routes.some(function(route) { return route.label == "HNA"; }) ? "red" : "blue";
       feature.id = router.address;
       feature.router = router;
@@ -243,7 +281,7 @@ var Map = undefined;
         return {};
       }
       var feature = new OpenLayers.Feature.Vector();
-      feature.style = { strokeWidth: 10,
+      feature.style = { strokeWidth: 7.0,
                         strokeLinecap: "round",
                         pointRadius: 0 };
       feature.id = route.router + "->" + route.neighbour;

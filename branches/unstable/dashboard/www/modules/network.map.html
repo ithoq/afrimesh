@@ -105,9 +105,10 @@ var network_map = undefined; // TODO - better solution for visibility to utility
           return true;
         });
       update(network_map); 
-      $("div[id$=_zoomworld]").click(function () {
+      //$("div[id$=_zoomworld]").click(function () {
+      $("div.olControlZoomToMaxExtentItemInactive").click(function () {
           console.log("Zoooooooooooom");
-          network_map.zoom(2);
+          network_map.zoom(3);
         });    
 
       if (continuation) { // TODO - 

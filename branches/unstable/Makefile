@@ -236,15 +236,15 @@ prep-linux : clean-linux sources #hooks-linux
 	@echo "Initializing linux package scripts for build"
 	mkdir -p $(PKG_BUILD_DIR)
 	cd $(PKG_BUILD_DIR) ; cp /tmp/afrimesh-$(VERSION).tar.gz .
-	#RE 
+	# RE 
 	cd $(PKG_BUILD_DIR) ; tar xzvf afrimesh-$(VERSION).tar.gz
-	#RE 
+	# RE 
 	cd $(PKG_BUILD_DIR) ; mv afrimesh-$(VERSION) afrimesh-dashboard-$(VERSION)
-	#RE 
+	# RE 
 	cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; dh_make -c BSD -e antoine@7degrees.co.za -s --createorig
-	#RE 
+	# RE 
 	rm -rf $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION)/debian/*
-	#RE 
+	# RE 
 	cp -a package-scripts/debian/afrimesh-dashboard/* $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION)/debian
 	# VTE package
 	cd $(PKG_BUILD_DIR) ; tar xzvf afrimesh-$(VERSION).tar.gz

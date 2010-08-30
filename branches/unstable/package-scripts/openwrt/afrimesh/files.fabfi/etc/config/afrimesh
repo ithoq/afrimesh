@@ -3,8 +3,8 @@ config 'afrimesh' 'dashboard'
 
 config 'afrimesh' 'support'
 	option 'howto'  'afrimesh'
-	option 'group'  'village-telco-dev'
-	option 'irc'    'http://webchat.freenode.net/?channels=villagetelco'
+	option 'group'  'afrimesh-dev'
+	option 'irc'    'http://webchat.freenode.net/?channels=afrimesh'
 
 config 'afrimesh' 'map'
 	option 'server' 'openstreetmap.org'
