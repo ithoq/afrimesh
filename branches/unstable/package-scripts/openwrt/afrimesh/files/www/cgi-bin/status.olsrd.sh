@@ -16,11 +16,33 @@ log() {
 }
 log "- `date` - starting device status report ----------------"
 
+# - Functions --------------------------------------------------------------
+radio() {
+    local interface=$1
+    levels=`iwconfig $interface |grep Quality`
+    link_quality=`echo $levels | cut -d = -f 2 | awk '{ print $1 }'`
+    signal_level=`echo $levels | cut -d = -f 3 | awk '{ print $1 " " $2 }'`
+    noise_level=`echo $levels | cut -d = -f 4 | awk '{ print $1 " " $2 }'`
+    echo $link_quality $signal_level $noise_level
+    #levels="$link_quality $signal_level $noise_level"
+}
+radio_wlanconfig() {
+    local interface=$0
+    #radio=`wlanconfig $interface list|grep $nexthop_arp`
+    #radio_rate=`echo $radio | awk '{ print $4 }'`
+    #radio_rssi=`echo $radio | awk '{ print $5 }'`
+    #radio_signal=`echo $radio | awk '{ print $5 }'`
+    #echo $radio $radio_rate $radio_rssi $radio_signal
+}
+radio_iw() {
+    echo
+}
 
 # - Status information -----------------------------------------------------
 log "querying device configuration"
 wlanmode=`uci get wireless.@wifi-iface[0].mode`
 device=`uci get wireless.@wifi-iface[0].device`
+[ $device == "radio0" ] && device=mesh # TODO - fabfi only
 interface=`uci get network.$device.ifname`
 self=`uci get network.$device.ipaddr`
 root=`uci get afrimesh.settings.root`
@@ -28,14 +50,16 @@ device_id=`uci get afrimesh.settings.deviceid`
 mac=`ifconfig $interface | grep HWaddr | awk '{ print $5 }'`
 path_status="$root/db/device:$self:status"
 path_history="$root/db/interface:$self:history"
+log "wlanmode:  $device"
 log "device:    $device"
 log "interface: $interface"
-log "root:      $root"
 log "self:      $self"
-log "mac:       $mac"
+log "root:      $root"
 log "deviceid:  $device_id"
+log "mac:       $mac"
 log "path_status:  $path_status"
 log "path_history: $path_history"
+
 
 # don't report status info for unprovisioned devices
 [ -z "$device_id" > /dev/null ] && {
@@ -58,39 +82,44 @@ log "querying traffic statistics"
 buffer=`cat /proc/net/dev|grep $interface`
 bytes_tx=`echo $buffer | awk '{ print $2 }'`
 bytes_rx=`echo $buffer | awk '{ print $10 }'`
-bytes="{ 'tx' : $bytes_tx, \
-         'rx' : $bytes_rx }"
+bytes="{ 'tx' : $bytes_tx, 'rx' : $bytes_rx }"
+log "bytes: $bytes"
 
 # query radio signal levels
 log "querying radio signal levels"
-levels=`iwconfig $interface |grep Quality`
-link_quality=`echo $levels | cut -d = -f 2 | awk '{ print $1 }'`
-signal_level=`echo $levels | cut -d = -f 3 | awk '{ print $1 " " $2 }'`
-noise_level=`echo $levels | cut -d = -f 4 | awk '{ print $1 " " $2 }'`
-radio="{ 'rssi'   : '$link_quality', \
-         'signal' : '$signal_level', \
+#levels=`radio $interface`
+levels=`radio wlan0` # TODO - fabfi only
+link_quality=`echo $levels | awk '{ print $1 }'`
+signal_level=`echo $levels | awk '{ print $2 }'`
+noise_level=`echo $levels  | awk '{ print $3 }'`
+radio="{ 'rssi'   : '$link_quality',
+         'signal' : '$signal_level',
          'noise'  : '$noise_level' }"
-
+log "radio: $radio"
 
 # - Query gateways --------------------------------------------------------- TODO mark default gw
 log "querying mesh gateways:"
-gateways=$(batmand -cbd2 | grep gateway |{
+# echo "/route" | nc localhost 2006 | awk '/^[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*/ { print $0 }' | grep "0.0.0.0/0" 
+gateways=$(echo "/route" | nc localhost 2006 | awk '/^0.0.0.0/ { print $0 }' |{
     while read line; do
         log "  $line"
         gateway_address=`echo $line | awk '{print \$2 }`
-        nexthop_address=`echo $line | awk '{print \$4 }`
-        score=`echo $line | awk 'BEGIN{FS="(";RS=")"}/\(/{print $2}'`
-        failures=`echo $line | awk '{print \$13 }`
-        #gateway_reply=`arping -f -w 2 -I $interface $gateway_address | grep reply`
+        #TODO nexthop_address=`echo $line | awk '{print \$4 }`
+        score=`echo $line | awk '{print $3}'`
+        #TODO failures=`echo $line | awk '{print \$13 }`
+        failures='0'
         gateway_ping=`ping -w $timeout -c 1 $gateway_address 2> /dev/null | grep from | awk '{ print \$7 }' | cut -d = -f 2`
         [ -z $gateway_ping ] && gateway_ping="-1.0"
-        nexthop_ping=`ping -w $timeout -c 1 $nexthop_address 2> /dev/null | grep from | awk '{ print \$7 }' | cut -d = -f 2`
+        #TODO nexthop_ping=`ping -w $timeout -c 1 $nexthop_address 2> /dev/null | grep from | awk '{ print \$7 }' | cut -d = -f 2`
         [ -z $nexthop_ping ] && nexthop_ping="-1.0"
-        nexthop_arp=`cat /proc/net/arp |grep $nexthop_address | awk '{ print $4 }'`
-        radio=`wlanconfig $interface list|grep $nexthop_arp`
-        radio_rate=`echo $radio | awk '{ print $4 }'`
-        radio_rssi=`echo $radio | awk '{ print $5 }'`
-        radio_signal=`echo $radio | awk '{ print $5 }'`
+        #TODO nexthop_arp=`cat /proc/net/arp |grep $nexthop_address | awk '{ print $4 }'`
+        #TODO radio=`wlanconfig $interface list|grep $nexthop_arp`
+        #TODO radio_rate=`echo $radio | awk '{ print $4 }'`
+        #TODO radio_rssi=`echo $radio | awk '{ print $5 }'`
+        #TODO radio_signal=`echo $radio | awk '{ print $5 }'`
+        radio_rate=0
+        radio_rssi=0
+        radio_signal=0
         entry="{ 'address'  : '$gateway_address', \
                  'nexthop'  : '$nexthop_address', \
                  'score'    : $score, \
@@ -114,7 +143,7 @@ gateways=${gateways%|*}
 # TODO - neighbors
 
 # construct & send HTTP request for instantaneous data
-log "constructing report for instantaneous data"
+log "constructing report for instantaneous data ----------------------------"
 json="{ 'timestamp' : $timestamp, \
         'mac'       : '$mac', \
         'self'      : '$self', \

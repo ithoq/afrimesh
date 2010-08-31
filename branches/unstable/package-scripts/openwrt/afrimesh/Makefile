@@ -32,7 +32,7 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ----------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=976
+PKG_REV:=982
 PKG_VERSION:=1.0pre-r$(PKG_REV)
 PKG_RELEASE:=1
 
@@ -197,7 +197,7 @@ define Package/fabfi-device/install
 	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/villagebus/villagebus                $(1)/www/cgi-bin/villagebus
 	$(INSTALL_BIN)  ./files/etc/crontabs/afrimesh                         $(1)/etc/crontabs/root
 	$(INSTALL_BIN)  ./files/www/cgi-bin/notify.sh               			    $(1)/www/cgi-bin/notify
-	$(INSTALL_BIN)  ./files/www/cgi-bin/status.sh                         $(1)/www/cgi-bin/status
+	$(INSTALL_BIN)  ./files/www/cgi-bin/status.olsrd.sh                   $(1)/www/cgi-bin/status
 	#$(INSTALL_BIN)  ./files.provision/etc/init.d/provision                $(1)/etc/init.d/provision
 	#$(INSTALL_BIN)  ./files.provision/www/cgi-bin/provision.sh            $(1)/www/cgi-bin/provision
 	#$(INSTALL_BIN)  ./files.provision/www/cgi-bin/provision-handset.sh    $(1)/www/cgi-bin/provision-handset
