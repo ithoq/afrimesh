@@ -1,0 +1,31 @@
+#!/bin/sh /etc/rc.common
+# Start MySQL tunnel
+START=85
+
+NAME=tunnel-mysql
+LOG_D=/var/log
+RUN_D=/var/run
+PID=$RUN_D/$NAME.pid
+PID_WATCH=$RUN_D/$NAME-watch.pid
+
+start() {
+	if [ -f $PID ] && [ -f /proc/$(cat $PID)/exe ]; then 
+		echo "Tunnel is already active...exiting"
+		exit
+	fi	
+	PID=$PID /usr/sbin/tunnel-mysql&
+	echo $! > $PID_WATCH	
+}
+
+stop() {
+	kill -SIGTERM $(cat $PID_WATCH)
+	kill -SIGTERM $(cat $PID)
+	rm $PID
+	rm $PID_WATCH
+}
+	
+restart() {
+	stop
+	sleep 2
+	start
+}	
