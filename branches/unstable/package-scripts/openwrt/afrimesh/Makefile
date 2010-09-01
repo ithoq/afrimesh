@@ -32,7 +32,7 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ----------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=987
+PKG_REV:=988
 PKG_VERSION:=1.0pre-r$(PKG_REV)
 PKG_RELEASE:=1
 
@@ -201,6 +201,11 @@ define Package/fabfi-device/install
 	#$(INSTALL_BIN)  ./files.provision/etc/init.d/provision                $(1)/etc/init.d/provision
 	#$(INSTALL_BIN)  ./files.provision/www/cgi-bin/provision.sh            $(1)/www/cgi-bin/provision
 	#$(INSTALL_BIN)  ./files.provision/www/cgi-bin/provision-handset.sh    $(1)/www/cgi-bin/provision-handset
+
+	$(INSTALL_DIR)  $(1)/usr/sbin
+	$(INSTALL_BIN)  ./files.fabfi/etc/init.d/tunnel-mysql                 $(1)/etc/init.d
+	$(INSTALL_BIN)  ./files.fabfi/usr/sbin/tunnel-mysql                   $(1)/usr/sbin
+
 
 	# TODO 
 	#$(INSTALL_BIN)  ./files.fabfi/etc/init.d/fallback-ip  $(1)/etc/init.d
