@@ -64,6 +64,7 @@ start() {
     append_parm   $section radiusserver2 "--radiusserver2"
     append_parm   $section radiussecret  "--radiussecret"
     append_parm   $section radiusnasid   "--radiusnasid"
+    append_switch $section nouamsuccess  "--nouamsuccess"
     append_parm   $section uamserver     "--uamserver"
     append_parm   $section uamhomepage   "--uamhomepage"
     append_parm   $section uamaliasname  "--uamaliasname" 

@@ -22,6 +22,7 @@ config 'configuration'
        option 'radiusserver2'   ''
        option 'radiussecret'    'cisco123'
        option 'radiusnasid'     'fabfi42'
+       option 'nouamsuccess'    '1'
        option 'uamserver'       'http://10.116.42.1/uam'
        option 'uamhomepage'     'http://10.116.42.1:3990/www/coova.html'
        option 'uamaliasname'    'chilli'
@@ -29,4 +30,5 @@ config 'configuration'
        option 'adminpasswd'     'cisco123'
        option 'papalwaysok'     '1'
        option 'mschapv2'        '0'
+
 
