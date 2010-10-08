@@ -1,5 +1,5 @@
 #summary How to release a new version of afrimesh
-#labels Phase-Deploy,Developers,Deploy
+#labels Phase-Implementation,Developers
 
 From time to time this software will try to escape into the world.
 
