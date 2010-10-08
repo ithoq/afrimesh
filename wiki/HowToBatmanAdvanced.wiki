@@ -1,0 +1,19 @@
+#summary How to build a Layer-II B.A.T.M.A.N. mesh network.
+#labels Phase-Deploy
+
+= OpenWRT Configuration =
+
+Run:
+{{{
+./scripts/feeds install kmod-batman-adv
+./scripts/feeds install afrimesh-batman-adv
+make menuconfig
+Administration->afrimesh-batman-adv
+}}}
+
+= Node Configuration =
+
+
+
+= Gateway Configuration =
+
