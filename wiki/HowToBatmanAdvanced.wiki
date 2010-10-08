@@ -1,5 +1,5 @@
 #summary How to build a Layer-II B.A.T.M.A.N. mesh network.
-#labels Phase-Deploy
+#labels Phase-Deploy,Deploy
 
 = OpenWRT Configuration =
 
@@ -16,4 +16,3 @@ Administration->afrimesh-batman-adv
 
 
 = Gateway Configuration =
-
