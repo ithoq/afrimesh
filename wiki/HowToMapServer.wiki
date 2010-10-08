@@ -1,5 +1,5 @@
 #summary How to set up a map server on your local network
-#labels Phase-Support,Phase-Deploy
+#labels Phase-Support
 
 = Read =
 
