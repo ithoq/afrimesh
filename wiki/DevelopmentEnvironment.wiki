@@ -1,4 +1,4 @@
-#labels Phase-Implementation
+#labels Phase-Implementation,Developers
 Configuring an afrimesh development environment.
 
 = Required Dependencies =
