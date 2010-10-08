@@ -1,4 +1,5 @@
 #summary explains the setup of nagios with json for future use with afrimesh project
+#labels Phase-Deploy,Phase-Support
 Go to the following link to setup nagios and follow the instructions http://www.ubuntugeek.com/nagios-network-monitoring-system-setup-in-ubuntu.html
 
 To setup Json for nagios 
