@@ -1,5 +1,5 @@
 #summary Explains the setup of pmacct for afrimesh
-#labels Phase-Deploy,Phase-Support
+#labels Phase-Support
 
   * Download get the pmacct patched version with json output
   * read the install file in the pmacct folder to compile the package
