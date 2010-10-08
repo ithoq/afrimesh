@@ -1,5 +1,5 @@
 #summary Basic instructions on setup and configuration of memcachedb and libmemcached
-#labels Phase-Support,Phase-Deploy
+#labels Phase-Support
 
 *Installing libmemcached*
   * Check out libmemcached source from http://memcachedb.googlecode.com/svn/clients/libmemcached-0.25-patch/
