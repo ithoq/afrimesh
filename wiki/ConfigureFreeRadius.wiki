@@ -1,4 +1,5 @@
 #summary Basic instructions for freeradius setup & configuration
+#labels Phase-Deploy
 
 
 
