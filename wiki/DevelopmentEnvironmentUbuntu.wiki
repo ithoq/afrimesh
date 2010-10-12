@@ -32,5 +32,5 @@ Run as required:
   apt-get update
   apt-get install json-c-dev 
   apt-get install uci-dev 
-  apt-get install libcredis
+  apt-get install libcredis-dev
   }}}
