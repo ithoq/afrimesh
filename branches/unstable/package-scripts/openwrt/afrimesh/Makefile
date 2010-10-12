@@ -234,6 +234,22 @@ endef
 define Package/afrimesh-batman/install
 endef
 
+# - afrimesh-batman-adv ----------------------------------------------------
+define Package/afrimesh-batman-adv
+	SECTION:=admin
+	CATEGORY:=Administration
+	DEPENDS:=+afrimesh-base +kmod-batman-adv
+	TITLE:=Afrimesh for B.A.T.M.A.N. Layer-II wireless mesh networks
+	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
+endef
+
+define Package/afrimesh-batman-adv/description
+	Afrimesh for B.A.T.M.A.N. Layer-II wireless mesh networks
+endef
+
+define Package/afrimesh-batman-adv/install
+endef
+
 
 # - afrimesh-olsr ----------------------------------------------------------
 define Package/afrimesh-olsr
@@ -339,7 +355,7 @@ endef
 define Package/afrimesh-portal
 	SECTION:=admin
 	CATEGORY:=Administration
-	DEPENDS:=+afrimesh-base +coova-chilli
+	DEPENDS:=+afrimesh-base +awesome-chilli
 	TITLE:=Afrimesh captive portal support
 endef
 
@@ -445,13 +461,9 @@ define Package/afrimesh-potato/install
 	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/dashboard/cgi-bin/mesh-topology.kml    $(1)/www/cgi-bin/mesh-topology.kml
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/images/*.gif         $(1)/www/afrimesh/images
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/images/*.png         $(1)/www/afrimesh/images
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/jquery/jquery.tools.min.js  \
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/jquery/jquery.tooltip.min.js  \
 			            $(1)/www/afrimesh/javascript/jquery
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/jquery/jquery.json.js  \
-			            $(1)/www/afrimesh/javascript/jquery
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/jquery/jquery.corner.js  \
-			            $(1)/www/afrimesh/javascript/jquery
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/jquery/jquery.checkbox.js  \
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/jquery/jquery.min.js  \
 			            $(1)/www/afrimesh/javascript/jquery
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/openlayers/OpenLayers.js    $(1)/www/afrimesh/javascript/openlayers
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/openlayers/OpenStreetMap.js $(1)/www/afrimesh/javascript/openlayers
@@ -533,6 +545,7 @@ endef
 # - eval packages ----------------------------------------------------------
 $(eval $(call BuildPackage,afrimesh-base))
 $(eval $(call BuildPackage,afrimesh-batman))
+$(eval $(call BuildPackage,afrimesh-batman-adv))
 $(eval $(call BuildPackage,afrimesh-olsr))
 $(eval $(call BuildPackage,afrimesh-provision))
 $(eval $(call BuildPackage,afrimesh-gateway))

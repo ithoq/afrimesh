@@ -38,19 +38,21 @@ start() {
     # build chilli arguments
     local args=""
     config_load   chilli
-    append_switch options debug     "--fg --debug"
-    append_parm   options dhcpif    "--dhcpif" 
-    append_parm   options tundev    "--tundev"
-    append_parm   options net       "--net"
-    append_parm   options dhcpstart "--dhcpstart"
-    append_parm   options dhcpend   "--dhcpend"
-    append_parm   options uamlisten "--uamlisten"
-    append_parm   options dns1      "--dns1"
-    append_parm   options dns2      "--dns2"
-    append_parm   options ipup      "--ipup"
-    append_parm   options ipdown    "--ipdown"
-    append_parm   options wwwdir    "--wwwdir"
-    append_parm   options wwwbin    "--wwwbin"
+    append_switch options debug         "--fg --debug"
+    append_parm   options dhcpif        "--dhcpif"
+    append_parm   options tundev        "--tundev"
+    append_switch options usetap        "--usetap"
+    append_parm   options net           "--net"
+    append_parm   options dhcpstart     "--dhcpstart"
+    append_parm   options dhcpend       "--dhcpend"
+    append_parm   options uamlisten     "--uamlisten"
+    append_parm   options dns1          "--dns1"
+    append_parm   options dns2          "--dns2"
+    append_parm   options ipup          "--ipup"
+    append_parm   options ipdown        "--ipdown"
+    append_parm   options wwwdir        "--wwwdir"
+    append_parm   options wwwbin        "--wwwbin"
+    append_switch options usestatusfile "--usestatusfile"
 
     # select active configuration
     config_get configuration options configuration
@@ -70,8 +72,12 @@ start() {
     append_parm   $section uamaliasname  "--uamaliasname" 
     append_parm   $section adminuser     "--adminuser"
     append_parm   $section adminpasswd   "--adminpasswd"
-    append_switch $section papalwaysok   "--papalwaysok"
     append_switch $section mschapv2      "--mschapv2"
+    append_switch $section eapolenable   "--eapolenable"
+    append_switch $section ieee8021q     "--ieee8021q"
+    append_parm   $section vlan          "--vlan"
+    append_switch $section acctupdate    "--acctupdate"
+
     
     # install tunnel
     #iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
