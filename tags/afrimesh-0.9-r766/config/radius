@@ -1,0 +1,8 @@
+config 'afrimesh' 'radius'
+	option 'radutmp' '/var/log/freeradius/radutmp'
+	option 'server' 'localhost'
+	option 'radtype' '2'
+	option 'database' 'radius'
+	option 'username' 'radius'
+	option 'password' 'radpass'
+

@@ -1,0 +1,10 @@
+--- p2p.orig/src/bigint/bigint.h	2009-06-18 14:28:17.000000000 +0200
++++ p2p.patched/src/bigint/bigint.h	2009-06-18 17:49:49.000000000 +0200
+@@ -59,6 +59,7 @@
+ #include <algorithm>
+ using namespace std;
+ 
++#include <limits.h>
+ 
+ // =======
+ // DEFINES
