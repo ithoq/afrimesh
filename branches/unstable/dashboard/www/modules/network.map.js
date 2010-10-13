@@ -81,7 +81,7 @@ var Map = undefined;
         "default" : {
           strokeWidth: 1,
           strokeColor: "#666666",
-          strokeOpacity: 0.1,
+          strokeOpacity: 0.5,
           pointRadius: 3.0, 
           fillColor: "#ffcc66",
         } });
