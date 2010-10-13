@@ -322,6 +322,7 @@ define Package/afrimesh-webif/description
 endef
 
 define Package/afrimesh-webif/install
+	$(INSTALL_DIR)   $(1)/www/cgi-bin
 	$(INSTALL_DIR)   $(1)/www/afrimesh
 	$(INSTALL_DIR)   $(1)/www/afrimesh/images
 	$(INSTALL_DIR)   $(1)/www/afrimesh/javascript
