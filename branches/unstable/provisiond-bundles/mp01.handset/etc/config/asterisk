@@ -5,7 +5,7 @@ config 'asterisk'
 	option 'zone' 'Australia/Perth'
 
 config 'sipgeneral'
-	option 'allow' 'gsm,ulaw'
+	#option 'allow' 'gsm,ulaw'
 
 config 'sip' 'sippotato'
 	option 'context' 'default'
@@ -18,3 +18,5 @@ config 'sip' 'sippotato'
 	option 'host'     '10.130.1.1'
 	option 'username' 'potato'
 	option 'secret'   'potato'
+	option 'allow' 'gsm'
+
