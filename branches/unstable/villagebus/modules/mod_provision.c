@@ -262,6 +262,11 @@ const fexp* provision_handset(closure* c, provision* self, const fexp* message)
                               L"10.0.0.4", mac->buffer); // TODO - evil hardcoded address is evil
   fexp* urlf = (fexp*)send(fexp_nil, s_fexp_cons, url);
   string* response  = (string*)send(Http, s_http_get, urlf);
+  if ((size_t)send(response, s_length) == 0) {
+    return (fexp*)send(VillageBus, s_villagebus_error, L"Zero length: Invalid provisioning response from a3glue");
+  }
+
+  // TODO - error handling for non-existent MAC addresses
   char*   responsec = (char*)send(response, s_string_tochar);
   struct json_object* a3glue = json_tokener_parse(responsec);
   if (a3glue == NULL) {
