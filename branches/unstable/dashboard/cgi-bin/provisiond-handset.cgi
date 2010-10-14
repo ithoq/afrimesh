@@ -75,11 +75,13 @@ log "Raw villagebus reply: $REPLY"
 provisioned=($REPLY)
 provisioned_id=${provisioned[0]} 
 provisioned_trunk=${provisioned[1]} 
-provisioned_username=${provisioned[2]}
-provisioned_secret=${provisioned[3]} 
-provisioned_codec=${provisioned[4]} 
+provisioned_did=${provisioned[2]}
+provisioned_username=${provisioned[3]}
+provisioned_secret=${provisioned[4]} 
+provisioned_codec=${provisioned[5]} 
 log "Provisioned handset:  $provisioned_id"
 log "Provisioned trunk:    $provisioned_trunk"
+log "Provisioned did:      $provisioned_did"
 log "Provisioned username: $provisioned_username"
 log "Provisioned secret:   $provisioned_secret"
 log "Provisioned codec:    $provisioned_codec"

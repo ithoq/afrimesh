@@ -269,9 +269,9 @@ const fexp* provision_handset(closure* c, provision* self, const fexp* message)
   }
 
   wchar_t* trunk       = PROVISION_DEFAULT_ROOT;  // TODO - evil hardcoded ip is evil
+  const char* did      = json_object_get_string(json_object_object_get(a3glue, "did"));
   const char* username = json_object_get_string(json_object_object_get(a3glue, "username"));
   const char* secret   = json_object_get_string(json_object_object_get(a3glue, "uipass"));
-  const char* did      = json_object_get_string(json_object_object_get(a3glue, "did"));
   const char* codec    = json_object_get_string(json_object_object_get(a3glue, "codec"));
 
   // connect to data store
@@ -292,9 +292,10 @@ const fexp* provision_handset(closure* c, provision* self, const fexp* message)
 
   // Return IP address, username, secret & any other config for the given handset
   string* reply = (string*)send(String, s_string_fromwchar, 
-                                L"%S %S %s %s %s",
+                                L"%S %S %s, %s %s %s",
                                 handset_id->buffer,
                                 trunk,
+                                did,
                                 username,
                                 secret,
                                 codec);
