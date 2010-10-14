@@ -65,9 +65,18 @@ const fexp* http_evaluate(closure* c, http* self, const fexp* expression)
  */
 const fexp* http_get(closure* c, http* self, const fexp* message)
 {
+  Request* request = VillageBus->request; 
+  string* search = (string*)fexp_nil;
+  if (request->search) {
+    search = (string*)send(String, s_string_fromwchar, L"?%S", request->search);
+  }
+
   // parse arguments
   string* url  = (string*)send(message, s_fexp_join, self->delimiter);
-  char*   urlc = (char*)send(url, s_string_tochar);
+  if ((fexp*)search != fexp_nil) {
+    url = (string*)send(url, s_string_add, search);
+  }
+  char* urlc = (char*)send(url, s_string_tochar);
   wprintl(L"GET /http/get/%s\n", urlc);
 
   // use curl for request for now  TODO - do proper async socket calls
