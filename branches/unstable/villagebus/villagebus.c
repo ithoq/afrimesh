@@ -74,7 +74,7 @@ void villagebus_init()
  */
 const fexp* villagebus_compile(closure* c, villagebus* self, Request* request)
 {
-  if (request == NULL || request->pathname == NULL) {
+  if (request == NULL || request->href == NULL) {
     return fexp_nil;
   }
   
@@ -85,19 +85,19 @@ const fexp* villagebus_compile(closure* c, villagebus* self, Request* request)
   tconc* path = (tconc*)send(Tconc, s_new, fexp_nil);
   size_t index = 0;
   size_t last  = 0;
-  for (index = 0; request->pathname[index] != L'\0'; index++) {
-    if ((request->pathname[index] == L'/') || (request->pathname[index] == L',')) {
+  for (index = 0; request->href[index] != L'\0'; index++) {
+    if ((request->href[index] == L'/') || (request->href[index] == L',')) {
       string* entry;
       if (index - last == 0) {
         entry = (string*)send(String, s_new, L"/", 1);
       } else {
-        entry = (string*)send(String, s_new, request->pathname + last, index - last);
+        entry = (string*)send(String, s_new, request->href + last, index - last);
       }
       path = (tconc*)send(path, s_tconc_append, entry);
       last = index + 1;
     }
   }
-  string* entry = (string*)send(String, s_new, request->pathname + last, index - last);
+  string* entry = (string*)send(String, s_new, request->href + last, index - last);
   path = (tconc*)send(path, s_tconc_append, entry);
   fexp* expression = (fexp*)send(path, s_tconc_tconc);
 

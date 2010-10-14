@@ -22,6 +22,7 @@ echo "root:      $root"
 echo "self:      $self"
 echo "device:    $device"
 echo "a2billing: $a2billing"
+echo "mac:       $wifi0_mac"
 
 
 # - die if initial device provisioning has not taken place -----------------
@@ -34,8 +35,8 @@ echo "a2billing: $a2billing"
 
 
 # - 1. Build handset provisioning request ----------------------------------
-json="{ 'self' : '$self', 'a2billing' : '$a2billing' }"
-name="/provision/handset/$device"
+json="{ 'self' : '$self', 'a2billing' : '$a2billing', 'device' : '$device' }"
+name="/provision/handset/$wifi0_mac"  # TODO use device id rather than MAC
 
 
 # - 2. Send handset provisioning request to mesh root ----------------------
@@ -47,7 +48,7 @@ Content-Length: ${#json}
 
 $json"
 echo -n "$REQUEST" | nc $root 80 >& $BUNDLE
-logger "device# $device ($self) sent handset provisioning request"
+logger "device# $device $wifi0_mac ($self) sent handset provisioning request"
 echo "- sent provisioning request -----------------------------------------"
 echo "name: $name"
 echo "request: $REQUEST"
@@ -78,8 +79,8 @@ echo
 
 
 # 4. - Restart telephony ---------------------------------------------------
-logger "device# $device ($self) handset provisioning complete. Restarting." 
-echo "device# $device ($self) handset provisioning complete. Restarting." 
+logger "device# $device $wifi0_mac ($self) handset provisioning complete. Restarting." 
+echo "device# $device $wifi0_mac ($self) handset provisioning complete. Restarting." 
 echo
 #/etc/init.d/asterisk restart
 #killall -9 asterisk ; sleep 15; /usr/sbin/asterisk; sleep 15
@@ -95,13 +96,13 @@ REQUEST="GET $name HTTP/1.0
 
 "
 echo -n "$REQUEST" | nc $root 80 
-logger "device# $device sent callback request"
-echo "- handset provisioned, sent callback request ------------------------"
+logger "device# $device $wifi0_mac ($self) sent callback request"
+echo "- handset provisioned, $wifi0_mac ($self) sent callback request ------------------------"
 echo "name:     " $name
 echo "trunk:    " `uci get asterisk.sippotato.host`
 echo "username: " `uci get asterisk.sippotato.username`
 echo "secret:   " `uci get asterisk.sippotato.secret`
-
+echo "codec:"   " `uci get asterisk.sippotato.codec`
 
 # 6. Die. Server will phone back w/ confirmation
 #
@@ -112,7 +113,7 @@ echo "secret:   " `uci get asterisk.sippotato.secret`
 #sleep 30
 
 # TODO - for demo I'll just originate the call locally for now
-/usr/sbin/asterisk -rx "originate MP/1 application Playback callme"
+# /usr/sbin/asterisk -rx "originate MP/1 application Playback callme"
 
 
 #killall -9 asterisk ; sleep 15; /usr/sbin/asterisk; sleep 15

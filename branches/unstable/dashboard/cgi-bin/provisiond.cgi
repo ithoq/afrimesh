@@ -3,7 +3,7 @@
 # - Configuration ----------------------------------------------------------
 VILLAGEBUS="./villagebus"
 #UCI="/usr/local/bin/uci-static"
-UCI="uci"
+UCI="uci" # TODO search for uci in /usr/bin/uci /usr/local/bin/uci-static etc.
 PROVISIOND_TMP=/tmp/provisiond.tmp
 BUNDLE_DIR="./provisiond-bundles/mp01.interface"
 LOG=1

@@ -43,7 +43,8 @@ core=safelib.o util.o object.o fexpression.o
 
 
 # - modules ----------------------------------------------------------------
-modules=mod_config.o mod_sys.o mod_telephony.o mod_accounting.o mod_package.o
+modules=mod_config.o mod_sys.o mod_telephony.o mod_accounting.o mod_http.o 
+modules+=mod_package.o
 modulelibs=$(DEPROOT)/lib/libuci.a 
 
 ifeq ($(ENABLE_MOD_PROVISION),1)
@@ -120,6 +121,9 @@ jsonrpc.o : ../common/jsonrpc.h ../common/jsonrpc.c
 
 mod_db.o : modules/mod_db.h modules/mod_db.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c modules/mod_db.c
+
+mod_http.o : modules/mod_http.h modules/mod_http.c
+	$(CC) $(INCLUDES) $(CFLAGS) -c modules/mod_http.c
 
 mod_provision.o : modules/mod_provision.h modules/mod_provision.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c modules/mod_provision.c

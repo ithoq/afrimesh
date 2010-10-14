@@ -339,9 +339,80 @@ const fexp* exec(char* command, char** arguments)
 }
 
 
+/**
+ * execute the given command & print the output directly to stdout
+ */
+const fexp* exec_out(char* command, char** arguments)
+{
+  char* tmp;
+  if ((tmp = path_exists(command)) == NULL) {
+    return (fexp*)send(VillageBus, s_villagebus_error, L"Command not found: %s", command);
+  }
+  command = tmp;
+
+  FILE* output;
+  output = safe_popen(command, arguments, "r");
+  while (1) {
+    size_t length;
+    char* line = fgetln(output, &length);
+    if (line == NULL) {
+      if (feof(output) != 0) {          /* eof */
+        break;
+      } else if (ferror(output) != 0) { /* error */
+        fclose(output);
+        return (fexp*)send(VillageBus, s_villagebus_error, L"Error reading command output: %s", strerror(errno));
+      } 
+      fclose(output);
+      return (fexp*)send(VillageBus, s_villagebus_error, L"Unexpected end of command output: %s", strerror(errno));
+    }
+    fprintf(stdout, "%s", line);
+  }
+  fclose(output);
+  return fexp_nil;
+}
+
 
 /**
- * execute the given command and return the result as an array of
+ * execute the given command & return the output as a string
+ */
+const fexp* exec_string(char* command, char** arguments)
+{
+  char* tmp;
+  if ((tmp = path_exists(command)) == NULL) {
+    return (fexp*)send(VillageBus, s_villagebus_error, L"Command not found: %s", command);
+  }
+  command = tmp;
+
+  size_t max   = 1024; /* Hard limit on number of output lines */
+  size_t count = 0;
+  string* ret = (string*)send(String, s_new, L"", 0);
+  FILE* output;
+  output = safe_popen(command, arguments, "r");
+  while (1 && count < max) { 
+    size_t length;
+    char* line = fgetln(output, &length);
+    if (line == NULL) {
+      if (feof(output) != 0) {          /* eof */
+        break;
+      } else if (ferror(output) != 0) { /* error */
+        fclose(output);
+        return (fexp*)send(VillageBus, s_villagebus_error, L"Error reading command output: %s", strerror(errno));
+      } 
+      fclose(output);
+      return (fexp*)send(VillageBus, s_villagebus_error, L"Unexpected end of command output: %s", strerror(errno));
+    }
+    count++;
+    string* sline = (string*)send(String, s_string_fromchar, line, length);
+    ret = (string*)send(ret, s_string_add, sline);
+  }
+  fclose(output);
+  return (fexp*)ret;
+}
+
+
+
+/**
+ * execute the given command and output the result as an array of
  * objects parsed according to the given parser function
  */
 const fexp* exec_parsed(char* command, char** arguments, 

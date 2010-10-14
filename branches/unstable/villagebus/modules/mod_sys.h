@@ -60,6 +60,8 @@ const string* sys_version(closure* c, sys* self, const fexp* message);
 
 // utilities
 const fexp* exec(char* command, char** arguments);
+const fexp* exec_out(char* command, char** arguments);
+const fexp* exec_string(char* command, char** arguments);
 const fexp* exec_parsed(char* command, char** arguments, 
                         struct json_object* (*parser)(const char*, size_t));
 

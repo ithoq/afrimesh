@@ -2,7 +2,7 @@
 
 # - Configuration ----------------------------------------------------------
 VILLAGEBUS="./villagebus"
-UCI="/usr/local/bin/uci-static"
+UCI="uci"  # TODO search for uci in /usr/bin/uci /usr/local/bin/uci-static etc.
 PROVISIOND_TMP=/tmp/provisiond.tmp
 BUNDLE_DIR="./provisiond-bundles/mp01.handset"
 LOG=1
@@ -67,6 +67,7 @@ fi
 
 
 # - forward request to villagebus & ask for handset settings ---------------
+# TODO should be POSTing the request body too plz so we can do id/mac validation
 log "- provisioning handset --"
 REQUEST_METHOD=CONSOLE
 REPLY=`$VILLAGEBUS GET "$PATH_INFO?$QUERY_STRING"`
@@ -76,10 +77,12 @@ provisioned_id=${provisioned[0]}
 provisioned_trunk=${provisioned[1]} 
 provisioned_username=${provisioned[2]}
 provisioned_secret=${provisioned[3]} 
+provisioned_codec=${provisioned[4]} 
 log "Provisioned handset:  $provisioned_id"
 log "Provisioned trunk:    $provisioned_trunk"
 log "Provisioned username: $provisioned_username"
 log "Provisioned secret:   $provisioned_secret"
+log "Provisioned codec:    $provisioned_codec"
 # TODO - check return values
 
 
@@ -101,6 +104,7 @@ find "$TARBALL_DIR" -name .svn -exec rm -rf '{}' ';'
 $UCI set asterisk.sippotato.host="$provisioned_trunk"
 $UCI set asterisk.sippotato.username="$provisioned_username"
 $UCI set asterisk.sippotato.secret="$provisioned_secret"
+$UCI set asterisk.sippotato.allow="$provisioned_codec"
 
 # commit configuration to provisioning bundle
 log "- The following config changes were provisioned -- "

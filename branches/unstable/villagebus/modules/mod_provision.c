@@ -1,32 +1,10 @@
 /**
- * Afrimesh: easy management for B.A.T.M.A.N. wireless mesh networks
- * Copyright (C) 2008-2009 Meraka Institute of the CSIR
- * All rights reserved.
+ * Afrimesh: easy management for mesh networks
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the copyright holders nor the names of its
- *    contributors may be used to endorse or promote products derived from
- *    this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
- * THE POSSIBILITY OF SUCH DAMAGE.
+ * This software is licensed as free software under the terms of the
+ * New BSD License. See /LICENSE for more information.
  */
+
 
 #include <errno.h>
 #include <sys/socket.h>
@@ -34,6 +12,7 @@
 
 #include "mod_provision.h"
 #include "mod_db.h"
+#include "mod_http.h"
 
 #define PROVISION_DEFAULT_ROOT L"10.130.1.1"
 
@@ -266,20 +245,34 @@ const fexp* provision_interface (closure* c, provision* self, const fexp* messag
 const fexp* provision_handset(closure* c, provision* self, const fexp* message)
 {
   // get parameters
-  string* device = (string*)send(message, s_fexp_car); 
+  string* mac = (string*)send(message, s_fexp_car); 
+  // string* device = TODO - read json request
   // string* a2billing = TODO - read json request for a2billing.id ? Else ask Redis?
-  wprintl(L"GET /provision/handset/%S\n", device->buffer);
+  wprintl(L"GET /provision/handset/%S\n", mac->buffer);
 
+  // TODO lookup device id for MAC & validate against json request 
+  
   // TODO - check if this handset is already linked to a device
 
-  // TODO - Read IP address for TRUNK from VTE server UCI config 
-  string* trunk = (string*)send(String, s_string_fromwchar, PROVISION_DEFAULT_ROOT); 
-  
   // TODO - Tell A2Billing @ trunk about this handset
 
-  // TODO - Ask A2Billing for a username&secret
-  string* username = (string*)send(String, s_string_fromwchar, L"potato");
-  string* secret   = (string*)send(String, s_string_fromwchar, L"potato");
+  // Ask A2Billing for a trunk&username&secret&codec
+  string* url = (string*)send(String, s_string_fromwchar, 
+                              L"http://%S/a3glue/a3g_provisioning.php?mac_addr=%S", 
+                              L"10.0.0.4", mac->buffer); // TODO - evil hardcoded address is evil
+  fexp* urlf = (fexp*)send(fexp_nil, s_fexp_cons, url);
+  string* response  = (string*)send(Http, s_http_get, urlf);
+  char*   responsec = (char*)send(response, s_string_tochar);
+  struct json_object* a3glue = json_tokener_parse(responsec);
+  if (a3glue == NULL) {
+    return (fexp*)send(VillageBus, s_villagebus_error, L"Syntax Error: Invalid provisioning response from a3glue");
+  }
+
+  wchar_t* trunk       = PROVISION_DEFAULT_ROOT;  // TODO - evil hardcoded ip is evil
+  const char* username = json_object_get_string(json_object_object_get(a3glue, "username"));
+  const char* secret   = json_object_get_string(json_object_object_get(a3glue, "uipass"));
+  const char* did      = json_object_get_string(json_object_object_get(a3glue, "did"));
+  const char* codec    = json_object_get_string(json_object_object_get(a3glue, "codec"));
 
   // connect to data store
   fexp* error = (fexp*)send(DB, s_db_connect);
@@ -292,21 +285,23 @@ const fexp* provision_handset(closure* c, provision* self, const fexp* message)
   string* handset_id = (string*)send(DB, s_db_incr, handset);  // incr handset:id
   string* provision_handset = (string*)send(String, s_string_fromwchar, 
                                             self->provision_handset,
-                                            device->buffer);
+                                            mac->buffer);
   send(DB, s_db_set, provision_handset, handset_id);           // set provision:<device>:handset <handset.id>
 
   // TODO - register provisioning request w/ notification queue ?
 
   // Return IP address, username, secret & any other config for the given handset
-  string* reply = (string*)send(String, s_string_fromwchar, L"%S %S %S %S",
+  string* reply = (string*)send(String, s_string_fromwchar, 
+                                L"%S %S %s %s %s",
                                 handset_id->buffer,
-                                trunk->buffer,
-                                username->buffer, 
-                                secret->buffer);
+                                trunk,
+                                username,
+                                secret,
+                                codec);
  done:
   // clean up
   send(DB, s_db_close);
-  
+
   return (fexp*)reply; 
 }
 

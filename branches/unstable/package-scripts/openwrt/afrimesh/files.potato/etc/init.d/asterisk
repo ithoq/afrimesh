@@ -52,8 +52,9 @@ append_sip_entry() {
   append_sip_parm "$cfg" "callerid"    ""
   append_sip_parm "$cfg" "canreinvite" ""
   append_sip_parm "$cfg" "allowguest"  ""
-  append sipconf "\ndisallow=all"
-  append sipconf "\nallow=$(uci get asterisk.@sipgeneral[0].allow)"  
+  append_sip_parm "$cfg" "allow"       ""
+  #append sipconf "\ndisallow=all"
+  #append sipconf "\nallow=$(uci get asterisk.@sipgeneral[0].allow)"  
 }
 
 

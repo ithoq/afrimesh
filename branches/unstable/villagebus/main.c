@@ -60,7 +60,7 @@ int main(int argc, char** argv)
   /** - parse request --------------------------------------------------- */
   cgi_init();
   Request* request = cgi_request(argc, argv);
-  wprintl(L"Parsed request: %p\n", request);
+  wprintl(L"Parsed request : %p\n", request);
   if (request == NULL) {
     return exit_failure(request, L"{ \"error\" : \"Could not parse request\" }");
   } else if (request->method == SYMBOL_UNKNOWN) {
@@ -68,14 +68,14 @@ int main(int argc, char** argv)
   } else if (request->pathname == NULL) {
     return exit_failure(request, L"{ \"error\" : \"name not found\" }");
   }
-  /*wprintf(L"request->method   : %d\n", request->method);
-  wprintf(L"request->href     : %S\n", request->href);
-  wprintf(L"request->pathname : %S\n", request->pathname);
-  wprintf(L"request->search   : %S\n", request->search);
-  if (request->search) {
-    wprintf(L"request->search   : %S\n", search_to_json(request->search, wcslen(request->search)));
-  }
-  wprintf(L"request->data     : %s\n", request->data);*/
+  wprintl(L"\tmethod : %d\n", request->method);
+  wprintl(L"\thref   : %S\n", request->href);
+  //wprintl(L"request->pathname : %S\n", request->pathname);
+  //wprintl(L"request->search   : %S\n", request->search);
+  //if (request->search) {
+  //  wprintl(L"request->search   : %S\n", search_to_json(request->search, wcslen(request->search)));
+  //}
+  //wprintl(L"request->data     : %s\n", request->data);
 
   /** - bootstrap interpreter ------------------------------------------- */
   wprintl(L"Bootstrapping object\n");
@@ -100,12 +100,14 @@ int main(int argc, char** argv)
   snmp_init();
 #endif
   sys_init();
+  http_init();
   telephony_init();
   string* modules = (string*)send(VillageBus->modules, s_tojson, false);
   wprintl(L"Loaded modules %s\n", (char*)send(modules, s_string_tochar));
 
   /** - compile request ------------------------------------------------- */
   const fexp* message = (fexp*)send(VillageBus, s_villagebus_compile, request);
+  // TODO debug output for compiled request
 
   /** - evaluate message ------------------------------------------------ */
   message = (fexp*)send(VillageBus, s_villagebus_evaluate, message);
