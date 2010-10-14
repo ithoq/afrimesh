@@ -292,7 +292,7 @@ const fexp* provision_handset(closure* c, provision* self, const fexp* message)
 
   // Return IP address, username, secret & any other config for the given handset
   string* reply = (string*)send(String, s_string_fromwchar, 
-                                L"%S %S %s, %s %s %s",
+                                L"%S %S %s %s %s %s",
                                 handset_id->buffer,
                                 trunk,
                                 did,
