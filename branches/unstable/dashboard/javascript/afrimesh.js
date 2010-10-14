@@ -107,7 +107,8 @@ _require("javascript/jquery/jquery.min.js",  true, function() {
               "javascript/afrimesh.person.js", 
               "javascript/afrimesh.customers.js", // TODO deprecate
               "javascript/afrimesh.telephony.js", // TODO s/telephony/handset
-              "javascript/afrimesh.settings.js" ], 
+              "javascript/afrimesh.billing.js",
+              "javascript/afrimesh.settings.js"], 
              true, 
              function(exports, data) {
                // register API modules
@@ -117,7 +118,8 @@ _require("javascript/jquery/jquery.min.js",  true, function() {
                afrimesh.community  = exports.BootCommunity(afrimesh);
                afrimesh.person     = exports.BootPerson(afrimesh);
                afrimesh.customers  = exports.BootCustomers(afrimesh);
-               afrimesh.telephony  = exports.BootTelephony(afrimesh);       
+               afrimesh.telephony  = exports.BootTelephony(afrimesh); 
+               afrimesh.billing    = exports.BootBilling(afrimesh);      
                afrimesh.villagebus = exports.BootVillageBus(afrimesh);
                
                // override default settings with live settings from the server

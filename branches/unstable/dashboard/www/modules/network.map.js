@@ -1,7 +1,5 @@
 /*
- * Afrimesh: easy management for B.A.T.M.A.N. wireless mesh networks
- * Copyright (C) 2008-2009 Meraka Institute of the CSIR
- * All rights reserved.
+ * Afrimesh: easy management for mesh networks
  *  
  * This software is licensed as free software under the terms of the
  * New BSD License. See /LICENSE for more information.
@@ -79,9 +77,9 @@ var Map = undefined;
       var geojson_format = new OpenLayers.Format.GeoJSON();
       var styles = new OpenLayers.StyleMap({
         "default" : {
-          strokeWidth: 1,
+          strokeWidth: 1.0,
           strokeColor: "#666666",
-          strokeOpacity: 0.5,
+          strokeOpacity: 0.1,
           pointRadius: 3.0, 
           fillColor: "#ffcc66",
         } });

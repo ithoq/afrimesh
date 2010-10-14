@@ -1,7 +1,5 @@
 /*
- * Afrimesh: easy management for B.A.T.M.A.N. wireless mesh networks
- * Copyright (C) 2008-2009 Meraka Institute of the CSIR
- * All rights reserved.
+ * Afrimesh: easy management for mesh networks
  *  
  * This software is licensed as free software under the terms of the
  * New BSD License. See /LICENSE for more information.
@@ -86,6 +84,10 @@ var BootVillageBus = function (afrimesh) {
       } else if (node == "@radius") {
         //return "/" + afrimesh.settings.radius.server + "/cgi-bin/village-bus-radius";
         return proxy(afrimesh.settings.radius.server, "/cgi-bin/village-bus-radius");
+      } else if (node == "@a3glue") {
+        // TODO afrimesh.settings.servers.a3glue
+        return proxy(afrimesh.settings.address, "/a3glue");
+        //return proxy(afrimesh.settings.address, "/plink");
       } else if (node[0] == '@') {
         //return "/" + node.substring(1) + "/cgi-bin/villagebus"; 
         return proxy(node.substring(1), "/cgi-bin/villagebus");

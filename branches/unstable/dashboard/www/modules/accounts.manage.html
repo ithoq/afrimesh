@@ -1,7 +1,5 @@
 <!--
- * Afrimesh: easy management for B.A.T.M.A.N. wireless mesh networks
- * Copyright (C) 2008-2009 Meraka Institute of the CSIR
- * All rights reserved.
+ * Afrimesh: easy management for mesh networks
  *  
  * This software is licensed as free software under the terms of the
  * New BSD License. See /LICENSE for more information.
@@ -49,6 +47,8 @@
         <span id="person">unknown</span> 
         <span id="device"></span>
         <span id="handset"></span>
+        <span id="a2b_credit"></span>
+        <span id="a3g_status"></span>
       </div>
     </div>
   </div>
@@ -147,6 +147,12 @@
       }
       clone.find(".expand").toggle(function() { on_show_editor(clone, person); }, 
                                    function() { on_hide_editor(clone); });
+      afrimesh.billing.voip(person.device.ip, function(error, info) { // link a2billing info
+          if (error) return console.error("Missing billing info for " + person.device.ip + ": " + error);
+          console.log("INFO: " + info[0].a2b_credit);
+          clone.find("#a2b_credit").html(info[0].a2b_credit);
+          clone.find("#a3g_status").html(info[0].a3g_status);
+        });
     };
     function on_show_editor(account, person) {
       var clone = $("#editor-template").clone()

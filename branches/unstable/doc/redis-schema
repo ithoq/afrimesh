@@ -1,5 +1,14 @@
 
 
+* Delete a failed provision attempt:
+
+  redis-cli del "provision:10.130.1.20:mac device:10.130.1.20:status" 
+  redis-cli del "provision:10.130.1.20:device interface:10.130.1.20:history"
+  redis-cli del "message:device:00:09:45:58:E5:02:provision"
+
+TODO - shouldn't need it!
+TODO - what's the plan for when devices change IP?
+
 --
 
    STATUS
@@ -44,3 +53,4 @@ handset:<id>:??? <------- HERE
 
 # notifications
 message:device:<mac>:provision  STRING  { device.id, ip, mac }
+
