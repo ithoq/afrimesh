@@ -107,8 +107,8 @@ echo "codec:    " `uci get asterisk.villagetelco.allow`
 # 6. Restart asterisk
 killall -TERM asterisk 
 sleep 3
+/etc/init.d/asterisk start
 
-exit
 
 # 6. Die. Server will phone back w/ confirmation
 #
