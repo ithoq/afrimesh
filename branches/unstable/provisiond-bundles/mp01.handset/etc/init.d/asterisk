@@ -45,7 +45,6 @@ append_sip_entry() {
   append_sip_parm "$cfg" "secret"      ""
   #append_sip_parm "$cfg" "host"        ""         "fromdomain"
   append_sip_parm "$cfg" "nat"         ""
-  append_sip_parm "$cfg" "qualify"     ""
   append_sip_parm "$cfg" "dtmfmode"    ""
   append_sip_parm "$cfg" "bindaddr"    ""
   append_sip_parm "$cfg" "bindport"    ""
