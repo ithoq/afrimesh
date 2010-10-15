@@ -25,3 +25,5 @@ config 'sip' 'villagetelco'
 	option 'sendrpid' 'yes'
 	option 'canreinvite' 'no'
 	option 'permit' '10.130.1.1'
+  option 'qualify' 'yes'
+

@@ -57,6 +57,7 @@ append_sip_entry() {
   append_sip_parm "$cfg" "sendrpid"    ""
   append_sip_parm "$cfg" "disallow"    ""
   append_sip_parm "$cfg" "allow"       ""
+  append_sip_parm "$cfg" "qualify"     "yes"
   #append sipconf "\ndisallow=all"
   #append sipconf "\nallow=$(uci get asterisk.@sipgeneral[0].allow)"  
 }
