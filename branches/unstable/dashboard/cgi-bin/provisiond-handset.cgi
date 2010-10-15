@@ -103,10 +103,10 @@ find "$TARBALL_DIR" -name .svn -exec rm -rf '{}' ';'
 
 # configure base bundle w/ provisioned values 
 # TODO set handset.id - anyone notice a flaw w/ tarballs & multiple provisioning phases? :)
-$UCI set asterisk.sippotato.host="$provisioned_trunk"
-$UCI set asterisk.sippotato.username="$provisioned_username"
-$UCI set asterisk.sippotato.secret="$provisioned_secret"
-$UCI set asterisk.sippotato.allow="$provisioned_codec"
+$UCI set asterisk.villagetelco.host="$provisioned_trunk"
+$UCI set asterisk.villagetelco.username="$provisioned_username"
+$UCI set asterisk.villagetelco.secret="$provisioned_secret"
+$UCI set asterisk.villagetelco.allow="$provisioned_codec"
 
 # commit configuration to provisioning bundle
 log "- The following config changes were provisioned -- "

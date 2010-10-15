@@ -65,6 +65,7 @@ append_sip_entry() {
 configure_sip() {
   local sipremote="$1"
   local sipextension="$2"
+  local sipcodec="$3"
 
   # build & write out potato.sip.conf  
   [ $(grep -c "#include \"potato\.sip\.conf\"" /etc/asterisk/sip.conf) -eq 0 ] && \
@@ -80,8 +81,8 @@ configure_sip() {
   cat > /etc/asterisk/potato.extensions.conf << EOF
 ; new dial rules to support SIP client functionality
 exten => ${sipextension},1,Dial(MP/1)                ; answer incoming SIP calls
-exten => _XXXX,1,Dial(SIP/\${EXTEN}@sippotato,30,r)  ; route 4 digit extensions to SIP provider
-exten => _0.,1,Dial(SIP/\${EXTEN}@sippotato,30,r)    ; trunk everything after '0' through SIP provider
+exten => _XXXX,1,Dial(SIP/\${EXTEN}@villagetelco,30,r)  ; route 4 digit extensions to SIP provider
+exten => _0.,1,Dial(SIP/\${EXTEN}@villagetelco,30,r)    ; trunk everything after '0' through SIP provider
 EOF
 }
 
@@ -104,10 +105,11 @@ configure_asterisk() {
   if is_false $sip_enable ; then
       return
   else
-      config_get host     "sippotato" "host"
-      config_get username "sippotato" "username"
-      config_get secret   "sippotato" "secret"
-      configure_sip "${username}:${secret}@${host}/${username}" "${username}"
+      config_get host     "villagetelco" "host"
+      config_get username "villagetelco" "username"
+      config_get secret   "villagetelco" "secret"
+      config_get codec    "villagetelco" "codec"
+      configure_sip "${username}:${secret}@${host}/${username}" "${username}" "${codec}"
   fi  
 }
 

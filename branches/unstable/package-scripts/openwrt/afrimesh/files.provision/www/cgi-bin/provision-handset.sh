@@ -99,10 +99,10 @@ echo -n "$REQUEST" | nc $root 80
 logger "device# $device $wifi0_mac ($self) sent callback request"
 echo "- handset provisioned, $wifi0_mac ($self) sent callback request ------------------------"
 echo "name:     " $name
-echo "trunk:    " `uci get asterisk.sippotato.host`
-echo "username: " `uci get asterisk.sippotato.username`
-echo "secret:   " `uci get asterisk.sippotato.secret`
-echo "codec:    " `uci get asterisk.sippotato.codec`
+echo "trunk:    " `uci get asterisk.villagetelco.host`
+echo "username: " `uci get asterisk.villagetelco.username`
+echo "secret:   " `uci get asterisk.villagetelco.secret`
+echo "codec:    " `uci get asterisk.villagetelco.codec`
 
 # 6. Restart asterisk
 killall -TERM asterisk 
