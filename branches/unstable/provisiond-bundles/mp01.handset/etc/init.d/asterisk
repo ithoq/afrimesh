@@ -38,17 +38,17 @@ append_sip_entry() {
   append_sip_parm "$cfg" "type"        "peer"
   append_sip_parm "$cfg" "permit"      "10.13.1.1"
   append_sip_parm "$cfg" "host"        "10.13.1.1"
-  append_sip_parm "$cfg" "port"        "5060"
+  append_sip_parm "$cfg" "port"        ""
   append_sip_parm "$cfg" "username"    ""
-  append_sip_parm "$cfg" "username"    ""         "authuser"
-  append_sip_parm "$cfg" "username"    ""         "fromuser"
+  #append_sip_parm "$cfg" "username"    ""         "authuser"
+  #append_sip_parm "$cfg" "username"    ""         "fromuser"
   append_sip_parm "$cfg" "secret"      ""
-  append_sip_parm "$cfg" "host"        ""         "fromdomain"
-  append_sip_parm "$cfg" "nat"         "no"
-  append_sip_parm "$cfg" "qualify"     "3600"
-  append_sip_parm "$cfg" "dtmfmode"    "rfc2833"
-  append_sip_parm "$cfg" "bindaddr"    "0.0.0.0"
-  append_sip_parm "$cfg" "bindport"    "5060"
+  #append_sip_parm "$cfg" "host"        ""         "fromdomain"
+  append_sip_parm "$cfg" "nat"         ""
+  append_sip_parm "$cfg" "qualify"     ""
+  append_sip_parm "$cfg" "dtmfmode"    ""
+  append_sip_parm "$cfg" "bindaddr"    ""
+  append_sip_parm "$cfg" "bindport"    ""
   append_sip_parm "$cfg" "insecure"    ""
   append_sip_parm "$cfg" "callerid"    ""
   append_sip_parm "$cfg" "canreinvite" ""
@@ -79,11 +79,13 @@ configure_sip() {
   [ $(grep -c "#include \"potato\.extensions\.conf\"" /etc/asterisk/extensions.conf) -eq 0 ] && \
     echo "#include \"potato.extensions.conf\"" >> /etc/asterisk/extensions.conf 
   cat > /etc/asterisk/potato.extensions.conf << EOF
-; new dial rules to support SIP client functionality
-exten => ${sipextension},1,Dial(MP/1)                ; answer incoming SIP calls
-exten => _XXXX,1,Dial(SIP/\${EXTEN}@villagetelco,30,r)  ; route 4 digit extensions to SIP provider
-exten => _0.,1,Dial(SIP/\${EXTEN}@villagetelco,30,r)    ; trunk everything after '0' through SIP provider
+; VT dial rules to support SIP client functionality
+[villagetelco-incoming]
+exten => s,1,Dial(MP/1) ; answer incoming SIP calls
 EOF
+#; exten => ${sipextension},1,Dial(MP/1)                
+#; exten => _XXXX,1,Dial(SIP/\${EXTEN}@villagetelco,30,r)  ; route 4 digit extensions to SIP provider
+#; exten => _0.,1,Dial(SIP/\${EXTEN}@villagetelco,30,r)    ; trunk everything after '0' through SIP provider
 }
 
 
@@ -109,7 +111,8 @@ configure_asterisk() {
       config_get username "villagetelco" "username"
       config_get secret   "villagetelco" "secret"
       config_get codec    "villagetelco" "allow"
-      configure_sip "${username}:${secret}@${host}/${username}" "${username}" "${codec}"
+      #configure_sip "${username}:${secret}@${host}/${username}" "${username}" "${codec}"
+      configure_sip "${username}:${secret}@${host}" "${username}" "${codec}"
   fi  
 }
 
