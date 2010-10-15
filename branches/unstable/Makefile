@@ -108,13 +108,14 @@ install-www:
 	-$(INSTALL) utilities/urldecode                      $(DASHBOARD_CGI)
 	-$(INSTALL) villagebus/villagebus                    $(DASHBOARD_CGI)
 	#-$(INSTALL) village-bus-radius/village-bus-radius $(DASHBOARD_CGI)
-	sudo $(INSTALL) ./provisiond-bundles      	               $(DASHBOARD_CGI)
-	sudo chmod 0755 $(DASHBOARD_CGI)/provisiond-bundles/mp01.handset/etc/init.d/asterisk
+	sudo rm -rf $(DASHBOARD_CGI)/provisiond-bundles
+	$(INSTALL) ./provisiond-bundles      	               $(DASHBOARD_CGI)
+	chmod 0755 $(DASHBOARD_CGI)/provisiond-bundles/mp01.handset/etc/init.d/asterisk
+	find $(DASHBOARD_CGI) -name "*~"   | xargs rm -f
+	find $(DASHBOARD_CGI) -name ".svn" | xargs rm -rf
+	find $(DASHBOARD_WWW) -name "*~"   | xargs rm -f
+	find $(DASHBOARD_WWW) -name ".svn" | xargs rm -rf
 	sudo chown -R 0:0 $(DASHBOARD_CGI)/provisiond-bundles
-	sudo find $(DASHBOARD_CGI) -name "*~"   -exec rm -f  '{}' ';'
-	sudo find $(DASHBOARD_CGI) -name ".svn" -exec rm -rf '{}' ';'
-	find $(DASHBOARD_WWW) -name "*~"   -exec rm -f  '{}' ';'
-	find $(DASHBOARD_WWW) -name ".svn" -exec rm -rf '{}' ';'
 
 install-config: 
 	@echo "Installing configuration files in: $(DASHBOARD_ETC)"
