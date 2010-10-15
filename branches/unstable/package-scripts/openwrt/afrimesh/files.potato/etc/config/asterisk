@@ -10,8 +10,8 @@ config 'asterisk'
 	option 'debug' 3
 	option 'zone' 'Australia/Perth'
 
-#config 'sipgeneral'
-#	option 'allow' 'ulaw'
+config 'sipgeneral'
+	option 'allow' 'gsm,ulaw'
 
 config 'sip' 'sippotato'
 	option 'context' 'default'

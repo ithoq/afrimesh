@@ -101,6 +101,8 @@ install-www:
 	$(INSTALL) dashboard/cgi-bin/provisiond.cgi          $(DASHBOARD_CGI)/provisiond
 	$(INSTALL) dashboard/cgi-bin/provisiond-handset.cgi  $(DASHBOARD_CGI)/provisiond-handset
 	$(INSTALL) ./provisiond-bundles      	               $(DASHBOARD_CGI)
+	chown -R 0:0 $(DASHBOARD_CGI)/provisiond-bundles
+	chmod 0755 $(DASHBOARD_CGI)/provisiond-bundles/mp01.handset/etc/init.d/asterisk
 	$(INSTALL) dashboard/cgi-bin/mesh-topology.kml       $(DASHBOARD_CGI)
 	chmod 0755 $(DASHBOARD_CGI)/*.cgi
 	chmod 0755 $(DASHBOARD_CGI)/provisiond

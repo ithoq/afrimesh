@@ -102,7 +102,13 @@ echo "name:     " $name
 echo "trunk:    " `uci get asterisk.sippotato.host`
 echo "username: " `uci get asterisk.sippotato.username`
 echo "secret:   " `uci get asterisk.sippotato.secret`
-echo "codec:"   " `uci get asterisk.sippotato.codec`
+echo "codec:    " `uci get asterisk.sippotato.codec`
+
+# 6. Restart asterisk
+killall -TERM asterisk 
+sleep 3
+
+exit
 
 # 6. Die. Server will phone back w/ confirmation
 #
@@ -113,7 +119,7 @@ echo "codec:"   " `uci get asterisk.sippotato.codec`
 #sleep 30
 
 # TODO - for demo I'll just originate the call locally for now
-# /usr/sbin/asterisk -rx "originate MP/1 application Playback callme"
+#/usr/sbin/asterisk -rx "originate MP/1 application Playback callme"
 
 
 #killall -9 asterisk ; sleep 15; /usr/sbin/asterisk; sleep 15

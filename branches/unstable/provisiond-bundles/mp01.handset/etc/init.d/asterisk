@@ -8,7 +8,7 @@ OPTIONS=""
 
 
 is_false() {
-    [ $1 != "true" ] && [ $1 != "on" ] && [ $1 != "1" ] && [ $1 != "yes" ]
+    [ "$1" != "true" ] && [ "$1" != "on" ] && [ "$1" != "1" ] && [ "$1" != "yes" ]
 }
 
 
@@ -36,6 +36,7 @@ append_sip_entry() {
   append sipconf "\n\n[$cfg]"
   append_sip_parm "$cfg" "context"     "default"
   append_sip_parm "$cfg" "type"        "peer"
+  append_sip_parm "$cfg" "permit"      "10.13.1.1"
   append_sip_parm "$cfg" "host"        "10.13.1.1"
   append_sip_parm "$cfg" "port"        "5060"
   append_sip_parm "$cfg" "username"    ""
@@ -52,6 +53,9 @@ append_sip_entry() {
   append_sip_parm "$cfg" "callerid"    ""
   append_sip_parm "$cfg" "canreinvite" ""
   append_sip_parm "$cfg" "allowguest"  ""
+  append_sip_parm "$cfg" "trustrpid"   ""
+  append_sip_parm "$cfg" "sendrpid"    ""
+  append_sip_parm "$cfg" "disallow"    ""
   append_sip_parm "$cfg" "allow"       ""
   #append sipconf "\ndisallow=all"
   #append sipconf "\nallow=$(uci get asterisk.@sipgeneral[0].allow)"  
@@ -85,7 +89,8 @@ EOF
 configure_asterisk() {
   # load asterisk configuration from UCI
   config_load afrimesh
-  config_get sip_enable "voip" "sip"
+  #config_get sip_enable "voip" "sip"
+  sip_enable=1 # provisioned potatos always have sip enabled
   config_get iax_enable "voip" "iax"
 
   # load asterisk configuration from UCI
