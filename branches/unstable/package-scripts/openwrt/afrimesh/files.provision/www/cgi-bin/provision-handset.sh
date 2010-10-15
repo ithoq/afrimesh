@@ -102,7 +102,7 @@ echo "name:     " $name
 echo "trunk:    " `uci get asterisk.villagetelco.host`
 echo "username: " `uci get asterisk.villagetelco.username`
 echo "secret:   " `uci get asterisk.villagetelco.secret`
-echo "codec:    " `uci get asterisk.villagetelco.codec`
+echo "codec:    " `uci get asterisk.villagetelco.allow`
 
 # 6. Restart asterisk
 killall -TERM asterisk 

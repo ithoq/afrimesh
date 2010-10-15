@@ -108,7 +108,7 @@ configure_asterisk() {
       config_get host     "villagetelco" "host"
       config_get username "villagetelco" "username"
       config_get secret   "villagetelco" "secret"
-      config_get codec    "villagetelco" "codec"
+      config_get codec    "villagetelco" "allow"
       configure_sip "${username}:${secret}@${host}/${username}" "${username}" "${codec}"
   fi  
 }
