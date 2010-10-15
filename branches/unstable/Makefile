@@ -108,8 +108,8 @@ install-www:
 	-$(INSTALL) utilities/urldecode                      $(DASHBOARD_CGI)
 	-$(INSTALL) villagebus/villagebus                    $(DASHBOARD_CGI)
 	#-$(INSTALL) village-bus-radius/village-bus-radius $(DASHBOARD_CGI)
-	$(INSTALL) ./provisiond-bundles      	               $(DASHBOARD_CGI)
-	chmod 0755 $(DASHBOARD_CGI)/provisiond-bundles/mp01.handset/etc/init.d/asterisk
+	sudo $(INSTALL) ./provisiond-bundles      	               $(DASHBOARD_CGI)
+	sudo chmod 0755 $(DASHBOARD_CGI)/provisiond-bundles/mp01.handset/etc/init.d/asterisk
 	sudo chown -R 0:0 $(DASHBOARD_CGI)/provisiond-bundles
 	sudo find $(DASHBOARD_CGI) -name "*~"   | xargs rm -f
 	sudo find $(DASHBOARD_CGI) -name ".svn" | xargs rm -rf
