@@ -34,8 +34,11 @@ if [ "$REQUEST_METHOD" = "POST" ] || [ "$REQUEST_METHOD" = "PUT" ]; then
     #QUERY=`echo "$RAW_QUERY" | sed 's/\"/\\\"/g'`
     QUERY=`echo "$RAW_QUERY" | sed "s/\"/"\\\\\'"/g"`
 fi
-URL=`echo "$QUERY_STRING" | grep -oE "(^|[?&])url=[^&]+" | sed "s/%20/ /g" | cut -f 2- -d "="`
-CALLBACK=`echo "$QUERY_STRING" | grep -oE "(^|[?&])callback=[^&]+" | sed "s/%20/ /g" | cut -f 2- -d "="`
+#URL=`echo "$QUERY_STRING" | grep -oE "(^|[?&])url=[^&]+" | sed "s/%20/ /g" | cut -f 2- -d "="`
+URL=`echo "$QUERY_STRING" | sed 's/^url=*//' | sed 's/[&|?]callback=.*//' | sed "s/%20/ /g"`
+# TODO - is this obsolete now?
+#CALLBACK=`echo "$QUERY_STRING" | grep -oE "(^|[?&])callback=[^&]+" | sed "s/%20/ /g" | cut -f 2- -d "="`
+CALLBACK=`echo "$QUERY_STRING" | sed 's/.*callback=*//'`
 
 # - parse remote url -------------------------------------------------------
 REMOTE_HOST=`echo $URL | sed -e 's/http:\/\///;s|\/.*||;s|\:.*||'`
@@ -48,14 +51,20 @@ if [ -z $REMOTE_HOST ] ; then
     rm "$BUFFER"
     exit
 fi
-REMOTE_PORT=`echo $URL | sed -e 's/http:\/\/.*://;s/[^0-9].*//'`
+ADR=`echo $URL | grep -o http://[^/]*`
+REMOTE_PORT=`echo $ADR | sed -e 's/http:\/\/.*://;s/[^0-9].*//'`
 REMOTE_PATH=`echo $URL | sed -e 's/http:\/\/[^\/]*//g'`
 [ -z $REMOTE_PORT ] && REMOTE_PORT="80"
 [ -z $REMOTE_PATH ] && REMOTE_PATH="/"
-[ ! -z $CALLBACK ]  && REMOTE_PATH="$REMOTE_PATH?callback=$CALLBACK"
+if [ ! -z $CALLBACK ] && [ $URL != "${URL/\?/}" ]; then
+    REMOTE_PATH="$REMOTE_PATH&callback=$CALLBACK"
+elif [ ! -z $CALLBACK ]; then
+    REMOTE_PATH="$REMOTE_PATH?callback=$CALLBACK"
+fi
 
 # log client request
 if [ "$LOG" = "1" ] ; then
+    echo "ajax-proxy.cgi - QUERY_STRING:   $QUERY_STRING"   >> "$BUFFER"
     echo "ajax-proxy.cgi - URL:            $URL"            >> "$BUFFER"
     echo "ajax-proxy.cgi - CALLBACK:       $CALLBACK"       >> "$BUFFER"
     echo "ajax-proxy.cgi - REMOTE_HOST:    $REMOTE_HOST"    >> "$BUFFER"
