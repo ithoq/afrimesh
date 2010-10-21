@@ -295,9 +295,9 @@ var Map = undefined;
      * Take a B.A.T.M.A.N. link quality value and convert it to a HTML color string
      */
     var quality = { 
-      good  : 1.02,
-      bad   : 1.04,
-      fault : 1.06
+      good  : 1.5,
+      bad   : 2.0,
+      fault : 10.0
     };
     
     var lq_to_color = function(lq) {
