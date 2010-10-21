@@ -297,7 +297,7 @@ var Map = undefined;
     var quality = { 
       good  : 1.5,
       bad   : 2.0,
-      fault : 10.0
+      fault : 3.0
     };
     
     var lq_to_color = function(lq) {
