@@ -273,7 +273,7 @@ const fexp* provision_handset(closure* c, provision* self, const fexp* message)
     return (fexp*)send(VillageBus, s_villagebus_error, L"Syntax Error: Invalid provisioning response from a3glue");
   }
 
-  wchar_t* trunk       = PROVISION_DEFAULT_ROOT;  // TODO - evil hardcoded ip is evil
+  wchar_t* trunk       = "192.168.130.2"; // PROVISION_DEFAULT_ROOT;  // TODO - evil hardcoded ip is evil
   const char* did      = json_object_get_string(json_object_object_get(a3glue, "did"));
   const char* username = json_object_get_string(json_object_object_get(a3glue, "username"));
   const char* secret   = json_object_get_string(json_object_object_get(a3glue, "uipass"));
