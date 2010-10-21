@@ -259,7 +259,7 @@ const fexp* provision_handset(closure* c, provision* self, const fexp* message)
   // Ask A2Billing for a trunk&username&secret&codec
   string* url = (string*)send(String, s_string_fromwchar, 
                               L"http://%S/a3glue/a3g_provisioning.php?mac_addr=%S", 
-                              L"10.0.0.4", mac->buffer); // TODO - evil hardcoded address is evil
+                              L"192.168.130.2", mac->buffer); // TODO - evil hardcoded address is evil
   fexp* urlf = (fexp*)send(fexp_nil, s_fexp_cons, url);
   string* response  = (string*)send(Http, s_http_get, urlf);
   if ((size_t)send(response, s_length) == 0) {
