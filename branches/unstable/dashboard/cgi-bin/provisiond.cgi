@@ -74,7 +74,8 @@ provisioned=(`$VILLAGEBUS GET "$PATH_INFO?$QUERY_STRING"`)
 provisioned_id=${provisioned[0]} 
 provisioned_mac=${provisioned[1]} 
 provisioned_ip=${provisioned[2]} 
-provisioned_root=${provisioned[3]}
+#provisioned_root=${provisioned[3]} # TODO - pull from provisioning module once module no longer hardcodes it
+provisioned_root=`$UCI get afrimesh.settings.root`
 provisioned_lon=`$UCI get afrimesh.location.longitude`
 provisioned_lat=`$UCI get afrimesh.location.latitude`
 log "Provisioned device:    $provisioned_id"
