@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ----------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=1056
+PKG_REV:=1060
 #PKG_REV:=`svn info | grep -o "Revision: [0-9]*" | sed -e "s/Revision: //"`
 PKG_VERSION:=1.0pre-r$(PKG_REV)
 PKG_RELEASE:=1

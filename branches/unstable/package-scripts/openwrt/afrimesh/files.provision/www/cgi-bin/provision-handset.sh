@@ -73,7 +73,8 @@ echo
 #      a self extracting tarfile.
 #   
 echo "- unpacked provisioning bundle -------------------------------------"
-tar xvzf $BUNDLE -C /
+tar xvzf $BUNDLE -C / | xargs chown root:root
+chmod 0666 /etc/config/*
 rm $BUNDLE
 echo
 

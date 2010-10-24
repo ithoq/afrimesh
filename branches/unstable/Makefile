@@ -6,7 +6,7 @@
 
 # - configuration ----------------------------------------------------------
 #REVISION=`svn info | grep -o "Revision: [0-9]*" | sed -e "s/Revision: //"`
-REVISION=1056
+REVISION=1060
 VERSION=1.0pre-r$(REVISION)
 RELEASE=1
 
@@ -110,14 +110,12 @@ install-www:
 	-$(INSTALL) utilities/urldecode                      $(DASHBOARD_CGI)
 	-$(INSTALL) villagebus/villagebus                    $(DASHBOARD_CGI)
 	#-$(INSTALL) village-bus-radius/village-bus-radius $(DASHBOARD_CGI)
-	sudo rm -rf $(DASHBOARD_CGI)/provisiond-bundles
 	$(INSTALL) ./provisiond-bundles      	               $(DASHBOARD_CGI)
 	chmod 0755 $(DASHBOARD_CGI)/provisiond-bundles/mp01.handset/etc/init.d/asterisk
 	find $(DASHBOARD_CGI) -name "*~"   | xargs rm -f
 	find $(DASHBOARD_CGI) -name ".svn" | xargs rm -rf
 	find $(DASHBOARD_WWW) -name "*~"   | xargs rm -f
 	find $(DASHBOARD_WWW) -name ".svn" | xargs rm -rf
-	sudo chown -R 0:0 $(DASHBOARD_CGI)/provisiond-bundles
 
 install-config: 
 	@echo "Installing configuration files in: $(DASHBOARD_ETC)"
@@ -186,9 +184,8 @@ packages-linux : source-packages-linux binary-packages-linux
 
 source-packages-linux : prep-linux
 	@echo "Building Debian/Ubuntu source packages"
-	#REENABLE 
 	cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; debuild -S
-	#cd $(PKG_BUILD_DIR)/villagetelco-dashboard-$(VERSION) ; debuild -S
+	cd $(PKG_BUILD_DIR)/villagetelco-dashboard-$(VERSION) ; debuild -S
 
 binary-packages-linux : prep-linux
 	@echo "Building Debian/Ubuntu packages"
@@ -196,7 +193,6 @@ binary-packages-linux : prep-linux
 	echo "HOOKDIR=$(PKG_BUILD_DIR)/hook.d" >> ~/.pbuilderrc
 	mkdir -p $(PKG_BUILD_DIR)/hook.d
 	cp package-scripts/debian/pbuilder-update-$(PPA)-keys.sh $(PKG_BUILD_DIR)/hook.d/D70update-ppa-keys
-	#REENABLE 
 	cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; pdebuild 
 	cd $(PKG_BUILD_DIR)/villagetelco-dashboard-$(VERSION) ; pdebuild 
 	@echo "Built: "
@@ -218,15 +214,10 @@ prep-linux : clean-linux sources #hooks-linux
 	@echo "Initializing linux package scripts for build"
 	mkdir -p $(PKG_BUILD_DIR)
 	cd $(PKG_BUILD_DIR) ; cp /tmp/afrimesh-$(VERSION).tar.gz .
-	# RE 
 	cd $(PKG_BUILD_DIR) ; tar xzvf afrimesh-$(VERSION).tar.gz
-	# RE 
 	cd $(PKG_BUILD_DIR) ; mv afrimesh-$(VERSION) afrimesh-dashboard-$(VERSION)
-	# RE 
 	cd $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION) ; dh_make -c BSD -e antoine@7degrees.co.za -s --createorig
-	# RE 
 	rm -rf $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION)/debian/*
-	# RE 
 	cp -a package-scripts/debian/afrimesh-dashboard/* $(PKG_BUILD_DIR)/afrimesh-dashboard-$(VERSION)/debian
 	# VTE package
 	cd $(PKG_BUILD_DIR) ; tar xzvf afrimesh-$(VERSION).tar.gz

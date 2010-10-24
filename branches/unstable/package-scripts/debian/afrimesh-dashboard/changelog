@@ -1,3 +1,10 @@
+afrimesh-dashboard (1.0pre-r1060-1) lucid; urgency=low
+
+  * Afrimesh VTE Server interim release.
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Sat, 24 October 2010 14:35:00 +0200
+
+
 afrimesh-dashboard (1.0pre-r965-1) lucid; urgency=low
 
   * Afrimesh 1.0 pre-release package. Please don't redistribute!
