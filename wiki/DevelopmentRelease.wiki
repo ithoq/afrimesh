@@ -43,9 +43,9 @@ While we maintain a mirror of the openwrt package scripts in the afrimesh source
 
 
 = Ubuntu =
-* Bump revision number:
+* bump revision number and check build PPA:
 {{{
-  # edit VERSION to reflect the correct subversion revision number
+  # edit VERSION to reflect the correct subversion revision number & check value of PPA variable
   vi Makefile
   # update changelog
   vi ./package-scripts/debian/afrimesh-dashboard/changelog
