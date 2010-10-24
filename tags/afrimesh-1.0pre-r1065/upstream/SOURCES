@@ -1,0 +1,99 @@
+
+
+Notes:
+------
+
+# openlayers
+svn co http://svn.openlayers.org/trunk/openlayers/ openlayers.svn
+cd openlayers.svn/build
+./build.py ../../openlayers.support/afrimesh.cfg
+
+
+# batman
+svn co http://downloads.open-mesh.net/svn/batman/trunk batman.svn
+
+
+# freeradius
+wget ftp://ftp.freeradius.org:/pub/freeradius/freeradius-server-2.1.6.tar.gz
+tar xzvf freeradius-server-2.1.6.tar.gz
+cd freeradius-server-2.1.6 ; ./configure ; make
+# edit freeradius.rlm/Makefile and set location of configured&compiled freeradius sources
+cd freeradius; make 
+
+
+# memcachedb & libmemcachedb
+svn co http://memcachedb.googlecode.com/svn/trunk/ memcachedb.svn
+svn co http://memcachedb.googlecode.com/svn/clients/libmemcached-0.25-patch libmemcached-0.25-patch.svn
+
+
+# olsr
+# DEPRECATED: hg clone http://gredler.at/hg/olsrd/
+hg clone http://gredler.at/hg/olsrd-0.5.6/
+mv olsrd olsrd.hg
+# DEPRECATED ./olsrd -n -f ../olsrd.support/olsrd.conf --dlPath lib/json_draw/
+./olsrd -f ../olsrd.support/olsrd.conf -i en1 -nofork
+
+
+# pmacct
+wget http://www.pmacct.net/pmacct-0.11.6.tar.gz
+tar xzvf pmacct-0.11.6.tar.gz
+cd pmacct-0.11.6
+patch -p1 < ../pmacct.patches/01-add-switch-to-output-json.patch
+# cvs -d :pserver:anonymous@cvs.pmacct.net:/home/repo-0.12 login  # pass: pmacct
+# cvs -d :pserver:anonymous@cvs.pmacct.net:/home/repo-0.12 co pmacct
+# mv pmacct pmacct.cvs
+
+
+
+
+Creating patches:
+-----------------
+
+* Create patches against subversioned sources with:
+  
+  svn diff > ../project.patches/description.patch
+
+* Create patches against git sources with:
+
+  git format-patch origin/master
+
+* Create patches against hg sources with:
+
+  hg diff -p -U 8 path/
+
+* Create patches against cvs sources with:
+
+  cvs diff -u8p path/
+
+* Create patches against unversioned sources with:
+
+  diff -Nuwarp project.orig/ project.patched/ > project.patches/description.patch  # for directories
+
+  diff -wup    oldfile newfile > ../project.patches/description.patch   # for files
+
+
+Applying patches:
+-----------------
+
+* Apply patches with:
+
+  patch -p1 < patch
+
+
+Also see: 
+---------
+
+  http://stephenjungels.com/jungels.net/articles/diff-patch-ten-minutes.html
+  http://www.gimp.org/bugs/howtos/submit-patch.html
+  https://developer.mozilla.org/en/Creating_a_patch
+
+
+For example:
+------------
+
+  diff -Nuwarp pmacct-0.11.6 pmacct-0.11.6.patched > pmacct.patches/01-add-switch-to-output-json.patch
+
+  patch -p1 < ../pmacct.patches/01-add-switch-to-output-json.patch
+
+
+

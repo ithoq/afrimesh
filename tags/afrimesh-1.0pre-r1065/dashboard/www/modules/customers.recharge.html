@@ -1,0 +1,115 @@
+<!--
+ * Afrimesh: easy management for B.A.T.M.A.N. wireless mesh networks
+ * Copyright (C) 2008-2009 Meraka Institute of the CSIR
+ * All rights reserved.
+ *  
+ * This software is licensed as free software under the terms of the
+ * New BSD License. See /LICENSE for more information.
+-->
+
+<h2>Recharge Customers</h2>
+
+<div id="widget-customers-recharge" class="widget customers-recharge">
+  <table id="choose">
+    <tr id="customer-plans">
+      <!-- plans get inserted here by populate_control() -->
+      <td class="spacer"></td>
+      <td><div class="button-submit round" id="prepaid-recharge"><p><b>recharge</b></p></div></td>
+    </tr>
+    <tr>
+      <td colspan="3" class="h-brace"></td>
+      <td class="spacer"></td>
+      <td class="h-brace"></td>
+    </tr>
+    <tr>
+      <td colspan="3" class="instructions">1. select plan</center></td>
+      <td class="spacer"></td>
+      <td class="instructions">2. profit!</td>
+    </tr>
+  </table>
+</div>
+
+
+
+<script type="text/javascript"> //<![CDATA[    
+(function() {
+
+  /** includes ------------------------------------------------------------ */
+
+
+  /** construction -------------------------------------------------------- */
+  ready = function() { // INJ 'ready' should be the only symbol we're exposing to the global namespace
+    afrimesh.device.configuration("root", "afrimesh", function(error, config) { // TODO - move to afrimesh.customers
+        if (error) return console.error("Could not retrieve customer plans: " + error);
+        customer_plans = [];
+        for (var section in config.afrimesh) {
+          var plan = config.afrimesh[section];
+          if (plan._sectiontype == "customer-plan") {  // TODO - design a cleaner solution for uci lists ? 
+            plan.section = section;            //        Probably not do-able given that uci does not
+            customer_plans.push(plan);         //        group entries logically but only in the order
+          }                                    //        they appear in the config file.
+        }
+        populate_control(customer_plans);
+      });
+    console.debug("loaded customers.recharge.html");
+    return unload;
+  };
+
+  function unload() {
+    console.debug("unloaded customers.recharge.html");
+  };
+
+
+  /** page logic ---------------------------------------------------------- */
+  function populate_control(customer_plans) {
+    var content = "";
+    customer_plans.map(function(plan) {
+        content += "<td><div class='button round' id='" + plan.minutes + "'>";
+        content += "<p><b>" + plan.currency + plan.price + "</b><i>" + plan.minutes + " minutes</i></p></div></td>";
+      });
+    $("#customer-plans").html(content + $("#customer-plans").html());
+    $("div.button").hover(function() { $(this).addClass   ("hover"); },
+                          function() { $(this).removeClass("hover"); });
+    $("div.button-submit").hover(function() { if (!$("div.button").hasClass("selected")) return; else $(this).addClass   ("hover"); },
+                                 function() { $(this).removeClass("hover"); });
+    $("div.button").click(function() {
+        $("div.button-submit").removeClass("selected");
+        $("div.button").removeClass("selected");
+        $(this).addClass("selected");
+      });
+    $("div.button-submit").mousedown(function() {
+        if (!$("div.button").hasClass("selected")) return;
+        $(this).addClass("selected");
+      });
+    $("div.button-submit").mouseup(on_submit);
+  };
+
+  function on_submit() {
+    $(this).removeClass("selected");
+    var plan = $("div#widget-customers-recharge div.button.selected").get(0).id;
+    afrimesh.customers.generate("mesh", "prepaid", plan, function(error, customer) { // TODO make customers not array!
+        if (error || !customer || customer.error) { // TODO - only one kind of error please
+          return console.error("Could not generate new customer: " + error + (customer ? " - " + customer.error : ""));
+        }
+        var s = "<center><table>";
+        s += "<tr><td><div class='voucher button round'>";
+        s += "<p><b>" + customer[0].username + "</b><i>username</i></p>";
+        s += "<p><b>" + customer[0].password + "</b><i>password</i></p>";
+        s += "</div></td></tr>";
+        s += "<tr><td><div class='button-submit round' id='menu-customers-recharge' style='float:center;'><p><b>print</b></p></div></td></tr>";
+        s += "</table><center>";
+        $("#widget-customers-recharge table").hide();
+        $("#widget-customers-recharge").html(s);
+        $("div.button-submit").hover(function() { $(this).addClass   ("hover"); },
+                                     function() { $(this).removeClass("hover"); });
+        $("div.button-submit").click(function() { $("ul#menu ul#customers li#recharge").click(); });
+      });
+  };
+
+  /** done ---------------------------------------------------------------- */
+  console.debug("loaded customers.recharge.js");
+
+})();
+//]]></script>
+
+

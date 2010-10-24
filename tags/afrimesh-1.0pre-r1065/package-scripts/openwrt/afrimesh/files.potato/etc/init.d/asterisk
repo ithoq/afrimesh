@@ -1,0 +1,165 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2006 OpenWrt.org
+
+START=50 
+DEST=
+DEFAULT=$DEST/etc/default/asterisk
+OPTIONS=""
+
+
+is_false() {
+    [ $1 != "true" ] && [ $1 != "on" ] && [ $1 != "1" ] && [ $1 != "yes" ]
+}
+
+
+append_sip_parm() {
+  local section="$1"
+  local option="$2"
+  local default="$3"
+  local key="$4"
+  if [ -z "$key" ] ; then 
+      key="$option"
+  fi
+  local value
+  config_get value "$section" "$option"
+  if [ -z "$value" ] ; then
+      value="$default"
+  fi
+  if [ ! -z "$key" ] && [ ! -z "$value" ] ; then
+    append sipconf "\n$key=$value"
+  fi
+}
+
+
+append_sip_entry() {
+  local cfg="$1"
+  append sipconf "\n\n[$cfg]"
+  append_sip_parm "$cfg" "context"     "default"
+  append_sip_parm "$cfg" "type"        "peer"
+  append_sip_parm "$cfg" "host"        "10.13.1.1"
+  append_sip_parm "$cfg" "port"        "5060"
+  append_sip_parm "$cfg" "username"    ""
+  append_sip_parm "$cfg" "username"    ""         "authuser"
+  append_sip_parm "$cfg" "username"    ""         "fromuser"
+  append_sip_parm "$cfg" "secret"      ""
+  append_sip_parm "$cfg" "host"        ""         "fromdomain"
+  append_sip_parm "$cfg" "nat"         "no"
+  append_sip_parm "$cfg" "qualify"     "3600"
+  append_sip_parm "$cfg" "dtmfmode"    "rfc2833"
+  append_sip_parm "$cfg" "bindaddr"    "0.0.0.0"
+  append_sip_parm "$cfg" "bindport"    "5060"
+  append_sip_parm "$cfg" "insecure"    ""
+  append_sip_parm "$cfg" "callerid"    ""
+  append_sip_parm "$cfg" "canreinvite" ""
+  append_sip_parm "$cfg" "allowguest"  ""
+  append_sip_parm "$cfg" "allow"       ""
+  #append sipconf "\ndisallow=all"
+  #append sipconf "\nallow=$(uci get asterisk.@sipgeneral[0].allow)"  
+}
+
+
+configure_sip() {
+  local sipremote="$1"
+  local sipextension="$2"
+
+  # build & write out potato.sip.conf  
+  [ $(grep -c "#include \"potato\.sip\.conf\"" /etc/asterisk/sip.conf) -eq 0 ] && \
+    echo "#include \"potato.sip.conf\"" >> /etc/asterisk/sip.conf 
+  local sipconf=""
+  config_foreach append_sip_entry sip
+  echo -e "register => ${sipremote}" > /etc/asterisk/potato.sip.conf # TODO - register incoming sip providers for all sip entries
+  echo -e "${sipconf}" >> /etc/asterisk/potato.sip.conf
+
+  # build & write out potato.extensions.conf  
+  [ $(grep -c "#include \"potato\.extensions\.conf\"" /etc/asterisk/extensions.conf) -eq 0 ] && \
+    echo "#include \"potato.extensions.conf\"" >> /etc/asterisk/extensions.conf 
+  cat > /etc/asterisk/potato.extensions.conf << EOF
+; new dial rules to support SIP client functionality
+exten => ${sipextension},1,Dial(MP/1)                ; answer incoming SIP calls
+exten => _XXXX,1,Dial(SIP/\${EXTEN}@sippotato,30,r)  ; route 4 digit extensions to SIP provider
+exten => _0.,1,Dial(SIP/\${EXTEN}@sippotato,30,r)    ; trunk everything after '0' through SIP provider
+EOF
+}
+
+
+configure_asterisk() {
+  # load asterisk configuration from UCI
+  config_load afrimesh
+  config_get sip_enable "voip" "sip"
+  config_get iax_enable "voip" "iax"
+
+  # load asterisk configuration from UCI
+  config_load asterisk
+
+  # clear any existing potato configuration 
+  echo > /etc/asterisk/potato.sip.conf
+  echo > /etc/asterisk/potato.extensions.conf
+
+  # configure sip trunks
+  if is_false $sip_enable ; then
+      return
+  else
+      config_get host     "sippotato" "host"
+      config_get username "sippotato" "username"
+      config_get secret   "sippotato" "secret"
+      configure_sip "${username}:${secret}@${host}/${username}" "${username}"
+  fi  
+}
+
+
+restart() {
+  # kill asterisk
+  [ -f $DEST/var/run/asterisk.pid ] && kill $(cat $DEST/var/run/asterisk.pid) >/dev/null 2>&1
+  sleep 2
+
+  # reconfigure asterisk
+  configure_asterisk
+
+  # restart asterisk
+  /usr/sbin/asterisk -f 2>&1 > /dev/null &
+}
+
+
+reload() {
+  # reconfigure asterisk
+  configure_asterisk
+
+  # reload dialplan
+  /usr/sbin/asterisk -rx 'reload' > /dev/null
+
+  # it takes asterisk a few moments to update peer status
+  sleep 4
+}
+
+
+start() {
+  # create asterisk directories
+  [ -f $DEFAULT ] && . $DEFAULT
+  [ -d $DEST/var/run ] || mkdir -p $DEST/var/run
+  [ -d $DEST/var/log/asterisk ] || mkdir -p $DEST/var/log/asterisk
+  [ -d $DEST/var/spool/asterisk ] || mkdir -p $DEST/var/spool/asterisk
+  [ -d /var/spool/asterisk ] || mkdir -p /var/spool/asterisk
+  [ -h $DEST/usr/lib/asterisk/astdb ] || ln -sf /var/spool/asterisk/astdb $DEST/usr/lib/asterisk/astdb
+
+  # create device nodes if needed
+  [ ! -c /dev/8250mp ] && mknod -m 666 /dev/8250mp c 33 0
+  [ ! -c /dev/mp     ] && mknod -m 666 /dev/mp     c 34 0
+  
+  # load kernel modules if needed
+  [ $(cut -d ' ' -f 1 /proc/modules | grep -c "^serial_core") -eq 0 ] && insmod /usr/lib/serial_core.ko
+  [ $(cut -d ' ' -f 1 /proc/modules | grep -c "^8250mp")      -eq 0 ] && insmod /usr/lib/8250mp.ko
+  [ $(cut -d ' ' -f 1 /proc/modules | grep -c "^mp")          -eq 0 ] && insmod /usr/lib/mp.ko
+  sleep 1
+
+  # generate the includes for asterisk configuration
+  configure_asterisk
+
+  # start up asterisk
+  /usr/sbin/asterisk -f 2>&1 > /dev/null &
+}
+
+
+stop() {
+  [ -f $DEST/var/run/asterisk.pid ] && kill $(cat $DEST/var/run/asterisk.pid) >/dev/null 2>&1
+}
+

@@ -1,0 +1,23 @@
+config 'afrimesh' 'dashboard'
+	option 'network_name' 'Mesh Potato'
+
+config 'afrimesh' 'support'
+	option 'howto'  'afrimesh'
+	option 'group'  'afrimesh-dev'
+	option 'irc'    'http://webchat.freenode.net/?channels=afrimesh'
+
+config 'afrimesh' 'map'
+	option 'server' 'openstreetmap.org'
+	option 'extent' '0.1'
+	option 'zoom'   '15'
+	option 'aerial' '0'
+
+config 'afrimesh' 'location'
+	option 'longitude' '28.278337'
+	option 'latitude'  '-25.746633'
+
+config 'afrimesh' 'settings'
+	option 'locale'     'en_US.UTF-8'
+  option 'root'       '10.130.1.1'
+
+

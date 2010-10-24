@@ -1,0 +1,17 @@
+diff -urN a/www/chilliController.js b/www/chilliController.js
+--- a/www/chilliController.js	2010-03-02 14:03:36.000000000 +0200
++++ b/www/chilliController.js	2010-08-26 14:32:23.000000000 +0200
+@@ -240,7 +240,7 @@
+ 
+ var chillijsWindowOnLoad = window.onload;
+ var delayTimer; // global reference to delayTimer
+-window.onload = function() {
++var readyfn = function() {
+     if (chillijsWindowOnLoad) 
+ 	chillijsWindowOnLoad();
+ 
+@@ -285,3 +285,4 @@
+     showWaitPage(); 
+     setTimeout('chilliController.refresh()', 500);
+ }
++setTimeout(readyfn, 250); // chrome does not trigger window.onload :-/

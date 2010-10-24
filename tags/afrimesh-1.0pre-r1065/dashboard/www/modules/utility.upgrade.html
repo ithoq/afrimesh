@@ -1,0 +1,197 @@
+<!--
+ * Afrimesh: easy management for B.A.T.M.A.N. wireless mesh networks
+ * Copyright (C) 2008-2009 Meraka Institute of the CSIR
+ * All rights reserved.
+ *  
+ * This software is licensed as free software under the terms of the
+ * New BSD License. See /LICENSE for more information.
+-->
+
+<div class="utility-upgrade">
+
+  <table id="update-packages" border=0 width=600>
+    <thead><th colspan=2>Update Potato Packages</th></thead>
+    <tr valign="top" style="height: 3.0em;">
+      <td>Check for updated packages</td>
+      <td align="right"><button>check</button></td>
+    </tr>
+  </table>
+
+  <table id="reflash-firmware" border=0 width=600>
+    <thead><th colspan=2>Reflash Potato Firmware</th></thead>
+    <tr valign="top"> 
+      <td>Upload new firmware</td>
+      <td align="right">
+        <form id="uploader" name="uploader" method="POST" enctype="multipart/form-data" 
+              action="/cgi-bin/firmware-upload.cgi">
+          <input name="file" id="file" type="file" />
+          <button>upload</button><br/>
+        </form>
+      </td>
+    </tr>
+    <tr><td colspan=2>&nbsp;</td></tr>
+    <tr>
+      <td colspan=2>
+        <div style="width:600px; max-height:200px; overflow:auto; word-wrap:break-word; white-space:pre-wrap;" 
+             id="log"></div>
+      </td>
+    </tr>
+  </table>
+  
+</div>
+
+<!-- hidden iframe for communication with the router during reflash operation -->
+<iframe style="width: 0px; height:0px; visibility:hidden;"
+        id="post_iframe" name="post_iframe" src="">
+</iframe>
+
+<script type="text/javascript"> //<![CDATA[    
+(function() {
+
+  /** includes ------------------------------------------------------------ */
+  /* load includes with: load("path/to/file.js");   */
+  /* often a good idea:  load("modules/utility.upgrade.js"); *;/
+
+  /** construction -------------------------------------------------------- */
+  ready = function() { // INJ 'ready' should be the only symbol we're exposing to the global namespace
+    console.debug("loaded utility.upgrade.html");
+    $("#update-packages  button").click(on_update_packages);
+    $("#reflash-firmware button").click(on_reflash_firmware);
+    return unload;
+  };
+
+  function unload() {
+    console.debug("unloaded utility.upgrade.html");
+  };
+
+  function done() {
+    $("ul#menu ul#utility li#upgrade").click(); 
+  };
+
+
+  /** update packages ------------------------------------------------------ */
+
+  function on_update_packages() {
+    $("#update-packages button").unbind("click");
+    $("#update-packages button").html("<img src='images/indicator.gif'/>");
+    $("#update-packages td:eq(0)").html("Updating package list . . .");
+    $("#reflash-firmware").html("");
+
+    var address = afrimesh.settings.address;
+
+    afrimesh.device.package.update(address, update_complete);
+    function update_complete(error, log) {
+      if (error) return console.error("Could not update package list");
+      $("#update-packages td:eq(0)").append(log.join("<br/>"));
+      afrimesh.device.package.list(address, list_complete);
+    };
+
+    function list_complete(error, packages) {
+      if (error) return console.error("Could not list upgradable packages");
+      var updates = $("#update-packages td:eq(0)").html("");
+      var html = "<table cellspacing=0 cellpadding=0 border=0 style='margin:0px; padding:0px;'>";
+      //html += "<tr><td width=100><i>package</i></td><td><i>current</i></td><td><i>update</i></td></tr>";
+      packages.map(function(package) { 
+          html += "<tr>" + "<td width=150><b>" + package.name    + "</b>&nbsp;&nbsp;</td>" + 
+                           "<td>"    + package.version + "&nbsp;&nbsp;</td>" +
+                           "<td>"    + package.comment + "</td></tr>";
+        });
+      html += "</table";
+      updates.append(html);
+      $("#update-packages button").html("update");  
+      $("#update-packages button").click(function() { 
+          $("#update-packages button").unbind("click");
+          $("#update-packages button").html("<img src='images/indicator.gif'/>")
+          $("#update-packages td:eq(0)").html("Updating packages . . .");
+          upgrade_complete([], packages);
+        });  
+    };
+    
+    function upgrade_complete(log, packages) {
+      $("#update-packages td:eq(0)").append(log.join("<br/>"));
+      if (packages.length) {
+        var package = packages.pop();
+        afrimesh.device.package.upgrade(address, package.name, function(error, log) { 
+            if (error) return console.error("Could not upgrade package: " + package.name);
+            upgrade_complete(log, packages); 
+          });
+        return;
+      }
+      $("#update-packages button").html("done");
+      $("#update-packages button").click(done);
+    };
+  };
+
+
+  /** upload firmware ------------------------------------------------------ */
+
+  function on_reflash_firmware() {
+    $("#reflash-firmware button").unbind("click");
+    $("#reflash-firmware button").html("<img src='images/indicator.gif'/>");
+    $("#reflash-firmware td:eq(0)").html("Uploading firmware image . . .");
+    $("#reflash-firmware #file").hide();
+    $("#update-packages").html("");
+
+    // post the firmware
+    $("#reflash-firmware #uploader").attr("target", "post_iframe");
+    $("#reflash-firmware #uploader").submit();
+    $("#reflash-firmware #uploader").unbind("submit");
+    $("#reflash-firmware #uploader").bind("submit", function() { return false; });
+
+    // check for upload completion
+    var timer = setTimeout(check_upload, 1000);
+    function check_upload() {
+      clearTimeout(timer);
+      $("#reflash-firmware td:eq(0)").append(" .");
+      var result = $("#post_iframe").contents().text();
+      if (result == "") { // TODO - ajax to check progress % ?  ->  the original form needs to send a unique id which our haserl upload handler can use to write a file containing progress info
+        timer = setTimeout(check_upload, 1000);
+        return;
+      } 
+      result = JSON.parse(result);
+      if (!result || result.error || !result.image || result.image == "") {
+        $("#reflash-firmware td:eq(0)").html("<b>error:</b> " + result.error);
+        $("#reflash-firmware button").html("retry").click(done);
+        return;
+      } 
+      $("#reflash-firmware td:eq(0)").html("Firmware uploaded successfully. Ready to flash.");
+      $("#reflash-firmware button").html("flash");
+      $("#reflash-firmware button").click(function() { 
+          $("#reflash-firmware button").unbind("click");
+          $("#reflash-firmware button").html("<img src='images/indicator.gif'/>");
+          $("#reflash-firmware td:eq(0)").html("Flashing firmware image . . .");
+          $("#post_iframe").contents().text("");
+          $("#post_iframe").attr("src", "/cgi-bin/firmware-flash.cgi?image=" + result.image);
+          timer = setTimeout(check_flash, 1000);
+        });
+    };
+
+    function check_flash() {
+      clearTimeout(timer);
+      $("#reflash-firmware td:eq(0)").append(" .");
+      var result = $("#post_iframe").contents().text();
+      if (result.indexOf("\"error\"") != -1) {
+        result = JSON.parse(result);
+        $("#reflash-firmware td:eq(0)").html("<b>error:</b> " + result.error);
+        $("#reflash-firmware button").html("retry").click(done);
+        return;
+      } else if (result.indexOf("Rebooting") == -1) {
+        $("#reflash-firmware #log").html("<pre>" + result + "</pre>");
+        timer = setTimeout(check_flash, 10000); 
+        return;
+      }
+      console.log("UPGRADED ROUTER: " + result);
+      $("#reflash-firmware td:eq(0)").html("<p>Upgrade completed</p><br/>" + 
+                                           "<p>Rebooting system . . .</p><br/>");
+      $("#reflash-firmware button").hide();
+      $("#reflash-firmware #log").hide();
+    };
+  };
+
+
+  /** done ---------------------------------------------------------------- */
+  console.debug("loaded utility.upgrade.js");
+ 
+})();
+//]]></script>
+

@@ -1,0 +1,27 @@
+#!/bin/sh /etc/rc.common
+START=30
+
+start () {
+  # fix cron
+  #/etc/init.d/cron stop
+  #/etc/init.d/cron enable
+  #/etc/init.d/cron start
+
+  # firewall
+  #mv /etc/config/firewall.afrimesh-base /etc/config/firewall
+  #mv /etc/firewall.user.afrimesh-base   /etc/init.d/firewall
+  #chmod 0755 /etc/init.d/firewall
+
+  # LuCI
+  #uci add_list lucid.luciweb.virtual=/village-bus
+  #uci commit
+  #/etc/init.d/lucid disable
+  #/etc/init.d/httpd enable
+
+  # permissions - TODO very evil 
+  chmod 0666 /etc/config/*
+
+  # cleanup
+  rm -rf /etc/init.d/runonce.afrimesh-base
+  rm -rf /etc/rc.d/S30runonce.afrimesh-base
+}

@@ -1,0 +1,186 @@
+<!--
+ * Afrimesh: easy management for B.A.T.M.A.N. wireless mesh networks
+ * Copyright (C) 2008-2009 Meraka Institute of the CSIR
+ * All rights reserved.
+ *  
+ * This software is licensed as free software under the terms of the
+ * New BSD License. See /LICENSE for more information.
+-->
+
+<table style="border:0px solid blue;">
+  <tr style="height:60px;">
+    <td style="vertical-align:middle;"><h2 style="padding:0px;">Internet Traffic&nbsp;&nbsp;</h2></td>
+    <td style="vertical-align:middle;">
+      <span id="traffic-internet" style="font-size:3em;"></span>
+      <br style="height:10px;" />
+      <span id="traffic-internet-in" style="color:orange;" />
+      <span id="traffic-internet-out" style="color:blue;" />
+    </td>
+    <td style="vertical-align:middle;">
+      &nbsp;&nbsp;
+      <span id="traffic-internet-busy" style="font-size:2.0em;">
+        <img src="images/indicator.gif"/>
+      </span>
+    </td>
+  </tr>
+</table>
+
+<p/><br/>
+
+<table border=0><tr><td><h2>Messages</h2></td></tr></table>
+<div id="network-messages" class="scrollview" style="top:160px";></div>
+
+
+<script type="text/javascript"> //<![CDATA[    
+(function() {
+
+  /** includes ------------------------------------------------------------ */
+  load("javascript/jquery/jquery.sparkline.js");
+
+  /** construction -------------------------------------------------------- */
+  ready = function() { // INJ 'ready' should be the only symbol we're exposing to the global namespace
+    //$(".traffic-village").sparkline([5,0,0,1,0,3], { type: 'bar', barColor: 'gray' });  // TODO - lose
+    console.debug("loaded network.health.html");
+    update();
+    return unload;
+  };
+
+  function unload() {
+    clearTimeout(timer);
+    console.debug("unloaded network.health.html");
+  };
+
+
+  /** update displays ----------------------------------------------------- */
+  var timer = {};
+  var update_frequency = 2000;
+  var update_target = 30000;
+  function update() {
+    clearTimeout(timer);
+
+    // traffic
+    afrimesh.device.snmp(afrimesh.settings.internet_gateway.address, 
+                         afrimesh.settings.internet_gateway.snmp.community, 
+                         [ // interfaces.ifTable.ifEntry.ifInOctets.interface
+                           ".1.3.6.1.2.1.2.2.1.10." + afrimesh.settings.internet_gateway.snmp.interface,    
+                           // interfaces.ifTable.ifEntry.ifOutOctets.interface
+                           ".1.3.6.1.2.1.2.2.1.16." + afrimesh.settings.internet_gateway.snmp.interface ],
+                         update_internet_traffic); 
+
+    // messages
+    afrimesh.network.log(update_network_messages, 20);
+
+    timer = setTimeout(update, update_frequency); 
+    if (update_frequency < update_target) {  
+      update_frequency *= 2;
+    }
+  };
+
+  var traffic = {
+    length    : 30,
+    max_down  : afrimesh.settings.internet_gateway.bandwidth.down,
+    max_up    : afrimesh.settings.internet_gateway.bandwidth.up,
+    down      : [], // [ afrimesh.settings.internet_gateway.bandwidth.down ],
+    up        : [], // [ afrimesh.settings.internet_gateway.bandwidth.up   ],
+    last      : new Date(),
+    last_down : 0,
+    last_up   : 0
+  }; 
+  for (var i = 0; i < traffic.length; i++) {
+    traffic.down.push(0);
+    traffic.up.push(0);
+  }
+  function update_internet_traffic(error, snmp) {
+    if (error) return console.error("Could not update internet traffic display: " + error);
+    var now = new Date();
+    if (traffic.last_down == 0      || traffic.last.getTime() > now.getTime() ||
+        traffic.last_down > snmp[0] ||  traffic.last_up   > snmp[1])  {  // IF_MIB__ifInOctets_4 | IF_MIB__ifOutOctets_4
+      traffic.last = now;
+      traffic.last_down = snmp[0];
+      traffic.last_up   = snmp[1];
+      return;
+    } 
+    var interval = now.getTime() - traffic.last.getTime();
+    var traffic_down = Math.min(traffic.max_down, ((snmp[0] - traffic.last_down) / interval) * 10.0);
+    var traffic_up   = Math.min(traffic.max_up,   ((snmp[1] - traffic.last_up)   / interval) * 10.0);
+    traffic.down.push(traffic_down);
+    traffic.up.push(traffic_up);
+    traffic.last_down = snmp[0];
+    traffic.last_up   = snmp[1];
+    traffic.last = now;
+    if (traffic.down.length > traffic.length) {
+      //traffic.down.splice(2, traffic.down.length - traffic.length); // leave 0 for scaling
+      traffic.down.splice(0, traffic.down.length - traffic.length); 
+    }
+    if (traffic.up.length > traffic.length) {
+      //traffic.up.splice(2, traffic.up.length - traffic.length); // leave 0 for scaling
+      traffic.up.splice(0, traffic.up.length - traffic.length);
+    }
+    $("#traffic-internet").sparkline(traffic.up,    { composite: false,  width: 200, lineColor: "blue",
+                                                      normalRangeMin:traffic.max_up - 10, normalRangeMax:traffic.max_up, normalRangeColor: "#fff", 
+                                                      spotColor: false, minSpotColor: false, maxSpotColor: false, fillColor: false });
+    $("#traffic-internet").sparkline(traffic.down,  { composite: true, width: 200, lineColor: "orange", 
+                                                      normalRangeMin:traffic.max_down - 10, normalRangeMax:traffic.max_down, normalRangeColor: "#eee", 
+                                                      spotColor: false, minSpotColor: false, maxSpotColor: false, fillColor: false });
+    $("#traffic-internet-in").html ("" + Math.floor(traffic_down) + "/" + traffic.max_down + "Kbps in, ");
+    $("#traffic-internet-out").html("" + Math.floor(traffic_up)   + "/" + traffic.max_up   + "Kbps out");
+    var n = Math.max(traffic_down / traffic.max_down, traffic_up / traffic.max_up);
+    var busy = ""; 
+    if (n < 0.2) {
+      busy += "<span style=\"color:green;\">relaxed</span>";
+    } else if (n < 0.75) {
+      busy += "<span style=\"color:green;\">normal</span>";
+    } else if (n < 0.90) {
+      busy += "<span style=\"color:orange;\">busy</span>";
+    } else {
+      busy += "<span style=\"color:red;\">full</span>";
+    }
+    $("#traffic-internet-busy").html(busy);
+
+  };
+
+
+  function update_network_messages(error, log) {
+    if (error) {
+      return console.error("error: " + error); // TODO - Fail handler
+    }
+
+    var html = "<table class='network-messages' border=0>"
+    html += "<thead><th>timestamp</th><th>level</th><th>node</th><th>process</th><th>message</th></thead>";
+    html += "<tbody></tbody></table>";
+    $("div#network-messages").html(html);
+    var table = $("#network-messages table > tbody:last"); 
+    log.map(function(entry) {
+        entry.level = entry.level.replace("<", "");
+        entry.level = entry.level.replace(">", "");
+        var row = "";
+        if (entry.level.indexOf(".notice") != -1) {
+          row += "<tr class='notice'>";
+        } else if (entry.level.indexOf(".warn") != -1) {
+          row += "<tr class='warn'>";
+        } else if (entry.level.indexOf("unknown.err") != -1) {
+          row += "<tr class='unknown'>";
+        } else if (entry.level.indexOf(".err") != -1) {
+          row += "<tr class='err'>";
+        } else {
+          row += "<tr class='unknown'>";
+        }
+
+        row += "<td id='timestamp'>"    + entry.timestamp + "</td>";
+        row += "<td id='level'>"        + entry.level     + "</td>";
+        row += "<td><div id='node'>"    + entry.address   + "</div></td>";
+        row += "<td id='process'>"      + entry.process   + "</td>";
+        row += "<td><div id='message'>" + entry.message   + "</div></td>";
+        row += "</tr>";
+        table.append(row);
+      });    
+  };
+
+
+  /** done ---------------------------------------------------------------- */
+  console.debug("loaded network.health.js");
+
+})();
+//]]></script>
+
+

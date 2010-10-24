@@ -1,0 +1,100 @@
+<!--
+ * Afrimesh: easy management for B.A.T.M.A.N. wireless mesh networks
+ * Copyright (C) 2008-2009 Meraka Institute of the CSIR
+ * All rights reserved.
+ *  
+ * This software is licensed as free software under the terms of the
+ * New BSD License. See /LICENSE for more information.
+-->
+
+<h2>Customer Plans</h2>
+
+<div id="customers-plans" class="customers-plans"></div>
+
+
+
+<script type="text/javascript"> //<![CDATA[    
+(function() {
+
+  /** includes ------------------------------------------------------------ */
+  load("javascript/jquery/jquery.jeditable.js");
+
+
+  /** construction -------------------------------------------------------- */
+  ready = function() { 
+    afrimesh.device.configuration("root", "afrimesh", function(error, config) {
+        if (error) return console.error("customers.plans - " + error);
+        customer_plans = [];
+        for (var section in config.afrimesh) {
+          var plan = config.afrimesh[section];
+          if (plan._sectiontype == "customer-plan") {  // TODO - design a cleaner solution for uci lists ? 
+            plan.section = section;                    //        Probably not do-able given that uci does not
+            customer_plans.push(plan);                 //        group entries logically but only in the order
+          }                                            //        they appear in the config file.
+        }
+        populate_control(customer_plans);      
+      });
+    console.debug("loaded customers.plans.html");
+    return unload;
+  };
+
+  function unload() {
+    console.debug("unloaded customers.plans.html");
+  };
+
+
+  /** page logic ---------------------------------------------------------- */
+  function populate_control(customer_plans) {
+
+    var s = "<table><thead><tr>";
+    s += "<th>name</th>";
+    s += "<th>minutes</th>";
+    s += "<th>currency</th>";
+    s += "<th>price</th></tr></thead>";
+    s += "<tbody>";
+    customer_plans.map(function(plan) {
+        s += "<tr class='plan'>";
+        s += "<td id='" + plan.section + "' class='name'>"     + plan.name     + "</td>";
+        s += "<td id='" + plan.section + "' class='minutes'>"  + plan.minutes  + "</td>";
+        s += "<td id='" + plan.section + "' class='currency'>" + plan.currency + "</td>";
+        s += "<td id='" + plan.section + "' class='price'>"    + plan.price    + "</td>";
+        s += "</tr>";
+      });
+    s += "</tbody>";
+    s += "</table>";
+    s += "<br/>";
+    $("div#customers-plans").html(s);
+
+    var settings = { type : "text", onblur : "submit", select : true, indicator : '<img src="images/indicator.gif">' };
+    $(".name")    .editable(on_submit, extend({ name : "name"     }, settings ));
+    $(".minutes") .editable(on_submit, extend({ name : "minutes"  }, settings ));
+    $(".currency").editable(on_submit, extend({ name : "currency" }, settings));
+    $(".price")   .editable(on_submit, extend({ name : "price"    }, settings ));
+  };
+
+
+  function on_submit(new_value, settings) {
+    afrimesh.device.configuration.set("root", [ { config  : "afrimesh", 
+                                                  section : this.id, 
+                                                  option  : settings.name, 
+                                                  value   : new_value } ], 
+                                      function (error, response) { 
+                                          if (error) return console.error("Could not update customer plan: " + error);
+                                          console.debug("Updated customer plan: " + dump_object(response)); 
+                                        });
+
+    // UDE - for uci lists the section id changes on commit
+    //       either grin&bear the page reload or maybe return the new 
+    //       section id so that we can update page id's ?
+    $("ul#menu ul#customers li#plans").click();
+
+    return new_value;
+  };
+
+  /** done ---------------------------------------------------------------- */
+  console.debug("loaded customers.plans.js");
+
+})();
+//]]></script>
+
+

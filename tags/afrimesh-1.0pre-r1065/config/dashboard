@@ -1,0 +1,4 @@
+config 'afrimesh' 'dashboard'
+        option 'visualisation_srv' '192.168.20.225'
+        option 'network_name' 'afrimesh'
+

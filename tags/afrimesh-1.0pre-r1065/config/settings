@@ -1,0 +1,3 @@
+config 'afrimesh' 'settings'
+       option 'locale' 'en_US.UTF-8'
+

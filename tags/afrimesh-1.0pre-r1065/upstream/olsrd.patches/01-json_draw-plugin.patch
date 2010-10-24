@@ -1,0 +1,749 @@
+diff -r a651cc474e85 Makefile
+--- a/Makefile	Sun Aug 09 09:00:01 2009 +0200
++++ b/Makefile	Wed Aug 12 17:01:38 2009 +0200
+@@ -149,9 +149,9 @@
+ SUBDIRS = $(notdir $(shell find lib -maxdepth 2 -name Makefile -not -path lib/Makefile -printf "%h\n"|sort))
+ else
+ ifeq ($(OS),win32)
+-SUBDIRS := dot_draw httpinfo lq_etx_ff lq_etx_float lq_etx_fpm lq_rfc mini secure txtinfo watchdog
++SUBDIRS := json_draw dot_draw httpinfo lq_etx_ff lq_etx_float lq_etx_fpm lq_rfc mini secure txtinfo watchdog
+ else
+-SUBDIRS := bmf debuginfo dot_draw dyn_gw dyn_gw_plain httpinfo lq_etx_ff lq_etx_float lq_etx_fpm lq_rfc mdns mini nameservice secure txtinfo watchdog
++SUBDIRS := bmf debuginfo json_draw dot_draw dyn_gw dyn_gw_plain httpinfo lq_etx_ff lq_etx_float lq_etx_fpm lq_rfc mdns mini nameservice secure txtinfo watchdog
+ endif
+ endif
+ 
+diff -r a651cc474e85 gui/win32/Inst/installer.nsi
+--- a/gui/win32/Inst/installer.nsi	Sun Aug 09 09:00:01 2009 +0200
++++ b/gui/win32/Inst/installer.nsi	Wed Aug 12 17:01:38 2009 +0200
+@@ -79,6 +79,7 @@
+         File linux-manual.txt
+         File ..\Main\RFC-Default.olsr
+         File ..\Main\LQ-Default.olsr
++        File ..\..\..\lib\dot_draw\olsrd_json_draw.dll
+         File ..\..\..\lib\dot_draw\olsrd_dot_draw.dll
+         File ..\..\..\lib\httpinfo\olsrd_httpinfo.dll
+         File ..\..\..\lib\mini\olsrd_mini.dll
+@@ -172,6 +173,7 @@
+         Delete $INSTDIR\LQ-Default.olsr
+ 	Delete $INSTDIR\olsrd.conf.rfc
+ 	Delete $INSTDIR\olsrd.conf.lq
++        Delete $INSTDIR\olsrd_json_draw.dll
+         Delete $INSTDIR\olsrd_dot_draw.dll
+         Delete $INSTDIR\olsrd_httpinfo.dll
+         Delete $INSTDIR\olsrd_mini.dll
+diff -r a651cc474e85 lib/json_draw/Makefile
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/lib/json_draw/Makefile	Wed Aug 12 17:01:38 2009 +0200
+@@ -0,0 +1,56 @@
++# The olsr.org Optimized Link-State Routing daemon(olsrd)
++# Copyright (c) 2004-2009, the olsr.org team - see HISTORY file
++# All rights reserved.
++#
++# Redistribution and use in source and binary forms, with or without
++# modification, are permitted provided that the following conditions
++# are met:
++#
++# * Redistributions of source code must retain the above copyright
++#   notice, this list of conditions and the following disclaimer.
++# * Redistributions in binary form must reproduce the above copyright
++#   notice, this list of conditions and the following disclaimer in
++#   the documentation and/or other materials provided with the
++#   distribution.
++# * Neither the name of olsr.org, olsrd nor the names of its
++#   contributors may be used to endorse or promote products derived
++#   from this software without specific prior written permission.
++#
++# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
++# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
++# COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
++# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
++# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
++# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
++# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
++# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
++# ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
++# POSSIBILITY OF SUCH DAMAGE.
++#
++# Visit http://www.olsr.org for more information.
++#
++# If you find this software useful feel free to make a donation
++# to the project. For more information see the website or contact
++# the copyright holders.
++#
++
++OLSRD_PLUGIN =	true
++PLUGIN_NAME =	olsrd_json_draw
++PLUGIN_VER =	0.1
++
++TOPDIR =	../..
++include $(TOPDIR)/Makefile.inc
++
++default_target: $(PLUGIN_FULLNAME)
++
++$(PLUGIN_FULLNAME): $(OBJS) version-script.txt
++		$(CC) $(LDFLAGS) -o $(PLUGIN_FULLNAME) $(OBJS) $(LIBS)
++
++install:	$(PLUGIN_FULLNAME)
++		$(STRIP) $(PLUGIN_FULLNAME)
++		$(INSTALL_LIB)
++
++clean:
++		rm -f $(OBJS) $(SRCS:%.c=%.d) $(PLUGIN_FULLNAME)
+diff -r a651cc474e85 lib/json_draw/README_JSON_DRAW
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/lib/json_draw/README_JSON_DRAW	Wed Aug 12 17:01:38 2009 +0200
+@@ -0,0 +1,37 @@
++DOT DATA GENERATION PLUGIN FOR OLSRD
++by Andreas Tonnesen(andreto@olsr.org)
++   Bruno Randolf
++
++02.06.05
++
++Added patch by Sebastian Hagen to fix FD leakage
++
++05.12.2004
++
++Various updates by Bruno Randolf has been applied to this
++plugin
++
++06.11.2004
++
++- Updated plugin interface version
++- Added plugin interface version function
++- Topology is generated upon every new connection
++
++29.06.2004
++
++ABOUT
++
++Note that this code is a quick hack done at the Wizards Of Oz 3
++
++The plugin generates output (over a TCP socket) in the dot format.
++The dot tool generates visual presentations of directed graphs.
++It can be downloaded as part of the GraphViz package from:
++http://www.graphviz.org/
++
++telet to 127.0.0.1 port 2004 to receive the data
++
++installation:
++make
++make install
++
++- Andreas T
+diff -r a651cc474e85 lib/json_draw/src/olsrd_json_draw.c
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/lib/json_draw/src/olsrd_json_draw.c	Wed Aug 12 17:01:38 2009 +0200
+@@ -0,0 +1,393 @@
++
++/*
++ * The olsr.org Optimized Link-State Routing daemon(olsrd)
++ * Copyright (c) 2004-2009, the olsr.org team - see HISTORY file
++ * All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ *
++ * * Redistributions of source code must retain the above copyright
++ *   notice, this list of conditions and the following disclaimer.
++ * * Redistributions in binary form must reproduce the above copyright
++ *   notice, this list of conditions and the following disclaimer in
++ *   the documentation and/or other materials provided with the
++ *   distribution.
++ * * Neither the name of olsr.org, olsrd nor the names of its
++ *   contributors may be used to endorse or promote products derived
++ *   from this software without specific prior written permission.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
++ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
++ * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
++ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
++ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
++ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
++ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
++ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
++ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
++ * POSSIBILITY OF SUCH DAMAGE.
++ *
++ * Visit http://www.olsr.org for more information.
++ *
++ * If you find this software useful feel free to make a donation
++ * to the project. For more information see the website or contact
++ * the copyright holders.
++ *
++ */
++
++/*
++ * Dynamic linked library for the olsr.org olsr daemon
++ */
++
++#include "olsrd_json_draw.h"
++#include "olsr.h"
++#include "ipcalc.h"
++#include "neighbor_table.h"
++#include "tc_set.h"
++#include "hna_set.h"
++#include "link_set.h"
++#include "olsr_ip_prefix_list.h"
++#include "olsr_logging.h"
++
++#ifdef _WRS_KERNEL
++#include <vxWorks.h>
++#include <sockLib.h>
++#include <wrn/coreip/netinet/in.h>
++#else
++#include <unistd.h>
++#include <errno.h>
++#include <stdarg.h>
++#endif
++
++#ifdef _WRS_KERNEL
++static int ipc_open;
++static int ipc_socket_up;
++#define DOT_DRAW_PORT 2004
++#endif
++
++static int ipc_socket;
++
++char first;
++
++/* IPC initialization function */
++static int
++  plugin_ipc_init(void);
++
++/* Event function to register with the sceduler */
++static int
++  pcf_event(int, int, int, int);
++
++static void
++  ipc_action(int, void *, unsigned int);
++
++static void
++  ipc_print_neigh_link(int, const struct nbr_entry *neighbor);
++
++static void
++  ipc_print_tc_link(int, const struct tc_entry *, const struct tc_edge_entry *);
++
++static void
++  ipc_print_net(int, const union olsr_ip_addr *, const struct olsr_ip_prefix *);
++
++static void
++  ipc_send(int, const char *, int);
++
++static void
++  ipc_send_fmt(int, const char *format, ...) __attribute__ ((format(printf, 2, 3)));
++
++#define ipc_send_str(fd, data) ipc_send((fd), (data), strlen(data))
++
++
++/**
++ *Do initialization here
++ *
++ *This function is called by the my_init
++ *function in uolsrd_plugin.c
++ */
++#ifdef _WRS_KERNEL
++int
++olsrd_dotdraw_init(void)
++#else
++int
++olsrd_plugin_init(void)
++#endif
++{
++  /* Initial IPC value */
++  ipc_socket = -1;
++
++  plugin_ipc_init();
++
++  return 1;
++}
++
++
++/**
++ * destructor - called at unload
++ */
++#ifdef _WRS_KERNEL
++void
++olsrd_jsondraw_exit(void)
++#else
++void
++olsr_plugin_exit(void)
++#endif
++{
++  if (ipc_socket != -1) {
++    CLOSESOCKET(ipc_socket);
++  }
++}
++
++
++static void
++ipc_print_neigh_link(int ipc_connection, const struct nbr_entry *neighbor)
++{
++  struct ipaddr_str mainaddrstrbuf, strbuf;
++  olsr_linkcost etx = 0.0;
++  const char *style;
++  const char *adr = olsr_ip_to_string(&mainaddrstrbuf, &olsr_cnf->router_id);
++  char lqbuffer[LQTEXT_MAXLENGTH];
++
++  if (neighbor->is_sym == 0) {  /* non SYM */
++    style = "dashed";
++  } else {
++    const struct link_entry *lnk = get_best_link_to_neighbor(&neighbor->nbr_addr);
++    if (lnk) {
++      etx = lnk->linkcost;
++    }
++    style = "solid";
++  }
++
++  ipc_send_fmt(ipc_connection,
++               "%s\t{ router : \"%s\", neighbour : \"%s\", label : \"%s\", style : \"%s\" }", 
++               (first ? "" : ",\n"), 
++               adr, 
++               olsr_ip_to_string(&strbuf, &neighbor->nbr_addr),
++               olsr_get_linkcost_text(etx, false, lqbuffer, sizeof(lqbuffer)), style);
++
++
++  first = 0;
++
++  if (neighbor->is_mpr) {
++    ipc_send_fmt(ipc_connection, "%s\t{ HNA : \"%s\", shape : \"box\" }", (first ? "" : ",\n"), adr);
++    first = 0;
++  }
++}
++
++
++static int
++plugin_ipc_init(void)
++{
++  struct sockaddr_in addr;
++  uint32_t yes = 1;
++
++  if (ipc_socket != -1) {
++    CLOSESOCKET(ipc_socket);
++  }
++
++  /* Init ipc socket */
++  ipc_socket = socket(AF_INET, SOCK_STREAM, 0);
++  if (ipc_socket == -1) {
++    OLSR_WARN(LOG_PLUGINS, "(JSON DRAW)IPC socket %s\n", strerror(errno));
++    return 0;
++  }
++
++  if (setsockopt(ipc_socket, SOL_SOCKET, SO_REUSEADDR, (char *)&yes, sizeof(yes)) < 0) {
++    OLSR_WARN(LOG_PLUGINS, "SO_REUSEADDR failed %s\n", strerror(errno));
++    CLOSESOCKET(ipc_socket);
++    return 0;
++  }
++#if defined __FreeBSD__ && defined SO_NOSIGPIPE
++  if (setsockopt(ipc_socket, SOL_SOCKET, SO_NOSIGPIPE, (char *)&yes, sizeof(yes)) < 0) {
++    OLSR_WARN(LOG_PLUGINS, "SO_REUSEADDR failed %s\n", strerror(errno));
++    CLOSESOCKET(ipc_socket);
++    return 0;
++  }
++#endif
++
++  /* Bind the socket */
++
++  /* complete the socket structure */
++  memset(&addr, 0, sizeof(addr));
++  addr.sin_family = AF_INET;
++  addr.sin_addr.s_addr = INADDR_ANY;
++  addr.sin_port = htons(ipc_port);
++
++  /* bind the socket to the port number */
++  if (bind(ipc_socket, (struct sockaddr *)&addr, sizeof(addr)) == -1) {
++    OLSR_WARN(LOG_PLUGINS, "(JSON DRAW)IPC bind %s\n", strerror(errno));
++    CLOSESOCKET(ipc_socket);
++    return 0;
++  }
++
++  /* show that we are willing to listen */
++  if (listen(ipc_socket, 1) == -1) {
++    OLSR_WARN(LOG_PLUGINS, "(JSON DRAW)IPC listen %s\n", strerror(errno));
++    CLOSESOCKET(ipc_socket);
++    return 0;
++  }
++
++  /* Register with olsrd */
++  add_olsr_socket(ipc_socket, &ipc_action, NULL, NULL, SP_PR_READ);
++
++  return 1;
++}
++
++
++static void
++ipc_action(int fd __attribute__ ((unused)), void *data __attribute__ ((unused)), unsigned int flags __attribute__ ((unused)))
++{
++  struct sockaddr_in pin;
++  socklen_t addrlen = sizeof(struct sockaddr_in);
++  int ipc_connection = accept(ipc_socket, (struct sockaddr *)&pin, &addrlen);
++  if (ipc_connection == -1) {
++    OLSR_WARN(LOG_PLUGINS, "(JSON DRAW)IPC accept: %s\n", strerror(errno));
++    return;
++  }
++#ifndef _WRS_KERNEL
++  if (ip4cmp(&pin.sin_addr, &ipc_accept_ip.v4) != 0) {
++    OLSR_WARN(LOG_PLUGINS, "Front end-connection from foreign host (%s) not allowed!\n", inet_ntoa(pin.sin_addr));
++    CLOSESOCKET(ipc_connection);
++    return;
++  }
++#endif
++  OLSR_DEBUG(LOG_PLUGINS, "(JSON DRAW)IPC: Connection from %s\n", inet_ntoa(pin.sin_addr));
++  pcf_event(ipc_connection, 1, 1, 1);
++  CLOSESOCKET(ipc_connection);  /* close connection after one output */
++}
++
++
++/**
++ *Scheduled event
++ */
++static int
++pcf_event(int ipc_connection, int chgs_neighborhood, int chgs_topology, int chgs_hna)
++{
++  int res = 0;
++  first = 1;
++
++  if (chgs_neighborhood || chgs_topology || chgs_hna) {
++    struct nbr_entry *neighbor_table_tmp;
++    struct tc_entry *tc;
++    struct ip_prefix_entry *hna;
++
++    /* Print tables to IPC socket (in JSON format) */
++	   ipc_send_str(ipc_connection, "HTTP/1.0 200 OK\nContent-type: application/json\n\n[\n");
++
++    /* Neighbors */
++    OLSR_FOR_ALL_NBR_ENTRIES(neighbor_table_tmp) {
++      ipc_print_neigh_link(ipc_connection, neighbor_table_tmp);
++    } OLSR_FOR_ALL_NBR_ENTRIES_END(neighbor_table_tmp);
++
++    /* Topology */
++    OLSR_FOR_ALL_TC_ENTRIES(tc) {
++      struct tc_edge_entry *tc_edge;
++      OLSR_FOR_ALL_TC_EDGE_ENTRIES(tc, tc_edge) {
++        if (tc_edge->edge_inv) {
++          ipc_print_tc_link(ipc_connection, tc, tc_edge);
++        }
++      }
++      OLSR_FOR_ALL_TC_EDGE_ENTRIES_END(tc, tc_edge);
++    }
++    OLSR_FOR_ALL_TC_ENTRIES_END(tc);
++
++    /* HNA entries */
++    OLSR_FOR_ALL_TC_ENTRIES(tc) {
++      /* Check all networks */
++      struct hna_net *tmp_net;
++      OLSR_FOR_ALL_TC_HNA_ENTRIES(tc, tmp_net) {
++        ipc_print_net(ipc_connection, &tc->addr, &tmp_net->hna_prefix);
++      }
++    } OLSR_FOR_ALL_TC_HNA_ENTRIES_END(tc, tmp_hna);
++    OLSR_FOR_ALL_TC_ENTRIES_END(tc);
++
++    /* Local HNA entries */
++    OLSR_FOR_ALL_IPPREFIX_ENTRIES(&olsr_cnf->hna_entries, hna) {
++      ipc_print_net(ipc_connection, &olsr_cnf->router_id, &hna->net);
++    } OLSR_FOR_ALL_IPPREFIX_ENTRIES_END()
++
++    ipc_send_str(ipc_connection, "\n]\n");
++
++    res = 1;
++  }
++
++  if (ipc_socket == -1) {
++    plugin_ipc_init();
++  }
++  return res;
++}
++
++static void
++ipc_print_tc_link(int ipc_connection, const struct tc_entry *entry, const struct tc_edge_entry *dst_entry)
++{
++  struct ipaddr_str strbuf1, strbuf2;
++  char lqbuffer[LQTEXT_MAXLENGTH];
++
++  ipc_send_fmt(ipc_connection,
++               "%s\t{ router : \"%s\", neighbour : \"%s\", label : \"%s\" }", 
++               (first ? "" : ",\n"), 
++               olsr_ip_to_string(&strbuf1, &entry->addr), 
++               olsr_ip_to_string(&strbuf2, &dst_entry->T_dest_addr), 
++               olsr_get_linkcost_text(dst_entry->cost, false, lqbuffer, sizeof(lqbuffer)) );
++
++  first = 0;
++
++}
++
++
++static void
++ipc_print_net(int ipc_connection, const union olsr_ip_addr *gw, const struct olsr_ip_prefix *net)
++{
++  struct ipaddr_str gwbuf;
++  struct ipprefix_str netbuf;
++
++  ipc_send_fmt(ipc_connection, 
++               "%s\t{ router : \"%s\", gateway : \"%s\", label : \"HNA\" }",
++               (first ? "" : ",\n"), 
++               olsr_ip_to_string(&gwbuf, gw), 
++               olsr_ip_prefix_to_string(&netbuf, net));
++  first = 0;
++
++  ipc_send_fmt(ipc_connection, ",\n\t{ HNA : \"%s\", shape : \"diamond\" }", netbuf.buf);
++}
++
++static void
++ipc_send(int ipc_connection, const char *data, int size)
++{
++  if (ipc_connection != -1) {
++#if defined __FreeBSD__ || defined __NetBSD__ || defined __OpenBSD__ || defined __MacOSX__ || \
++defined _WRS_KERNEL
++#define FLAGS 0
++#else
++#define FLAGS MSG_NOSIGNAL
++#endif
++    if (send(ipc_connection, data, size, FLAGS) == -1) {
++      OLSR_WARN(LOG_PLUGINS, "(JSON DRAW)IPC connection lost!\n");
++      CLOSESOCKET(ipc_connection);
++    }
++  }
++}
++
++static void
++ipc_send_fmt(int ipc_connection, const char *format, ...)
++{
++  if (ipc_connection != -1) {
++    char buf[4096];
++    int len;
++    va_list arg;
++    va_start(arg, format);
++    len = vsnprintf(buf, sizeof(buf), format, arg);
++    va_end(arg);
++    ipc_send(ipc_connection, buf, len);
++  }
++}
++
++/*
++ * Local Variables:
++ * c-basic-offset: 2
++ * indent-tabs-mode: nil
++ * End:
++ */
+diff -r a651cc474e85 lib/json_draw/src/olsrd_json_draw.h
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/lib/json_draw/src/olsrd_json_draw.h	Wed Aug 12 17:01:38 2009 +0200
+@@ -0,0 +1,67 @@
++
++/*
++ * The olsr.org Optimized Link-State Routing daemon(olsrd)
++ * Copyright (c) 2004-2009, the olsr.org team - see HISTORY file
++ * All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ *
++ * * Redistributions of source code must retain the above copyright
++ *   notice, this list of conditions and the following disclaimer.
++ * * Redistributions in binary form must reproduce the above copyright
++ *   notice, this list of conditions and the following disclaimer in
++ *   the documentation and/or other materials provided with the
++ *   distribution.
++ * * Neither the name of olsr.org, olsrd nor the names of its
++ *   contributors may be used to endorse or promote products derived
++ *   from this software without specific prior written permission.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
++ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
++ * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
++ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
++ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
++ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
++ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
++ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
++ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
++ * POSSIBILITY OF SUCH DAMAGE.
++ *
++ * Visit http://www.olsr.org for more information.
++ *
++ * If you find this software useful feel free to make a donation
++ * to the project. For more information see the website or contact
++ * the copyright holders.
++ *
++ */
++
++/*
++ * Dynamic linked library for the olsr.org olsr daemon
++ */
++
++#ifndef _OLSRD_JSON_DRAW
++#define _OLSRD_JSON_DRAW
++
++#include "plugin.h"
++#include "plugin_util.h"
++
++extern union olsr_ip_addr ipc_accept_ip;
++extern int ipc_port;
++
++int olsrd_plugin_interface_version(void);
++int olsrd_plugin_init(void);
++void olsr_plugin_exit(void);
++void olsrd_get_plugin_parameters(const struct olsrd_plugin_parameters **params, int *size);
++
++#endif
++
++/*
++ * Local Variables:
++ * c-basic-offset: 2
++ * indent-tabs-mode: nil
++ * End:
++ */
+diff -r a651cc474e85 lib/json_draw/src/olsrd_plugin.c
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/lib/json_draw/src/olsrd_plugin.c	Wed Aug 12 17:01:38 2009 +0200
+@@ -0,0 +1,128 @@
++
++/*
++ * The olsr.org Optimized Link-State Routing daemon(olsrd)
++ * Copyright (c) 2004-2009, the olsr.org team - see HISTORY file
++ * All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ *
++ * * Redistributions of source code must retain the above copyright
++ *   notice, this list of conditions and the following disclaimer.
++ * * Redistributions in binary form must reproduce the above copyright
++ *   notice, this list of conditions and the following disclaimer in
++ *   the documentation and/or other materials provided with the
++ *   distribution.
++ * * Neither the name of olsr.org, olsrd nor the names of its
++ *   contributors may be used to endorse or promote products derived
++ *   from this software without specific prior written permission.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
++ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
++ * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
++ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
++ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
++ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
++ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
++ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
++ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
++ * POSSIBILITY OF SUCH DAMAGE.
++ *
++ * Visit http://www.olsr.org for more information.
++ *
++ * If you find this software useful feel free to make a donation
++ * to the project. For more information see the website or contact
++ * the copyright holders.
++ *
++ */
++
++/*
++ * Dynamic linked library for the olsr.org olsr daemon
++ */
++#include "olsrd_json_draw.h"
++#include "olsr.h"
++#include "defs.h"
++#include "olsr_logging.h"
++
++#include <stdio.h>
++#include <string.h>
++#include <stdlib.h>
++#include <arpa/inet.h>
++#include <sys/types.h>
++#include <netinet/in.h>
++
++
++#define PLUGIN_NAME    "OLSRD json draw plugin"
++#define PLUGIN_VERSION "0.1"
++#define PLUGIN_AUTHOR   "George James (based on 'OLSRD dot draw plugin' by Andreas Tonnesen)"
++#define MOD_DESC PLUGIN_NAME " " PLUGIN_VERSION " by " PLUGIN_AUTHOR
++#define PLUGIN_INTERFACE_VERSION 5
++
++union olsr_ip_addr ipc_accept_ip;
++int ipc_port;
++
++static void my_init(void) __attribute__ ((constructor));
++static void my_fini(void) __attribute__ ((destructor));
++
++
++/**
++ *Constructor
++ */
++static void
++my_init(void)
++{
++  /* Print plugin info to stdout */
++  OLSR_INFO(LOG_PLUGINS, "%s\n", MOD_DESC);
++
++  /* defaults for parameters */
++  ipc_port = 2005;
++  ipc_accept_ip.v4.s_addr = htonl(INADDR_LOOPBACK);
++}
++
++
++/**
++ *Destructor
++ */
++static void
++my_fini(void)
++{
++  /* Calls the destruction function
++   * olsr_plugin_exit()
++   * This function should be present in your
++   * sourcefile and all data destruction
++   * should happen there - NOT HERE!
++   */
++  olsr_plugin_exit();
++}
++
++
++int
++olsrd_plugin_interface_version(void)
++{
++  return PLUGIN_INTERFACE_VERSION;
++}
++
++
++static const struct olsrd_plugin_parameters plugin_parameters[] = {
++  {.name = "port",.set_plugin_parameter = &set_plugin_port,.data = &ipc_port},
++  {.name = "accept",.set_plugin_parameter = &set_plugin_ipaddress,.data = &ipc_accept_ip}
++};
++
++void
++olsrd_get_plugin_parameters(const struct olsrd_plugin_parameters **params, int *size)
++{
++  *params = plugin_parameters;
++  *size = ARRAYSIZE(plugin_parameters);
++}
++
++/*
++ * Local Variables:
++ * mode: c
++ * style: linux
++ * c-basic-offset: 4
++ * indent-tabs-mode: nil
++ * End:
++ */
+diff -r a651cc474e85 lib/json_draw/version-script.txt
+--- /dev/null	Thu Jan 01 00:00:00 1970 +0000
++++ b/lib/json_draw/version-script.txt	Wed Aug 12 17:01:38 2009 +0200
+@@ -0,0 +1,10 @@
++VERS_1.0
++{
++  global:
++    olsrd_plugin_interface_version;
++    olsrd_plugin_init;
++    olsrd_get_plugin_parameters;
++
++  local:
++    *;
++};

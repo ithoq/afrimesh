@@ -1,0 +1,5 @@
+libcredis (0.2.2-1) lucid; urgency=low
+
+  * Initial release 
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Thu, 23 July 2009 13:14:44 +0200

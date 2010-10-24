@@ -1,0 +1,25 @@
+config 'afrimesh' 'dashboard'
+	option 'network_name' 'Mesh Potato'
+
+config 'afrimesh' 'settings'
+	option 'locale'     'en_US.UTF-8'
+
+config 'afrimesh' 'support'
+	option 'howto'  'afrimesh'
+	option 'group'  'village-telco-dev'
+	option 'irc'    'http://webchat.freenode.net/?channels=villagetelco'
+
+config 'afrimesh' 'location'
+	option 'longitude' '28.278337'
+	option 'latitude'  '-25.746633'
+
+config 'afrimesh' 'map'
+	option 'server' 'openstreetmap.org'
+	option 'extent' '0.1'
+	option 'zoom'   '15'
+	option 'aerial' '0'
+
+config 'afrimesh' 'voip'
+	option 'sip' 'on'
+	option 'iax' 'off'
+
