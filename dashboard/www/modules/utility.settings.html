@@ -7,15 +7,15 @@
  * New BSD License. See /LICENSE for more information.
 -->
 
-<form class="two-column" 
+<form class="two-column scrollview"
+      style="top:2.0em;"
       id="dashboard"
       OnSubmit="return false;"
       OnKeyPress="return disable_key(13, event);">
 
-  <table border="0">
-    <tr valign="top">
-
-      <td>
+  <table style="border:0px solid green;">
+    <tr>
+      <td style="vertical-align:top;">
         <fieldset>
           <legend>Mesh</legend>
           <div class="label">Visualization Server</div>
@@ -39,9 +39,17 @@
             <p class="learnmore"></p>
             <p id="accounting_server|error" style="color:#FF0000;"></p>
           </div>
+          <!-- div class="label">Database Server</div>
+          <input id="afrimesh|settings|network|mesh|redis_server" style="background:#FFAAAA;" type="text" />
+          <div class="tooltip"><h3>Database Server</h3>
+            <p class="explain"></p>
+            <p class="typical"></p>
+            <p class="learnmore"></p>
+            <p id="redis_server|error" style="color:#FF0000;"></p>
+          </div -->
         </fieldset>
 
-        <fieldset>
+        <!-- fieldset>
              <legend>Access Control</legend>
              <div class="label">Radius Server</div>
              <input id="afrimesh|settings|radius|server" style="background:#FFAAAA;" type="text"></input>
@@ -54,11 +62,6 @@
                <option value="1">mysql</option>
                <option value="2">memcachedb</option>
              </select>
-             <!-- div class="label">Database</div>
-             <input id="afrimesh|settings|radius|database" type="text" />
-             <div class="tooltip"><h3>database</h3>
-               <p class="explain">Enter the RADIUS authentication database here.</p>
-             </div -->
              <div class="label">Username</div>
              <input id="afrimesh|settings|radius|username" type="text" />
              <div class="tooltip"><h3>username</h3>
@@ -69,10 +72,15 @@
              <div class="tooltip"><h3>password</h3>
                <p class="explain">Enter your password for authentication on the RADIUS database here.</p>
              </div>
-        </fieldset>          
+        </fieldset -->
+        <!-- div class="label">Database</div>
+             <input id="afrimesh|settings|radius|database" type="text" />
+             <div class="tooltip"><h3>database</h3>
+               <p class="explain">Enter the RADIUS authentication database here.</p>
+        </div -->
       </td>
 
-      <td>        
+      <td style="vertical-align:top;">
         <fieldset>
           <legend>Internet Gateway</legend>
           <div class="label">IP Address</div>
@@ -110,12 +118,12 @@
 
   <fieldset> 
     <legend>Map</legend>
-    <table border=0>
-      <tr valign=top>
-        <td>  
+    <table style="border:0px solid yellow;">
+      <tr>
+        <td style="vertical-align:top;">  
           <div class="label" style="clear:both;">Map Server</div>
         </td>
-        <td>
+        <td style="vertical-align:top;">
           <input id="afrimesh|settings|map|server" type="text"/>
           <div class="tooltip"><h3>map server</h3>
             <p class="explain">The Network Map gets the terrain data from the server at this address.</p>
@@ -130,22 +138,28 @@
           </div><br/>
         </td>
       </tr>
-      <tr valign=top>
-        <td>
+      <tr>
+        <td style="vertical-align:top;">
           <div class="label" style="clear:both;">
-            Location
+            Mesh Location
             <p/><br/>
-            <input id="afrimesh|settings|location|longitude" style="width:100px; font-size:0.8em;" /><br/>
-            <input id="afrimesh|settings|location|latitude"  style="width:100px; font-size:0.8em;" /><br/>
-            <button id="geolocator" style="font-size: 0.8em;">
+            <p style="padding-right: 1.0em; font-size: 0.8em;">
+              Drag the circle on the map to the location of your mesh or just enter your coordinates below:
+            </p><br/>
+            <table>
+              <tr style="font-size:0.8em;">
+                <td>Lon:</td><td><input id="afrimesh|settings|location|longitude" style="width:100px;" type="text" /></td>
+              </tr>
+              <tr style="font-size:0.8em;">
+                <td>Lat:</td><td><input id="afrimesh|settings|location|latitude" style="width:100px;" type="text" /></td>
+              </tr>
+            </table>
+            <button id="geolocator" class="round-small button">
               update map
             </button>
-            <p style="font-size: 0.85em; padding-right: 1.0em;">
-              Set your location by adjusting the map controls on the right or entering your co-ordinates above.
-            </p>
           </div>
         </td>
-        <td>
+        <td style="vertical-align:top;">
           <div id="location" />
         </td>
       </tr>
@@ -157,6 +171,7 @@
 (function() {
 
   /** includes ------------------------------------------------------------ */
+  load("javascript/jquery/jquery.tooltip.min.js");
   load("modules/utility.settings.js"); 
 
 
@@ -173,13 +188,10 @@
     /** install tooltips -------------------------------------------------- */
     $("input.[id*=afrimesh]").tooltip({
         position : ['bottom', 'right'],   // place tooltip on the right edge 
-        offset   : [-20, 20],             // a little tweaking of the position 
+        offset   : [-49, -85],            // a little tweaking of the position 
         effect   : 'toggle',              // use a simple show/hide effect 
-        opacity  : 0.8                    // custom opacity setting 
+        opacity  : 1.0                    // custom opacity setting 
       });
-
-    /** round corners ------------------------------------------------------ */
-    $(".tooltip").corner("tr 8px bl 8px br 8px");
 
     /** style controls ----------------------------------------------------- */
     //$('form.two-column :checkbox').slider(); // TODO
@@ -225,7 +237,7 @@
         update_map_server();
       });
     $("input.[id*=afrimesh|settings|radius|server]").bind("blur", function(event) { 
-        update_radius_server();
+        //update_radius_server();
       });
     $("input.[id*=afrimesh|settings|internet_gateway|address]").bind("blur", function(event) { 
         populate_select_interface();
@@ -247,7 +259,7 @@
     update_map_server();
 
      /** query RADIUS server and mysql database for availability ----- */
-    update_radius_server();
+    //update_radius_server();
 
     return unload;
   };

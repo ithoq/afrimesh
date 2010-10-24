@@ -60,32 +60,32 @@ var LocationMap = null;
   /** query internet gateway's interfaces via snmp ---------------------- */
   populate_select_interface = function() {
     $("input.[id*=afrimesh|settings|internet_gateway|address]").css("background", "#FFAAAA");
-    function update(interfaces) {
-      if (interfaces == undefined) {
-        $("p.[id*=internet_gateway|error]").html("Internet gateway unreachable.");
-        console.debug("SNMP ERROR: " + (interfaces ? interfaces.error : "unknown error"));
-        console.debug("settings  server: " + afrimesh.settings.address);
-        $("select.[id*=afrimesh|settings|internet_gateway|snmp|interface]").html("");
-        return;
-      }
-      $("p.[id*=internet_gateway|error]").html("");
-      $("input.[id*=afrimesh|settings|internet_gateway|address]").css("background", "#AAFFAA");
-      var interface_current = afrimesh.settings.internet_gateway.snmp.interface;
-      var interface_count = 1;
-      var options = "";
-      for (var interface in interfaces) {
-        options += "<option value='" + interface_count + "' ";
-        options += (interface_count == interface_current ? "selected" : "") + ">";
-        options += interfaces[interface];
-        options += "</option>";
-        interface_count++;
-      }
-      $("select.[id*=afrimesh|settings|internet_gateway|snmp|interface]").html(options);
-    };
-    afrimesh.villagebus.snmp.walk.async(update,
-                                        afrimesh.settings.internet_gateway.address, 
-                                        afrimesh.settings.internet_gateway.snmp.community, 
-                                        ".1.3.6.1.2.1.2.2.1.2");  // IF-MIB::ifDescr
+    afrimesh.device.snmp.walk(afrimesh.settings.internet_gateway.address,
+                              afrimesh.settings.internet_gateway.snmp.community,
+                              ".1.3.6.1.2.1.2.2.1.2",  // IF-MIB::ifDescr 
+      function(error, interfaces) {
+          if (error) return console.error("Could not access internet gateway via SNMP: " + error);
+          if (interfaces == undefined) {
+            $("p.[id*=internet_gateway|error]").html("Internet gateway unreachable.");
+            console.debug("SNMP ERROR: " + (interfaces ? interfaces.error : "unknown error"));
+            console.debug("settings  server: " + afrimesh.settings.address);
+            $("select.[id*=afrimesh|settings|internet_gateway|snmp|interface]").html("");
+            return;
+          }
+          $("p.[id*=internet_gateway|error]").html("");
+          $("input.[id*=afrimesh|settings|internet_gateway|address]").css("background", "#AAFFAA");
+          var interface_current = afrimesh.settings.internet_gateway.snmp.interface;
+          var interface_count = 1;
+          var options = "";
+          for (var interface in interfaces) {
+            options += "<option value='" + interface_count + "' ";
+            options += (interface_count == interface_current ? "selected" : "") + ">";
+            options += interfaces[interface];
+            options += "</option>";
+            interface_count++;
+          }
+          $("select.[id*=afrimesh|settings|internet_gateway|snmp|interface]").html(options);
+      });
   }
 
   update_mesh_controls = function() {
@@ -111,14 +111,15 @@ var LocationMap = null;
     } 
     $(".sip_trunk").show();
     var server = $("input.[id*=afrimesh|settings|voip|sip|address]").val();
-    afrimesh.villagebus.voip.sip.peers.async(function(peers) {
+    afrimesh.telephony.sip.peers("self", function(error, peers) {
+      if (error) return console.error("Could not get sip peers: " + error);
         peers.map(function(peer) {
             console.debug(show(peer));
             if (peer.host == server && peer.status == "OK") {
               $("fieldset#asterisk :text, :password").css("background", "#AAFFAA");
             }
           });
-      }, afrimesh.settings.address);
+    });
   };
 
   update_iax_server = function() {
@@ -137,17 +138,14 @@ var LocationMap = null;
   update_vis_server = function() {
     $("input.[id*=afrimesh|settings|network|mesh|vis_server]").css("background", "#FFAAAA");
     try {
-      //var routes = afrimesh.villagebus.mesh_topology();
-      function update (routes) {
-        if (routes != undefined && isArray(routes)) {
+      afrimesh.network.routes(function (error, routes) {
+          if (error || !isArray(routes)) {
+            $("p.[id*=vis_server|error]").html("Visualization server unreachable.");
+            return console.debug("Visualization server unreachable: " + error);
+          }
           $("input.[id*=afrimesh|settings|network|mesh|vis_server]").css("background", "#AAFFAA");
           $("p.[id*=vis_server|error]").html("");
-        } else {
-          console.debug("utility.settings.js->update_vis_server: Visualization server unreachable.");
-          $("p.[id*=vis_server|error]").html("Visualization server unreachable.");
-        }
-      };
-      afrimesh.villagebus.mesh_topology.vis.async(update);
+        });
     } catch (error) {
       $("p.[id*=vis_server|error]").html("Visualization server unreachable. " + error + ".");
       console.debug("Vis server is unreachable. " + error);
@@ -157,16 +155,14 @@ var LocationMap = null;
   update_accounting_server = function() {
     $("input.[id*=afrimesh|settings|network|mesh|accounting_server]").css("background", "#FFAAAA");
     try {
-      function update (data) {
-        if (data != undefined && isArray(data)) {
+      afrimesh.network.accounting(function (error, data) {
+          if (error && !isArray(data)) {
+            $("p.[id*=accounting_server|error]").html("Accounting server unreachable.");
+            return console.debug("utility.settings.js->update_vis_server: Visualization server unreachable.");
+          }
           $("input.[id*=afrimesh|settings|network|mesh|accounting_server]").css("background", "#AAFFAA");
           $("p.[id*=accounting_server|error]").html("");
-        } else {
-          console.debug("utility.settings.js->update_vis_server: Visualization server unreachable.");
-          $("p.[id*=accounting_server|error]").html("Accounting server unreachable.");
-        }
-      };
-      afrimesh.villagebus.acct.gateway.async(update);
+        });
     } catch (error) {
       $("p.[id*=vis_server|error]").html("Visualization server unreachable. " + error + ".");
       console.debug("Vis server is unreachable. " + error);
@@ -283,6 +279,7 @@ var LocationMap = null;
     var latitude = parseFloat($("input.[id*=afrimesh|settings|location|latitude]").val());
     console.debug(longitude + ", " + latitude);
     this.location_map.center(longitude, latitude);
+    network_map.center(longitude, latitude, 14);
   };
   
   /** create a map which can be used to set the router location --------- */
@@ -294,8 +291,13 @@ var LocationMap = null;
           displayProjection : epsg_4326,
           units             : "m",
           transitionEffect  : "resize",
+          controls          : [ new OpenLayers.Control.Navigation({ 
+                                  zoomWheelEnabled : false }),
+                                new OpenLayers.Control.PanPanel(),
+                                new OpenLayers.Control.ZoomPanel() ],
           //numZoomLevels     : 20,
-          theme             : "style/map.default.css"
+          //theme             : "style/map.default.css"
+          theme             : "style/map.css?version=43"
         };
         var map = new OpenLayers.Map(id, options);
         if (afrimesh.settings.map.server == "openstreetmap.org") { // TODO afrimesh.settings.map.server == afrimesh.settings.map.server.default
@@ -303,7 +305,7 @@ var LocationMap = null;
         } else {
           map.addLayers([ new OpenLayers.Layer.OSM.LocalMap("Relief Map", "http://" + afrimesh.settings.map.server + "/tiles/") ]);
         }
-        map.addControl(new OpenLayers.Control.Attribution());
+        //map.addControl(new OpenLayers.Control.Attribution());
         map.addControl(new OpenLayers.Control.MousePosition());
         map.addControl(new OpenLayers.Control.ScaleLine());
         map.setCenter(LonLat(longitude, latitude), zoom);
@@ -319,11 +321,11 @@ var LocationMap = null;
             var latitude  = parseFloat(location.lat).toFixed(7);
             $("input.[id*=afrimesh|settings|location|longitude]").val(longitude);
             $("input.[id*=afrimesh|settings|location|latitude]").val(latitude);
-            afrimesh.villagebus.uci.set.async(function (response) {
+            afrimesh.device.location.set(feature.router.address, location.lon, location.lat, function (error, response) {
+                if (error) return console.error("Could not update router location for " + feature.router.address + ": " + error);
                 console.debug("Updated router location for:" + feature.router.address);
-              }, feature.router.address,
-              [ { config: "afrimesh", section: "location", option: "longitude", value: longitude.toString() },
-                { config: "afrimesh", section: "location", option: "latitude",  value: latitude.toString() } ]);
+                update_location();
+              });
           };
         }
         map.addControl(map.dragger);
@@ -335,13 +337,12 @@ var LocationMap = null;
     /**
      * Recenter map on coordinates
      */
-    this.center = function(longitude, latitude) {
+    this.center = function(longitude, latitude, zoom) {
       var feature = this.router({ address : afrimesh.settings.address });
       var location = new LonLat(longitude, latitude);
       feature.move(location);
-      //the_map.setCenter(LonLat(longitude, latitude), the_map.zoom);
-      if (the_map.zoom < 10) {
-        the_map.zoomTo(10);
+      if (zoom) {
+        the_map.zoomTo(zoom);
       }
       the_map.panTo(LonLat(longitude, latitude));
     };

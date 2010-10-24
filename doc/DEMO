@@ -1,0 +1,134 @@
+* Demo Kit For Steve
+  . This document
+  . Ubuntu binaries:  
+    villagetelco-dashboard.deb
+    vis-i386-lucid
+  . Atheros binaries: 
+    firmware image
+  . MP01 binaries:    
+    firmware (vanilla rv233)
+    villagetelco-device.ipkg
+    netcat.ipkg
+
+  
+* HOWTO Manually deprovision everyone & reset dashboard location
+  redis-cli flushdb
+  uci del afrimesh.location.latitude
+  uci del afrimesh.location.longitude
+  uci commit
+
+
+* HOWTO Modify default provisioned settings for device network interface:
+  Edit: /usr/lib/cgi-bin/provisiond-bundles/mp01.interface
+
+
+* HOWTO Modify default provisioned settings for device handset:
+  Edit: /usr/lib/cgi-bin/provisiond-bundles/mp01.handset
+
+
+* Starting from a virgin Ubuntu 10.04 w/ all updates installed
+** install batmand & vis & NAT gateway
+   scp antoine@pi:~/Desktop/vis-i386-lucid ~/vis
+   ~/vis -d1 -j wlan0
+   sudo su -
+   iptables --flush
+   iptables --table nat --flush
+   iptables --table nat --append POSTROUTING --out-interface eth0 -j MASQUERADE  
+   iptables --append FORWARD --in-interface wlan0 -j ACCEPT
+   echo 1 > /proc/sys/net/ipv4/ip_forward
+   apt-get install batmand
+   /usr/sbin/batmand -d1 -s 10.130.1.1 -g 100mbit wlan0
+
+** Install afrimesh-dashboard from apt (make sure ppa:afrimesh/ppa is _UNINSTALLED_)
+   sudo apt-add-repository ppa:antoine-7degrees/ppa
+   sudo apt-get update
+   sudo dpkg -i afrimesh-dashboard
+   
+** Install afrimesh-dashboard from binary .deb
+   scp antoine@delta:/var/cache/pbuilder/result/villagetelco-dashboard*_i386.deb ~/Desktop
+   sudo apt-add-repository ppa:antoine-7degrees/ppa
+   sudo apt-get update
+   sudo apt-get install apache2 snmp snmpd pmacct libcredis redis-server uci
+   sudo dpkg -i ~/Desktop/villagetelco-dashboard*_i386.deb
+   sudo chmod a+rw /var/log/messages
+   sudo chmod -R a+rw /etc/config /tmp/.uci
+   sudo chmod 0777 /etc/config /tmp/.uci
+   uci set afrimesh.settings.foo=bar  
+   uci commit                         
+   
+** configure pmacct
+   /etc/pmacctd/pmacctd.conf :
+     !aggregate: src_host,dst_host
+     aggregate: dst_host,dst_mac
+     !pcap_filter: net 127.0.0.0/8
+     pcap_filter: net 10.130.1.0/24
+     interface: wlan0   # eth0 on VM
+  sudo /etc/init.d/pmacct restart
+
+** configure snmpd 
+   /etc/default/snmpd
+     SNMPDOPTS='-Lsd -Lf /dev/null -u snmp -g snmp -I -smux -p /var/run/snmpd.pid'
+   /etc/snmp/snmpd.conf
+     #com2sec paranoid  default         public                                                                                                                    
+     com2sec readonly  default         public
+   sudo /etc/init.d/snmpd restart
+   Test with: snmpwalk -v 2c -c public 10.130.1.1 .1.3.6.1.2.1.2.2.1.2
+
+** configure rsyslogd
+  /etc/default/rsyslog
+    #RSYSLOGD_OPTIONS="-c4"
+    RSYSLOGD_OPTIONS="-c2 -r"
+  sudo service rsyslog restart
+
+
+* Starting from a virgin MP01 w/ stock VT Firmware (r233) + afrimesh-potato
+** Flash router:
+   fis init
+   load -r -b %{FREEMEMLO} -m http -p 80 -h 192.168.1.9 /~antoine/mp/rv233/openwrt-atheros-vmlinux-rv233.lzma
+   fis create -e 0x80041000 -r 0x80041000 vmlinux.bin.l7
+   load -r -b %{FREEMEMLO} -m http -p 80 -h 192.168.1.9 /~antoine/mp/rv233/openwrt-atheros-root-rv233.squashfs
+   fis create rootfs
+   reset
+   
+** Configuration  (telnet 192.168.1.20)
+   opkg install http://192.168.20.105/~antoine/firmware.potato/packages/mips/netcat_0.7.1-1_mips.ipk
+   opkg install http://192.168.20.105/~antoine/firmware.potato/packages/mips/villagetelco-device_1.0pre-r954-1_mips.ipk
+   (Answer 'Y' when asked to replace /etc/config/afrimesh)   
+   /etc/init.d/provision enable
+
+   chmod -R a+rw /etc/config
+   #uci set wireless.@wifi-iface[0].mode=adhoc # ???
+   uci set network.wifi0.ipaddr=10.130.1.101
+   uci set batmand.general.routing_class=3
+   uci set batmand.general.visualisation_srv=10.130.1.1
+   uci set system.@system[0].log_ip=10.130.1.1
+   uci commit
+   reboot
+
+
+* Starting from a virgin Meraki Mini w/ stock Kamikaze + afrimesh-base, afrimesh-provision, afrimesh-batman
+** Flash router w/ firmware
+   fis init
+   load -r -b 0x80041000 -m http -p 80 -h 192.168.84.9 /~antoine/firmware/atheros/openwrt-atheros-vmlinux.gz
+   fis create -r 0x80041000 -e 0x80041000 linux
+   load -r -b 0x80041000 -m http -p 80 -h 192.168.84.9 /~antoine/firmware/atheros/openwrt-atheros-root.jffs2-64k
+   fis create -r 0x80041000 -e 0x80041000 rootfs
+   
+** Wireless configuration
+   factory_mode=adhoc  # ahdemo - TODO fix in provision.bundles/etc/config/wireless too
+   factory_ssid=potato
+   factory_bssid="01:CA:FF:EE:BA:BE"
+   factory_channel=1
+   wifi0_device=wifi0
+   wifi0_interface=ath0
+   wifi0_address=10.130.1.33
+   uci set wireless.$wifi0_device.disabled=0
+   uci set wireless.$wifi0_device.channel=$factory_channel
+   uci set wireless.@wifi-iface[0].encryption=none
+   uci set wireless.@wifi-iface[0].ssid=$factory_ssid
+   uci set wireless.@wifi-iface[0].mode=$factory_mode
+   uci set wireless.@wifi-iface[0].bssid=$factory_bssid
+   uci set wireless.@wifi-iface[0].network=$wifi0_device
+   uci commit
+   reboot
+  

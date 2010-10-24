@@ -93,7 +93,7 @@ radius_delete_memcachedb.o : village-bus-radius.h memcachedb/radius_delete.c
 main.o : village-bus-radius.h main.c 
 	$(CC) $(CFLAGS) -c main.c
 
-mysql : 
+mysql-init : 
 	# create radius user
 	-cat sql/admin-drop.sql  | mysql $(MYSQL_ADMIN)
 	-cat sql/admin.sql  | mysql $(MYSQL_ADMIN)

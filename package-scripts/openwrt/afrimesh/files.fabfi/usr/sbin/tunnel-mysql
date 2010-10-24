@@ -1,0 +1,18 @@
+#!/bin/sh
+
+
+# configuration
+identity=/etc/dropbear/dropbear_rsa_host_key
+remote=fabfi@portal.joinafrica.org
+port=3306
+cmd="ssh -y -i $identity $remote -L 1$port:127.0.0.1:$port -N"
+
+while true; do
+	$cmd &
+	pid=$!
+	echo $pid > $PID
+	wait $pid
+	sleep 5;
+done
+
+
