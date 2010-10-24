@@ -1,4 +1,4 @@
-json-c (0.9-2) lucid; urgency=low
+json-c (0.9-5) lucid; urgency=low
 
   * Switched to packaging for Lucid
 

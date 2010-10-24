@@ -264,8 +264,8 @@ depends-packages-linux-json-c :
 	rm -rf  $(PKG_BUILD_DIR)/json-c-0.9/debian/*.install
 	cp package-scripts/debian/json-c/* $(PKG_BUILD_DIR)/json-c-0.9/debian
 	# Ugly workaround for launchpad lameness
-	rm -rf $(PKG_BUILD_DIR)/json-c-0.9.orig.tar.gz
-	wget --no-clobber -P $(PKG_BUILD_DIR) http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu/pool/main/j/json-c/json-c_0.9.orig.tar.gz
+	rm -rf $(PKG_BUILD_DIR)/json-c_0.9.orig.tar.gz
+	wget --no-clobber -P $(PKG_BUILD_DIR) http://ppa.launchpad.net/afrimesh/ppa/ubuntu/pool/main/j/json-c/json-c_0.9.orig.tar.gz
 	@cd $(PKG_BUILD_DIR)/json-c-0.9 ; debuild -S
 	# to build binaries
 	#@cd $(PKG_BUILD_DIR)/json-c-0.9 ; pdebuild
@@ -288,8 +288,8 @@ depends-packages-linux-uci :
 	cp package-scripts/debian/uci/Makefile     $(PKG_BUILD_DIR)/uci-0.7.5
 	cp package-scripts/debian/uci/Makefile.inc $(PKG_BUILD_DIR)/uci-0.7.5
 	# Ugly workaround for launchpad lameness
-	rm -rf $(PKG_BUILD_DIR)/uci-0.7.5.orig.tar.gz
-	wget --no-clobber -P $(PKG_BUILD_DIR) http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu/pool/main/u/uci/uci_0.7.5.orig.tar.gz
+	rm -rf $(PKG_BUILD_DIR)/uci_0.7.5.orig.tar.gz
+	wget --no-clobber -P $(PKG_BUILD_DIR) http://ppa.launchpad.net/afrimesh/ppa/ubuntu/pool/main/u/uci/uci_0.7.5.orig.tar.gz
 	@cd $(PKG_BUILD_DIR)/uci-0.7.5 ; debuild -S
   # to build binaries:
 	#@cd $(PKG_BUILD_DIR)/uci-0.7.5 ; pdebuild
@@ -334,10 +334,10 @@ depends-launchpad-linux : depends-packages-linux-json-c depends-packages-linux-u
 	@echo "Uploading/Refreshing packages to launchpad.net ppa"
 	# TODO run lintian & linda
 	# TODO read package release # from changelogs
-	dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/json-c_0.9-2_source.changes
-	dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/uci_0.7.5-2_source.changes
+	dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/json-c_0.9-5_source.changes
+	dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/uci_0.7.5-5_source.changes
 	#dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/libmemcachedb_0.25-1_source.changes
-	dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/libcredis_0.2.2-1_source.changes	
+	#dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/libcredis_0.2.2-1_source.changes	
 
 
 # - freebsd ----------------------------------------------------------------
