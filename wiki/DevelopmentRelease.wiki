@@ -10,7 +10,7 @@ By following these instructions you can make this a painless process for everyon
 * Run:
 {{{
   svn copy http://afrimesh.googlecode.com/svn/trunk \
-           http://afrimesh.googlecode.com/tags/afrimesh-<version>-r<revision#> \
+           http://afrimesh.googlecode.com/svn/tags/afrimesh-<version>-r<revision#> \
       -m "Tagged afrimesh-<version>-r<revision#>."
 }}}
 
