@@ -10,6 +10,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
+#include "mod_config.h"
 #include "mod_provision.h"
 #include "mod_db.h"
 #include "mod_http.h"
@@ -66,6 +67,22 @@ void provision_init()
  */
 const fexp* provision_evaluate(closure* c, provision* self, const fexp* expression)
 {
+  // read config for root server address - TODO macros for easy villagebus calls
+  string* val  = (string*)send(String, s_string_fromwchar, L"val");
+  string* key  = (string*)send(String, s_string_fromwchar, L"afrimesh.settings.root");
+  fexp* m = fexp_nil;
+  m = (fexp*)send(m, s_fexp_cons, key);
+  m = (fexp*)send(m, s_fexp_cons, val);
+  string* root = (string*)send(Config, s_villagebus_evaluate, m);
+  self->provision_root = root->buffer;
+  key = (string*)send(String, s_string_fromwchar, L"afrimesh.settings.a2billing");
+  m = fexp_nil;
+  m = (fexp*)send(m, s_fexp_cons, key);
+  m = (fexp*)send(m, s_fexp_cons, val);
+  string* a2billing = (string*)send(Config, s_villagebus_evaluate, m);
+  self->provision_a2billing = a2billing->buffer;
+  //wprintf(L"root: %S  a2billing: %S\n", self->provision_root, self->provision_a2billing);
+
   // search for name in local context
   string* name    = (string*)send(expression, s_fexp_car);
   fexp*   message = (fexp*)send(expression, s_fexp_cdr);
@@ -149,7 +166,7 @@ const fexp* provision_interface (closure* c, provision* self, const fexp* messag
                           json_object_get_string(json_object_object_get(json, "id")),
                           json_object_get_string(json_object_object_get(json, "mac")),
                           json_object_get_string(json_object_object_get(json, "ip")),
-                          PROVISION_DEFAULT_ROOT); 
+                          self->provision_root); 
       goto done;
     }
     
@@ -170,7 +187,7 @@ const fexp* provision_interface (closure* c, provision* self, const fexp* messag
                         id->buffer, 
                         mac->buffer, 
                         address->buffer,  
-                        PROVISION_DEFAULT_ROOT);    // TODO - read from VTE server UCI config
+                        self->provision_root);    // TODO - read from VTE server UCI config
 
     // register provisioning request w/ notification queue
     // TODO - we should really only be setting this once the device has
@@ -237,7 +254,7 @@ const fexp* provision_interface (closure* c, provision* self, const fexp* messag
   string* ret = (string*)send(String, s_string_fromwchar, L"\"10.%d.%d.%d\"", n1, n2, n3);*/
   // Strategy 4 - ability to specify an external hook for IP generation
 
-  string* ret = (string*)send(String, s_string_fromwchar, L"\"10.130.1.250\"");
+  string* ret = (string*)send(String, s_string_fromwchar, L"\"10.130.1.1\"");
   return (fexp*)ret;
 }
 
@@ -245,7 +262,7 @@ const fexp* provision_interface (closure* c, provision* self, const fexp* messag
 const fexp* provision_handset(closure* c, provision* self, const fexp* message)
 {
   // get parameters
-  string* mac = (string*)send(message, s_fexp_car); 
+  string* mac = (string*)send(message, s_fexp_car);
   // string* device = TODO - read json request
   // string* a2billing = TODO - read json request for a2billing.id ? Else ask Redis?
   wprintl(L"GET /provision/handset/%S\n", mac->buffer);
@@ -259,7 +276,7 @@ const fexp* provision_handset(closure* c, provision* self, const fexp* message)
   // Ask A2Billing for a trunk&username&secret&codec
   string* url = (string*)send(String, s_string_fromwchar, 
                               L"http://%S/a3glue/a3g_provisioning.php?mac_addr=%S", 
-                              L"192.168.130.2", mac->buffer); // TODO - evil hardcoded address is evil
+                              self->provision_a2billing, mac->buffer);
   fexp* urlf = (fexp*)send(fexp_nil, s_fexp_cons, url);
   string* response  = (string*)send(Http, s_http_get, urlf);
   if ((size_t)send(response, s_length) == 0) {
@@ -273,7 +290,6 @@ const fexp* provision_handset(closure* c, provision* self, const fexp* message)
     return (fexp*)send(VillageBus, s_villagebus_error, L"Syntax Error: Invalid provisioning response from a3glue");
   }
 
-  wchar_t* trunk       = L"192.168.130.2"; // PROVISION_DEFAULT_ROOT;  // TODO - evil hardcoded ip is evil
   const char* did      = json_object_get_string(json_object_object_get(a3glue, "did"));
   const char* username = json_object_get_string(json_object_object_get(a3glue, "username"));
   const char* secret   = json_object_get_string(json_object_object_get(a3glue, "uipass"));
@@ -299,7 +315,7 @@ const fexp* provision_handset(closure* c, provision* self, const fexp* message)
   string* reply = (string*)send(String, s_string_fromwchar, 
                                 L"%S %S %s %s %s %s",
                                 handset_id->buffer,
-                                trunk,
+                                self->provision_a2billing,
                                 did,
                                 username,
                                 secret,

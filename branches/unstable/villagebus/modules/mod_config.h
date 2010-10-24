@@ -32,6 +32,7 @@
 #ifndef MOD_CONFIG_H
 #define MOD_CONFIG_H
 
+#include <uci.h> 
 #include <villagebus.h>
 
 /* - config ------------------------------------------------------------- */
@@ -44,6 +45,9 @@ extern vtable* config_vt;
 extern object* _Config;
 extern config* Config;
 extern object* s_config;
+extern symbol* s_config_put;
+extern symbol* s_config_get;
+extern symbol* s_config_val;
 
 void config_init();
 
@@ -51,6 +55,7 @@ const fexp* config_evaluate(closure* c, config* self, const fexp* message);
 
 const fexp* config_put(closure* c, config* self, const fexp* message, const unsigned char* payload);
 const fexp* config_get(closure* c, config* self, const fexp* message);
+const fexp* config_val(closure* c, config* self, const fexp* message);
 
 config* config_print(closure* c, config* self);
 

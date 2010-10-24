@@ -21,6 +21,8 @@ typedef struct _provision {
   wchar_t* provision_mac;
   wchar_t* provision_handset;
   wchar_t* provision_person;
+  wchar_t* provision_root;
+  wchar_t* provision_a2billing;
   wchar_t* message_device;
   wchar_t* message_handset;
 } provision;

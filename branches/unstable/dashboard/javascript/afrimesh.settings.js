@@ -45,6 +45,7 @@ function BootSettings(parent, address) {
     "afrimesh|settings|network_name" : { remote : "afrimesh|dashboard|network_name", init : "mesh testbed" },
     "afrimesh|settings|locale"       : { remote : "afrimesh|settings|locale",        init : "en_US.UTF-8"  },
     "afrimesh|settings|ajax_proxy"   : { remote : "afrimesh|settings|ajax_proxy",    init : "/cgi-bin/ajax-proxy.cgi?url=" },
+    "afrimesh|settings|a2billing"    : { remote : "afrimesh|settings|a2billing",     init : "10.130.1.1"  },
 
     "afrimesh|settings|support|howto" : { remote : "afrimesh|support|howto", init : "afrimesh"  },
     "afrimesh|settings|support|group" : { remote : "afrimesh|support|group", init : "afrimesh"  },
@@ -64,7 +65,7 @@ function BootSettings(parent, address) {
     "afrimesh|settings|network|wireless|ssid"     : { remote : "wireless|@wifi-iface[0]|ssid",  init : "?" },
     "afrimesh|settings|network|wireless|bssid"    : { remote : "wireless|@wifi-iface[0]|bssid", init : "??:??:??:??:??:??" },
 
-    "afrimesh|settings|network|mesh|accounting_server" : { remote : "afrimesh|dashboard|accounting_server", init : "10.130.1.1" },  
+    "afrimesh|settings|network|mesh|accounting_server" : { remote : "afrimesh|settings|accounting_server", init : "10.130.1.1" },  
     "afrimesh|settings|network|mesh|vis_server"        : { remote : "batmand|general|visualisation_srv", init : "10.130.1.1" },  
     "afrimesh|settings|network|mesh|routing_class"     : { remote : "batmand|general|routing_class",     init : "" },  
     "afrimesh|settings|network|mesh|gateway_class"     : { remote : "batmand|general|gateway_class",     init : "" },  

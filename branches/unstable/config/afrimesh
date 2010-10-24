@@ -1,9 +1,11 @@
 config 'afrimesh' 'dashboard'
 	option 'network_name' 'Dashboard'
-	option 'accounting_server' '10.130.1.1'
 
 config 'afrimesh' 'settings'
-	option 'locale' 'en_US.UTF-8'
+	option 'locale'            'en_US.UTF-8'
+  option 'root'              '10.130.1.1'
+  option 'a2billing'         '10.130.1.1'
+	option 'accounting_server' '10.130.1.1'
 
 config 'afrimesh' 'support'
 	option 'howto'  'afrimesh'

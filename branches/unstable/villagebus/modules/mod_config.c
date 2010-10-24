@@ -28,8 +28,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-#include <uci.h> 
 #include <common/jsonrpc.h>
 
 #include "mod_config.h"
@@ -40,7 +38,9 @@ vtable* config_vt = 0;
 object* _Config = 0;
 config* Config = 0;
 object* s_config = 0;
-
+symbol* s_config_put = 0;
+symbol* s_config_get = 0;
+symbol* s_config_val = 0;
 
 void config_init() 
 {
@@ -48,6 +48,14 @@ void config_init()
   send(config_vt, s_addMethod, s_print, config_print);
   send(config_vt, s_addMethod, s_villagebus_evaluate, config_evaluate);
   _Config = send(config_vt, s_allocate, 0);
+
+  // register local symbols
+  s_config_put = (symbol*)symbol_intern(0, _Config, L"put");
+  s_config_get = (symbol*)symbol_intern(0, _Config, L"get");
+  s_config_val = (symbol*)symbol_intern(0, _Config, L"val");
+  send(config_vt, s_addMethod, s_config_put, config_put);
+  send(config_vt, s_addMethod, s_config_get, config_get);
+  send(config_vt, s_addMethod, s_config_val, config_val);
 
   // global module instance vars
   Config = (config*)send(_Config->_vt[-1], s_allocate, sizeof(config));
@@ -61,10 +69,10 @@ void config_init()
 }
 
 
-const fexp* config_evaluate(closure* c, config* self, const fexp* message)
+const fexp* config_evaluate(closure* c, config* self, const fexp* expression)
 {
   // TODO - VillageBus->request context should be coming in via the closure
-  //wprintf(L"mod_config: "); send(message, s_print); wprintf(L"\n");
+  //wprintf(L"mod_config: "); send(expression, s_print); wprintf(L"\n");
 
   // lazily initialize uci context
   self->context = uci_alloc_context();
@@ -72,22 +80,32 @@ const fexp* config_evaluate(closure* c, config* self, const fexp* message)
     return (fexp*)send(VillageBus, s_villagebus_error, L"uci: out of memory"); 
   }
 
+  // search for name in local context
+  string* name    = (string*)send(expression, s_fexp_car);
+  fexp*   message = (fexp*)send(expression, s_fexp_cdr);
+  //wprintf(L"name: "); send(name, s_print); wprintf(L"\n");
+  //wprintf(L"message: "); send(message, s_print); wprintf(L"\n");
+  object* channel = symbol_lookup(0, _Config, name->buffer);
+  if (channel) {
+    return (fexp*)send(self, channel, message);
+  } 
+
   // evaluate request 
   Request* request = VillageBus->request;
   switch (request->method) {
   case POST:  // semantically this should only ever respond to PUT but some web 
               // servers (*cough* anything under OpenWRT *cough*) often don't 
               // support PUT :-/
-    message = config_put(c, self, message, request->data);
+    expression = config_put(c, self, expression, request->data);
     break;
   case PUT:
-    message = config_put(c, self, message, request->data);
+    expression = config_put(c, self, expression, request->data);
     break;
   case GET:
-    message = config_get(c, self, message);
+    expression = config_get(c, self, expression);
     break;
   default:
-    message = (fexp*)send(VillageBus, 
+    expression = (fexp*)send(VillageBus, 
                           s_villagebus_error, 
                           L"mod_config has no registered handler for request method: %d", 
                           request->method);  // TODO method_to_string 
@@ -98,7 +116,7 @@ const fexp* config_evaluate(closure* c, config* self, const fexp* message)
     uci_free_context(self->context);
   }
 
-  return message;
+  return expression;
 }
 
 
@@ -174,6 +192,46 @@ const fexp* config_get(closure* c, config* self, const fexp* message)
   //        Which kinda sucks totally.
   int n = uci_show(self->context, (strchr(query, '*') ? NULL : query)); // TODO - some decent error handling inside there...
   free(query);
+  
+  return fexp_nil;
+}
+
+
+const fexp* config_val(closure* c, config* self, const fexp* expression)
+{
+  //wprintf(L"config_val: "); send(expression, s_print); wprintf(L"\n");
+  struct uci_option* o; 
+  struct uci_element* e;
+  struct uci_ptr ptr;
+
+  string* key = (string*)send(expression, s_fexp_car);
+  char* str = send(key, s_string_tochar);
+  if (uci_lookup_ptr(self->context, &ptr, str, true) != UCI_OK) {
+    printf("COULD NOT LOOKUP\n");
+    uci_perror(self->context, "village-bus-uci");
+    return fexp_nil;
+  }
+
+  if (!(ptr.flags & UCI_LOOKUP_COMPLETE)) {
+    printf("COULD NOT FIND\n");
+    self->context->err = UCI_ERR_NOTFOUND;
+    uci_perror(self->context, "village-bus-uci");    
+    return fexp_nil;
+  }
+
+  switch(ptr.last->type) {
+  case UCI_TYPE_SECTION: // TODO section  ptr.s->type);
+  case UCI_TYPE_OPTION:  o = ptr.o;  break;
+  }
+  
+  switch (o->type) {
+  case UCI_TYPE_STRING:
+    return (fexp*)send(String, s_string_fromchar, o->v.string, strlen(o->v.string));
+  case UCI_TYPE_LIST:
+    uci_foreach_element(&o->v.list, e) {
+      // TODO cons fexp e->name
+    }
+  }
   
   return fexp_nil;
 }
