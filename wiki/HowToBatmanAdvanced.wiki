@@ -50,6 +50,6 @@ uci commit
 
 = Vis Server Configuration =
 {{{
-uci set batman-adv.bat0.vis_mode=1
+uci set batman-adv.bat0.vis_mode=server
 uci commit
 }}}
