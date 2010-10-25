@@ -26,17 +26,18 @@ fis create -r 0x80041000 -e 0x80041000 rootfs
 uci delete wireless.wifi0.disabled
 uci delete wireless.@wifi-iface[0].network
 uci set wireless.wifi0.channel=1
-uci set wireless.@wifi-iface[0].mode=ahdemo
-uci set wireless.@wifi-iface[0].ssid=mesh
+uci set wireless.@wifi-iface[0].mode=adhoc
+uci set wireless.@wifi-iface[0].ssid=afrimesh
 uci set network.lan.mtu=1500
 uci set network.lan.ifname="eth0 bat0"
 uci set network.lan.proto=dhcp
 uci delete network.lan.ipaddr
 uci delete network.lan.netmask
-uci set network.ath0=interface
-uci set network.ath0.ifname=ath0
-uci set network.ath0.proto=none
-uci set network.ath0.mtu=1524
+uci set network.wifi0=interface
+uci set network.wifi0.ifname=ath0
+uci set network.wifi0.proto=none
+#uci set network.wifi0.mtu=1524
+uci set network.wifi0.mtu=1548
 uci set network.bat0=interface
 uci set network.bat0.ifname=bat0
 uci set network.bat0.proto=none
