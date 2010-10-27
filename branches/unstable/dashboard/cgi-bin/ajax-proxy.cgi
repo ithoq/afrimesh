@@ -38,7 +38,7 @@ fi
 URL=`echo "$QUERY_STRING" | sed 's/^url=*//' | sed 's/[&|?]callback=.*//' | sed "s/%20/ /g"`
 # TODO - is this obsolete now?
 #CALLBACK=`echo "$QUERY_STRING" | grep -oE "(^|[?&])callback=[^&]+" | sed "s/%20/ /g" | cut -f 2- -d "="`
-CALLBACK=`echo "$QUERY_STRING" | sed 's/.*callback=*//'`
+CALLBACK=`echo "$QUERY_STRING" | grep -o "callback=.*" | sed 's/.*callback=*//'`
 
 # - parse remote url -------------------------------------------------------
 REMOTE_HOST=`echo $URL | sed -e 's/http:\/\///;s|\/.*||;s|\:.*||'`
