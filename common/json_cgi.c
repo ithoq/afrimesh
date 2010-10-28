@@ -104,7 +104,7 @@ char* cgi_decode(const char* request, size_t length)
     json_cgi_parse_buffer = NULL;
   }
   json_cgi_parse_buffer = malloc(buffer_size);
-  memset(json_cgi_parse_buffer, buffer_size, 0);
+  memset(json_cgi_parse_buffer, 0, buffer_size);
   char* buffer = json_cgi_parse_buffer;
   for (index = 0; request[index] != '\0' && index < length; index++) {
     c = request[index];
@@ -138,7 +138,7 @@ char* request_to_json(const char* request, size_t length)
   }
   
   json_cgi_parse_buffer = malloc(buffer_size);
-  memset(json_cgi_parse_buffer, buffer_size, 0);
+  memset(json_cgi_parse_buffer, 0, buffer_size);
   char * buffer = json_cgi_parse_buffer;
 
   buffer += snprintf(buffer, buffer_size, "{ '");

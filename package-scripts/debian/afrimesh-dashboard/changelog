@@ -1,8 +1,22 @@
-afrimesh-dashboard (0.9-r766-1) hardy; urgency=low
+afrimesh-dashboard (1.0pre-r1078-1) lucid; urgency=low
 
-  * Minor packaging fixes
+  * Fixed ajax-proxy bug that mangled calls with no callback identifier.
 
- -- Antoine van Gelder <antoine@7degrees.co.za>  Wed, 30 June 2010 20:32:00 +0200
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Thu, 28 October 2010 08:35:00 +0200
+
+
+afrimesh-dashboard (1.0pre-r1065-1) lucid; urgency=low
+
+  * Afrimesh VTE Server interim release.
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Sat, 24 October 2010 14:35:00 +0200
+
+
+afrimesh-dashboard (1.0pre-r965-1) lucid; urgency=low
+
+  * Afrimesh 1.0 pre-release package. Please don't redistribute!
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Sat, 31 July 2010 14:35:00 +0200
 
 
 afrimesh-dashboard (0.9-r721-1) hardy; urgency=low

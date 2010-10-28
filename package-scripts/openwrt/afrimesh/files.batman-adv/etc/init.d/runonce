@@ -1,0 +1,54 @@
+#!/bin/sh /etc/rc.common
+START=30
+
+start () {
+    # factory config
+    factory_root=48.0.0.1
+
+    # local config
+    afrimesh_root=$(uci get afrimesh.settings.root)
+
+    # disable firewall
+    /etc/init.d/firewall disable
+
+    # configure router - TODO this is for UBNT loco M5 running backfire.svn - look up ifnames at runtime
+    uci delete wireless.radio0.disabled
+    uci set wireless.radio0.channel=48
+    uci delete wireless.@wifi-iface[0].network
+    uci set wireless.@wifi-iface[0].mode=adhoc
+    uci set wireless.@wifi-iface[0].ssid=Afrimesh
+    uci set wireless.@wifi-iface[0].bssid=01:CA:FF:EE:BA:BE
+
+    uci set network.wifi0=interface
+    uci set network.wifi0.ifname=wlan0
+    uci set network.wifi0.proto=none
+    ##uci set network.radio0.mtu=1524
+    uci set network.wifi0.mtu=1548
+
+    #uci set network.lan.mtu=1500
+    uci set network.lan.ifname="eth0 bat0"
+    uci set network.lan.proto=dhcp
+    uci delete network.lan.ipaddr
+    uci delete network.lan.netmask
+    uci delete network.wan
+
+    uci set network.bat0=interface
+    uci set network.bat0.ifname=bat0
+    uci set network.bat0.proto=none
+    #uci set network.bat0.mtu=1500
+
+    uci set batman-adv.bat0.interfaces=wlan0
+
+    # configure afrimesh
+    uci set system.@system[0].log_ip=$afrimesh_root
+
+    # commit changes
+    uci commit
+
+    # permissions - TODO something a bit less extreme :)
+    chmod -R a+rw /etc/config
+
+    # cleanup
+    rm -rf /etc/init.d/runonce.afrimesh-batman-adv
+    rm -rf /etc/rc.d/S30runonce.afrimesh-batman-adv
+}
