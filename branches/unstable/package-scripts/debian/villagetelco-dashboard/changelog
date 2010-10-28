@@ -1,3 +1,10 @@
+villagetelco-dashboard (1.0pre-r1078-1) lucid; urgency=low
+
+  * Fixed ajax-proxy bug that mangled calls with no callback identifier.
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Thu, 28 October 2010 08:35:00 +0200
+
+
 villagetelco-dashboard (1.0pre-r1065-1) lucid; urgency=low
 
   * Afrimesh VTE Server interim release.
