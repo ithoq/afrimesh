@@ -40,7 +40,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/afrimesh-base
 	SECTION:=admin
 	CATEGORY:=Administration
-	DEPENDS:=+busybox +libuci +libjson +ntpclient +mini-httpd
+	DEPENDS:=+libuci +libjson +ntpclient +mini-httpd +netcat
 	TITLE:=Easy management for wireless community mesh networks
 	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
 	#$(call Config,afrimesh.location.latitude,string,-25.7481182,Router Latitude)
@@ -81,7 +81,7 @@ endef
 define Package/afrimesh-provision
 	SECTION:=admin
 	CATEGORY:=Administration
-	DEPENDS:=+afrimesh-batman
+	DEPENDS:=+afrimesh-base
 	TITLE:=Mesh router auto-provisioning support
 	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
 endef
@@ -95,10 +95,32 @@ define Package/afrimesh-provision/install
 	$(INSTALL_DIR)  $(1)/www/cgi-bin
 	$(INSTALL_BIN)  ./files.provision/etc/init.d/provision             $(1)/etc/init.d/provision
 	$(INSTALL_BIN)  ./files.provision/www/cgi-bin/provision.sh         $(1)/www/cgi-bin/provision
-	$(INSTALL_BIN)  ./files.provision/www/cgi-bin/provision-handset.sh $(1)/www/cgi-bin/provision-handset
 
 	# - runonce --
 	$(INSTALL_BIN)  ./files.provision/etc/init.d/runonce          		 $(1)/etc/init.d/runonce.afrimesh-provision
+endef
+
+
+# - afrimesh-batman-adv ----------------------------------------------------
+define Package/afrimesh-batman-adv
+	SECTION:=admin
+	CATEGORY:=Administration
+	DEPENDS:=+afrimesh-base +kmod-batman-adv
+	TITLE:=Afrimesh for B.A.T.M.A.N. Layer-II wireless mesh networks
+	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
+endef
+
+define Package/afrimesh-batman-adv/description
+	Afrimesh for B.A.T.M.A.N. Layer-II wireless mesh networks
+endef
+
+define Package/afrimesh-batman-adv/install
+	$(INSTALL_DIR)  $(1)/etc
+	$(INSTALL_DIR)  $(1)/etc/config
+
+	# - runonce --
+	$(INSTALL_DIR)  $(1)/etc/init.d
+	$(INSTALL_BIN)  ./files.batman-adv/etc/init.d/runonce  $(1)/etc/init.d/runonce.afrimesh-batman-adv
 endef
 
 
@@ -210,22 +232,6 @@ define Package/afrimesh-batman/description
 endef
 
 define Package/afrimesh-batman/install
-endef
-
-# - afrimesh-batman-adv ----------------------------------------------------
-define Package/afrimesh-batman-adv
-	SECTION:=admin
-	CATEGORY:=Administration
-	DEPENDS:=+afrimesh-base +kmod-batman-adv
-	TITLE:=Afrimesh for B.A.T.M.A.N. Layer-II wireless mesh networks
-	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
-endef
-
-define Package/afrimesh-batman-adv/description
-	Afrimesh for B.A.T.M.A.N. Layer-II wireless mesh networks
-endef
-
-define Package/afrimesh-batman-adv/install
 endef
 
 
