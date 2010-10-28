@@ -1,0 +1,23 @@
+#!/bin/sh /etc/rc.common
+START=30
+
+
+start () {
+    # factory config
+
+    # local config
+    factory_root=$(uci get afrimesh.settings.root)
+
+    # configure router
+    uci set system.@system[0].log_ip=$factory_root
+
+    # commit changes
+    uci commit
+  
+    # permissions - TODO something a bit less extreme :)
+    chmod -R a+rw /etc/config
+
+    # cleanup
+    rm -rf /etc/init.d/runonce.fabfi-device
+    rm -rf /etc/rc.d/S30runonce.fabfi-device
+}

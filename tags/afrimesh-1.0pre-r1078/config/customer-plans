@@ -1,0 +1,18 @@
+config customer-plan
+       option name 'discount'
+       option minutes 60
+       option currency "R"
+       option price 10.00
+
+config customer-plan
+       option name 'value'
+       option minutes 180
+       option currency "R"
+       option price 25.00
+
+config customer-plan
+       option name 'premium'
+       option minutes 480
+       option currency "R"
+       option price 50.00
+

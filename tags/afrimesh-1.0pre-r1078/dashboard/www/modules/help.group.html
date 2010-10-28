@@ -1,0 +1,79 @@
+<!--
+ * Afrimesh: easy management for B.A.T.M.A.N. wireless mesh networks
+ * Copyright (C) 2008-2009 Meraka Institute of the CSIR
+ * All rights reserved.
+ *  
+ * This software is licensed as free software under the terms of the
+ * New BSD License. See /LICENSE for more information.
+-->
+
+<h2>Support group</h2>
+
+<div class="help" id="groupcontent">please wait a moment...</div>
+
+<!-- div id="mashed_potatoes" style="display:none;"></div -->
+
+<script type="text/javascript"> //<![CDATA[    
+(function() {
+
+  /** includes ------------------------------------------------------------ */
+  var group_base = "http://groups.google.com";
+  var group_uri  = "group/" + afrimesh.settings.support.group + "/topics?gvc=2";
+
+  /** construction -------------------------------------------------------- */
+  ready = function() { // INJ 'ready' should be the only symbol we're exposing to the global namespace
+    mash_site(group_base, group_uri);
+    console.debug("loaded help.forum.html");
+    return unload;
+  };
+
+  function unload() {
+    console.debug("unloaded help.forum.html");
+  };
+
+
+  /** done ---------------------------------------------------------------- */
+  console.debug("loaded help.forum.js");
+
+  
+  /** support functions --------------------------------------------------- */
+  function mash_site(site_base, page_uri) {
+    var ajax_proxy = afrimesh.villagebus.ajax_proxy();
+    $.ajax({ url: ajax_proxy + site_base + "/" + page_uri,
+             success: on_got_content });
+  }
+  function on_got_content(content) {
+    merge_content(content);
+    $("#groupcontent a").click(function() {
+        var uri = url_to_uri(this.href);
+        console.debug("Rewrote url: " + this.href + " -> " + group_base + " / " + uri);
+        mash_site(group_base, uri);
+        return false;            
+      });
+  }
+  function merge_content(html) {
+    var message_list = $(html).find(".maincontoutboxatt");
+    var message_header = (message_list.length ? "" : $(html).find("div#msgs #hdr .exh .fontsize2")); 
+    var message_body = (message_list.length ? "" : $(html).find("div#msgs #body #inbdy")); 
+    $("#groupcontent").empty();
+    if (message_list.length) {
+      $("#groupcontent").append(message_list);
+    } else if (message_header.length && message_body.length) { 
+      $("#groupcontent").append("<div class='navigation'><a href='/" + group_uri + "'>Back to topics</a></div>")
+      $("#groupcontent").append("<div class='spacer';></div>");
+      $("#groupcontent").append(message_header);
+      $("#groupcontent").append("<div class='spacer';></div>");
+      $("#groupcontent").append(message_body);
+      $("#groupcontent").append("<div class='spacer';></div>");
+      $("#groupcontent").append("<div class='navigation'><a href='/" + group_uri + "'>Back to topics</a></div>");
+    }  else {
+      $("#groupcontent").append("There was a problem accessing the support group content");
+    }
+    $("#groupcontent img").remove();
+  } 
+
+ 
+})();
+//]]></script>
+
+

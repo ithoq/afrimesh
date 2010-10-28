@@ -1,0 +1,5 @@
+libmemcachedb (0.25-1) hardy; urgency=low
+
+  * Initial release 
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Thu, 16 July 2009 10:40:44 +0200

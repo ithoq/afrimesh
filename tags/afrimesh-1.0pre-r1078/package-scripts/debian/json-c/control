@@ -1,0 +1,27 @@
+Source: json-c
+Priority: extra
+Maintainer: Antoine van Gelder <antoine@7degrees.co.za>
+Build-Depends: debhelper (>= 5), autotools-dev
+Standards-Version: 3.7.2
+Section: libs
+
+Package: json-c-dev
+Section: libdevel
+Architecture: any
+Depends: json-c (= ${Source-Version})
+Description: JSON-C is an implementation of JSON in c
+ JSON-C implements a reference counting object model that allows you to 
+ easily construct JSON objects in C, output them as JSON formatted strings
+ and parse JSON formatted strings back into the C representation of JSON
+ objects.
+
+Package: json-c
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: JSON-C is an implementation of JSON in c
+ JSON-C implements a reference counting object model that allows you to 
+ easily construct JSON objects in C, output them as JSON formatted strings
+ and parse JSON formatted strings back into the C representation of JSON
+ objects.
+
