@@ -23,7 +23,7 @@ add the Afrimesh package archive & signing keys to the system.
 To do this, please open up a Terminal and run:
 
   {{{
-  sudo apt-add-repository "deb http://ppa.launchpad.net/afrimesh/ppa/ubuntu hardy main"
+  sudo apt-add-repository ppa:afrimesh/ppa
   }}}
 
 On older versions of Ubuntu you may need to run this instead:
