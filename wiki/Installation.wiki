@@ -4,18 +4,7 @@
 = Step 1 - Install the Afrimesh Dashboard Server =
 --------
 
-=== Option 1 - The WispBox LiveCD ===
-
-The easiest option, WispBox boots your server straight into a fully
-configured network management server and Internet gateway.
-
-TODO - [http://code.google.com/p/wispinabox/]
---------
-
-
-=== Option 2 - Ubuntu Packages ===
-
-Slightly harder, but still pretty easy.
+=== Option 1 - Ubuntu Packages ===
 
 Before you can install the afrimesh-dashboard package you will need to
 add the Afrimesh package archive & signing keys to the system.
@@ -56,13 +45,13 @@ Now you can go on to: *Step 2 - Configure the Afrimesh Dashboard Server*
 --------
 
 
-=== Option 3 - OpenWRT ===
+=== Option 2 - OpenWRT ===
 
 TODO
 --------
 
 
-=== Option 4 - FreeBSD ===
+=== Option 3 - FreeBSD ===
 
 TODO
 
@@ -73,7 +62,7 @@ TODO
 --------
 
 
-=== Option 5 - From Source ===
+=== Option 4 - From Source ===
 
 The latest stable version of the Afrimesh sources can always be
 obtained from: [http://code.google.com/p/afrimesh/downloads/list]
