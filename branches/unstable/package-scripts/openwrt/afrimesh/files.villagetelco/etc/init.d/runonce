@@ -9,7 +9,7 @@ start () {
     factory_root=$(uci get afrimesh.settings.root)
 
     # configure router
-    uci set batmand.general.routing_class=3
+    uci set batmand.general.routing_class=1
     uci set batmand.general.visualisation_srv=$factory_root
     uci set system.@system[0].log_ip=$factory_root
 
