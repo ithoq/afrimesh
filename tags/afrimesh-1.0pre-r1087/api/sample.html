@@ -1,0 +1,46 @@
+<html>
+  <head>
+    <style>
+      body {
+        font-family: Helvetica, Verdana, Arial, Sans;
+      }
+    </style>
+    <script type="text/javascript" src="javascript/afrimesh.js"></script>
+    <script type="text/javascript">  //<![CDATA[    
+      afrimesh.ready(function() {
+        console.log("afrimesh ready");
+
+        // bind hello mesh function to button
+        $("div#topology button").click(hello_mesh);
+      });
+
+      // hello mesh
+      function hello_mesh() {
+        afrimesh.network.routers(function(error, routers) { 
+          if (error) return console.error("Error getting network devices list: " + error);
+          var html = routers.map(function(router) {
+            return "<div>" + 
+                   "<b>" + router.address + "</b> " + 
+                   router.routes.map(function(route) { 
+                     if      ("neighbour" in route) return route.neighbour;
+                     else if ("gateway"   in route) return route.gateway;
+                     return "";
+                   }).join(" ") +
+                   "</div>";
+            }).join("\n");
+          $("div#topology").html(html);
+          console.log(html);
+        });
+      };
+    //]]></script>
+  </head>
+  <body>
+
+    <h1>Afrimesh API Sample</h1>
+
+    <div id="topology">
+      <button>mesh topology</button>
+    </div>
+
+  </body>
+</html>

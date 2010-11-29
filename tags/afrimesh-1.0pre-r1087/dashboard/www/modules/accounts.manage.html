@@ -1,0 +1,210 @@
+<!--
+ * Afrimesh: easy management for mesh networks
+ *  
+ * This software is licensed as free software under the terms of the
+ * New BSD License. See /LICENSE for more information.
+-->
+
+<div id="accounts-manage">
+
+  <!-- search control -->
+  <div style="border: 0px solid red;">
+    <input type="text" 
+           style="width:400px; height:30px; padding-left:10px; vertical-align:middle;"
+           name="seach" id="search" 
+           value="" title="Search on person information ..." />
+    &nbsp;
+    <span id="account-create" class="round button" style="float:right; vertical-align:middle;">Add another person</span>
+  </div>
+  <hr />
+
+  <!-- account list -->
+  <div class="scrollview" style="top:5.0em;">
+
+    <!-- account editor template -->
+    <div id="editor-template" class="round-small editor">
+      <input type="hidden" id="id" />
+      <input type="text"   id="firstname" title="first name" style="width: 10em;"/>
+      <input type="text"   id="lastname"  title="last name"  style="width: 10em;"/>
+      <input type="text"   id="email"     title="email"      style="width: 15em;"/>
+      <br/>
+      <textarea id="address" title="street address" cols="30" rows="4"></textarea>
+      <span class="mydevices button round-small" style="display:inline-block;">
+        <span id="ip"></span><br/>
+        <i><span id="mac"></span></i><br/><br/>
+        <b>deprovision</b>
+      </span>
+      <div style="text-align:right;">
+        <button id="save">save</button>
+        <button id="cancel">cancel</button>
+      </div>
+    </div>
+
+    <!-- account summary template -->
+    <div id="accountlist" class="accounts">
+      <div id="account-template" style="display:none;"> 
+        <span class="expand">+</span>
+        <span id="person">unknown</span> 
+        <span id="device"></span>
+        <span id="handset"></span>
+        <span id="a2b_credit"></span>
+        <span id="a3g_status"></span>
+      </div>
+    </div>
+  </div>
+
+</div> <!-- #accounts-manage -->
+
+
+
+<script type="text/javascript"> //<![CDATA[    
+(function() {
+
+  /** includes ---------------------------------------------------------- */
+  /* often a good idea:  load("modules/accounts.manage.js"); *;/
+
+
+  /** construction ------------------------------------------------------ */
+  ready = function() { // INJ 'ready' should be the only symbol we're exposing to the global namespace
+    /* often a good place to do this: populate_control(); */
+    console.debug("loaded accounts.manage.html");
+
+    /* set up search box */
+    $('input[title!=""]').hint();    
+    $("div#accounts-manage input#search").bind("keyup", function(event) {
+        if (this.value == "") { 
+          return $("div.account").show();
+        }
+        var filter = this.value;
+        $("div.account:not(:contains(" + filter + "))").hide();
+        $("div.account:contains(" + filter + ")").show();
+	      if (event.keyCode != 13) return true;
+        return false;
+      });
+
+
+    /* load data */   
+    function populate_control() {
+      afrimesh.community.neighbors(function(error, person) {
+          if (error) return console.error("Missing community: " + error);
+          insert_entry(person);
+        });
+      
+    };
+    populate_control();
+
+    $("#account-create").click(function() {
+        var clone = $("#account-template").clone()
+                                          .addClass("account")
+                                          .attr("id", 0)
+                                          .prependTo("#accountlist").show();
+        var person = {}; //{ id:0, firstname:"", lastname:"", email:"", address:"" };
+        var editor = on_show_editor(clone, person);
+        editor.find("button#cancel").click(function() { 
+            editor.remove(); 
+            clone.remove(); 
+          });
+      });    
+
+    function on_save_person(account) {
+      var person = {
+        id        : account.find("input#id").val(),
+        firstname : account.find("input#firstname").hintval(),
+        lastname  : account.find("input#lastname").hintval(),
+        email     : account.find("input#email").hintval(),
+        address   : account.find("textarea#address").hintval(),
+        device    : account.source.device
+      };
+      console.log("Saving: " + show(person));
+
+      afrimesh.person.save(person, function(error, person) {  // save person info and get id
+          if (error) return console.error("Could not save: " + error); // Show error in editor
+          console.log("Save success");
+          $("#accountlist").find(".account").remove(); // TODO - a bit drastic :)
+          populate_control();
+        }, account.source);
+
+    };
+
+    function on_deprovision(account, device) {
+      afrimesh.network.release(device, function(error, response) {
+          if (error) return console.error("Could not release device: " + error);
+          account.source.device = undefined;
+          account.find("span.mydevices").remove();
+          on_save_person(account);
+        });
+    };
+
+    function insert_entry(person) {
+      var clone = $("#account-template").clone()
+                                        .addClass("account")
+                                        .attr("id", person.id)
+                                        .appendTo("#accountlist").show();
+      clone.find("#person").html(person.firstname + " " + person.lastname);
+      if (person.device) {
+        clone.find("#device").html(person.device.ip + " <i>(" + person.device.mac + ")</i>");
+        clone.find("#handset").html(person.device.id);
+      }
+      clone.find(".expand").toggle(function() { on_show_editor(clone, person); }, 
+                                   function() { on_hide_editor(clone); });
+      afrimesh.billing.voip(person.device.ip, function(error, info) { // link a2billing info
+          if (error) return console.error("Missing billing info for " + person.device.ip + ": " + error);
+          console.log("INFO: " + info[0].a2b_credit);
+          clone.find("#a2b_credit").html(info[0].a2b_credit);
+          clone.find("#a3g_status").html(info[0].a3g_status);
+        });
+    };
+    function on_show_editor(account, person) {
+      var clone = $("#editor-template").clone()
+                                       .attr("id",    "editor");
+      clone.appendTo($(account).find("#person")).show();
+      $(account).find("#person").addClass("round-small expanded");
+      $(account).find(".expand").html("-");
+      $("input[title!='']").hint(); $("textarea[title!='']").hint();    
+      // set field values
+      clone.source = person;
+      clone.find("input#id").val(person.id);
+      clone.find("input#firstname").hintval(person.firstname);
+      clone.find("input#lastname").hintval(person.lastname);
+      clone.find("input#email").hintval(person.email);
+      clone.find("textarea#address").hintval(person.address);
+      if (person.device) {
+        clone.find("span.mydevices #ip").html(person.device.ip);
+        clone.find("span.mydevices #mac").html("(" + person.device.mac + ")");
+        clone.find("span.mydevices").click(function() { on_deprovision(clone, person.device); });
+      } else {
+        clone.find("span.mydevices").hide();
+      }
+      clone.find("button#save")  .click(function() { on_save_person(clone);  });
+      clone.find("button#cancel").click(function() { account.find(".expand").click(); });
+      return clone;
+    };
+    function on_hide_editor(account) {
+      $(account).find(".expand").html("+");
+      $(account).find("#person").removeClass("round-small expanded");
+      $(account).find("#person #editor").remove();
+      return account;
+    };
+    /* -- */
+
+
+    return unload;
+  };
+
+  function unload() {
+    console.debug("unloaded accounts.manage.html");
+  };
+
+
+  /** populate control -------------------------------------------------- */
+  function populate_accounts(accounts) {
+  };
+
+
+  /** done -------------------------------------------------------------- */
+  console.debug("loaded accounts.manage.js");
+ 
+})();
+//]]></script>
+
+

@@ -1,0 +1,452 @@
+/**
+ * Afrimesh: easy management for B.A.T.M.A.N. wireless mesh networks
+ * Copyright (C) 2008-2009 Meraka Institute of the CSIR
+ * All rights reserved.
+ *  
+ * This software is licensed as free software under the terms of the
+ * New BSD License. See /LICENSE for more information.
+ */
+
+
+/* - funky braces --------------------------------------------------------- */
+td.instructions {
+  text-align: center;
+  font-size: 1.5em;
+  color: lightgray;
+}
+td.v-instructions {
+  text-align: left;
+  font-size: 1.5em;
+  color: lightgray;
+}
+td.h-brace {
+  border-left: 1px solid lightgray;
+  border-right: 1px solid lightgray;
+  border-bottom: 1px solid lightgray;
+}
+td.v-brace {
+  border-top: 1px solid lightgray;
+  border-right: 1px solid lightgray;
+  border-bottom: 1px solid lightgray;
+}
+
+
+/* - customers-manage module ----------------------------------------------- */
+.customers-manage         { font-size: 1.25em; }
+.customers-manage table   {  } 
+.customers-manage th      {  
+  background-repeat: no-repeat;
+  background-position: center right;
+  background-image: url(images/bg.gif); 
+  cursor: hand;  
+} 
+.customers-manage th.headerSortUp   { background-image: url(images/asc.gif);  }
+.customers-manage th.headerSortDown { background-image: url(images/desc.gif); }
+.customers-manage td { padding-top: 0.5em; } 
+.customers-manage th.command, td.command { 
+  text-align: right;  
+  padding-right: 20px;  
+} 
+.customers-manage td.command span { 
+  background: lightgray;  
+  padding: 0.1em 0.4em 0.2em 0.4em; /* top right bottom left */     
+  margin-left: 0.3em;
+  cursor: hand; w
+} 
+.customers-manage .button.hover {
+  background: darkgray;
+}
+.customers-manage .button.selected {
+  background: gray;
+}
+.customers-manage .edit-username {  
+  width: 15em;
+  cursor: caret;
+}
+.customers-manage .edit-type {  
+  width: 7.5em;
+  cursor: hand; 
+}
+
+
+/* - customers-status module ----------------------------------------------- */
+.customers-status         { font-size: 1.25em; }
+.customers-status table   { } 
+.customers-status th      {   
+  background-repeat: no-repeat;
+  background-position: center right;
+  background-image: url(images/bg.gif); 
+  cursor: hand; 
+  padding:0px; 
+  padding-right:1.0em;
+} 
+.customers-status th.headerSortUp {
+  background-image: url(images/asc.gif);
+}
+.customers-status th.headerSortDown {
+  background-image: url(images/desc.gif);
+}
+.customers-status tr.idle { color: lightgray;  }
+.customers-status td      {  } 
+.customers-status td.name { width: 10em; } 
+
+
+/* - customers-plans ------------------------------------------------------ */
+.customers-plans              { font-size: 1.25em; }
+.customers-plans table        {  } 
+.customers-plans th           { padding:0px; padding-right:1.0em;} 
+.customers-plans td           { padding-top: 0.5em; } 
+.customers-plans td.name      { cursor: caret; width: 10em;  }
+.customers-plans td.minutes   { cursor: caret;  }
+.customers-plans td.currency  { cursor: caret;  }
+.customers-plans td.price     { cursor: caret;  }
+
+
+/* - customers-recharge module -------------------------------------------- */
+.customers-recharge      { margin: 1em; }
+.customers-recharge td.spacer { width: 0em; height: 1em; }
+.customers-recharge div.button, div.button-submit {
+  background: lightgray;
+  margin-left: 10px;
+  cursor: hand;  
+}
+.customers-recharge div.button-submit {
+  background: #B2C3DD;
+}
+.customers-recharge div.button-submit.hover {
+  background: #92A3BD;
+}
+.customers-recharge div.button-submit.selected {
+  background: #72839D;
+}
+.customers-recharge div.button.hover {
+  background: darkgray;
+}
+.customers-recharge div.button.selected {
+  background: gray;
+}
+.customers-recharge div.button p, div.button-submit p {
+  padding: 10px; 
+  text-align: center;
+}
+.customers-recharge div.button p b, div.button-submit p b { 
+  font-size: 2.0em;
+  display: block;
+}
+.customers-recharge div.button p i { 
+  font-size: 1.5em;
+  display: block;
+}
+.customers-recharge div.voucher.button {
+  background: white;
+  border: 1px solid gray;
+  width: 30em;
+  cursor: default;  
+}
+
+
+/* - network health module ------------------------------------------------ */
+.network-messages thead {
+  color: black;
+}
+.network-messages tr {
+  vertical-align: top;
+}
+.network-messages td {
+  font-size: 1.0em;
+  margin: 0px;
+  padding: 0px;
+  padding-right: 10px;
+}
+.network-messages td#timestamp {
+  width: 10.0em;
+  color: gray;
+}
+.network-messages td#level {
+  color: gray;
+}
+.network-messages div#node {
+  color: gray;
+  vertical-align: top; 
+  height: 1.3em;  
+  overflow: hidden; 
+  display: block; 
+}
+.network-messages td#process {
+  color: gray;
+}
+.network-messages div#message {
+  vertical-align: top; 
+  height: 1.3em; 
+  overflow: hidden; 
+  display: block; 
+}
+.network-messages tr.notice td {
+  color: blue;
+}
+.network-messages tr.warn td {
+  color: orange;
+}
+.network-messages tr.err td {
+  color: red;
+}
+.network-messages tr.unknown td {
+  color: #202020;
+}
+        
+
+/* - accounts manage module --------------------------------------------- */
+div#accounts-manage {
+  border: 0px solid blue;
+}
+div#accounts-manage div.accounts {
+  display        : table;
+  border         : 0px solid blue;
+  border-spacing : 0em 0.3em;
+  /*table-layout : fixed;*/
+  width          : 100%;
+}
+div#accounts-manage div.account {
+  display: table-row;
+}
+div#accounts-manage div.account span {
+  display        : table-cell;
+  border         : 0px solid red;
+  vertical-align : top;
+  padding        : 5px 5px;
+  text-overflow  : ellipsis;
+  white-space    : nowrap;
+  overflow       : hidden; 
+}
+div#accounts-manage div.account span.expanded {
+  /*border     : 1px solid #ddd;*/
+  background : #eee;
+}
+div#accounts-manage div.account span.expand {
+  color       : darkgray;
+  font-family : "Courier New", "Courier", "Lucida Sans Mono";
+  font-size   : 1.0em;
+  font-weight : bold;
+  width       : 1px;
+}
+div#accounts-manage .editor {
+  background     : #eee;
+  border         : 0px solid red;
+  display        : none;
+  padding        : 0.5em;
+  padding-bottom : 0.25em;
+  padding-right  : 0.25em;
+}
+div#accounts-manage .editor input, textarea {
+  margin-bottom: 10px;
+  padding-left:0.25em;
+}
+div#accounts-manage span.mydevices {
+  font-weight:normal; 
+  font-size:0.9em; 
+  text-align:center; 
+  /*display:inline-block;*/
+}
+div#accounts-manage span.mydevices span {
+  display:inline;
+}
+
+/* - network devices module --------------------------------------------- */
+div#network-devices {
+}
+div#network-devices table, thead, tr, th, td {  
+}
+div#network-devices thead {
+}
+div#network-devices tr {
+}
+div#network-devices th td {
+}
+div#network-devices form.filter {
+  border:0px solid blue;
+  background-color: white;
+  color: #333;
+  padding-top: 1.0em;
+  padding-bottom: 1.0em;
+}
+div#network-devices form.filter label {
+  padding: 5px 10px;
+  margin-left: 0.5em;
+  /*color: white;*/
+  background: #ddd;
+}
+div#network-devices form.filter label:hover {
+}
+div#network-devices form.filter .active {
+  color: white;
+  background: #333;
+  /*text-shadow: 0px -1px 0px black;*/
+}
+div#network-devices div.devices {
+  display: table;
+  border: 0px solid green;
+  border-spacing: 0.5em;
+}
+div#network-devices div.head {
+  display: table-row;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+div#network-devices div.head span {
+  display: table-cell;
+}
+div#network-devices div.device {
+  display: table-row;
+}
+div#network-devices div.device span {
+  display: table-cell;
+  border: 0px solid blue;
+  vertical-align: middle;
+}
+div#network-devices div.device span.name {
+  color: blue;
+  font-weight: bold;
+  padding-right: 1.5em;
+}
+div#network-devices div.device span.uptime {
+  color: black;
+}
+div#network-devices div.device span.lastseen {
+  color: black;
+}
+div#network-devices div.device span.status {
+  color: green;
+}
+div#network-devices div.device span.traffic {
+  color: gray;
+}
+div#network-devices div.device span.graph {
+  margin: 0px; padding: 0px;
+  border: 1px solid lightgray;
+  background: #eee;
+  padding-left: 0.25em;
+  padding-right: 0.25em;
+  width: 100%;
+}
+
+
+
+/* - utility upgrade module ---------------------------------------------- */
+.utility-upgrade td { 
+  margin:0px; 
+  padding:0px; 
+}
+
+
+/* - internet-configure module -------------------------------------------- */
+.ui-sortable, .ui-sortable-brace, .ui-sortable-instructions { width: 310px; padding: 5px; }
+.ui-sortable        { border:1px solid gray; min-height: 230px; margin: 5px; }
+.ui-sortable-brace  {   
+  border-left: 1px solid lightgray;
+  border-right: 1px solid lightgray;
+  border-bottom: 1px solid lightgray;  
+  margin-top: 1em;
+  width:320px;
+}
+.ui-sortable-instructions { 
+  text-align: center;
+  font-size: 1.5em;
+  color: lightgray;
+}
+dl.sort { margin: 5px; }
+dl.sort dt { 
+  border: 1px solid gray;
+  cursor:move; 
+  height:1.6em; 
+  line-height:1.6; 
+  position:relative; 
+  text-align: center; 
+  width: 300px; 
+}
+dl.sort dd { background-color:red;  }
+
+
+.internet-configure td { background-color: lightgray; border: 4px solid white; padding: 4px;  } 
+
+/* - help module ---------------------------------------------------------- */
+.help li {
+  margin-left: 2.0em;
+  list-style-type: disc;
+  list-style-position: outside;
+}
+.help div.spacer {
+  height: 2.0em;
+}
+.help div.navigation {
+  background: #f7f7f7;
+}
+
+
+/* - setting module ------------------------------------------------------- */
+form.two-column {
+  border: 0px solid green;
+  margin: 0px;  
+  padding: 0px; 
+}
+form.two-column td {
+  margin: 0px;  
+  padding: 0px; 
+}
+form.two-column fieldset {
+  border:0px solid blue;
+  padding-bottom: 0.5em;
+  width: 400px; 
+}
+form.two-column#potato fieldset    {
+  /*border:1px solid orange;*/
+  padding-bottom: 0.5em;
+  width: 340px; 
+}
+form.two-column fieldset:last-child {
+  padding-bottom: 0px;
+}
+form.two-column#potato fieldset:last-child {
+  padding-bottom: 0px;
+}
+form.two-column button {
+  border: 0px solid red;
+  vertical-align: bottom;
+}
+form.two-column legend {
+  border: 0px solid brown;
+  font-size: 1.5em;
+  padding-top: 0px;
+  padding-bottom: .25em;
+}
+form.two-column .label {
+  border:0px solid green;
+  color: darkgray; 
+  width: 180px; /* 120 for potato */
+  float: left;
+}
+form.two-column#potato .label  {
+  /*border:1px solid purple;*/
+  color: darkgray; 
+  width: 120px; 
+  float: left;
+}
+form.two-column .iax_trunk, .sip_trunk, .gateway_class, .routing_class {
+  margin-top: .5em;
+}
+form.two-column input, select {
+  /*border:1px solid green;*/
+  margin-bottom: .5em;
+  width: 200px;  /* FireFox is sizing these rather large by default */
+}
+form.two-column input[type=checkbox] {  /* aaaaaaaaaargh */
+}
+form.two-column #location {
+  width:  600px;
+  height: 300px;
+  z-index: -1;
+}
+form.two-column #location.message {
+  /*border: 1px dashed gray;*/
+  text-align: center;
+  float: left;
+}

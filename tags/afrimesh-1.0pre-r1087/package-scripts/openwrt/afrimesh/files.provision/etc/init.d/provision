@@ -1,0 +1,38 @@
+#!/bin/sh /etc/rc.common
+START=94
+
+
+start() {
+    logger "Started provisioning daemon on $DATE"
+
+    # configuration
+    DATE=`date`
+    device=$(uci get wireless.@wifi-iface[0].device)
+    interface=$(uci get network.$device.ifname)
+    mac=`ifconfig $interface | grep HWaddr | awk '{ print $5 }'`
+    root=$(uci get afrimesh.settings.root)
+    self=$(uci get network.$device.ipaddr)
+    
+    # die if there is no mesh root server set
+    [ -z $root ] && exit 
+
+    # We have to succeed in receiving 5 packets in 10 seconds 
+    # for provisioning to proceed.
+    while true; do
+        ping -c 5 -w 10 $root >& /dev/null ; [ $? = 0 ] && break 
+        sleep 5
+        # TODO - should we die if we can't get this right after some number of tries ?
+    done
+
+    # start provisioning service
+    logger "$mac ($self) initiating provisioning request."
+    /www/cgi-bin/provision >> /tmp/provision.log 2>&1
+}
+
+
+stop() {
+    logger "Aborted provisioning daemon on $DATE"
+    killall -9 provision 
+    killall -9 S94provision 
+}
+

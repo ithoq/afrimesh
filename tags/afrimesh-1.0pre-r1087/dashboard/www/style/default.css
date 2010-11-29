@@ -1,0 +1,350 @@
+/**
+ * Afrimesh: easy management for B.A.T.M.A.N. wireless mesh networks
+ * Copyright (C) 2008-2009 Meraka Institute of the CSIR
+ * All rights reserved.
+ *  
+ * This software is licensed as free software under the terms of the
+ * New BSD License. See /LICENSE for more information.
+ */
+
+
+/* - reset ----------------------------------------------------------------- */
+/* * {
+  margin: 0px;
+  padding:0px;
+}*/
+@import url("reset.css");
+
+
+/* - global ---------------------------------------------------------------- */
+html {
+  font-family: "Lucida Grande", "Lucida Sans", "Lucida Sans Unicode", Helvetica, Verdana, Arial, sans-serif;
+}
+
+body {
+  overflow:hidden;
+  color: #333;
+}
+
+
+/* - clean links - */
+a         { text-decoration: none; }
+a:link    { text-decoration: none; }
+a:visited { text-decoration: none; }
+a:focus   { text-decoration: none; -moz-outline-style: none; }
+a:active  { text-decoration: none; outline: none; }
+a:hover   { text-decoration: none; }
+
+
+/* - styles --------------------------------------------------------------- */
+h1 {
+  font-size: 1.85em;
+  padding-bottom: .75em;
+}
+
+h2 {
+  font-size: 1.5em;
+  font-weight: bold;
+  padding-bottom: .75em;
+}
+
+h3 {
+  font-size: 1.25em;
+  padding-bottom: .75em;
+}
+
+
+/* - better default tables ------------------------------------------------ */
+/*thead  { color:gray; }
+th,td  { padding: 0.3em; }
+th     { border-bottom: 1px solid lightgray; }*/
+
+
+/* - better default inputs ------------------------------------------------ */
+input {
+  vertical-align: top; /* wtf? */
+  margin: 0px;
+}
+textarea {
+  /*padding: 0px;*/
+  margin: 0px;
+  display:inline;
+}
+input[type=text], input[type=password], textarea {  
+  border: 1px solid gray;
+  font-size: 1.0em;
+}
+input.blur, textarea.blur {
+  color : gray;
+}
+
+
+/* - visual styles -------------------------------------------------------- */
+.underline {
+  text-decoration: underline;
+}
+.round {
+  border-radius : 1.0em;
+  -khtml-border-radius  : 1.0em;
+  -moz-border-radius    : 1.0em;
+  -opera-border-radius  : 1.0em;
+  -webkit-border-radius : 1.0em;
+}
+.round-small {
+  border-radius : 0.5em;
+  -khtml-border-radius  : 0.5em;
+  -moz-border-radius    : 0.5em;
+  -opera-border-radius  : 0.5em;
+  -webkit-border-radius : 0.5em;
+}
+.shadow {
+  box-shadow : rgba(0,0,0,0.5) 0px 0px 10px;
+  -khtml-box-shadow  : rgba(0,0,0,0.5) 0px 0px 10px;
+  -moz-box-shadow    : rgba(0,0,0,0.5) 0px 0px 10px;
+  -opera-box-shadow  : rgba(0,0,0,0.5) 0px 0px 10px;
+  -webkit-box-shadow : rgba(0,0,0,0.5) 0px 0px 10px;
+}
+
+
+/* - content ------------------------------------------------------------ */
+div#overlay {
+  position   : absolute; 
+  left       : 80px; 
+  right      : 10px; 
+  top        : 10px; 
+  bottom     : 10px;
+  padding    : 1em;
+  background : rgba(255,255,255,0.95);
+  display    : none;
+}
+div#overlay #content {
+}
+
+
+/* - dock --------------------------------------------------------------- */
+ul#dock {
+  position    : absolute; 
+  top         : 10px; 
+  bottom      : 10px; 
+  width       : 60px;
+  background  : rgba(64,64,64,0.8); 
+  /*text-align  : left;*/
+} 
+ul#dock.dockleft {
+  left          : 0px; 
+  border-top    : 2px solid white;
+  border-bottom : 2px solid white;
+  border-right  : 2px solid white;
+  border-left   : 0px;
+  border-top-left-radius         : 0.0em;
+  -khtml-border-top-left-radius  : 0.0em;
+  -moz-border-radius-topleft     : 0.0em;
+  -opera-border-top-left-radius  : 0.0em;
+  -webkit-border-top-left-radius : 0.0em;
+  border-bottom-left-radius         : 0.0em;
+  -khtml-border-bottom-left-radius  : 0.0em;
+  -moz-border-radius-bottomleft     : 0.0em;
+  -opera-border-bottom-left-radius  : 0.0em;
+  -webkit-border-bottom-left-radius : 0.0em;
+}
+ul#dock.dockright {
+  right        : 0px; 
+  border       : 2px solid white;
+  border-right : 0px;
+  border-top-right-radius         : 0.0em;
+  -khtml-border-top-right-radius  : 0.0em;
+  -moz-border-radius-topright     : 0.0em;
+  -opera-border-top-right-radius  : 0.0em;
+  -webkit-border-top-right-radius : 0.0em;
+  border-bottom-right-radius         : 0.0em;
+  -khtml-border-bottom-right-radius  : 0.0em;
+  -moz-border-radius-bottomright     : 0.0em;
+  -opera-border-bottom-right-radius  : 0.0em;
+  -webkit-border-bottom-right-radius : 0.0em;
+}
+ul#dock.dockmax {
+}
+ul#dock.dockmin {
+  left: -60px;
+}
+ul#dock hr {
+  border   : 0px solid blue;
+  height   : 10px;
+  display  : block;
+  margin   : 0px; 
+  padding  : 0px;
+}
+ul#dock li {
+  border   : 0px solid red;
+}
+ul#dock li img {
+  border       : 0px solid green;
+  display      : block;
+  padding-left : 6px;
+}
+ul#dock li:hover {
+}
+ul#dock .callout {
+  z-index       : 1;
+  position      : absolute;
+  top           : 10px;
+  right         : -22px;
+  font-size     : 0px; line-height: 0%; width: 0px;
+  border-top    : 15px solid rgba(255,255,255,0.0);
+  border-right  : 16px solid white;
+  border-bottom : 15px solid rgba(255,255,255,0.0);
+}
+ul#dock .callout-border {
+  z-index       : 0;
+  position      : absolute;
+  top           : 10px;
+  right         : -21px;
+  font-size     : 0px; line-height: 0%; width: 0px;
+  border-top    : 15px solid rgba(255,255,255,0.0);
+  border-right  : 16px solid #bab8b4;
+  border-bottom : 15px solid rgba(255,255,255,0.0);
+}
+
+
+/* - notifications ------------------------------------------------------ */
+div#notifications {
+  border   : 0px solid red;
+  position : absolute; 
+  bottom   : 15px; 
+  right    : 10px;
+}
+div#notifications .icon {
+  position : relative;
+  float    : right;
+  border   : 0px solid black;
+  width    : 48px; 
+  height   : 48px;
+  background-image : url(../images/node-composite.png);
+}
+div#notifications .callout {
+  z-index: 1;
+  position: absolute;
+  top: -13px;
+  right: 9px;
+  font-size: 0px; line-height: 0%; width: 0px;
+  border-left  : 15px solid rgba(255,255,255,0.0);
+  border-top   : 16px solid white;
+  border-right : 15px solid rgba(255,255,255,0.0);
+  display  : none;
+}
+div#notifications .callout-border {
+  z-index: 1;
+  position: absolute;
+  top: -12px;
+  right: 9px;
+  font-size: 0px; line-height: 0%; width: 0px;
+  border-left  : 15px solid rgba(255,255,255,0.0);
+  border-top   : 16px solid #bab8b4;
+  border-right : 15px solid rgba(255,255,255,0.0);
+  display  : none;
+}
+div#popup {
+  position   : absolute; 
+  right      : 10px; 
+  bottom     : 95px;
+  min-width  : 150px;
+  min-height : 50px;
+  padding    : 0.5em;
+  background : rgba(255,255,255,0.95);
+  display : none;
+}
+
+
+
+/* - tooltips ------------------------------------------------------------- */
+/* Toolbar tooltips - Courtesy of: http://www.frequency-decoder.com/demo/css-tooltips/ */
+ul#dock [tooltip] {
+  position:relative;
+}
+ul#dock [tooltip]:after,
+ul#dock [tooltip]:before {
+  content: "";
+  opacity: 0;
+}
+ul#dock [tooltip]:hover:after,
+ul#dock [tooltip]:focus:after { 
+  z-index: 10;
+  opacity:1.0;
+  display:block;
+  content:attr(tooltip);
+  position:absolute;
+  top:12px;
+  left:35px;
+  margin:0 0 0 30px; /* top, right, bottom, left  */
+  white-space:nowrap;
+  padding:5px;
+  padding-left:10px;
+  padding-right:10px;
+  line-height:12px;
+  min-height:12px; 
+  color: white;
+  font-weight: bold;
+  background:rgba(0, 0, 0, 0.8); 
+  text-align:center;        
+  outline:none;        
+  text-decoration:none !important;                  
+  text-shadow:#000000 0 1px 0px; 
+  border-radius : 0.5em;
+  -khtml-border-radius  : 1.0em;
+  -moz-border-radius    : 1.0em;
+  -opera-border-radius  : 1.0em;
+  -webkit-border-radius : 1.0em;
+}  
+
+/* Utility->Settings tooltips - TODO replace w/ Toolbar tooltips */
+div.tooltip {
+  background-color : rgba(0,0,0,0.75); 
+  padding          : 0.5em;
+  /*margin-right     : 1.0em;*/
+  display          : none; 
+  max-width        : 300px;
+  z-index          : 1000;
+  border-radius : 0.5em;
+  -khtml-border-radius  : 0.5em;
+  -moz-border-radius    : 0.5em;
+  -opera-border-radius  : 0.5em;
+  -webkit-border-radius : 0.5em;
+  border-top-left-radius : 0.0em;
+  -khtml-border-top-left-radius  : 0.0em;
+  -moz-border-radius-topleft     : 0.0em;
+  -opera-border-top-left-radius  : 0.0em;
+  -webkit-border-top-left-radius : 0.0em;
+}
+div.tooltip h3 {   
+  color:lightgray;
+}
+div.tooltip p {   
+  color : orange; 
+}
+div.tooltip p.explain {
+}
+
+.button {
+  padding : 5px 20px 5px 20px;
+  background: #B2C3DD;
+  font-weight: bold;
+}
+.button:hover {
+  background: #92A3BD;
+}
+.button:click {
+  background: #72839D;
+}
+
+/* - scrollview --------------------------------------------------------- */
+.scrollview {
+  border        : 0px solid red;
+  overflow      : auto;
+  overflow-x    : hidden; 
+  position      : absolute;
+  top           : 1.0em; /* TODO - Should be relative to previous elements on the page. */
+  bottom        : 1.0em;
+  right         : 1.0em;
+  left          : 1.0em;
+  padding-right : 1.0em; /* make space for the scrollbar */
+}

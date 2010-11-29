@@ -1,0 +1,135 @@
+
+div#map .olControlAttribution   { 
+  top    : 2px!important; 
+  left   : 8px!important; 
+  right  : auto;
+} 
+
+div#map .olControlMousePosition { 
+  bottom : 15px;
+  right: 2px!important; 
+  font-weight: bold;
+} 
+
+div#map .olControlScaleLine {
+   display: block;
+   position: absolute;
+   left: 90px!important;
+   bottom: 140px;
+   font-size: xx-small;
+}
+
+div#map .olControlPanPanel {
+  background-image: url(images/pan-panel.png);
+  left    : auto;
+  right   : 60px;
+  top     : 15px;
+}
+div#map .olControlZoomPanel {
+  background-image: url(images/zoom-panel.png);
+  left    : auto;
+  right   : 51px;
+  top     : 75px;
+} 
+
+/* TODO - styles not working, google just overrides 'em
+.olLayerGoogleV3 {
+  bottom: 20px;
+}
+.olLayerGoogleCopyright {
+  right  : 3px;
+  bottom : 2px;
+  left   : auto;  
+}
+.olLayerGooglePoweredBy {
+  left   : 2px;
+  bottom : 2px;   
+}*/
+
+div#map .olPopup {
+  background-color: black;
+  opacity: 0.95;
+}    
+
+div#map form.export {
+  position : absolute; 
+  top      : 134px;
+  right    : 26px;
+}
+
+div#map .network {
+  position:absolute; 
+  top: 0px; 
+  left: 0px; 
+  bottom: 0px; 
+  right: 0px;
+}
+
+div#map .legend {
+  position       : absolute; 
+  bottom         : 5px; 
+  left           : 80px;
+  background     : #d0d0d0; 
+  color          : white;
+  padding        : 10px; margin: 0px;
+  opacity        : 0.7;
+  filter         : alpha(opacity=60);
+  -moz-opacity   : 0.7;
+  -khtml-opacity : 0.7;
+}
+
+div#map a { color: orange; }
+div#map a:link { color: orange; }
+div#map a:visited { color: orange; }
+div#map a:active { color: orange; }
+div#map a:hover { color: orange; }
+
+div#map.message {
+  font-size: 1.25em;
+  border: 1px dashed gray;
+  text-align: center;
+}
+
+div#map .popup { 
+  color: white;
+  margin:0px;
+  padding:0px;
+  background-color: black;
+  opacity: 0.95;
+  overflow: hidden;
+}
+div#map .popup #address { 
+  margin-bottom: 5px;
+}
+div#map .popup #ip { 
+  color: orange;
+  font-size: 1.2em;
+  font-weight: bold;
+}
+div#map .popup #mac { 
+  color: darkgray;
+  font-size: 0.75em;
+  font-style: italic;
+}
+div#map .popup #health { 
+  color: green;
+  margin-bottom: 5px;   
+}
+div#map .popup #traffic { 
+  margin-bottom: 5px;   
+}
+span#map .popup #traffic { 
+  color: darkgray;
+  font-size: 0.75em;
+}
+div#map .popup #neighbours { 
+  color: yellow;
+  font-size: 1.1em;
+}
+div#map .Popup #neighbours td { 
+  font-size: 0.9em;
+  margin: 0px;
+  padding: 0px;
+  padding-right: 10px;
+}
+

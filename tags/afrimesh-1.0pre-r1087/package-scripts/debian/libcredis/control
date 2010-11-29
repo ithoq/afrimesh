@@ -1,0 +1,20 @@
+Source: libcredis
+Priority: extra
+Maintainer: Antoine van Gelder <antoine@7degrees.co.za>
+Build-Depends: debhelper (>= 5)
+Standards-Version: 3.7.2
+Section: libs
+
+Package: libcredis-dev
+Section: libdevel
+Architecture: any
+Depends: libcredis (= ${Source-Version})
+Description: Credis is a client library in plain C for communicating with 
+ Redis servers.
+
+Package: libcredis
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Credis is a client library in plain C for communicating with 
+ Redis servers.
