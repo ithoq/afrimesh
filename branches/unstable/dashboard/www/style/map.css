@@ -6,7 +6,8 @@ div#map .olControlAttribution   {
 } 
 
 div#map .olControlMousePosition { 
-  right: 5px!important; 
+  bottom : 15px;
+  right: 2px!important; 
   font-weight: bold;
 } 
 
@@ -30,6 +31,20 @@ div#map .olControlZoomPanel {
   right   : 51px;
   top     : 75px;
 } 
+
+/* TODO - styles not working, google just overrides 'em
+.olLayerGoogleV3 {
+  bottom: 20px;
+}
+.olLayerGoogleCopyright {
+  right  : 3px;
+  bottom : 2px;
+  left   : auto;  
+}
+.olLayerGooglePoweredBy {
+  left   : 2px;
+  bottom : 2px;   
+}*/
 
 div#map .olPopup {
   background-color: black;

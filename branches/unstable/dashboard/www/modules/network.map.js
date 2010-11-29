@@ -29,29 +29,30 @@ var Map = undefined;
                               new OpenLayers.Control.PanPanel(),
                               new OpenLayers.Control.ZoomPanel() ],
         //theme             : "style/map.default.css"  
-        theme             : "style/map.css?version=43",  // Ffffffffffuuuuuuuuuu!!!! Damn you Safaris!!!!
+        theme             : "style/map.css?version=49",  // Ffffffffffuuuuuuuuuu!!!! Damn you Safaris!!!!
         //allOverlays: true,
         //maxExtent: new OpenLayers.Bounds(1549471.9221, 6403610.94, 1550001.32545, 6404015.8)
       };
       var map = new OpenLayers.Map(id, options);
+      var layers = [];
 
-      var mapnik = new OpenLayers.Layer.OSM.Mapnik("Street Map");
-      var relief = undefined;
+      // map providers - google
+      if (afrimesh.settings.map.google == "1") {
+        layers.push(new OpenLayers.Layer.Google("Google Streetmap",  {
+          numZoomLevels: 20 }));
+        layers.push(new OpenLayers.Layer.Google("Google Hybrid", {
+          type: google.maps.MapTypeId.HYBRID, 
+          numZoomLevels: 20 }));
+      }
+
+      // map providers - openstreetmap
       console.debug("map server: " + afrimesh.settings.map.server);
       if (afrimesh.settings.map.server == "openstreetmap.org") {
-        relief = new OpenLayers.Layer.OSM.CycleMap("Relief Map");
+        layers.push(new OpenLayers.Layer.OSM.CycleMap("Relief Map"));
       } else {
-        relief = new OpenLayers.Layer.OSM.LocalMap("Relief Map", "http://" + afrimesh.settings.map.server + "/tiles/");
+        layers.push(new OpenLayers.Layer.OSM.LocalMap("Relief Map", "http://" + afrimesh.settings.map.server + "/tiles/"));
       }
-      if (afrimesh.settings.map.aerial == "1") {
-        var satellite = new OpenLayers.Layer.Yahoo("Aerial Map", { // TODO - http://labs.metacarta.com/osm/over-yahoo/
-            type              : YAHOO_MAP_SAT,
-            sphericalMercator : true
-          });
-        map.addLayers([ relief, mapnik, satellite ]);
-      } else {
-        map.addLayers([ relief, mapnik ]);
-      }
+      //layers.push(new OpenLayers.Layer.OSM.Mapnik("Street Map"));
 
       // grid
       var range = 20000000;
@@ -84,8 +85,11 @@ var Map = undefined;
           fillColor: "#ffcc66",
         } });
       var grid = new OpenLayers.Layer.Vector("Grid", { styleMap : styles }); 
-      map.addLayer(grid);
       grid.addFeatures(geojson_format.read(grid_json));
+      layers.push(grid);
+
+      // add all layers
+      map.addLayers(layers);
 
       // controls
       map.addControl(new OpenLayers.Control.Attribution());

@@ -17,7 +17,7 @@ config 'afrimesh' 'location'
 	option 'latitude' ''
 
 config 'afrimesh' 'map'
-	option 'aerial' 'false'
+	option 'google' 'false'
 	option 'server' 'openstreetmap.org'
 	option 'extent' '5.0'
 	option 'zoom'   '15'

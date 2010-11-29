@@ -78,7 +78,7 @@ function BootSettings(parent, address) {
     "afrimesh|settings|map|server" : {  remote : "afrimesh|map|server", init : "openstreetmap.org" },
     "afrimesh|settings|map|extent" : {  remote : "afrimesh|map|extent", init : "0.025" },
     "afrimesh|settings|map|zoom"   : {  remote : "afrimesh|map|zoom",   init : "16" },
-    "afrimesh|settings|map|aerial" : {  remote : "afrimesh|map|aerial", init : "false" },
+    "afrimesh|settings|map|google" : {  remote : "afrimesh|map|google", init : "false" },
 
     "afrimesh|settings|internet_gateway|address"        : {  remote : "afrimesh|gateway|address",        init : "" },
     "afrimesh|settings|internet_gateway|snmp|community" : {  remote : "afrimesh|gateway|snmp_community", init : "public" },
