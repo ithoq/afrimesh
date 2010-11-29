@@ -1,0 +1,21 @@
+<html>
+  <head>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript">
+      function test_post() {
+        $.ajax({
+            async       : true,
+            type        : "POST",
+            url         : "http://localhost/cgi-bin/villagebus/status/self?foo=bar&ook=acke",
+            contentType : "application/json",
+            data        : "Some More Data",
+            error       : function(data) { console.log("Error:   " + data); },
+            success     : function(data) { console.log("Success: " + data); }
+          });
+      };
+    </script>
+  </head>
+  <body>
+    <button onClick="test_post();">test post</button>
+  </body>
+</html>

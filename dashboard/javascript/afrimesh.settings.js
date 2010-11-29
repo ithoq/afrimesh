@@ -15,6 +15,13 @@
  * @arg address  - override default settings object with the config settings from the network node at this address
  */
 function BootSettings(parent, address) {
+
+  // Network roots are nodes with some level of savvy about the network. 
+  // Generally, if they can't process a message they should be able to tell you who can
+  // TODO - check if 'address' is a valid root, fallback to other roots otherwise
+  var roots = [ address, "10.130.1.1" ];
+  var default_root = roots[0];
+
   /**
    * Map our afrimesh.settings object to UCI for persistent storage
    *
@@ -33,9 +40,12 @@ function BootSettings(parent, address) {
    *  . set the value of the node at that position
    */
   var afrimesh2uci = { 
+    "afrimesh|settings|root"         : { remote : "afrimesh|settings|root",          init : default_root },
+
     "afrimesh|settings|network_name" : { remote : "afrimesh|dashboard|network_name", init : "mesh testbed" },
     "afrimesh|settings|locale"       : { remote : "afrimesh|settings|locale",        init : "en_US.UTF-8"  },
     "afrimesh|settings|ajax_proxy"   : { remote : "afrimesh|settings|ajax_proxy",    init : "/cgi-bin/ajax-proxy.cgi?url=" },
+    "afrimesh|settings|a2billing"    : { remote : "afrimesh|settings|a2billing",     init : "10.130.1.1"  },
 
     "afrimesh|settings|support|howto" : { remote : "afrimesh|support|howto", init : "afrimesh"  },
     "afrimesh|settings|support|group" : { remote : "afrimesh|support|group", init : "afrimesh"  },
@@ -55,18 +65,20 @@ function BootSettings(parent, address) {
     "afrimesh|settings|network|wireless|ssid"     : { remote : "wireless|@wifi-iface[0]|ssid",  init : "?" },
     "afrimesh|settings|network|wireless|bssid"    : { remote : "wireless|@wifi-iface[0]|bssid", init : "??:??:??:??:??:??" },
 
-    "afrimesh|settings|network|mesh|accounting_server" : { remote : "afrimesh|dashboard|accounting_server", init : "10.0.0.1" },  
-    "afrimesh|settings|network|mesh|vis_server"        : { remote : "batmand|general|visualisation_srv", init : "10.0.0.1" },  
+    "afrimesh|settings|network|mesh|accounting_server" : { remote : "afrimesh|settings|accounting_server", init : "10.130.1.1" },  
+    "afrimesh|settings|network|mesh|vis_server"        : { remote : "batmand|general|visualisation_srv", init : "10.130.1.1" },  
     "afrimesh|settings|network|mesh|routing_class"     : { remote : "batmand|general|routing_class",     init : "" },  
     "afrimesh|settings|network|mesh|gateway_class"     : { remote : "batmand|general|gateway_class",     init : "" },  
 
-    "afrimesh|settings|location|longitude" : {  remote : "afrimesh|location|longitude", init : "18.339733" },
-    "afrimesh|settings|location|latitude"  : {  remote : "afrimesh|location|latitude",  init : "-34.138061" },
+    //"afrimesh|settings|location|longitude" : {  remote : "afrimesh|location|longitude", init : "18.339733" },
+    //"afrimesh|settings|location|latitude"  : {  remote : "afrimesh|location|latitude",  init : "-34.138061" },
+    "afrimesh|settings|location|longitude" : {  remote : "afrimesh|location|longitude", init : undefined },
+    "afrimesh|settings|location|latitude"  : {  remote : "afrimesh|location|latitude",  init : undefined },
 
     "afrimesh|settings|map|server" : {  remote : "afrimesh|map|server", init : "openstreetmap.org" },
     "afrimesh|settings|map|extent" : {  remote : "afrimesh|map|extent", init : "0.025" },
     "afrimesh|settings|map|zoom"   : {  remote : "afrimesh|map|zoom",   init : "16" },
-    "afrimesh|settings|map|aerial" : {  remote : "afrimesh|map|aerial", init : "false" },
+    "afrimesh|settings|map|google" : {  remote : "afrimesh|map|google", init : "false" },
 
     "afrimesh|settings|internet_gateway|address"        : {  remote : "afrimesh|gateway|address",        init : "" },
     "afrimesh|settings|internet_gateway|snmp|community" : {  remote : "afrimesh|gateway|snmp_community", init : "public" },
@@ -74,7 +86,7 @@ function BootSettings(parent, address) {
     "afrimesh|settings|internet_gateway|bandwidth|down" : {  remote : "afrimesh|gateway|bandwidth_down", init : "512" },
     "afrimesh|settings|internet_gateway|bandwidth|up"   : {  remote : "afrimesh|gateway|bandwidth_up",   init : "256" },
     
-    "afrimesh|settings|radius|server"   : {  remote : "afrimesh|radius|server",   init : "10.0.0.1" },
+    "afrimesh|settings|radius|server"   : {  remote : "afrimesh|radius|server",   init : "10.130.1.1" },
     "afrimesh|settings|radius|radtype"  : {  remote : "afrimesh|radius|radtype",  init : "1" },
     "afrimesh|settings|radius|database" : {  remote : "afrimesh|radius|database", init : "radius" },
     "afrimesh|settings|radius|username" : {  remote : "afrimesh|radius|username", init : "radius" },
@@ -87,43 +99,45 @@ function BootSettings(parent, address) {
   };
   settings.address = address;
 
-  /** - utility functions ------------------------------------------------- */
-  settings.load = function(local, remote, key) {
-    console.debug("local: " + local + " - key: " + key);
-    if (local && remote && remote[key]) {
-      local[key] = remote[key];
-    } else {
-      console.warn("afrimesh.settings.load: " + address + " has no value for '" + key + "'");
-    }
-    return 0;
-  };
 
+  /** - functions on selectors -------------------------------------------- */
   settings.save = function(selector, value) {
-    console.debug("Saving: " + selector + " = " + value);
+    //console.debug("Saving: " + selector + " = " + value);
     var remote = Qsplit(parent.settings.uci_config, afrimesh2uci[selector].remote);
-    console.debug("Remote: " + afrimesh2uci[selector].remote + " = " + remote);
+    //console.debug("Remote: " + afrimesh2uci[selector].remote + " = " + remote);
     if (remote.length != 3) { 
       console.error("afrimesh.settings: '" + selector + "' has invalid remote selector '" + afrimesh2uci[selector].remote + "'");
       return false;
     }
     Qset(parent, selector, value);                         // apply to local settings object
-    parent.villagebus.uci.set.async(function (response) {  // apply to remote UCI
-        console.debug("afrimesh.settings.save(uci://" + address + "/" + afrimesh2uci[selector].remote + ", " + value + ") -> " + response);
-      },
-      address, 
-      [ { config  : remote[0], 
-          section : remote[1], 
-          option  : remote[2], 
-          value   : value }    ]);
+
+    afrimesh.device.configuration.set(address, [{ 
+      config  : remote[0],
+      section : remote[1],
+      option  : remote[2],
+      value   : value }], function(error, response) {
+        if (error) { return console.error("Could not save configuration: " + error); }
+        console.debug("PUT /" + address + "/config/" + afrimesh2uci[selector].remote + " " + value + " -> " + show(response));
+      });
+
     return true;
   };
 
 
   /** - apply persistent settings ------------------------------------------ */
-  var load_remote = function() {
-    var config = parent.villagebus.uci.get.sync(address, "");
+  var load_remote = function() {   
+    // This is the initial remote call which bootstraps the environment.
+    // Until it is complete we don't have enough information about the mesh
+    // to guarantee the availability of the API.
+    //
+    // We're going to access VillageBus directly to be able to perform
+    // this call synchronously so that we can block further initialization
+    // until it has completed.
+    var name = parent.villagebus.Name("/@self/config/*");
+    name = parent.villagebus.GET(name);
+    var config = parent.villagebus.Read(name)[0];
+    //console.debug("REMOTE CONFIG: \n" + rshow(config));    
     parent.settings.uci_config = config;
-    console.debug("REMOTE CONFIG: \n" + rshow(config));
     for (var local in afrimesh2uci) {
       var value = "";
       try { 
@@ -135,14 +149,14 @@ function BootSettings(parent, address) {
         Qset(parent, local, value);
       } else {
         Qset(parent, local, afrimesh2uci[local].init);
-        console.debug ("Missing configuration entry '" + local + "'; reverting to default: " + afrimesh2uci[local].init);
+        //console.debug ("Missing configuration entry '" + local + "'; reverting to default: " + afrimesh2uci[local].init);
       }
     }
     for (var setting in parent.settings) {
       settings[setting] = parent.settings[setting];
     }
-  };
-  load_remote();
+  }; load_remote();
+  
 
   /* TODO - cleanup this evilness to deal w/ hosting OpenLayers elsewhere in order to save space */
   settings.map.openlayers_url = "http://" + settings.map.server + "/openlayers/";
@@ -164,3 +178,5 @@ function BootSettings(parent, address) {
 
   return settings;
 };
+exports.BootSettings = BootSettings;
+console.debug("loaded afrimesh.settings.js");
