@@ -12,9 +12,9 @@ By following these instructions you can make this a painless process for everyon
   version=1.0pre
   cd ~/afrimesh
   revision=`svnversion | cut -d : -f 2`
-  svn copy https://afrimesh.googlecode.com/svn/trunk \
+  svn copy https://afrimesh.googlecode.com/svn/branches/unstable \
            https://afrimesh.googlecode.com/svn/tags/afrimesh-$version-r$revision \
-      -m "Tagged release afrimesh-$version-r$revision."
+      -m "Tagged release afrimesh-$version-r$revision"
 }}}
 
 
