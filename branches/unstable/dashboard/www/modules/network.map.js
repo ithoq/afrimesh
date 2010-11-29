@@ -38,10 +38,10 @@ var Map = undefined;
 
       // map providers - google
       if (afrimesh.settings.map.google == "1") {
-        layers.push(new OpenLayers.Layer.Google("Google Streetmap",  {
-          numZoomLevels: 20 }));
         layers.push(new OpenLayers.Layer.Google("Google Hybrid", {
           type: google.maps.MapTypeId.HYBRID, 
+          numZoomLevels: 20 }));
+        layers.push(new OpenLayers.Layer.Google("Google Streetmap",  {
           numZoomLevels: 20 }));
       }
 
