@@ -1,3 +1,10 @@
+afrimesh-dashboard (1.0pre-r1086-1) lucid; urgency=low
+
+  * Added support for Google street & hybrid maps w/ new option afrimesh.maps.google=1|0
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Mon, 29 November 2010 08:35:00 +0200
+
+
 afrimesh-dashboard (1.0pre-r1078-1) lucid; urgency=low
 
   * Fixed ajax-proxy bug that mangled calls with no callback identifier.

@@ -6,7 +6,7 @@
 
 # - configuration ----------------------------------------------------------
 #REVISION=`svn info | grep -o "Revision: [0-9]*" | sed -e "s/Revision: //"`
-REVISION=1078
+REVISION=1086
 VERSION=1.0pre-r$(REVISION)
 RELEASE=1
 
