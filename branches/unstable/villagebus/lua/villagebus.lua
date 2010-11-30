@@ -26,13 +26,13 @@ require "json"
 
 
 --[[ modules ]]-------------------------------------------------------------
-package.path = package.path .. ";/Users/antoine/afrimesh/villagebus/lua/?.lua"
-require "http"
-require "provision"
+--package.path = package.path .. ";/Users/antoine/afrimesh/villagebus/lua/?.lua;/home/antoine/src/afrimesh.nfs/villagebus/lua/?.lua"
+require "modules.http"
+require "modules.provision"
 
 
 --[[ helpers ]]-------------------------------------------------------------
-require "urlcode"
+require "lib.urlcode"
 function getcgi(name)
   local value = os.getenv(name)
   return value and value or ""
