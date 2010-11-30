@@ -79,7 +79,8 @@ afrimesh.settings = {
   //address      : window.location.hostname ? window.location.hostname : "192.168.20.225",
   //address      : window.location.hostname ? window.location.hostname : "10.0.0.4",
   address      : window.location.hostname ? window.location.hostname : "192.168.20.108",
-  ajax_proxy   : "/cgi-bin/ajax-proxy.cgi?url="
+  //ajax_proxy   : "/cgi-bin/ajax-proxy.cgi?url="
+  ajax_proxy   : "/cgi-bin/villagebus.lua"
 };
 console.log("afrimesh.settings.address : " + afrimesh.settings.address);
 

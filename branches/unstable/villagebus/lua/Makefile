@@ -2,15 +2,14 @@
 
 all : villagebus
 
-sources=urlcode.lua provision.lua http.lua villagebus.lua
+#sources=villagebus.lua urlcode.lua provision.lua http.lua 
+sources=urlcode.lua villagebus.lua 
+modules=modules/provision.lua modules/http.lua 
 
 villagebus : $(sources)
 	luac -o villagebus.luac $(sources)
-	#luac -o villagebus.luac villagebus.lua
-	luac -o urlcode.luac urlcode.lua
-	luac -o provision.luac provision.lua
-	luac -o http.luac http.lua
-
+	#luac -o villagebus.modules.luac $(modules)
+	luac -o modules/modules.luac $(modules)
 
 # tests
 
@@ -32,4 +31,5 @@ post :
 	echo '{ "a" : "1", "b" : "2", "c" : "3" }' | $(POST) ./villagebus.lua
 
 clean :
-	rm -f *~ *.o *.luac
+	rm -f *~ *.luac 
+	rm -f modules/*~ modules/*.luac

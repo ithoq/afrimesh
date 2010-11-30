@@ -112,6 +112,12 @@ install-www:
 	#-$(INSTALL) village-bus-radius/village-bus-radius $(DASHBOARD_CGI)
 	$(INSTALL) ./provisiond-bundles      	               $(DASHBOARD_CGI)
 	chmod 0755 $(DASHBOARD_CGI)/provisiond-bundles/mp01.handset/etc/init.d/asterisk
+	$(INSTALL) villagebus/lua/villagebus.lua           $(DASHBOARD_CGI)
+	$(INSTALL) villagebus/lua/urlcode.lua              $(DASHBOARD_CGI)
+	mkdir -p $(DASHBOARD_CGI)/modules
+	$(INSTALL) villagebus/lua/modules/http.lua         $(DASHBOARD_CGI)/modules
+	$(INSTALL) villagebus/lua/modules/provision.lua    $(DASHBOARD_CGI)/modules
+	chmod 0755 $(DASHBOARD_CGI)/villagebus.lua
 	find $(DASHBOARD_CGI) -name "*~"   | xargs rm -f
 	find $(DASHBOARD_CGI) -name ".svn" | xargs rm -rf
 	find $(DASHBOARD_WWW) -name "*~"   | xargs rm -f

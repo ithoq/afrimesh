@@ -64,7 +64,7 @@ var BootVillageBus = function (afrimesh) {
   function proxy(host, path) {
     var url = "/" + host + path;
     if (host != afrimesh.settings.address) {  // address may or may not be routable - TODO we vant to be sure!
-      return afrimesh.villagebus.ajax_proxy("/") + "http:/" + url;
+      return afrimesh.villagebus.ajax_proxy("/") + "/http" + url;
     }
     return url;
   };

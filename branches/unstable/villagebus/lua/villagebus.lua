@@ -26,13 +26,12 @@ require "json"
 
 
 --[[ modules ]]-------------------------------------------------------------
---package.path = package.path .. ";/Users/antoine/afrimesh/villagebus/lua/?.lua;/home/antoine/src/afrimesh.nfs/villagebus/lua/?.lua"
 require "modules.http"
 require "modules.provision"
 
 
 --[[ helpers ]]-------------------------------------------------------------
-require "lib.urlcode"
+require "urlcode"
 function getcgi(name)
   local value = os.getenv(name)
   return value and value or ""
@@ -96,7 +95,7 @@ function main(argc, argv)
   -- evaluate request ------------------------------------------------------
   log:debug("-- EVAL ---------------------------------------")
   local name = table.remove(request.path, 1)
-  local module = villagebus[name]       
+  local module = modules[name]       
   local response = nil
   if type(module) ~= "table" then
     response = fail("Could not resolve module for name: " .. name)

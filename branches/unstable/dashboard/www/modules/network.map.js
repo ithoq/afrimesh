@@ -40,9 +40,9 @@ var Map = undefined;
       if (afrimesh.settings.map.google == "1") {
         layers.push(new OpenLayers.Layer.Google("Google Hybrid", {
           type: google.maps.MapTypeId.HYBRID,
-          numZoomLevels: 25 }));
+          numZoomLevels: 21 }));
         layers.push(new OpenLayers.Layer.Google("Google Streetmap",  {
-          numZoomLevels: 25 }));
+          numZoomLevels: 21 }));
       }
 
       // map providers - openstreetmap
