@@ -20,7 +20,8 @@ require "luarocks.require"
 require "logging"
 require "logging.file"
 log = logging.file("/tmp/villagebus.lua.log") --, "%Y-%m-%d")
-log:setLevel(logging.INFO)
+-- log:setLevel(logging.INFO)
+log:setLevel(logging.DEBUG)
 log:debug("villagebus.lua starting")
 require "json"
 
@@ -98,7 +99,7 @@ function main(argc, argv)
   local module = modules[name]       
   local response = nil
   if type(module) ~= "table" then
-    response = fail("Could not resolve module for name: " .. name)
+    response = fail("Could not resolve module for name: " .. (name or "nil"))
   elseif module["evaluate"] then       -- look for an 'evaluate' function
     log:info(name .. ".evaluate(" .. json.encode(request) .. ")")
     response = module["evaluate"](request)

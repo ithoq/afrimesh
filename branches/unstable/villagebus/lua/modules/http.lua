@@ -4,7 +4,9 @@ require "socket"
 local http = require "socket.http"
 local ltn12 = require("ltn12")
 
-module("villagebus.http", package.seeall)
+-- module("villagebus.http", package.seeall)
+module("modules.http", package.seeall)
+--module(..., package.seeall)
 
 
 --[[ evaluate ]]------------------------------------------------------------
@@ -53,15 +55,31 @@ function evaluate(request) -- request = { verb, path, query, data }
   local code    = 0
   local headers = {}
   local reply   = ""
+  -- http.USERAGENT = "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_5; en-us)"
   result, code, headers, reply = http.request(body)
+  if not headers then
+    return fail("request returned no headers", "http")
+  end
   
   -- output response
+  if not headers["content-length"] then 
+    log:debug("Adding 'content-length : " .. string.len(content) .. "' header")
+    headers["content-length"] = string.len(content)
+  end
+  if headers["transfer-encoding"] == "chunked" then 
+    log:debug("Stripping transfer-encoding header")
+    headers["transfer-encoding"] = nil
+  end
+  log:debug("------------------------------------------------")
   for key, val in pairs(headers) do
     print(key .. ": " .. val)
+    log:debug(key .. ": " .. val)
   end
   print()
   print(content)
-
+  log:debug("")
+  log:debug(content)
+  log:debug("------------------------------------------------")
   return nil
 end
 

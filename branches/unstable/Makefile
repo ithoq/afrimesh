@@ -6,7 +6,7 @@
 
 # - configuration ----------------------------------------------------------
 #REVISION=`svn info | grep -o "Revision: [0-9]*" | sed -e "s/Revision: //"`
-REVISION=1086
+REVISION=1094
 VERSION=1.0pre-r$(REVISION)
 RELEASE=1
 
@@ -52,13 +52,14 @@ FLAVOR=BSD
 endif
 
 ifeq ($(UNAME),Darwin)
-WWW_ROOT=$(DESTDIR)/Library/WebServer/share/httpd
+WWW_ROOT=$(DESTDIR)/Library/WebServer/Documents
 DASHBOARD_CGI=$(DESTDIR)/Library/WebServer/CGI-Executables
 #DEPROOT=/opt/local
-DEPROOT=/Volumes/afrimesh-dev/ext
+DEPROOT=$(PWD)/ext/darwin
 MAKE=make
 FLAVOR=BSD
-CFLAGS+=-m32
+CFLAGS+=
+#-m32
 endif
 
 DASHBOARD_WWW=$(WWW_ROOT)/afrimesh
@@ -99,11 +100,11 @@ install-www:
 	@echo "Installing dashboard cgi scripts in: $(DASHBOARD_CGI)"
 	@if ! test -d $(DASHBOARD_CGI) ; then mkdir -p $(DASHBOARD_CGI) ; fi
 	$(INSTALL) ./package-scripts/openwrt/afrimesh/files.portal/www/cgi-bin/uam.pl $(DASHBOARD_CGI)
-	$(INSTALL) dashboard/cgi-bin/ajax-proxy.cgi          $(DASHBOARD_CGI)
+	#$(INSTALL) dashboard/cgi-bin/ajax-proxy.cgi          $(DASHBOARD_CGI)
 	$(INSTALL) dashboard/cgi-bin/provisiond.cgi          $(DASHBOARD_CGI)/provisiond
 	$(INSTALL) dashboard/cgi-bin/provisiond-handset.cgi  $(DASHBOARD_CGI)/provisiond-handset
 	$(INSTALL) dashboard/cgi-bin/mesh-topology.kml       $(DASHBOARD_CGI)
-	chmod 0755 $(DASHBOARD_CGI)/*.cgi
+	#chmod 0755 $(DASHBOARD_CGI)/*.cgi
 	chmod 0755 $(DASHBOARD_CGI)/provisiond
 	chmod 0755 $(DASHBOARD_CGI)/provisiond-handset
 	chmod 0755 $(DASHBOARD_CGI)/mesh-topology.kml

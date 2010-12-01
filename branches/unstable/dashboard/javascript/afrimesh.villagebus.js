@@ -280,7 +280,7 @@ var BootVillageBus = function (afrimesh) {
       name = afrimesh.villagebus.GET(name);
       continuation.mq.timer = setTimeout(function() {
         poll(name, continuation, rate);
-      }, (rate ? rate : 15000));
+      }, (rate ? rate : 60000));
       return name;
     })(name, continuation, rate);
     return continuation;
