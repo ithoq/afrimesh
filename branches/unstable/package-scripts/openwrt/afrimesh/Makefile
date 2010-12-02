@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ----------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=1094
+PKG_REV:=1097
 #PKG_REV:=`svn info | grep -o "Revision: [0-9]*" | sed -e "s/Revision: //"`
 PKG_VERSION:=1.0pre-r$(PKG_REV)
 PKG_RELEASE:=1
@@ -40,7 +40,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/afrimesh-base
 	SECTION:=admin
 	CATEGORY:=Administration
-	DEPENDS:=+libuci +libjson +ntpclient +mini-httpd +netcat
+	DEPENDS:=+libuci +libjson +ntpclient +mini-httpd +netcat +lua +luasocket +lualogging +luajson
 	TITLE:=Easy management for wireless community mesh networks
 	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
 	#$(call Config,afrimesh.location.latitude,string,-25.7481182,Router Latitude)
@@ -70,6 +70,15 @@ define Package/afrimesh-base/install
 	$(INSTALL_BIN)  ./files/www/cgi-bin/notify.sh           $(1)/www/cgi-bin/notify
 	$(INSTALL_BIN)  ./files/www/cgi-bin/status.sh           $(1)/www/cgi-bin/status
 	$(INSTALL_BIN)  $(PKG_BUILD_DIR)/villagebus/villagebus  $(1)/www/cgi-bin/villagebus
+
+	# villagebus.lua
+	$(INSTALL_DIR) $(1)/usr/lib/lua/luarocks
+	touch $(1)/usr/lib/lua/luarocks/require.lua # fake luarocks.require for OpenWRT
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/villagebus/lua/villagebus.lua           $(1)/www/cgi-bin
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/villagebus/lua/urlcode.lua              $(1)/www/cgi-bin
+	$(INSTALL_DIR)  $(1)/www/cgi-bin/modules
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/villagebus/lua/modules/http.lua         $(1)/www/cgi-bin/modules
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/villagebus/lua/modules/provision.lua    $(1)/www/cgi-bin/modules
 
 	# - runonce --
 	$(INSTALL_DIR)  $(1)/etc/init.d
@@ -209,11 +218,11 @@ define Package/fabfi-device/install
 	# villagebus.lua
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luarocks
 	touch $(1)/usr/lib/lua/luarocks/require.lua # fake luarocks.require for OpenWRT
-	$(INSTALL_DATA) villagebus/lua/villagebus.lua           $(1)/www/cgi-bin
-	$(INSTALL_DATA) villagebus/lua/urlcode.lua              $(1)/www/cgi-bin
-	mkdir -p $(DASHBOARD_CGI)/modules
-	$(INSTALL_DATA) villagebus/lua/modules/http.lua         $(1)/www/cgi-bin/modules
-	$(INSTALL_DATA) villagebus/lua/modules/provision.lua    $(1)/www/cgi-bin/modules
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/villagebus/lua/villagebus.lua           $(1)/www/cgi-bin
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/villagebus/lua/urlcode.lua              $(1)/www/cgi-bin
+	$(INSTALL_DIR)  $(1)/www/cgi-bin/modules
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/villagebus/lua/modules/http.lua         $(1)/www/cgi-bin/modules
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/villagebus/lua/modules/provision.lua    $(1)/www/cgi-bin/modules
 
 	# TODO 
 	#$(INSTALL_BIN)  ./files.fabfi/etc/init.d/fallback-ip  $(1)/etc/init.d
