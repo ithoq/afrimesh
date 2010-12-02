@@ -58,8 +58,7 @@ DASHBOARD_CGI=$(DESTDIR)/Library/WebServer/CGI-Executables
 DEPROOT=$(PWD)/ext/darwin
 MAKE=make
 FLAVOR=BSD
-CFLAGS+=
-#-m32
+CFLAGS+=-m32
 endif
 
 DASHBOARD_WWW=$(WWW_ROOT)/afrimesh

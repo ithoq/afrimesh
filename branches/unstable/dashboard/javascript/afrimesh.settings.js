@@ -20,7 +20,7 @@ function BootSettings(parent, address) {
   // Generally, if they can't process a message they should be able to tell you who can
   // TODO - check if 'address' is a valid root, fallback to other roots otherwise
   var roots = [ address, "10.130.1.1" ];
-  var default_root = roots[0];
+  var default_root = "6.6.6.6"; //roots[0];
 
   /**
    * Map our afrimesh.settings object to UCI for persistent storage
@@ -41,6 +41,7 @@ function BootSettings(parent, address) {
    */
   var afrimesh2uci = { 
     "afrimesh|settings|root"         : { remote : "afrimesh|settings|root",          init : default_root },
+    "afrimesh|settings|edge"         : { remote : "afrimesh|settings|edge",          init : undefined },
 
     "afrimesh|settings|network_name" : { remote : "afrimesh|dashboard|network_name", init : "mesh testbed" },
     "afrimesh|settings|locale"       : { remote : "afrimesh|settings|locale",        init : "en_US.UTF-8"  },

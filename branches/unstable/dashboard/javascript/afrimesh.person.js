@@ -68,7 +68,7 @@ function BootPerson(parent) {
     // <id> = incr person:id
     // sadd <id> person:ids    TODO
     function new_id(person, continuation) {
-      var name = afrimesh.villagebus.Bind("/@root/db/incr/person:id", function(error, id) {
+      var name = afrimesh.villagebus.Bind("/@self/db/incr/person:id", function(error, id) {
           person.id = id;
           return continuation(error, person); 
         });
@@ -78,7 +78,7 @@ function BootPerson(parent) {
     // Save the person details
     // set person:<id>:details = { id, email, firstname, lastname };
     function update(person, continuation) {
-      var name = afrimesh.villagebus.Bind("/@root/db/person:" + person.id + ":details", function(error, response) {
+      var name = afrimesh.villagebus.Bind("/@self/db/person:" + person.id + ":details", function(error, response) {
           if (error) return continuation(error, response);
           return index_email(person, continuation);
         });
@@ -88,7 +88,7 @@ function BootPerson(parent) {
     // Link person id & email
     // set person:<email>:id id
     function index_email(person, continuation) {
-      var name = afrimesh.villagebus.Bind("/@root/db/person:" + person.email + ":id", function(error, response) {
+      var name = afrimesh.villagebus.Bind("/@self/db/person:" + person.email + ":id", function(error, response) {
           return continuation(error, person);
         });
       return afrimesh.villagebus.PUT(name, person.id); 
@@ -97,7 +97,7 @@ function BootPerson(parent) {
     // Remove Link between person id & email
     // del person:<email>:id
     function nuke_email(person, continuation) {
-      var name = afrimesh.villagebus.Bind("/@root/db/person:" + person.email + ":id", function(error, response) {
+      var name = afrimesh.villagebus.Bind("/@self/db/person:" + person.email + ":id", function(error, response) {
           return continuation(error, person);
         });
       return afrimesh.villagebus.DELETE(name); 
@@ -105,8 +105,8 @@ function BootPerson(parent) {
 
     // find person with this email
     function load_email(person, continuation) {
-      var name = afrimesh.villagebus.Bind("/@root/db/person:" + person.email + ":id", function(error, id) {
-        console.log("/@root/db/person:" + person.email + ":id -> (" + error + ", " + id + ")");
+      var name = afrimesh.villagebus.Bind("/@self/db/person:" + person.email + ":id", function(error, id) {
+        console.log("/@self/db/person:" + person.email + ":id -> (" + error + ", " + id + ")");
         if (error) return continuation(error, id);
         person.id = id;
         return continuation(error, person);
@@ -127,7 +127,7 @@ function BootPerson(parent) {
    * set provision:<device.ip>:person = person.id
    */
   person.link = function(person, device, continuation) {
-    var name = afrimesh.villagebus.Bind("/@root/db/provision:" + device.ip + ":person", function(error, response) {
+    var name = afrimesh.villagebus.Bind("/@self/db/provision:" + device.ip + ":person", function(error, response) {
         return continuation(error, person);
       });
     return afrimesh.villagebus.PUT(name, person.id);     

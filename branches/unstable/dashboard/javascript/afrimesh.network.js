@@ -20,11 +20,11 @@ function BootNetwork(parent) {
    * BUFFERED
    */
   network.status = function(continuation) {
-    var name = afrimesh.villagebus.Name("/@root/db/keys/device:*/status");
+    var name = afrimesh.villagebus.Name("/@self/db/keys/device:*/status");
     name = afrimesh.villagebus.Bind(name, function(error, response) {
         if (error) return continuation(error, null);  // TODO - return Fail(error, continuation) maybe ?
         response.map(function(key) {
-            return afrimesh.villagebus.GET(afrimesh.villagebus.Bind("/@root/db/" + key, function(error, response) {
+            return afrimesh.villagebus.GET(afrimesh.villagebus.Bind("/@self/db/" + key, function(error, response) {
                 return continuation(error, response.self, response);
               }));
           });
@@ -38,7 +38,7 @@ function BootNetwork(parent) {
    * Deprovisions the given device from the network
    */
   network.release = function(device, continuation) {
-    var name = afrimesh.villagebus.Name("/@root/provision/release/" + device.ip); 
+    var name = afrimesh.villagebus.Name("/@self/provision/release/" + device.ip); 
     name = afrimesh.villagebus.Bind(name, continuation);
     name = afrimesh.villagebus.DELETE(name);
     return name;
@@ -51,7 +51,7 @@ function BootNetwork(parent) {
    * Returns the network log
    */
   network.log = function(continuation, count) {
-    var name = afrimesh.villagebus.Name("/@root/sys/syslog");
+    var name = afrimesh.villagebus.Name("/@self/sys/syslog");
     name = afrimesh.villagebus.Bind(name, continuation);
     name = afrimesh.villagebus.GET(name, { count : (count?count:10) });
     return name;

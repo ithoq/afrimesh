@@ -131,3 +131,11 @@ function main(argc, argv)
 end
 main()
 
+--[[
+http://lambda.7degrees.co.za/cgi-bin/villagebus.lua/http/192.168.20.108/cgi-bin/villagebus.lua/http/10.130.1.1:2005
+
+http://lambda.7degrees.co.za/cgi-bin/villagebus.lua/http/@reginald/10.130.1.1:2005
+
+http://lambda.7degrees.co.za/cgi-bin/villagebus.lua/@reginald/http/10.130.1.1:2005
+]]--
+

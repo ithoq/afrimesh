@@ -22,7 +22,7 @@ function BootDevice(parent) {
    * Returns instantaneous DB data for the device at address
    */
   device.status = function(address, continuation) {
-    var name = afrimesh.villagebus.Name("/@root/db/device:" + address + "/status");
+    var name = afrimesh.villagebus.Name("/@self/db/device:" + address + "/status");
     name = afrimesh.villagebus.Bind(name, function(error, response) {
         if (error) return continuation(error, null);
         return continuation(error, response);
@@ -38,7 +38,7 @@ function BootDevice(parent) {
   device.interface = {};
   // TODO - device.interface.list 
   device.interface.history = function(address, continuation, range) {
-    var name = afrimesh.villagebus.Name("/@root/db/lrange/interface:" + address + "/history");
+    var name = afrimesh.villagebus.Name("/@self/db/lrange/interface:" + address + "/history");
     name = afrimesh.villagebus.Bind(name, function(error, response) {
         if (error) return continuation(error, null);  // TODO - return Fail(error, continuation) maybe ?
         return continuation(error, response);
@@ -57,13 +57,13 @@ function BootDevice(parent) {
    * SNMP access to device
    */
   device.snmp = function(address, community, oids, continuation) {
-    var name = afrimesh.villagebus.Name("/@root/snmp/get/" + address + "/" + community + "/" + oids.join(","));
+    var name = afrimesh.villagebus.Name("/@self/snmp/get/" + address + "/" + community + "/" + oids.join(","));
     name = afrimesh.villagebus.Bind(name, continuation);
     name = afrimesh.villagebus.GET(name);
     return name;
   };
   device.snmp.walk = function(address, community, oid, continuation) {
-    var name = afrimesh.villagebus.Name("/@root/snmp/walk/" + address + "/" + community + "/" + oid);
+    var name = afrimesh.villagebus.Name("/@self/snmp/walk/" + address + "/" + community + "/" + oid);
     name = afrimesh.villagebus.Bind(name, continuation);
     name = afrimesh.villagebus.GET(name);
     return name;

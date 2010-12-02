@@ -27,13 +27,17 @@ var BootVillageBus = function (afrimesh) {
 
   /** - ajax_proxy ------------------------------------------------------ */
   villagebus.ajax_proxy = function(prefix) { 
-    return prefix + afrimesh.settings.address + afrimesh.settings.ajax_proxy; 
+    console.log("EDGE: " + afrimesh.settings.edge);
+    // edge_proxy : "/http/192.168.20.108/cgi-bin/villagebus.lua"
+    var edge_proxy = afrimesh.settings.edge ? "/http/" + afrimesh.settings.edge + "/cgi-bin/villagebus.lua" 
+                                            : "";  
+    return prefix + afrimesh.settings.address + afrimesh.settings.ajax_proxy + edge_proxy; 
   };
 
   /** - villagebus.api -------------------------------------------------- */
 
   /* Either this:
-  var name     = afrimesh.villagebus.Name("/@root/db/keys/status");
+  var name     = afrimesh.villagebus.Name("/@self/db/keys/status");
   var channel  = afrimesh.villagebus.GET(name, "*");
   var response = afrimesh.villagebus.Read(channel);
   if (afrimesh.villagebus.Fail(response)) return console.log(response.error);
@@ -42,7 +46,7 @@ var BootVillageBus = function (afrimesh) {
   }
 
   // Or this:
-  var name = afrimesh.villagebus.Name("/@root/db/keys/status");
+  var name = afrimesh.villagebus.Name("/@self/db/keys/status");
   name = Bind(name, function(error, response) {
       if (error) return console.log(error);
       for (key in response) { // dadadadada }
@@ -69,6 +73,7 @@ var BootVillageBus = function (afrimesh) {
     return url;
   };
   villagebus.Name = function(name) {
+    console.log("name: " + name);
     name = name.split('/').map(function(node) {   // perform path transformations for network locations
       if (node == "@root") {
         //return "/" + afrimesh.settings.root + "/cgi-bin/villagebus";
@@ -94,6 +99,7 @@ var BootVillageBus = function (afrimesh) {
       }
       return node;
     }).join('/');
+    console.log("txlate: " + name);
     name = {
       async       : true,
       type        : "GET",
@@ -261,7 +267,7 @@ var BootVillageBus = function (afrimesh) {
 
   // notify continuation whenever new message(s) are available in the queue
   villagebus.mq.Bind = function(name, continuation, rate) {
-    var queue = "/@root/db/keys/message:" + name;
+    var queue = "/@self/db/keys/message:" + name;
     continuation.mq       = { };
     continuation.mq.timer = undefined;
     continuation.mq.cache = { };
@@ -274,7 +280,7 @@ var BootVillageBus = function (afrimesh) {
             return continuation.mq.cache[message];
           } 
           continuation.mq.cache[message] = true;
-          return afrimesh.villagebus.GET(afrimesh.villagebus.Bind("/@root/db/" + message, continuation));
+          return afrimesh.villagebus.GET(afrimesh.villagebus.Bind("/@self/db/" + message, continuation));
         });
       });
       name = afrimesh.villagebus.GET(name);
@@ -294,7 +300,7 @@ var BootVillageBus = function (afrimesh) {
     if (queue && queue.mq && queue.mq.cache) {
       queue.mq.cache[name] = false;
     }
-    name = afrimesh.villagebus.Bind("/@root/db/" + name, continuation);
+    name = afrimesh.villagebus.Bind("/@self/db/" + name, continuation);
     return afrimesh.villagebus.DELETE(name);  
   };
 

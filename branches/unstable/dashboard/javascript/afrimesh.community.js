@@ -18,12 +18,12 @@ function BootCommunity(parent) {
    * TODO: return 'radius' neighbors for person with 'email'
    */
   community.neighbors = function(continuation, email, radius) {
-    var name = afrimesh.villagebus.Name("/@root/db/keys/person:*/details");
+    var name = afrimesh.villagebus.Name("/@self/db/keys/person:*/details");
     name = afrimesh.villagebus.Bind(name, function(error, response) {
         if (error) return continuation(error, null); 
         if (!response) return; // no neighbors
         response.map(function(key) {
-            return afrimesh.villagebus.GET(afrimesh.villagebus.Bind("/@root/db/" + key, function(error, response) {
+            return afrimesh.villagebus.GET(afrimesh.villagebus.Bind("/@self/db/" + key, function(error, response) {
                 return continuation(error, response);
               }));
           });
