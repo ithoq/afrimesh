@@ -175,7 +175,7 @@ endef
 define Package/fabfi-device
 	SECTION:=admin
 	CATEGORY:=Administration
-	DEPENDS:=+libuci +libjson +netcat
+	DEPENDS:=+libuci +libjson +netcat +lua +luasocket +lualogging +luajson
 	TITLE:=Basically afrimesh-base and afrimesh-provision
 	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
 endef
@@ -206,6 +206,14 @@ define Package/fabfi-device/install
 	$(INSTALL_BIN)  ./files.fabfi/etc/init.d/tunnel-mysql                 $(1)/etc/init.d
 	$(INSTALL_BIN)  ./files.fabfi/usr/sbin/tunnel-mysql                   $(1)/usr/sbin
 
+	# villagebus.lua
+	$(INSTALL_DIR) $(1)/usr/lib/lua/luarocks
+	touch $(1)/usr/lib/lua/luarocks/require.lua # fake luarocks.require for OpenWRT
+	$(INSTALL_DATA) villagebus/lua/villagebus.lua           $(1)/www/cgi-bin
+	$(INSTALL_DATA) villagebus/lua/urlcode.lua              $(1)/www/cgi-bin
+	mkdir -p $(DASHBOARD_CGI)/modules
+	$(INSTALL_DATA) villagebus/lua/modules/http.lua         $(1)/www/cgi-bin/modules
+	$(INSTALL_DATA) villagebus/lua/modules/provision.lua    $(1)/www/cgi-bin/modules
 
 	# TODO 
 	#$(INSTALL_BIN)  ./files.fabfi/etc/init.d/fallback-ip  $(1)/etc/init.d
