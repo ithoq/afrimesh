@@ -68,7 +68,7 @@
               //$("#overlay").fadeIn(250);
               $("#overlay").show();
               $("div#content").hide();
-              $("div#content").load("modules/" + module + ".html", function(page) { 
+              $("div#content").load("modules/" + module + ".html", function(page) {
                   $("div#content").show(); 
                   unloader = ready(); // UDE fades mess with load completion and require a ready() method :(
                 });

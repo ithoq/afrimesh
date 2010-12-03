@@ -18,16 +18,19 @@ villagebus.xhr = function() {
   return null;
 };
 
-villagebus.http = function(request) { // { verb, path, query, data }
+villagebus.http = function(request, continuation) { // { verb, host, path, query, data }
+  // TODO - check if we need a proxy
+  request.path = villagebus.proxy("") + request.host + "/" + request.path;
+  console.log("Requesting: " + request.path);
   var xhr = villagebus.xhr();
-  xhr.open(request.verb, request.path, request.continuation != null);
+  xhr.open(request.verb, request.path, continuation != null);
   xhr.onreadystatechange = function() {
     if (xhr.readyState != 4) return; // TODO handle all error states
     var response = JSON.parse(xhr.responseText);
     if (response.error) {
-      return request.continuation(response.error, null);
+      return continuation(response.error, null);
     }
-    return request.continuation(null, response);
+    return continuation(null, response);
   };
   if (request.data) {
     xhr.send(JSON.stringify(request.data));
@@ -37,6 +40,9 @@ villagebus.http = function(request) { // { verb, path, query, data }
   return xhr;
 };
 
+villagebus.parseurl = function(request) { // { verb, path, ... }
+  
+};
 
 // HTTP Verbs: http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html
 // . Safe: No action except retrieval
@@ -45,9 +51,8 @@ villagebus.http = function(request) { // { verb, path, query, data }
 
 // idempotent, safe
 villagebus.GET = function(url, continuation) {
-  return villagebus.http({ verb : "GET", 
-                           path : url, 
-                           continuation : continuation });
+  var request = villagebus.parseurl({ verb : "GET", path : url });
+  return villagebus.http(request, continuation);
 };
 
 // idempotent, safe
@@ -64,10 +69,8 @@ villagebus.DELETE = function() {
 
 // unsafe
 villagebus.POST = function(url, data, continuation) {
-  return villagebus.http({ verb : "POST", 
-                           path : url, 
-                           data : data,
-                           continuation : continuation });
+  var request = villagebus.parseurl({ verb : "POST", path : url, data : data });
+  return villagebus.http(request, continuation);
 };
 
 // no side-effects
