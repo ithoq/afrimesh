@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=lualogging
 PKG_VERSION:=1.1.4
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=http://luaforge.net/frs/download.php/2693/
@@ -33,6 +33,7 @@ endef
 define Package/lualogging/install
 	$(INSTALL_DIR) $(1)/usr/lib/lua
 	cp -r $(PKG_BUILD_DIR)/src/logging $(1)/usr/lib/lua
+	echo 'require("logging.logging")' > $(1)/usr/lib/lua/logging.lua
 endef
 
 $(eval $(call BuildPackage,lualogging))

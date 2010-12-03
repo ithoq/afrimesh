@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ----------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=1097
+PKG_REV:=1099
 #PKG_REV:=`svn info | grep -o "Revision: [0-9]*" | sed -e "s/Revision: //"`
 PKG_VERSION:=1.0pre-r$(PKG_REV)
 PKG_RELEASE:=1
@@ -41,7 +41,7 @@ define Package/afrimesh-base
 	SECTION:=admin
 	CATEGORY:=Administration
 	DEPENDS:=+libuci +libjson +ntpclient +mini-httpd +netcat +lua +luasocket +lualogging +luajson
-	TITLE:=Easy management for wireless community mesh networks
+	TITLE:=Easy management for wireless community mesh netwo3rks
 	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
 	#$(call Config,afrimesh.location.latitude,string,-25.7481182,Router Latitude)
 	#$(call Config,afrimesh.location.longitude,string,28.2822312,Router Longitude)
@@ -74,7 +74,7 @@ define Package/afrimesh-base/install
 	# villagebus.lua
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luarocks
 	touch $(1)/usr/lib/lua/luarocks/require.lua # fake luarocks.require for OpenWRT
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/villagebus/lua/villagebus.lua           $(1)/www/cgi-bin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/villagebus/lua/villagebus.lua           $(1)/www/cgi-bin
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/villagebus/lua/urlcode.lua              $(1)/www/cgi-bin
 	$(INSTALL_DIR)  $(1)/www/cgi-bin/modules
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/villagebus/lua/modules/http.lua         $(1)/www/cgi-bin/modules
@@ -218,7 +218,7 @@ define Package/fabfi-device/install
 	# villagebus.lua
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luarocks
 	touch $(1)/usr/lib/lua/luarocks/require.lua # fake luarocks.require for OpenWRT
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/villagebus/lua/villagebus.lua           $(1)/www/cgi-bin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/villagebus/lua/villagebus.lua           $(1)/www/cgi-bin
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/villagebus/lua/urlcode.lua              $(1)/www/cgi-bin
 	$(INSTALL_DIR)  $(1)/www/cgi-bin/modules
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/villagebus/lua/modules/http.lua         $(1)/www/cgi-bin/modules
@@ -493,7 +493,7 @@ define Package/afrimesh-potato/postinst
 	cp /www/afrimesh/index.luci.html     /www/index.luci.html
 	cp /www/afrimesh/index.redirect.html /www/index.html
 	# fix permissions for config - TODO why ?!
-	chmod 0644 /etc/config/afrimesh
+	chmod 0666 /etc/config/afrimesh
 }
 endef
 

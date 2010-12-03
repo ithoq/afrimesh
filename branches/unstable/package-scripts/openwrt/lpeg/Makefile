@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=lpeg
 PKG_VERSION:=0.10
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=http://www.inf.puc-rio.br/~roberto/lpeg/
@@ -36,6 +36,7 @@ endef
 
 define Build/Compile
 	$(MAKE) -C $(PKG_BUILD_DIR) \
+    CC="$(TARGET_CC) $(TARGET_CFLAGS) -std=gnu99 -fPIC" \
 		lpeg.so
 endef
 

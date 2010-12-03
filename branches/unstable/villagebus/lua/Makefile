@@ -17,6 +17,8 @@ GET=PATH_INFO="/http/192.168.20.100:80/index.html" \
     REQUEST_METHOD="GET" \
     QUERY_STRING="foo=bar&plink=plonk"	
 
+# PATH_INFO="/http/example.com/index.html" REQUEST_METHOD="GET" ./villagebus.lua
+
 get :
 	$(GET) ./villagebus.lua
 	#$(GET) lua ./villagebus.luac
