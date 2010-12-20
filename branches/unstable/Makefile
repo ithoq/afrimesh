@@ -335,15 +335,33 @@ depends-packages-linux-libcredis :
 	#@cd $(PKG_BUILD_DIR)/libcredis-0.2.2 ; pdebuild
 	#@cd $(PKG_BUILD_DIR)/libcredis-0.2.2 ; fakeroot dpkg-buildpackage -b -uc 
 
+depends-packages-linux-redis-lua :
+	wget --no-clobber -P $(PKG_BUILD_DIR) http://cloud.github.com/downloads/nrk/redis-lua/redis-lua-2.0.0-0.tar.gz
+	rm -rf $(PKG_BUILD_DIR)/redis-lua-2.0.0-0/debian
+	tar xzvf $(PKG_BUILD_DIR)/redis-lua-2.0.0-0.tar.gz -C $(PKG_BUILD_DIR)
+	@cd $(PKG_BUILD_DIR)/redis-lua-2.0.0-0 ; dh_make --library -c BSD -e antoine@7degrees.co.za --packagename redis-lua --createorig
+	rm -rf  $(PKG_BUILD_DIR)/redis-lua-2.0.0-0/debian/*.ex
+	rm -rf  $(PKG_BUILD_DIR)/redis-lua-2.0.0-0/debian/*.EX
+	rm -rf  $(PKG_BUILD_DIR)/redis-lua-2.0.0-0/debian/*.install
+	cp package-scripts/debian/redis-lua/* $(PKG_BUILD_DIR)/redis-lua-2.0.0-0/debian	
+	# Ugly workaround for launchpad lameness
+	#rm -rf $(PKG_BUILD_DIR)/redis-lua-2.0.0-0.orig.tar.gz
+	#wget -P $(PKG_BUILD_DIR) http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu/pool/main/r/redis-lua/redis-lua-2.0.0-0.orig.tar.gz
+	@cd $(PKG_BUILD_DIR)/redis-lua-2.0.0-0 ; debuild -S
+	# to build binaries:
+	#@cd $(PKG_BUILD_DIR)/redis-lua-2.0.0-0 ; pdebuild
+	#@cd $(PKG_BUILD_DIR)/redis-lua-2.0.0-0 ; fakeroot dpkg-buildpackage -b -uc 
 
-depends-launchpad-linux : depends-packages-linux-json-c depends-packages-linux-uci # depends-packages-linux-libcredis depends-packages-linux-libmemcached 
+
+depends-launchpad-linux : depends-packages-linux-redis-lua #depends-packages-linux-json-c depends-packages-linux-uci depends-packages-linux-libcredis depends-packages-linux-libmemcached 
 	@echo "Uploading/Refreshing packages to launchpad.net ppa"
 	# TODO run lintian & linda
 	# TODO read package release # from changelogs
-	dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/json-c_0.9-5_source.changes
-	dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/uci_0.7.5-5_source.changes
+	#dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/json-c_0.9-5_source.changes
+	#dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/uci_0.7.5-5_source.changes
 	#dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/libmemcachedb_0.25-1_source.changes
 	#dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/libcredis_0.2.2-1_source.changes	
+	dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/redis-lua_2.0.0-0-1_source.changes
 
 
 # - freebsd ----------------------------------------------------------------

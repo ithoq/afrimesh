@@ -12,6 +12,7 @@
   sudo luarocks install luasocket
   sudo luarocks install luajson
   sudo luarocks install lualogging
+  sudo luarocks install redis-lua
 ]]--
 
 

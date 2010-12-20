@@ -18,17 +18,26 @@ villagebus.xhr = function() {
   return null;
 };
 
-villagebus.http = function(request, continuation) { // { verb, host, path, query, data }
+villagebus.http = function(request, continuation) { // { verb, host, port, path, query, data }
   // TODO - check if we need a proxy
-  request.path = villagebus.proxy("") + request.host + "/" + request.path;
-  console.log("Requesting: " + request.path);
+  console.log("villagebus.http(" + JSON.stringify(request) + ")");
+  if (request.host) {
+    request.path = villagebus.proxy("") + request.host + "/" + request.path;
+  }
+  console.log(request.verb + " " + request.path);
   var xhr = villagebus.xhr();
   xhr.open(request.verb, request.path, continuation != null);
   xhr.onreadystatechange = function() {
     if (xhr.readyState != 4) return; // TODO handle all error states
-    var response = JSON.parse(xhr.responseText);
-    if (response.error) {
-      return continuation(response.error, null);
+    //console.log("GOT: " + xhr.responseText);
+    try {
+      var response = JSON.parse(xhr.responseText);
+      if (response.error) {
+        return continuation(response.error, null);
+      }
+    } catch (e) {
+      console.warn("Reply is not JSON encoded: " + e);
+      return continuation(null, xhr.responseText);
     }
     return continuation(null, response);
   };
@@ -40,8 +49,14 @@ villagebus.http = function(request, continuation) { // { verb, host, path, query
   return xhr;
 };
 
-villagebus.parseurl = function(request) { // { verb, path, ... }
-  
+villagebus.parseurl = function(request) { // { verb, url, ... }
+  var a = document.createElement("a");
+  a.href = request.url; // { hostname, port, pathname, search } 
+  request.host  = a.hostname;
+  request.port  = a.port != 0 ? a.port : 80;
+  request.path  = a.pathname;
+  request.query = a.search;
+  return request;
 };
 
 // HTTP Verbs: http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html
@@ -51,7 +66,7 @@ villagebus.parseurl = function(request) { // { verb, path, ... }
 
 // idempotent, safe
 villagebus.GET = function(url, continuation) {
-  var request = villagebus.parseurl({ verb : "GET", path : url });
+  var request = villagebus.parseurl({ verb : "GET", url : url });
   return villagebus.http(request, continuation);
 };
 
@@ -69,7 +84,7 @@ villagebus.DELETE = function() {
 
 // unsafe
 villagebus.POST = function(url, data, continuation) {
-  var request = villagebus.parseurl({ verb : "POST", path : url, data : data });
+  var request = villagebus.parseurl({ verb : "POST", url : url, data : data });
   return villagebus.http(request, continuation);
 };
 
