@@ -1,3 +1,11 @@
+uci (2010-09-28-1) lucid; urgency=low
+
+  * Bumped uci version
+  * Added liblua5.1-lua package spec for lua bindings
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Sat, 20 December 2010 16:00:00 +0200
+
+
 uci (0.7.5-5) lucid; urgency=low
 
   * Switched to packaging for Lucid

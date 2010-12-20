@@ -232,33 +232,6 @@ prep-linux : clean-linux sources #hooks-linux
 	rm -rf $(PKG_BUILD_DIR)/villagetelco-dashboard-$(VERSION)/debian/*
 	cp -a package-scripts/debian/villagetelco-dashboard/* $(PKG_BUILD_DIR)/villagetelco-dashboard-$(VERSION)/debian
 
-
-#hooks-linux :
-#	@echo "Installing hooks to install unofficial packages needed to build Afrimesh"
-#	mkdir -p $(PKG_BUILD_DIR)
-#	rm -f ~/.pbuilderrc
-#	echo "HOOKDIR=$(PKG_BUILD_DIR)/hook.d" >> ~/.pbuilderrc
-#	mkdir -p $(PKG_BUILD_DIR)/hook.d
-#	echo "#!/bin/sh" > $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-#	echo "echo \"Installing unofficial dependencies for Afrimesh\"" >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-#	echo "cd /tmp ; wget $(DEPS_URL)/uci_0.7.5-1_i386.deb" >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-#	echo "cd /tmp ; wget $(DEPS_URL)/uci-dev_0.7.5-1_i386.deb" >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-#	echo "cd /tmp ; wget $(DEPS_URL)/json-c_0.9-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK
-#	echo "cd /tmp ; wget $(DEPS_URL)/json-c-dev_0.9-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-#	echo "cd /tmp ; wget $(DEPS_URL)/libmemcachedb_0.25-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-#	echo "cd /tmp ; wget $(DEPS_URL)/libmemcachedb-dev_0.25-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-#	echo "cd /tmp ; wget $(DEPS_URL)/libcredis_0.2.2-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-#	echo "cd /tmp ; wget $(DEPS_URL)/libcredis-dev_0.2.2-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-#	echo "dpkg -i /tmp/uci_0.7.5-1_i386.deb" >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-#	echo "dpkg -i /tmp/uci-dev_0.7.5-1_i386.deb" >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-#	echo "dpkg -i /tmp/json-c_0.9-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-#	echo "dpkg -i /tmp/json-c-dev_0.9-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-#	echo "dpkg -i /tmp/libmemcachedb_0.25-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-#	echo "dpkg -i /tmp/libmemcachedb-dev_0.25-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-#	echo "dpkg -i /tmp/libcredis_0.2.2-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-#	echo "dpkg -i /tmp/libcredis-dev_0.2.2-1_i386.deb"  >> $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-#	chmod 0755 $(PKG_BUILD_DIR)/hook.d/$(DEPS_HOOK)
-
 depends-packages-linux-json-c :
 	wget --no-clobber -c -P $(PKG_BUILD_DIR) http://oss.metaparadigm.com/json-c/json-c-0.9.tar.gz
 	rm -rf $(PKG_BUILD_DIR)/json-c-0.9
@@ -277,45 +250,32 @@ depends-packages-linux-json-c :
 	#@cd $(PKG_BUILD_DIR)/json-c-0.9 ; pdebuild
 	#@cd $(PKG_BUILD_DIR)/json-c-0.9 ; fakeroot dpkg-buildpackage -b -uc
 
+UCI_VERSION=2010-09-28.2
+UCI=uci-$(UCI_VERSION)
 depends-packages-linux-uci :
-	wget --no-clobber -P $(PKG_BUILD_DIR) http://mirror2.openwrt.org/sources/uci-0.7.5.tar.gz
-	rm -rf $(PKG_BUILD_DIR)/uci-0.7.5
-	rm -rf $(PKG_BUILD_DIR)/uci-0.7.5.orig
-	cd $(PKG_BUILD_DIR) ; tar xzvf uci-0.7.5.tar.gz 
-	@cd $(PKG_BUILD_DIR)/uci-0.7.5 ; dh_make --library -c LGPL -e antoine@7degrees.co.za --packagename uci --createorig 
-	rm -rf  $(PKG_BUILD_DIR)/uci-0.7.5/debian/*.ex
-	rm -rf  $(PKG_BUILD_DIR)/uci-0.7.5/debian/*.EX
-	rm -rf  $(PKG_BUILD_DIR)/uci-0.7.5/debian/*.install
-	cp package-scripts/debian/uci/changelog    $(PKG_BUILD_DIR)/uci-0.7.5/debian
-	cp package-scripts/debian/uci/control      $(PKG_BUILD_DIR)/uci-0.7.5/debian
-	cp package-scripts/debian/uci/copyright    $(PKG_BUILD_DIR)/uci-0.7.5/debian
-	cp package-scripts/debian/uci/rules        $(PKG_BUILD_DIR)/uci-0.7.5/debian
-	cp package-scripts/debian/uci/*.install    $(PKG_BUILD_DIR)/uci-0.7.5/debian
-	cp package-scripts/debian/uci/Makefile     $(PKG_BUILD_DIR)/uci-0.7.5
-	cp package-scripts/debian/uci/Makefile.inc $(PKG_BUILD_DIR)/uci-0.7.5
+	wget --no-clobber -P $(PKG_BUILD_DIR) http://downloads.openwrt.org/sources/$(UCI).tar.gz
+	rm -rf $(PKG_BUILD_DIR)/$(UCI)
+	rm -rf $(PKG_BUILD_DIR)/$(UCI).orig
+	cd $(PKG_BUILD_DIR) ; tar xzvf $(UCI).tar.gz 
+	@cd $(PKG_BUILD_DIR)/$(UCI) ; dh_make --multi -c LGPL -e antoine@7degrees.co.za --packagename uci --createorig 
+	rm -rf  $(PKG_BUILD_DIR)/$(UCI)/debian/*.ex
+	rm -rf  $(PKG_BUILD_DIR)/$(UCI)/debian/*.EX
+	rm -rf  $(PKG_BUILD_DIR)/$(UCI)/debian/*.install
+	#rm -rf  $(PKG_BUILD_DIR)/$(UCI)/debian/*
+	cp package-scripts/debian/uci/changelog    $(PKG_BUILD_DIR)/$(UCI)/debian
+	cp package-scripts/debian/uci/compat       $(PKG_BUILD_DIR)/$(UCI)/debian
+	cp package-scripts/debian/uci/control      $(PKG_BUILD_DIR)/$(UCI)/debian
+	cp package-scripts/debian/uci/copyright    $(PKG_BUILD_DIR)/$(UCI)/debian
+	cp package-scripts/debian/uci/rules        $(PKG_BUILD_DIR)/$(UCI)/debian
+	cp package-scripts/debian/uci/*.install    $(PKG_BUILD_DIR)/$(UCI)/debian
+	cp package-scripts/debian/uci/Makefile.lua $(PKG_BUILD_DIR)/$(UCI)/lua/Makefile
 	# Ugly workaround for launchpad lameness
-	rm -rf $(PKG_BUILD_DIR)/uci_0.7.5.orig.tar.gz
-	wget --no-clobber -P $(PKG_BUILD_DIR) http://ppa.launchpad.net/afrimesh/ppa/ubuntu/pool/main/u/uci/uci_0.7.5.orig.tar.gz
-	@cd $(PKG_BUILD_DIR)/uci-0.7.5 ; debuild -S
+	#rm -rf $(PKG_BUILD_DIR)/uci_0.7.5.orig.tar.gz
+	#wget --no-clobber -P $(PKG_BUILD_DIR) http://ppa.launchpad.net/afrimesh/ppa/ubuntu/pool/main/u/uci/uci_0.7.5.orig.tar.gz
+	@cd $(PKG_BUILD_DIR)/$(UCI) ; debuild -S
   # to build binaries:
-	#@cd $(PKG_BUILD_DIR)/uci-0.7.5 ; pdebuild
-	#@cd $(PKG_BUILD_DIR)/uci-0.7.5 ; fakeroot dpkg-buildpackage -b -uc
-
-depends-packages-linux-libmemcached :
-	svn checkout http://memcachedb.googlecode.com/svn/clients/libmemcached-0.25-patch $(PKG_BUILD_DIR)/libmemcachedb-0.25
-	rm -rf $(PKG_BUILD_DIR)/libmemcachedb-0.25/debian
-	@cd $(PKG_BUILD_DIR)/libmemcachedb-0.25 ; dh_make --library -c BSD -e antoine@7degrees.co.za --packagename libmemcachedb --createorig
-	rm -rf  $(PKG_BUILD_DIR)/libmemcachedb-0.25/debian/*.ex
-	rm -rf  $(PKG_BUILD_DIR)/libmemcachedb-0.25/debian/*.EX
-	rm -rf  $(PKG_BUILD_DIR)/libmemcachedb-0.25/debian/*.install
-	cp package-scripts/debian/libmemcachedb/* $(PKG_BUILD_DIR)/libmemcachedb-0.25/debian	
-	# Ugly workaround for launchpad lameness
-	#rm -rf $(PKG_BUILD_DIR)/libmemcachedb-0.25.orig.tar.gz
-	#wget -P $(PKG_BUILD_DIR) http://ppa.launchpad.net/antoine-7degrees/ppa/ubuntu/pool/main/l/libmemcachedb/libmemcachedb-0.25.orig.tar.gz
-	@cd $(PKG_BUILD_DIR)/libmemcachedb-0.25 ; debuild -S
-	# to build binaries:
-	#@cd $(PKG_BUILD_DIR)/libmemcachedb-0.25 ; pdebuild
-	#@cd $(PKG_BUILD_DIR)/libmemcachedb-0.25 ; fakeroot dpkg-buildpackage -b -uc 
+	#@cd $(PKG_BUILD_DIR)/$(UCI) ; pdebuild
+	#@cd $(PKG_BUILD_DIR)/$(UCI) ; fakeroot dpkg-buildpackage -b -uc
 
 depends-packages-linux-libcredis :
 	wget --no-clobber -P $(PKG_BUILD_DIR) http://credis.googlecode.com/files/credis-0.2.2.tar.gz
@@ -353,15 +313,15 @@ depends-packages-linux-redis-lua :
 	#@cd $(PKG_BUILD_DIR)/redis-lua-2.0.0-0 ; fakeroot dpkg-buildpackage -b -uc 
 
 
-depends-launchpad-linux : depends-packages-linux-redis-lua #depends-packages-linux-json-c depends-packages-linux-uci depends-packages-linux-libcredis depends-packages-linux-libmemcached 
+depends-launchpad-linux : depends-packages-linux-uci  #depends-packages-linux-redis-lua depends-packages-linux-json-c depends-packages-linux-libcredis depends-packages-linux-libmemcached 
 	@echo "Uploading/Refreshing packages to launchpad.net ppa"
 	# TODO run lintian & linda
 	# TODO read package release # from changelogs
 	#dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/json-c_0.9-5_source.changes
-	#dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/uci_0.7.5-5_source.changes
+	dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/uci_2010-09-28-1_source.changes
 	#dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/libmemcachedb_0.25-1_source.changes
 	#dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/libcredis_0.2.2-1_source.changes	
-	dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/redis-lua_2.0.0-0-1_source.changes
+	#dput -c package-scripts/debian/dput.cf $(PPA) $(PKG_BUILD_DIR)/redis-lua_2.0.0-0-1_source.changes
 
 
 # - freebsd ----------------------------------------------------------------

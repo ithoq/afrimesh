@@ -13,6 +13,8 @@
   sudo luarocks install luajson
   sudo luarocks install lualogging
   sudo luarocks install redis-lua
+
+  libuci-lua
 ]]--
 
 
