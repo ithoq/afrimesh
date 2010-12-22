@@ -40,7 +40,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/afrimesh-base
 	SECTION:=admin
 	CATEGORY:=Administration
-	DEPENDS:=+libuci +libjson +ntpclient +mini-httpd +netcat +lua +luasocket +lualogging +luajson
+	DEPENDS:=+libuci +libjson +ntpclient +mini-httpd +netcat +lua +luasocket +lualogging +luajson +libuci-lua
 	TITLE:=Easy management for wireless community mesh netwo3rks
 	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
 	#$(call Config,afrimesh.location.latitude,string,-25.7481182,Router Latitude)
@@ -75,7 +75,8 @@ define Package/afrimesh-base/install
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luarocks
 	touch $(1)/usr/lib/lua/luarocks/require.lua # fake luarocks.require for OpenWRT
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/villagebus/lua/villagebus.lua           $(1)/www/cgi-bin
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/villagebus/lua/urlcode.lua              $(1)/www/cgi-bin
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/villagebus/lua/urlcode.lua             $(1)/www/cgi-bin
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/villagebus/lua/common.lua              $(1)/www/cgi-bin
 	$(INSTALL_DIR)  $(1)/www/cgi-bin/modules
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/villagebus/lua/modules/http.lua         $(1)/www/cgi-bin/modules
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/villagebus/lua/modules/provision.lua    $(1)/www/cgi-bin/modules
@@ -103,7 +104,7 @@ define Package/afrimesh-provision/install
 	$(INSTALL_DIR)  $(1)/etc/init.d
 	$(INSTALL_DIR)  $(1)/www/cgi-bin
 	$(INSTALL_BIN)  ./files.provision/etc/init.d/provision             $(1)/etc/init.d/provision
-	$(INSTALL_BIN)  ./files.provision/www/cgi-bin/provision.sh         $(1)/www/cgi-bin/provision
+	$(INSTALL_BIN)  ./files.provision/www/cgi-bin/provision.lua        $(1)/www/cgi-bin/provision
 
 	# - runonce --
 	$(INSTALL_BIN)  ./files.provision/etc/init.d/runonce          		 $(1)/etc/init.d/runonce.afrimesh-provision
@@ -137,7 +138,7 @@ endef
 define Package/villagetelco-device
 	SECTION:=admin
 	CATEGORY:=Administration
-	DEPENDS:=+libuci +libjson +netcat
+	DEPENDS:=+libuci +libjson +netcat +lua +luasocket +lualogging +luajson +libuci-lua
 	TITLE:=Basically afrimesh-base and afrimesh-provision
 	VERSION:=$(PKG_VERSION)-$(PKG_RELEASE)
 endef
@@ -163,8 +164,18 @@ define Package/villagetelco-device/install
 	$(INSTALL_BIN)  ./files/www/cgi-bin/status.sh                         $(1)/www/cgi-bin/status
 	$(INSTALL_BIN)  ./files.provision/etc/init.d/provision                $(1)/etc/init.d/provision
 	$(INSTALL_BIN)  ./files.provision/usr/lib/asterisk/sounds/callme.gsm  $(1)/usr/lib/asterisk/sounds
-	$(INSTALL_BIN)  ./files.provision/www/cgi-bin/provision.sh            $(1)/www/cgi-bin/provision
-	$(INSTALL_BIN)  ./files.provision/www/cgi-bin/provision-handset.sh    $(1)/www/cgi-bin/provision-handset
+	$(INSTALL_BIN)  ./files.provision/www/cgi-bin/provision.lua           $(1)/www/cgi-bin/provision
+	$(INSTALL_BIN)  ./files.provision/www/cgi-bin/provision-handset.lua   $(1)/www/cgi-bin/provision-handset
+
+	# villagebus.lua
+	$(INSTALL_DIR) $(1)/usr/lib/lua/luarocks
+	touch $(1)/usr/lib/lua/luarocks/require.lua # fake luarocks.require for OpenWRT
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/villagebus/lua/villagebus.lua           $(1)/www/cgi-bin
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/villagebus/lua/urlcode.lua             $(1)/www/cgi-bin
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/villagebus/lua/common.lua              $(1)/www/cgi-bin
+	$(INSTALL_DIR)  $(1)/www/cgi-bin/modules
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/villagebus/lua/modules/http.lua         $(1)/www/cgi-bin/modules
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/villagebus/lua/modules/provision.lua    $(1)/www/cgi-bin/modules
 
 	# TODO 
 	#$(INSTALL_BIN)  ./files.villagetelco/etc/init.d/fallback-ip  $(1)/etc/init.d
@@ -208,8 +219,8 @@ define Package/fabfi-device/install
 	$(INSTALL_BIN)  ./files/www/cgi-bin/notify.sh               			    $(1)/www/cgi-bin/notify
 	$(INSTALL_BIN)  ./files/www/cgi-bin/status.olsrd.sh                   $(1)/www/cgi-bin/status
 	#$(INSTALL_BIN)  ./files.provision/etc/init.d/provision                $(1)/etc/init.d/provision
-	#$(INSTALL_BIN)  ./files.provision/www/cgi-bin/provision.sh            $(1)/www/cgi-bin/provision
-	#$(INSTALL_BIN)  ./files.provision/www/cgi-bin/provision-handset.sh    $(1)/www/cgi-bin/provision-handset
+	#$(INSTALL_BIN)  ./files.provision/www/cgi-bin/provision.lua           $(1)/www/cgi-bin/provision
+	#$(INSTALL_BIN)  ./files.provision/www/cgi-bin/provision-handset.lua   $(1)/www/cgi-bin/provision-handset
 
 	$(INSTALL_DIR)  $(1)/usr/sbin
 	$(INSTALL_BIN)  ./files.fabfi/etc/init.d/tunnel-mysql                 $(1)/etc/init.d
@@ -219,7 +230,8 @@ define Package/fabfi-device/install
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luarocks
 	touch $(1)/usr/lib/lua/luarocks/require.lua # fake luarocks.require for OpenWRT
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/villagebus/lua/villagebus.lua           $(1)/www/cgi-bin
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/villagebus/lua/urlcode.lua              $(1)/www/cgi-bin
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/villagebus/lua/urlcode.lua             $(1)/www/cgi-bin
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/villagebus/lua/common.lua              $(1)/www/cgi-bin
 	$(INSTALL_DIR)  $(1)/www/cgi-bin/modules
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/villagebus/lua/modules/http.lua         $(1)/www/cgi-bin/modules
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/villagebus/lua/modules/provision.lua    $(1)/www/cgi-bin/modules

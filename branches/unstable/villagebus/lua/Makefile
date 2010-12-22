@@ -19,7 +19,7 @@ GET=PATH_INFO="/http/192.168.20.100:80/index.html" \
 
 # PATH_INFO="/http/example.com/index.html" REQUEST_METHOD="GET" ./villagebus.lua
 
-get :
+test-get :
 	$(GET) ./villagebus.lua
 	#$(GET) lua ./villagebus.luac
 
@@ -29,8 +29,16 @@ POST=PATH_INFO="/http/192.168.20.100:80/cgi-bin/villagebus.lua/provision/router/
      QUERY_STRING="foo=bar&plink=plonk" \
      CONTENT_LENGTH=1
 
-post :
+test-post :
 	echo '{ "a" : "1", "b" : "2", "c" : "3" }' | $(POST) ./villagebus.lua
+
+
+PROVISION=PATH_INFO="/provision/interface/00:11:22:33:44:55"\
+          REQUEST_METHOD="POST" \
+          QUERY_STRING="foo=bar&plink=plonk" \
+	        CONTENT_LENGTH=1
+test-provision :
+	echo '{ "a" : "1", "b" : "2", "c" : "3" }' | $(PROVISION) ./villagebus.lua
 
 clean :
 	rm -f *~ *.luac 

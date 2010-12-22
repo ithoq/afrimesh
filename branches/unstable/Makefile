@@ -19,8 +19,8 @@ MODULES=\
 #   _DO_ set this to your personal ppa if you want to build test packages
 #   _DON'T_ set this to afrimesh-ppa unless you are planning on doing a
 #   release !!!                                   
-PPA=antoine-7degrees-ppa
-#PPA=afrimesh-ppa
+#PPA=antoine-7degrees-ppa
+PPA=afrimesh-ppa
 
 # Some non-standard dependencies are hosted here
 #DEPS_URL="https://launchpad.net/~antoine-7degrees/+archive/ppa/+files/"
@@ -100,8 +100,8 @@ install-www:
 	@if ! test -d $(DASHBOARD_CGI) ; then mkdir -p $(DASHBOARD_CGI) ; fi
 	$(INSTALL) ./package-scripts/openwrt/afrimesh/files.portal/www/cgi-bin/uam.pl $(DASHBOARD_CGI)
 	#$(INSTALL) dashboard/cgi-bin/ajax-proxy.cgi          $(DASHBOARD_CGI)
-	$(INSTALL) dashboard/cgi-bin/provisiond.cgi          $(DASHBOARD_CGI)/provisiond
-	$(INSTALL) dashboard/cgi-bin/provisiond-handset.cgi  $(DASHBOARD_CGI)/provisiond-handset
+	#$(INSTALL) dashboard/cgi-bin/provisiond.cgi          $(DASHBOARD_CGI)/provisiond
+	#$(INSTALL) dashboard/cgi-bin/provisiond-handset.cgi  $(DASHBOARD_CGI)/provisiond-handset
 	$(INSTALL) dashboard/cgi-bin/mesh-topology.kml       $(DASHBOARD_CGI)
 	#chmod 0755 $(DASHBOARD_CGI)/*.cgi
 	chmod 0755 $(DASHBOARD_CGI)/provisiond
@@ -114,6 +114,7 @@ install-www:
 	chmod 0755 $(DASHBOARD_CGI)/provisiond-bundles/mp01.handset/etc/init.d/asterisk
 	$(INSTALL) villagebus/lua/villagebus.lua           $(DASHBOARD_CGI)
 	$(INSTALL) villagebus/lua/urlcode.lua              $(DASHBOARD_CGI)
+	$(INSTALL) villagebus/lua/common.lua               $(DASHBOARD_CGI)
 	mkdir -p $(DASHBOARD_CGI)/modules
 	$(INSTALL) villagebus/lua/modules/http.lua         $(DASHBOARD_CGI)/modules
 	$(INSTALL) villagebus/lua/modules/provision.lua    $(DASHBOARD_CGI)/modules

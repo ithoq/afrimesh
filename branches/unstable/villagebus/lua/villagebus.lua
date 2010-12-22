@@ -20,13 +20,20 @@
 
 --[[ includes ]]------------------------------------------------------------
 require "luarocks.require"
+require "json"
+
 require "logging"
 require "logging.file"
-log = logging.file("/tmp/villagebus.lua.log") --, "%Y-%m-%d")
+logname = "/tmp/villagebus.lua.log"
+os.execute("touch " .. logname .. " >& /dev/null")
+os.execute("chmod 0666 " .. logname  .. " >& /dev/null")
+log = logging.file(logname)
+if not log then
+  log = logging.file("/dev/null")
+end
 -- log:setLevel(logging.INFO)
 log:setLevel(logging.DEBUG)
 log:debug("villagebus.lua starting")
-require "json"
 
 
 --[[ modules ]]-------------------------------------------------------------
@@ -51,7 +58,7 @@ end
 
 
 --[[ main ]]----------------------------------------------------------------
-function main(argc, argv) 
+function main(arg) 
   log:debug("-- CGI ----------------------------------------")
   local cgi = {
     request_method  = getcgi("REQUEST_METHOD"),
@@ -132,13 +139,11 @@ function main(argc, argv)
   log:info("================================================")
   log:info("")
 end
-main()
+main(arg)
 
 --[[
 http://lambda.7degrees.co.za/cgi-bin/villagebus.lua/http/192.168.20.108/cgi-bin/villagebus.lua/http/10.130.1.1:2005
-
 http://lambda.7degrees.co.za/cgi-bin/villagebus.lua/http/@reginald/10.130.1.1:2005
-
 http://lambda.7degrees.co.za/cgi-bin/villagebus.lua/@reginald/http/10.130.1.1:2005
 ]]--
 
