@@ -14,12 +14,14 @@ div.olLayerDiv {
 }
 
 .olLayerGoogleCopyright {
-    left: 2px;
+    right: 2px;
     bottom: 2px;  
+    visibility: hidden;
 }
 .olLayerGooglePoweredBy {
-    left: 2px;
+    right: 2px;
     bottom: 15px;   
+    /*visibility: hidden;*/
 }
 .olControlAttribution {
     font-size: smaller; 

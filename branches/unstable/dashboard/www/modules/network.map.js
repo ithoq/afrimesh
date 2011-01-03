@@ -29,7 +29,7 @@ var Map = undefined;
                               new OpenLayers.Control.PanPanel(),
                               new OpenLayers.Control.ZoomPanel() ],
         //theme             : "style/map.default.css"  
-        theme             : "style/map.css?version=49",  // Ffffffffffuuuuuuuuuu!!!! Damn you Safaris!!!!
+        theme             : "style/map.css?version=50",  // Ffffffffffuuuuuuuuuu!!!! Damn you Safaris!!!!
         //allOverlays: true,
         //maxExtent: new OpenLayers.Bounds(1549471.9221, 6403610.94, 1550001.32545, 6404015.8)
       };
