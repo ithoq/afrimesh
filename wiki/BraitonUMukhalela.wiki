@@ -2,7 +2,7 @@
 
 = Introduction =
 
-My name is Braiton U Mukhalela, I am currently working on Afrimesh project at the CSIR- Meraka Institute.I like working in FOSS.
+My name is Braiton U Mukhalela, I am currently working on Afrimesh project at the CSIR- Meraka Institute.I like working on FOSS.
 
 
 = Details =
