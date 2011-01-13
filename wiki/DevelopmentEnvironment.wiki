@@ -57,8 +57,10 @@ In the top-level afrimesh source directory type:
 
   {{{
   make install
+  chmod a+rw /tmp/*.log 
+  chmod -R a+rw /etc/config
   }}}
 
 
 = Test Installation =
-  * Install /etc/config/afrimesh
+  * Check /etc/config/afrimesh
