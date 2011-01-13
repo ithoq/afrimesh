@@ -34,7 +34,7 @@ Configuring an afrimesh development environment.
 
   * Run:
   {{{
-  svn checkout http://afrimesh.googlecode.com/svn/trunk/ afrimesh
+  svn checkout http://afrimesh.googlecode.com/svn/branches/unstable/ afrimesh
   }}}
 
   * Check the following variables in Makefile
