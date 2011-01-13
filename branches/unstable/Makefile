@@ -100,8 +100,8 @@ install-www:
 	@if ! test -d $(DASHBOARD_CGI) ; then mkdir -p $(DASHBOARD_CGI) ; fi
 	$(INSTALL) ./package-scripts/openwrt/afrimesh/files.portal/www/cgi-bin/uam.pl $(DASHBOARD_CGI)
 	#$(INSTALL) dashboard/cgi-bin/ajax-proxy.cgi          $(DASHBOARD_CGI)
-	#$(INSTALL) dashboard/cgi-bin/provisiond.cgi          $(DASHBOARD_CGI)/provisiond
-	#$(INSTALL) dashboard/cgi-bin/provisiond-handset.cgi  $(DASHBOARD_CGI)/provisiond-handset
+	$(INSTALL) dashboard/cgi-bin/provisiond.cgi          $(DASHBOARD_CGI)/provisiond
+	$(INSTALL) dashboard/cgi-bin/provisiond-handset.cgi  $(DASHBOARD_CGI)/provisiond-handset
 	$(INSTALL) dashboard/cgi-bin/mesh-topology.kml       $(DASHBOARD_CGI)
 	#chmod 0755 $(DASHBOARD_CGI)/*.cgi
 	chmod 0755 $(DASHBOARD_CGI)/provisiond
