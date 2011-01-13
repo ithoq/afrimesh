@@ -8,10 +8,10 @@ package.cpath = package.cpath .. ";/Users/antoine/afrimesh/ext/darwin/lib/lua5.1
 package.cpath = package.cpath .. ";/usr/share/lua/5.1/?.so"
 uci = require("uci")
 uci = uci.cursor()
-require "common"
 
 
 --[[ utils ]]------------------------------------------------------------
+require "common"
 
 
 --[[ logging ]]------------------------------------------------------------
@@ -27,6 +27,9 @@ end
 -- log:setLevel(logging.INFO)
 log:setLevel(logging.DEBUG)
 log:info("provision.lua starting")
+
+
+
 
 
 --[[ definitions ]]---------------------------------------------------------
@@ -63,7 +66,7 @@ function readconf()
   ethernet.mac       = os.pexecute("ifconfig " .. ethernet.interface .. " | grep HWaddr | awk '{ print $5 }'")
   ethernet.mac       = string.upper(ethernet.mac)
   local conf = {
-    provision = "/cgi-bin/villabus.lua/provision",
+    provision = "/cgi-bin/villagebus.lua/provision/router",
     deviceid  = uci:get("afrimesh.settings.deviceid") or "",
     root      = uci:get("afrimesh.settings.root") or factory.root,
     wireless  = wireless,

@@ -1,12 +1,5 @@
 
---[[ includes ]]------------------------------------------------------------
-require "socket"
-local http = require "socket.http"
-local ltn12 = require("ltn12")
-
--- module("villagebus.http", package.seeall)
 module("modules.http", package.seeall)
---module(..., package.seeall)
 
 
 --[[ evaluate ]]------------------------------------------------------------

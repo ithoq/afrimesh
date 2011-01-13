@@ -37,24 +37,10 @@ log:debug("villagebus.lua starting")
 
 
 --[[ modules ]]-------------------------------------------------------------
+require "common"
 require "modules.http"
 require "modules.provision"
 
-
---[[ helpers ]]-------------------------------------------------------------
-require "urlcode"
-function getcgi(name)
-  local value = os.getenv(name)
-  return value and value or ""
-end
-function fail(message, module)
-  if module then
-    log:error("module " .. module .. ": " .. message)
-  else
-    log:error(message)
-  end
-  return json.encode({ error = message })
-end
 
 
 --[[ main ]]----------------------------------------------------------------
