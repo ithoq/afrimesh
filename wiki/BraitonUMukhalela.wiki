@@ -1,0 +1,13 @@
+#summary One-sentence summary of this page.
+
+= Introduction =
+
+My name is Braiton U Mukhalela, I am currently working on Afrimesh project at the CSIR- Meraka Institute.I like working in FOSS.
+
+
+= Details =
+
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
