@@ -36,7 +36,9 @@ Run as required:
   }}}
 
 
-* finally Lua:
-{{{
-  apt-get install lua5.1 luarocks liblua5.1-socket2 liblua5.1-json liblua5.1-logging liblua5.1-uci
-}}}
+Finally:
+
+  * Lua:
+  {{{
+    apt-get install lua5.1 luarocks liblua5.1-socket2 liblua5.1-json liblua5.1-logging liblua5.1-uci
+  }}}
