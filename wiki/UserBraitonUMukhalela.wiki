@@ -1,6 +1,6 @@
 #summary One-sentence summary of this page.
 
-= Introduction 
+
 My name is Braiton U Mukhalela, currently working on the Afrimesh project with the CSIR- Meraka Institute in Pretoria RSA.I simply love my programming, especially using FOSS.
 
 
