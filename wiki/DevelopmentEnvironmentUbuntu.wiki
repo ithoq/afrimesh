@@ -45,7 +45,7 @@ Finally:
 
 
 =64-bit Ubuntu=
-Afrimesh will compile on 64-bit Ubuntu, but it won't work. Do get it working, you will have to install the 32-bit libraries and compile afrimesh as 32-bit binaries.
+Afrimesh will compile on 64-bit Ubuntu, but it won't work. A workaround to get it working, is to install the 32-bit libraries and compile afrimesh as 32-bit binaries.
 
 First, install the 32-bit libraries that is already in the Ubuntu 64-bit repository:
   {{{
