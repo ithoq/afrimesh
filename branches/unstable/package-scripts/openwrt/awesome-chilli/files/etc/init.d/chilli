@@ -62,6 +62,7 @@ start() {
     done
     append_parm   $section locationname  "--locationname" 
     append_parm   $section uamallowed    "--uamallowed"
+    append_parm   $section uamdomain     "--uamdomain"
     append_parm   $section radiusserver1 "--radiusserver1"
     append_parm   $section radiusserver2 "--radiusserver2"
     append_parm   $section radiussecret  "--radiussecret"
