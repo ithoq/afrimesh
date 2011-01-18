@@ -70,6 +70,8 @@ start() {
     append_parm   $section uamserver     "--uamserver"
     append_parm   $section uamhomepage   "--uamhomepage"
     append_parm   $section uamaliasname  "--uamaliasname" 
+    append_parm   $section uamsecret     "--uamsecret"
+    append_parm   $section uamformat     "--uamformat"
     append_parm   $section adminuser     "--adminuser"
     append_parm   $section adminpasswd   "--adminpasswd"
     append_switch $section mschapv2      "--mschapv2"
