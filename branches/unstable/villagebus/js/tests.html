@@ -1,0 +1,90 @@
+<html>
+  <head>
+    <style>
+      body {
+        font-family: Helvetica, Verdana, Arial, Sans;
+      }
+    </style>
+    <script type="text/javascript"> 
+      document.addEventListener("DOMContentLoaded", function(event) {
+        console.log(document.readyState + " : " + event);
+  
+        // Exercise villagebus
+        //var url  = "http://localhost/cgi-bin/villagebus.lua/provision/router/00:11:22:33:44:55?foo=bar";
+        var url = "http://127.0.0.1:8000/test/farmer/brown?ink=ank&ook=oink";
+        var data = { foo : "bar", plink : "plonk" };
+
+        $("#get").onclick = function() {
+          console.log("get");
+          var xhr = villagebus.GET(url, function(error, response) {
+            if (error) return $("#post").innerHTML = "Error: " + error;
+            $("#get").innerHTML = JSON.stringify(response);
+          });
+        };
+
+        $("#post").onclick = function() {
+          console.log("post");
+          var xhr = villagebus.POST(url, data, function(error, response) {
+            if (error) return $("#post").innerHTML = "Error: " + error;
+            $("#post").innerHTML = JSON.stringify(response);      
+          });
+        };
+
+        $("#put").onclick = function() {
+          console.log("put");
+          var xhr = villagebus.PUT(url, data, function(error, response) {
+            if (error) return $("#put").innerHTML = "Error: " + error;
+            $("#put").innerHTML = JSON.stringify(response);      
+          });
+        };
+
+        $("form[name=login]").submit(function(foo) {
+          console.log(foo);
+          return true;
+        });
+
+        return false;
+      }, false);
+      
+      // https://developer.mozilla.org/En/Code_snippets/QuerySelector
+      function $(selector, element)  {
+        return element ? element.querySelector(selector) 
+                       : document.querySelector(selector);
+      };
+
+    </script>
+    <script type="text/javascript" src="villagebus.js"></script>
+  </head>
+  <body>
+
+    <form name="login" action="http://127.0.0.1:8000/auth/login" method="POST">
+      username: <input name="username" type="text" value="antoine"></input><br/>
+      password: <input name="password" type="password" value="foo"></input><br/>
+      <input type="submit" value="login"></input>
+      <!-- input type="button" value="register"></input -->
+    </form>
+
+    <div id="get">
+      <button>get</button>
+    </div>
+
+    <div id="post">
+      <button>post</button>
+    </div>
+
+    <div id="put">
+      <button>put</button>
+    </div>
+
+    <div id="delete">
+      <button>delete</button>
+    </div>
+
+    <div id="head">
+      <button>head</button>
+    </div>
+
+
+
+  </body>
+</html>
