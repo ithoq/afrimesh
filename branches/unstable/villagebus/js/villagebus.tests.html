@@ -7,20 +7,36 @@
     </style>
 
     <script type="text/javascript"> 
-
       document.addEventListener("DOMContentLoaded", function(event) {
-      return;
         console.log(document.readyState + " : " + event);
+
+        // check if we are logged in
+        villagebus.GET("/auth/session", function(error, session) {
+          if (error) {
+            $("form[name=login]").style.display = "show";
+            return $("#logout").innerHTML = error;
+          }
+          console.log("SESSION");
+          console.log(session);
+          if (session.authorized) {
+            $("form[name=login]").style.display = "none";
+            $("#logout").style.display = "show";
+            $("#logout #username").innerHTML = session.username;
+          } else {
+            $("form[name=login]").style.display = "show";
+            $("#logout").style.display = "none";
+          }
+        });
   
         // Exercise villagebus
         //var url  = "http://localhost/cgi-bin/villagebus.lua/provision/router/00:11:22:33:44:55?foo=bar";
-        var url = "http://127.0.0.1:8000/test/farmer/brown?ink=ank&ook=oink";
+        var url = "/test/farmer/brown?ink=ank&ook=oink";
         var data = { foo : "bar", plink : "plonk" };
 
         $("#get").onclick = function() {
           console.log("get");
           var xhr = villagebus.GET(url, function(error, response) {
-            if (error) return $("#post").innerHTML = "Error: " + error;
+            if (error) return $("#get").innerHTML = "Error: " + error;
             $("#get").innerHTML = JSON.stringify(response);
           });
         };
@@ -41,10 +57,16 @@
           });
         };
 
-        $("form[name=login]").submit(function(foo) {
-          console.log(foo);
-          return true;
-        });
+        //$("form[name=login]").submit(function() {
+        $("form[name=login]").addEventListener("submit", function(event) {
+          console.log(event.target.username.value);
+          console.log(event.target.password.value);
+          event.target.sha1.value = hex_sha1(event.target.username.value + event.target.username.password);
+          event.target.password.value = "";
+          console.log(event.target.sha1.value);
+          //event.stopPropagation();
+          //event.preventDefault();
+        }, false);
 
         return false;
       }, false);
@@ -56,16 +78,22 @@
       };
 
     </script>
+    <script type="text/javascript" src="sha1-min.js"></script> <!-- http://pajhome.org.uk/crypt/md5/instructions.html  -->
     <script type="text/javascript" src="villagebus.js"></script>
   </head>
   <body>
 
-    <form name="login" action="http://127.0.0.1:8000/auth/login" method="POST">
+    <form name="login" action="/auth/login" method="POST">
       username: <input name="username" type="text" value="antoine"></input><br/>
       password: <input name="password" type="password" value="foo"></input><br/>
+      <input name="sha1" type="hidden" value=""></input>
       <input type="submit" value="login"></input>
       <!-- input type="button" value="register"></input -->
     </form>
+    <span id="logout">
+      <a href="/auth/logout">logout </a>
+      <span id="username"></span>
+    </span><br/>
 
     <div id="get">
       <button>get</button>

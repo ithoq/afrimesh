@@ -6,6 +6,15 @@ var villagebus = function() {
 };
 
 
+/** - channels ---------------------------------------------------------- */
+villagebus.publish = function(channel, message) {
+};
+
+villagebus.subscribe = function(channel, continuation) {
+};
+
+
+/** - REST -------------------------------------------------------------- */
 villagebus.proxy = function(prefix) {
   return prefix + "/cgi-bin/villagebus.lua/http/";
 };
@@ -18,15 +27,16 @@ villagebus.xhr = function() {
   return null;
 };
 
-villagebus.http = function(request, continuation) { // { verb, host, port, path, query, data }
+villagebus.http = function(rest, continuation) { // { verb, host, port, path, query, data }
   // TODO - check if we need a proxy
-  console.log("villagebus.http(" + JSON.stringify(request) + ")");
-  if (request.host) {
-    request.path = villagebus.proxy("") + request.host + "/" + request.path;
+  console.log("villagebus.http(" + JSON.stringify(rest) + ")");
+  console.log("WINDOW.LOCATION.HOSTNAME: " + window.location.hostname + "  REST.HOST: " + rest.host);
+  if (rest.host && window.location.hostname != rest.host) {
+    rest.path = villagebus.proxy("") + rest.host + ":" + rest.port + "/" + rest.path;
   }
-  console.log(request.verb + " " + request.path);
+  console.log(rest.verb + " " + rest.path);
   var xhr = villagebus.xhr();
-  xhr.open(request.verb, request.path, continuation != null);
+  xhr.open(rest.verb, rest.path, continuation != null);
   xhr.onreadystatechange = function() {
     if (xhr.readyState != 4) return; // TODO handle all error states
     //console.log("GOT: " + xhr.responseText);
@@ -41,22 +51,22 @@ villagebus.http = function(request, continuation) { // { verb, host, port, path,
     }
     return continuation(null, response);
   };
-  if (request.data) {
-    xhr.send(JSON.stringify(request.data));
+  if (rest.data) {
+    xhr.send(JSON.stringify(rest.data));
   } else {
     xhr.send(null);
   }
   return xhr;
 };
 
-villagebus.parseurl = function(request) { // { verb, url, ... }
+villagebus.parse = function(rest) { // { verb, url, ... }
   var a = document.createElement("a");
-  a.href = request.url; // { hostname, port, pathname, search } 
-  request.host  = a.hostname;
-  request.port  = a.port != 0 ? a.port : 80;
-  request.path  = a.pathname;
-  request.query = a.search;
-  return request;
+  a.href = rest.url; // { hostname, port, pathname, search } 
+  rest.host  = a.hostname;
+  rest.port  = a.port != 0 ? a.port : 80;
+  rest.path  = a.pathname;
+  rest.query = a.search;
+  return rest;
 };
 
 // HTTP Verbs: http://www.w3.org/Protocols/rfc2616/rfc2616-sec9.html
@@ -65,26 +75,32 @@ villagebus.parseurl = function(request) { // { verb, url, ... }
 
 
 // idempotent, safe
-villagebus.GET = function(url, continuation) {
-  var request = villagebus.parseurl({ verb : "GET", url : url });
-  return villagebus.http(request, continuation);
+villagebus.GET = function(url, continuation) { // curl 'http://127.0.0.1:8000/test/farmer?foo=bar&oink=ank'
+  var rest = villagebus.parse({ verb : "GET", url : url });
+  return villagebus.http(rest, continuation);
 };
 
 // idempotent, safe
-villagebus.HEAD = function() {
+villagebus.HEAD = function(url, continuation) {
+  var rest = villagebus.parse({ verb : "HEAD", url : url });
+  return villagebus.http(rest, continuation);
 };
 
 // idempotent, unsafe
-villagebus.PUT = function() {
+villagebus.PUT = function(url, data, continuation) {
+  var request = villagebus.parse({ verb : "PUT", url : url, data : data });
+  return villagebus.http(request, continuation);
 };
 
 // idempotent, unsafe
-villagebus.DELETE = function() {
+villagebus.DELETE = function(url, continuation) {
+  var rest = villagebus.parse({ verb : "DELETE", url : url });
+  return villagebus.http(rest, continuation);
 };
 
-// unsafe
-villagebus.POST = function(url, data, continuation) {
-  var request = villagebus.parseurl({ verb : "POST", url : url, data : data });
+// unsafe 
+villagebus.POST = function(url, data, continuation) { // curl -X POST -d '{"a":"b"}' 'http://127.0.0.1:8000/test/farmer?foo=bar&oink=ank'
+  var request = villagebus.parse({ verb : "POST", url : url, data : data });
   return villagebus.http(request, continuation);
 };
 
@@ -102,3 +118,5 @@ villagebus.OPTIONS = function() {
 villagebus.CONNECT = function() {
 };
 
+
+console.log("loaded villagebus.js");
