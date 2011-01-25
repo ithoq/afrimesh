@@ -106,7 +106,11 @@ http.createServer(function (request, response) {
     } else if (module) {
       var namefn = rest.path.shift();
       if (module[namefn]) {
-        reply = module[namefn](request, response, rest);
+        if (module[namefn][rest.verb]) {
+          reply = module[namefn][rest.verb](request, response, rest);
+        } else {
+          reply = module[namefn](request, response, rest);
+        }
       } else {
         reply = fail("Could not resolve name '" + namefn + "' in module: " + name);
         reply.status = 404;
