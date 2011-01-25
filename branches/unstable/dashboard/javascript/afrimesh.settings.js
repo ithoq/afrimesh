@@ -48,6 +48,7 @@ function BootSettings(parent, address) {
     //"afrimesh|settings|ajax_proxy"   : { remote : "afrimesh|settings|ajax_proxy",    init : "/cgi-bin/ajax-proxy.cgi?url=" }
     "afrimesh|settings|ajax_proxy"   : { remote : "afrimesh|settings|ajax_proxy",    init : "/cgi-bin/villagebus.lua" },
     "afrimesh|settings|a2billing"    : { remote : "afrimesh|settings|a2billing",     init : "10.130.1.1"  },
+    "afrimesh|settings|redis_server" : { remote : "afrimesh|settings|redis_server",  init : address  },
 
     "afrimesh|settings|support|howto" : { remote : "afrimesh|support|howto", init : "afrimesh"  },
     "afrimesh|settings|support|group" : { remote : "afrimesh|support|group", init : "afrimesh"  },

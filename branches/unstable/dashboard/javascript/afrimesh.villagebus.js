@@ -80,6 +80,9 @@ var BootVillageBus = function (afrimesh) {
         return proxy(afrimesh.settings.root, "/cgi-bin/villagebus");
       } else if (node == "@self") {
         return "/" + afrimesh.settings.address + "/cgi-bin/villagebus"; 
+      } else if (node == "@redis") {
+        console.log("REDIS IS AT: " + afrimesh.settings.redis_server + " (" + afrimesh.settings.address + ") ");
+        return proxy(afrimesh.settings.redis_server, "/cgi-bin/villagebus");
       } else if (node == "@topology") {
         //return "/" + afrimesh.settings.network.mesh.vis_server + ":2005";  
         return proxy(afrimesh.settings.network.mesh.vis_server, ":2005");

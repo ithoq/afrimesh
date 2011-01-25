@@ -19,8 +19,8 @@ MODULES=\
 #   _DO_ set this to your personal ppa if you want to build test packages
 #   _DON'T_ set this to afrimesh-ppa unless you are planning on doing a
 #   release !!!                                   
-#PPA=antoine-7degrees-ppa
-PPA=afrimesh-ppa
+PPA=antoine-7degrees-ppa
+#PPA=afrimesh-ppa
 
 # Some non-standard dependencies are hosted here
 #DEPS_URL="https://launchpad.net/~antoine-7degrees/+archive/ppa/+files/"
