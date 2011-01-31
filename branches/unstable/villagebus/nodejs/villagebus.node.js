@@ -74,17 +74,16 @@ http.createServer(function (request, response) {
 
 
   // read post data
-  var data = undefined;
   request.addListener("data", function(chunk) {
-    if (!data) data = "";
-    data += chunk;
+    if (!request.data) request.data = "";
+    request.data += chunk;
   }).on('end', function() {  // check if data is json or form encoded
     try {
-      data = JSON.parse(data);
+      request.data = JSON.parse(request.data);
       return;
     } catch (e) { }
     try {
-      data = querystring.parse(data);
+      request.data = querystring.parse(request.data);
     } catch (e) { }
   });
 
@@ -93,18 +92,18 @@ http.createServer(function (request, response) {
   request.addListener("end", function() {
 
     console.log("\n----------------------------------------------------------------------");
+    // parse request url
     var a = url.parse(unescape(request.url), true);
     request.path  = a.pathname.split(/\/+/g).slice(1);
     request.query = a.query;
-    request.data  = data;
-    var rest = {
+    //request.data  = data;
+    console.log("REST    : " + JSON.stringify({
       url   : request.url,
       verb  : request.method,
-      path  : a.pathname.split(/\/+/g).slice(1),
-      query : a.query,
-      data  : data
-    };
-    console.log("REST    : " + JSON.stringify(rest));
+      path  : request.path,
+      query : request.query,
+      data  : request.data
+    }));
 
     // get session
     request.session = sessions.lookupOrCreate(request, {
@@ -125,7 +124,7 @@ http.createServer(function (request, response) {
 
     // dispatch request
     var reply  = { error : "Unknown error for name: '" + name + "'", status : 200 };
-    var name   = rest.path.shift();
+    var name   = request.path.shift();
     var module = modules[name];
     if (!module) {                            // try to serve as a file
       return paperboy.deliver(config.webroot, request, response)
@@ -136,18 +135,18 @@ http.createServer(function (request, response) {
           });
       
     } else if (module) {
-      var namefn = rest.path[0];
+      var namefn = request.path[0];
       if (module[namefn]) {               // if we have a namefn
-        namefn = rest.path.shift();
-        if (module[namefn][rest.verb]) {  // invoke any REST verb attached to namefn
-          reply = module[namefn][rest.verb](request, response, rest);
+        namefn = request.path.shift();
+        if (module[namefn][request.method]) {  // invoke any REST verb attached to namefn
+          reply = module[namefn][request.method](request, response);
         } else {                          // invoke namefn
-          reply = module[namefn](request, response, rest); 
+          reply = module[namefn](request, response); 
         }
-      } else if (module[rest.verb]) {     // invoke any REST verbs attached to module
-        reply = module[rest.verb](request, response, rest);
+      } else if (module[request.method]) {     // invoke any REST verbs attached to module
+        reply = module[request.method](request, response);
       } else if (module["evaluate"]) {    // invoke any evaluate function attached to module
-        reply = module.evaluate(request, response, rest);
+        reply = module.evaluate(request, response);
       } else {
         return response.fin(404, "Could not resolve name '" + namefn + "' in module: " + name);
       }

@@ -19,8 +19,8 @@ console.log("loaded module: pubsub");
                   optional: you can request any past message within a date/numeric range
 
    next:userid
-   users:username                     // zset of usernames (emails)
-   users:userid                       // set of userids
+   usernames:username                     // zset of usernames (emails)
+   usernames:userid                       // set of userids
    userid:<userid>:username
    userid:<userid>:sha1
    userid:<userid>:channelid          // can add multiple channels later
@@ -93,12 +93,12 @@ function channel_create(client, userid, channel, continuation) {
 // publish -> POST /pubsub/publish?[channel=<channel>] { message : <message> } -> <channel>  
 //            if no channel specified, channel name is assumed to be <request.session.data.username>
 // ccurl -X POST -d '{"foo":"bar"}' http://127.0.0.1:8000/pubsub
-exports.POST = function(request, response, rest) {
+exports.POST = function(request, response) {
   if (!request.session.data.authorized) return response.fin(401, "not logged in");
-  if (!rest.data || !rest.data.message) return response.fin(400, "invalid message");
+  if (!request.data || !request.data.message) return response.fin(400, "invalid message");
   var client = request.session.redis();
   var message = {
-    message   : rest.data.message,
+    message   : request.data.message,
     timestamp : (new Date()).valueOf(),
     userid    : request.session.data.userid,
     username  : request.session.data.username,
@@ -146,7 +146,7 @@ exports.POST = function(request, response, rest) {
 // poll -> GET /pubsub?[channel|lastn|daterange] -> <messages>
 //         if no channel specificied, then all channels associated with <userid>
 // ccurl -X GET http://127.0.0.1:8000/pubsub
-exports.GET = function(request, response, rest) {
+exports.GET = function(request, response) {
   if (!request.session.data.authorized) return response.fin(401, "not logged in");
   var client = request.session.redis();
   return client.lrange("userid:" + request.session.data.userid + ":timeline", 0, -1, function(error, messageids) {
@@ -168,16 +168,16 @@ exports.GET = function(request, response, rest) {
 //                unsubscribes <request.session.data.userid> from channel 
 
 exports.subscribers = {
-  POST : function(request, response, rest) {
+  POST : function(request, response) {
     if (!request.session.data.authorized) return response.fin(401, "not logged in");
-    if (!rest.data.channel && !rest.data.channelid) return response.fin(400, "specify channel or channelid");
+    if (!request.data.channel && !request.data.channelid) return response.fin(400, "specify channel or channelid");
     var client = request.session.redis();
-    if (rest.data.channel) { // lookup channelid from channel name
-      return client.get("channel:" + rest.data.channel + ":channelid", function(error, channelid) {
-        console.log("Tried to find channelid for: " + rest.data.channel + " -> " + channelid);
+    if (request.data.channel) { // lookup channelid from channel name
+      return client.get("channel:" + request.data.channel + ":channelid", function(error, channelid) {
+        console.log("Tried to find channelid for: " + request.data.channel + " -> " + channelid);
         if (error) return response.fin(500, error);
         if (!channelid) { // create channel from channelname
-          return channel_create(client, null, rest.data.channel, function(error, channelid) {
+          return channel_create(client, null, request.data.channel, function(error, channelid) {
             if (error) return response.fin(500, error);
             subscribe(channelid);
           });
@@ -185,7 +185,7 @@ exports.subscribers = {
         subscribe(channelid);
       });
     }
-    subscribe(rest.data.channelid);
+    subscribe(request.data.channelid);
     function subscribe(channelid) {
       client.sadd("channelid:" + channelid + ":subscribers", request.session.data.userid, function(error, reply) {
         if (error) return response.fin(500, error);
@@ -195,17 +195,17 @@ exports.subscribers = {
     };
   },
 
-  DELETE : function(request, response, rest) {
+  DELETE : function(request, response) {
     if (!request.session.data.authorized) return response.fin(401, "not logged in");
-    if (!rest.query.channel && !rest.query.channelid) return response.fin(400, "specify channel or channelid");
+    if (!request.query.channel && !request.query.channelid) return response.fin(400, "specify channel or channelid");
     var client = request.session.redis();
-    if (rest.query.channel) {
-      return client.get("channel:" + rest.query.channel + ":channelid", function(error, channelid) {
+    if (request.query.channel) {
+      return client.get("channel:" + request.query.channel + ":channelid", function(error, channelid) {
         if (error) return response.fin(500, error);
         unsubscribe(channelid);
       });
     }
-    unsubscribe(rest.query.channelid);
+    unsubscribe(request.query.channelid);
     function unsubscribe(channelid) {
       client.srem("channelid:" + channelid + ":subscribers", request.session.data.userid, function(error, reply) {
         if (error) return response.fin(500, error);
@@ -220,7 +220,7 @@ exports.subscribers = {
 //              delete all data for all channels 
 // curl -X DELETE http://127.0.0.1:8000/pubsub/purge
 exports.purge = {
-  DELETE : function(request, response, rest) {
+  DELETE : function(request, response) {
     console.log("purging...");
     var client = request.session.redis();
     var del = [ "channels:channel", "next:channelid", "next:messageid",

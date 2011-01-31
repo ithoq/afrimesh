@@ -4,18 +4,18 @@ var fail = require("../common").fail;
 
 console.log("loaded module: http");
 
-exports.evaluate = function(request, response, rest) {
+exports.evaluate = function(request, response) {
 
-  var hostname = rest.path.shift();
+  var hostname = request.path.shift();
   if (!hostname) return fail("no hostname in request", "http");
   var port = 80; // TODO - parse port if present
-  var path = "/" + rest.path.join("/");
+  var path = "/" + request.path.join("/");
   console.log("hostname : " + hostname);
   console.log("port     : " + port);
   console.log("path     : " + path);
 
   var httpclient = http.createClient(port, hostname);
-  var httprequest = httpclient.request(rest.verb, path, { host : hostname });
+  var httprequest = httpclient.request(request.method, path, { host : hostname });
   httprequest.end();
   httprequest.on('response', function (httpresponse) {
     console.log('STATUS  : ' + httpresponse.statusCode);

@@ -8,22 +8,22 @@ console.log("loaded module: profile"); // TODO - __filename
 // profiles -> GET /profiles?[username|userid=] -> <profiles>  
 //             Only returns profiles with matching prefix if username specified
 // curl -X GET http://127.0.0.1:8000/profiles
-exports.GET = function(request, response, rest) { // TODO - move rest.* to request object
+exports.GET = function(request, response) { // TODO - move rest.* to request object
   var client = request.session.redis();
-  if (rest.query.userid) {                                         // userid 
+  if (request.query.userid) {                                         // userid 
     return client.multi()
-        .get("userid:" + rest.query.userid + ":profile")
-        .smembers("userid:" + rest.query.userid + ":followers")
-        .smembers("userid:" + rest.query.userid + ":following").exec(function(error, reply) {
+        .get("userid:" + request.query.userid + ":profile")
+        .smembers("userid:" + request.query.userid + ":followers")
+        .smembers("userid:" + request.query.userid + ":following").exec(function(error, reply) {
           if (error) return response.fin(500, error);
-          if (!reply[0]) return response.fin(404, "no profile for userid:" + rest.query.userid);
+          if (!reply[0]) return response.fin(404, "no profile for userid:" + request.query.userid);
           var profile = JSON.parse(reply[0]);
           profile.followers = reply[1];
           profile.following = reply[2];
           return response.fin(200, profile);
         });
   }
-  return client.smembers("users:userid", function(error, userids) {// everyone
+  return client.smembers("usernames:userid", function(error, userids) {// everyone
     if (error) return response.fin(500, error);
     var multi = client.multi();
     for (var i in userids) {
@@ -54,18 +54,18 @@ exports.GET = function(request, response, rest) { // TODO - move rest.* to reque
 // ccurl -X POST -d '{"username":"antoine@7degrees.co.za"}' "http://127.0.0.1:8000/profiles/following"
 // ccurl -X DELETE "http://127.0.0.1:8000/profiles/following?username=antoine@7degrees.co.za"
 exports.following = {
-  POST : function(request, response, rest) {
+  POST : function(request, response) {
     if (!request.session.data.authorized) return response.fin(401, "not logged in");
-    if (!rest.data.username && !rest.data.userid) return response.fin(400, "specify username or userid");
+    if (!request.data.username && !request.data.userid) return response.fin(400, "specify username or userid");
     var client = request.session.redis();
-    if (rest.data.username) { // if username specified, need to look up uid
-      return client.get("username:" + rest.data.username + ":userid", function(error, userid) {
+    if (request.data.username) { // if username specified, need to look up uid
+      return client.get("username:" + request.data.username + ":userid", function(error, userid) {
         if (error) return response.fin(500, error);
-        if (!userid) return response.fin(404, "no username:" + rest.data.username);
+        if (!userid) return response.fin(404, "no username:" + request.data.username);
         follow(userid);
       });
     }
-    follow(rest.data.userid);
+    follow(request.data.userid);
     function follow(userid) {
       client.multi()
           .get ("userid:" + userid + ":username")
@@ -74,23 +74,23 @@ exports.following = {
           .exec(function(error, reply) {
             if (error) return response.fin(500, error);
             if (!reply[0]) return response.fin(404, "no username found for userid:" + userid);
-            rest.data.channel = reply[0];
-            return pubsub.subscribers.POST(request, response, rest);
+            request.data.channel = reply[0];
+            return pubsub.subscribers.POST(request, response);
           });
     }
   },
 
-  DELETE : function(request, response, rest) {
+  DELETE : function(request, response) {
     if (!request.session.data.authorized)           return response.fin(401, "not logged in");
-    if (!rest.query.username && !rest.query.userid) return response.fin(400, "specify username or userid");
+    if (!request.query.username && !request.query.userid) return response.fin(400, "specify username or userid");
     var client = request.session.redis();
-    if (rest.query.username) { // if username specified, need to look up uid
-      return client.get("username:" + rest.query.username + ":userid", function(error, userid) {
+    if (request.query.username) { // if username specified, need to look up uid
+      return client.get("username:" + request.query.username + ":userid", function(error, userid) {
         if (error) return response.fin(500, error);
         unfollow(userid);
       });
     }
-    unfollow(rest.query.userid);
+    unfollow(request.query.userid);
     function unfollow(userid) {
       client.multi()
           .get ("userid:" + userid + ":channelid")
@@ -99,8 +99,8 @@ exports.following = {
           .exec(function(error, reply) {
             if (error) return response.fin(500, error);
             if (!reply[0]) return response.fin(500, "no channelid found for userid:" + userid);
-            rest.query.channelid = reply[0];
-            return pubsub.subscribers.DELETE(request, response, rest);
+            request.query.channelid = reply[0];
+            return pubsub.subscribers.DELETE(request, response);
           });
     }
   }
