@@ -1,8 +1,45 @@
+/** - grf -------------------------------------------------------------- */
+if (typeof(window.console) == "undefined") {  // Some browsers really have no console at all
+  window.console = { debug   : function(){},
+                     warning : function(){},
+                     error   : function(){},
+                     log     : function(){} };
+  console = window.console;
+}
 
+// ?
 var villagebus = function() {
   var ret = [];
   for (var p in this) { if (p != "prototype") ret.push(p); }
   return ret;
+};
+
+
+/** - utilities --------------------------------------------------------- */
+function type(value) {
+  var s = typeof value;
+  if (s == 'object') {
+    if (value) {
+      if (typeof value.length == 'number' && typeof value.splice != 'undefined' && !value.propertyIsEnumerable('length'))
+        return 'array';
+      if (typeof value.call != 'undefined')
+        return 'function';
+    } else 
+      return 'null';
+  } else if (s == 'function' && typeof value.call == 'undefined') 
+    return 'object';
+  return s;
+};
+function extend (target, source) {
+  for (var field in source) {
+    if (target[field] && type(target[field]) == "object"
+                      && type(source[field]) == "object") {
+      target[field] = extend(target[field], source[field]);
+    } else {
+      target[field] = source[field]; 
+    }
+  }
+  return target;
 };
 
 
@@ -36,10 +73,10 @@ villagebus.http = function(rest, continuation) { // { verb, host, port, path, qu
   }
   console.log(rest.verb + " " + rest.path);
   var xhr = villagebus.xhr();
-  xhr.open(rest.verb, rest.path, continuation != null);
+  xhr.open(rest.verb, rest.path + (rest.query ? rest.query : ""), continuation != null);
   xhr.onreadystatechange = function() {
     if (xhr.readyState != 4) return; // TODO handle all error states
-    //console.log("GOT: " + xhr.responseText);
+    console.log("villagebus reply: " + xhr.responseText);
     try {
       var response = JSON.parse(xhr.responseText);
       if (response.error) {
