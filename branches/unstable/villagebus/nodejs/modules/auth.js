@@ -23,21 +23,21 @@ exports.logout = {
 };
 
 
-// login -> POST /auth/register { username : <username>, sha1 : <sha1> } -> <userid>
-// ccurl -X POST -d '{"username":"antoine@7degrees.co.za","sha1":"210b263cd3aed1604792c1449058e40d6ae3b86b"}' http://127.0.0.1:8000/auth/login
+// login -> POST /auth/register { username : <username>, hash : <hash> } -> <userid>
+// ccurl -X POST -d '{"username":"antoine@7degrees.co.za","hash":"210b263cd3aed1604792c1449058e40d6ae3b86b"}' http://127.0.0.1:8000/auth/login
 exports.login = {
   POST : function(request, response) {
-    if (!request.data.username && !request.data.sha1) {
+    if (!request.data.username && !request.data.hash) {
       return response.fin(401, "invalid credentials: " + request.data);   
     }
     var client = request.session.redis();
     client.get("username:" + request.data.username + ":userid", function(error, userid) {
       if (error) return response.fin(500, error);
       if (!userid) return response.fin(401, "no such user: " + request.data.username);
-      client.get("userid:" + userid + ":sha1", function (error, sha1) {
+      client.get("userid:" + userid + ":hash", function (error, hash) {
         if (error) return response.fin(500, error);
-        if (!sha1) return response.fin(401, "no hash for userid: " + userid);
-        if (request.data.sha1 != sha1) return response.fin(401, "invalid password");
+        if (!hash) return response.fin(401, "no hash for userid: " + userid);
+        if (request.data.hash != hash) return response.fin(401, "invalid password");
         request.session.data.userid     = userid;
         request.session.data.username   = request.data.username;
         request.session.data.authorized = true;
@@ -50,7 +50,7 @@ exports.login = {
 };
 
 
-// register -> POST /auth/register { username : <username>, sha1 : <sha1> } -> <userid>
+// register -> POST /auth/register { username : <username>, hash : <hash> } -> <userid>
 // curl -X POST -d '{"username":"antoine@7degrees.co.za","210b263cd3aed1604792c1449058e40d6ae3b86b":"1234"}' http://127.0.0.1:8000/auth/register
 exports.register = {
   POST : function(request, response) {
@@ -59,19 +59,19 @@ exports.register = {
     return client.get("username:" + request.data.username + ":userid", function(error, userid) {
       if (error) return response.fin(500, error);
       if (userid) return response.fin(409, "username already exists");
-      create(request.data.username, request.data.sha1);
+      create(request.data.username, request.data.hash);
     });
 
-    function create(username, sha1) {
+    function create(username, hash) {
       client.incr("next:userid", function(error, userid) {
         if (error) return response.fin(500, error);
         var profile = { userid : userid,
                         username : username };
         client.multi()
             .zadd("usernames:username", 0, username)
-            .sadd("usernames:userid", userid)
+            .zadd("usernames:userid", 0, userid)
             .mset([ "userid:"   + userid   + ":username", username,
-                    "userid:"   + userid   + ":sha1",     sha1,
+                    "userid:"   + userid   + ":hash",     hash,
                     "userid:"   + userid   + ":profile",  JSON.stringify(profile),
                     "username:" + username + ":userid",   userid ])
             .exec(function(error, reply) {

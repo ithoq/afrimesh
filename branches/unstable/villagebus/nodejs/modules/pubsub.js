@@ -22,7 +22,7 @@ console.log("loaded module: pubsub");
    usernames:username                     // zset of usernames (emails)
    usernames:userid                       // set of userids
    userid:<userid>:username
-   userid:<userid>:sha1
+   userid:<userid>:hash
    userid:<userid>:channelid          // can add multiple channels later
    userid:<userid>:timeline           // zset of <messageid>
    userid:<userid>:following          // set of <uid>   <--- 
@@ -92,7 +92,7 @@ function channel_create(client, userid, channel, continuation) {
 
 // publish -> POST /pubsub/publish?[channel=<channel>] { message : <message> } -> <channel>  
 //            if no channel specified, channel name is assumed to be <request.session.data.username>
-// ccurl -X POST -d '{"foo":"bar"}' http://127.0.0.1:8000/pubsub
+// ccurl -X POST -d '{"message":"this is a message"}' http://127.0.0.1:8000/pubsub
 exports.POST = function(request, response) {
   if (!request.session.data.authorized) return response.fin(401, "not logged in");
   if (!request.data || !request.data.message) return response.fin(400, "invalid message");
@@ -144,7 +144,7 @@ exports.POST = function(request, response) {
 
 
 // poll -> GET /pubsub?[channel|lastn|daterange] -> <messages>
-//         if no channel specificied, then all channels associated with <userid>
+//         if no channel specificied, then all messages from all channels associated with <userid>
 // ccurl -X GET http://127.0.0.1:8000/pubsub
 exports.GET = function(request, response) {
   if (!request.session.data.authorized) return response.fin(401, "not logged in");

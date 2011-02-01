@@ -143,9 +143,9 @@
         $("form[name=login]").addEventListener("submit", function(event) {
           console.log(event.target.username.value);
           console.log(event.target.password.value);
-          event.target.sha1.value = hex_sha1(event.target.username.value + event.target.password.value);
+          event.target.hash.value = hex_sha1(event.target.username.value + event.target.password.value);
           event.target.password.value = "";
-          console.log(event.target.sha1.value);
+          console.log(event.target.hash.value);
           //event.stopPropagation();
           //event.preventDefault();
         }, false);
@@ -166,8 +166,8 @@
             event.preventDefault();
             return $("form[name=register] #error").innerHTML = "passwords must match";
           }
-          event.target.sha1.value = hex_sha1(event.target.username.value + event.target.password.value);
-          console.log(event.target.sha1.value);
+          event.target.hash.value = hex_sha1(event.target.username.value + event.target.password.value);
+          console.log(event.target.hash.value);
           event.target.password.value = "";
           event.target.confirm.value  = "";
           //event.preventDefault();
@@ -197,7 +197,7 @@
     <form name="login" action="/auth/login" method="POST">
       <input name="username" type="email" placeholder="email address" value="antoine@7degrees.co.za" required></input>
       <input name="password" type="password" placeholder="password" value="r1t1f1m1" required></input>
-      <input name="sha1" type="hidden" value=""></input>
+      <input name="hash" type="hidden" value=""></input>
       <input type="submit" value="login"></input>
       <input name="register" type="button" value="register"></input>
     </form>
@@ -210,7 +210,7 @@
       <input name="username" type="email"    placeholder="email address" required></input>
       <input name="password" type="password" placeholder="password" required></input>
       <input name="confirm"  type="password" placeholder="confirm password" required></input>      
-      <input name="sha1" type="hidden" value=""></input>
+      <input name="hash" type="hidden" value=""></input>
       <input type="submit" value="register"></input>
       <span id="error"></span>
     </form>

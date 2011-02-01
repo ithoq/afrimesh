@@ -23,7 +23,7 @@ exports.GET = function(request, response) { // TODO - move rest.* to request obj
           return response.fin(200, profile);
         });
   }
-  return client.smembers("usernames:userid", function(error, userids) {// everyone
+  return client.zrange("usernames:userid", 0, -1, function(error, userids) {// everyone
     if (error) return response.fin(500, error);
     var multi = client.multi();
     for (var i in userids) {
