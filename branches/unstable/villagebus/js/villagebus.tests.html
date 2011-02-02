@@ -27,6 +27,7 @@
           } else {
             $("form[name=login]").style.display = "block";
             $("#logout").style.display = "none";
+            populate(undefined);
           }
         });
 
@@ -37,7 +38,7 @@
 
         function populate(session) {
           // following, followers
-          villagebus.GET("/profiles?userid=" + session.userid, function(error, profile) {
+          if (session) villagebus.GET("/profiles?userid=" + session.userid, function(error, profile) {
             if (error) return fail(error);
             console.log(profile);
             profile.following.forEach(function(userid) {
@@ -53,7 +54,7 @@
           });
 
           // profiles
-          villagebus.GET("/profiles", function(error, profiles) {
+          if (session) villagebus.GET("/profiles", function(error, profiles) {
             if (error) return fail(error);
             profiles.forEach(function(profile) {
               var div = extend(document.createElement("div"), {
@@ -104,7 +105,14 @@
               div.style.margin = "5px";
               div.style.padding = "5px";
               div.setAttribute("align", "left");
-              div.innerHTML = JSON.stringify(message);
+              //div.innerHTML = JSON.stringify(message);
+              var html = message.channel + ": <b>" + message.message + "</b><br/>";
+              if (message.image) {
+                html += "<img src='uploads/" + message.image + "' width='160'></img><br/>";
+              }
+              //html += JSON.stringify(message);
+              //console.log(html);      
+              div.innerHTML = html;
               $("#messages").appendChild(div);
             });
           });
@@ -215,8 +223,9 @@
       <span id="error"></span>
     </form>
 
-    <form name="publish" action="/pubsub" method="POST">
+    <form name="publish" action="/pubsub" method="POST" enctype="multipart/form-data">
       <textarea name="message" cols="40" rows="5" autofocus></textarea><br/>
+      <input type="file" name="image"></input><br/>
       <input type="submit"></input>
     </form>
 

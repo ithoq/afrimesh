@@ -43,6 +43,9 @@ function extend (target, source) {
 };
 
 
+// TODO: http://www.erichynds.com/jquery/using-deferreds-in-jquery/
+
+
 /** - channels ---------------------------------------------------------- */
 villagebus.publish = function(channel, message) {
 };

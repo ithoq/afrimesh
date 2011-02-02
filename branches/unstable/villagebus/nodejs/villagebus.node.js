@@ -4,6 +4,7 @@ var http = require("http");
 var path = require('path');
 var querystring = require("querystring");
 var paperboy = require("paperboy");
+var multipart = require("multipart"); // npm install multipart
 
 // other dependencies
 var sessions = require("./session"); // https://github.com/Marak/session.js/blob/master/lib/session.js
@@ -73,11 +74,33 @@ http.createServer(function (request, response) {
   };
 
 
-  // read post data
+  // read post data 
+  request.setEncoding("binary"); // otherwise multipart gets nuked
   request.addListener("data", function(chunk) {
     if (!request.data) request.data = "";
     request.data += chunk;
-  }).on('end', function() {  // check if data is json or form encoded
+  }).on('end', function() {  // check if data is multipart, json or form encoded
+    if (request.data && request.data.substring(0, 4) == "----") {
+      var data = {};
+      var parser = multipart.parser();
+      var fields = {};
+      var files  = {};
+      var buffer = "";
+      parser.headers = request.headers;
+      parser.onpartend = function (part)  {  
+        if (part.filename) files [part.filename] = buffer; 
+        else               fields[part.name] = buffer; 
+        buffer = "";
+      };
+      parser.ondata = function (chunk) { buffer += chunk; };
+      parser.onend = function () { 
+        request.data  = fields;
+        request.files = files;
+      };
+      parser.write(request.data);
+      parser.close();
+      return;
+    }
     try {
       request.data = JSON.parse(request.data);
       return;

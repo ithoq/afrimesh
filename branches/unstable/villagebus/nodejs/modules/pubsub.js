@@ -1,6 +1,7 @@
 
 var http  = require("http");
 var redis = require("redis");
+var fs    = require("fs");
 var fail  = require("../common").fail;
 
 console.log("loaded module: pubsub");
@@ -97,13 +98,21 @@ exports.POST = function(request, response) {
   if (!request.session.data.authorized) return response.fin(401, "not logged in");
   if (!request.data || !request.data.message) return response.fin(400, "invalid message");
   var client = request.redis();
-  var message = {
-    message   : request.data.message,
-    timestamp : (new Date()).valueOf(),
-    userid    : request.session.data.userid,
-    username  : request.session.data.username,
-    channel   : request.session.data.username   // no channel specified - use username as the channel name
-  };
+  var message = request.data ? request.data : {};
+  message.timestamp = (new Date()).valueOf();
+  message.userid    = request.session.data.userid;
+  message.username  = request.session.data.username;
+  message.channel   = request.session.data.username;   // no channel specified - use username as the channel name
+  
+  if (request.files && Object.keys(request.files)[0]) { // message has a file attached, include it
+    filename = Object.keys(request.files)[0];
+    message.image = filename; // TODO should only be set after save
+    fs.writeFile("webroot/uploads/" + filename, 
+                 request.files[filename], "binary", function(error) { // TODO: store data in redis, not local filesystem
+      if (error) console.log("ERROR SAVING FILE: " + error);
+      console.log("saved: " + filename);
+    }); 
+  }
 
   return client.get("channel:" + request.session.data.username + ":channelid", function(error, channelid) {
     if (error) return response.fin(500, error);
