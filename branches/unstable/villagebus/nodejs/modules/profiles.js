@@ -14,14 +14,27 @@ exports.GET = function(request, response) { // TODO - move rest.* to request obj
     return client.multi()
         .get("userid:" + request.query.userid + ":profile")
         .smembers("userid:" + request.query.userid + ":followers")
-        .smembers("userid:" + request.query.userid + ":following").exec(function(error, reply) {
-          if (error) return response.fin(500, error);
-          if (!reply[0]) return response.fin(404, "no profile for userid:" + request.query.userid);
+        .smembers("userid:" + request.query.userid + ":following")
+        .exec(function(err, reply) {
           var profile = JSON.parse(reply[0]);
-          profile.followers = reply[1];
-          profile.following = reply[2];
-          return response.fin(200, profile);
+          if (!profile) return response.fin(404, "Not found");
+          read_profiles(reply[1], function(error, profiles) {
+            if (error) return response.fin(500, error);
+            profile.followers = profiles.map(function(profile) { return JSON.parse(profile) });
+            read_profiles(reply[2], function(error, profiles) {
+              if (error) return response.fin(500, error);
+              profile.following = profiles.map(function(profile) { return JSON.parse(profile) });
+              return response.fin(200, profile);
+            });
+          });
         });
+    function read_profiles(userids, continuation) {
+      var multi = client.multi();
+      for (var i in userids) {
+        multi.get("userid:" + userids[i] + ":profile");
+      }
+      multi.exec(continuation);
+    }
   }
   return client.zrange("usernames:userid", 0, -1, function(error, userids) {// everyone
     if (error) return response.fin(500, error);
@@ -45,6 +58,22 @@ exports.GET = function(request, response) { // TODO - move rest.* to request obj
   });
 };
 
+
+// profiles -> PUT /profiles {} 
+//             Update the profile of the currently logged in user
+// ccurl -X PUT -d '{"userid":1,"username":"antoine@7degrees.co.za","longitude":0.0,"latitude":0.0}' "http://127.0.0.1:8000/profiles"
+exports.PUT = function(request, response) {
+  if (!request.session.data.authorized) return response.fin(401, "not logged in");
+  if (!request.data.userid || !request.data.username ||
+      request.session.data.userid   != request.data.userid ||
+      request.session.data.username != request.data.username) return response.fin(400, "invalid request");
+  var client = request.redis();
+  client.set("userid:" + request.session.data.userid + ":profile", 
+             JSON.stringify(request.data), function(error, userid) {
+    if (error) return response.fin(500, error);
+    return response.fin(200, request.data);
+  });
+};
 
 
 // following -> POST /profiles/following { username|userid : <username|userid> }
