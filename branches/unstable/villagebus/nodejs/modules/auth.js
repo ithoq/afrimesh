@@ -30,7 +30,7 @@ exports.login = {
     if (!request.data.username && !request.data.hash) {
       return response.fin(401, "invalid credentials: " + request.data);   
     }
-    var client = request.session.redis();
+    var client = request.redis();
     client.get("username:" + request.data.username + ":userid", function(error, userid) {
       if (error) return response.fin(500, error);
       if (!userid) return response.fin(401, "no such user: " + request.data.username);
@@ -54,7 +54,7 @@ exports.login = {
 // curl -X POST -d '{"username":"antoine@7degrees.co.za","210b263cd3aed1604792c1449058e40d6ae3b86b":"1234"}' http://127.0.0.1:8000/auth/register
 exports.register = {
   POST : function(request, response) {
-    var client = request.session.redis();    
+    var client = request.redis();    
     // TODO check if user already exists
     return client.get("username:" + request.data.username + ":userid", function(error, userid) {
       if (error) return response.fin(500, error);

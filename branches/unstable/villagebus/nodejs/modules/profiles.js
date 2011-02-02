@@ -9,7 +9,7 @@ console.log("loaded module: profile"); // TODO - __filename
 //             Only returns profiles with matching prefix if username specified
 // curl -X GET http://127.0.0.1:8000/profiles
 exports.GET = function(request, response) { // TODO - move rest.* to request object
-  var client = request.session.redis();
+  var client = request.redis();
   if (request.query.userid) {                                         // userid 
     return client.multi()
         .get("userid:" + request.query.userid + ":profile")
@@ -57,7 +57,7 @@ exports.following = {
   POST : function(request, response) {
     if (!request.session.data.authorized) return response.fin(401, "not logged in");
     if (!request.data.username && !request.data.userid) return response.fin(400, "specify username or userid");
-    var client = request.session.redis();
+    var client = request.redis();
     if (request.data.username) { // if username specified, need to look up uid
       return client.get("username:" + request.data.username + ":userid", function(error, userid) {
         if (error) return response.fin(500, error);
@@ -83,7 +83,7 @@ exports.following = {
   DELETE : function(request, response) {
     if (!request.session.data.authorized)           return response.fin(401, "not logged in");
     if (!request.query.username && !request.query.userid) return response.fin(400, "specify username or userid");
-    var client = request.session.redis();
+    var client = request.redis();
     if (request.query.username) { // if username specified, need to look up uid
       return client.get("username:" + request.query.username + ":userid", function(error, userid) {
         if (error) return response.fin(500, error);

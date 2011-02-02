@@ -57,14 +57,14 @@ http.createServer(function (request, response) {
     headers = headers ? headers        : {};
     module  = module  ? module + ": "  : "";
     console.log("fin " + module + status + " " + reply);
-    if (request.session.redis.client) { // close any open redis session
+    if (request.redis.client) { // close any open redis session
       try {
         console.log("quit redis");
-        request.session.redis.client.quit();
+        request.redis.client.quit();
       } catch (e) {
         console.log("ERROR QUITTING REDIS: " + e);
       }
-      request.session.redis.client = undefined;
+      request.redis.client = undefined;
     }
     headers["Content-Type"] = "text/plain"; // TODO pass content type e.g. "application/json";
     response.writeHead(status, headers);
@@ -109,14 +109,14 @@ http.createServer(function (request, response) {
     request.session = sessions.lookupOrCreate(request, {
       lifetime : 3600
     });
-    request.session.redis = function() {
-      if (!request.session.redis.client) {
-        request.session.redis.client = require("redis").createClient();
-        request.session.redis.client.on("error", function(error) { 
+    request.redis = function() {
+      if (!request.redis.client) {
+        request.redis.client = require("redis").createClient();
+        request.redis.client.on("error", function(error) { 
           console.log("REDIS ERROR " + error); 
         });
       }
-      return request.session.redis.client;
+      return request.redis.client;
     }
     response.setHeader('Set-Cookie', request.session.getSetCookieHeaderValue());
     //console.log("Cookie  : " + request.session.getSetCookieHeaderValue());
@@ -152,7 +152,6 @@ http.createServer(function (request, response) {
       }
 
     } else {
-      reply.status = 420; // enhance your calm
       return response.fin(420, "enhance your calm");
     }
 
