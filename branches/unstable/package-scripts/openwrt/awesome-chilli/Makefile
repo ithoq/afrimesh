@@ -8,13 +8,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=awesome-chilli
-PKG_VERSION:=1.2.5
+PKG_VERSION:=1.2.6
 PKG_RELEASE:=2
 
 PKG_SOURCE:=coova-chilli-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=http://ap.coova.org/chilli
 PKG_BUILD_DIR:=$(BUILD_DIR)/coova-chilli-$(PKG_VERSION)
-PKG_MD5SUM:=1b890cb043b4340e1f15c2b2cff742d3
+PKG_MD5SUM:=3153c200dad514976760dc5176ee8897
 
 PKG_FIXUP:=libtool
 PKG_INSTALL:=1

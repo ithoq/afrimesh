@@ -12,6 +12,7 @@ config 'chilli' 'options'
        option 'ipdown'          '/etc/chilli/down.sh'
        option 'wwwdir'          '/etc/chilli/www'
        option 'wwwbin'          '/etc/chilli/wwwsh'
+       option 'layer3'          '0'
        
 config 'configuration'
        option 'name'            'default'

@@ -53,6 +53,7 @@ start() {
     append_parm   options wwwdir        "--wwwdir"
     append_parm   options wwwbin        "--wwwbin"
     append_switch options usestatusfile "--usestatusfile"
+    append_switch options layer3        "--layer3"
 
     # select active configuration
     config_get configuration options configuration
