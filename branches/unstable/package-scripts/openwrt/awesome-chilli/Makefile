@@ -40,6 +40,19 @@ define Package/awesome-chilli/conffiles
 /etc/config/chilli
 endef
 
+CONFIGURE_ARGS += \
+	--enable-layer3
+
+#CONFIGURE_VARS += \
+#	LDFLAGS="$$$$LDFLAGS" \
+#	CFLAGS="-static -DCURL_STATICLIB" \
+#	CC="$(filter-out ccache,$(TARGET_CC))"
+
+define Build/Configure
+	$(call Build/Configure/Default,,bash)
+endef
+
+
 define Package/awesome-chilli/install
 	$(INSTALL_DIR) $(1)/etc
 	$(INSTALL_DIR) $(1)/etc/config
