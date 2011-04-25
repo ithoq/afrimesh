@@ -44,13 +44,13 @@ CONFIGURE_ARGS += \
 	--enable-layer3
 
 #CONFIGURE_VARS += \
-#	LDFLAGS="$$$$LDFLAGS" \
-#	CFLAGS="-static -DCURL_STATICLIB" \
-#	CC="$(filter-out ccache,$(TARGET_CC))"
+#LDFLAGS="$$$$LDFLAGS" \
+#CFLAGS="" \
+#CC="$(filter-out ccache,$(TARGET_CC))"
 
-define Build/Configure
-	$(call Build/Configure/Default,,bash)
-endef
+#define Build/Configure
+#	$(call Build/Configure/Default,,bash)
+#endef
 
 
 define Package/awesome-chilli/install
