@@ -1,0 +1,15 @@
+Source: redis-lua
+Section: interpreters
+Priority: optional
+Maintainer: Antoine van Gelder <antoine@7degrees.co.za>
+Build-Depends: debhelper (>= 5)
+Standards-Version: 3.8.4
+Vcs-Git: git://github.com/nrk/redis-lua.git
+Vcs-Browser: http://github.com/nrk/redis-lua
+Homepage: http://github.com/nrk/redis-lua
+
+Package: liblua5.1-redis
+Architecture: all
+Depends: ${misc:Depends}, lua5.1
+Description: A Lua client library for the redis key value storage system
+

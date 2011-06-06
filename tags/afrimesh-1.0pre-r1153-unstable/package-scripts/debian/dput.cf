@@ -1,0 +1,14 @@
+
+[antoine-7degrees-ppa]
+fqdn = ppa.launchpad.net
+method = ftp
+incoming = ~antoine-7degrees/ppa/ubuntu/
+login = anonymous
+allow_unsigned_uploads = 0
+
+[afrimesh-ppa]
+fqdn = ppa.launchpad.net
+method = ftp
+incoming = ~afrimesh/ppa/ubuntu/
+login = anonymous
+allow_unsigned_uploads = 0

@@ -1,0 +1,48 @@
+diff -Nuwarp pmacct-0.12.0/src/Makefile.in pmacct-0.12.0.patched/src/Makefile.in
+--- pmacct-0.12.0/src/Makefile.in	2010-02-16 14:06:07.000000000 +0200
++++ pmacct-0.12.0.patched/src/Makefile.in	2010-02-18 17:58:21.000000000 +0200
+@@ -139,7 +139,7 @@ cfg_handlers.o net_aggr.o bpf_filter.o p
+ ports_aggr.o addr.o pretag.o pretag_handlers.o ip_flow.o setproctitle.o \
+ classifier.o regexp.o regsub.o conntrack.o xflow_status.o nl.o
+ uacctd_DEPENDENCIES = 
+-CFLAGS = @CFLAGS@
++CFLAGS = @CFLAGS@ $(TARGET_FLAGS)
+ COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+ CCLD = $(CC)
+ LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@
+diff -Nuwarp pmacct-0.12.0/src/bgp/Makefile.in pmacct-0.12.0.patched/src/bgp/Makefile.in
+--- pmacct-0.12.0/src/bgp/Makefile.in	2009-03-06 15:42:01.000000000 +0200
++++ pmacct-0.12.0.patched/src/bgp/Makefile.in	2010-02-18 18:02:53.000000000 +0200
+@@ -14,7 +14,7 @@ VPATH=@srcdir@
+ CC=@CC@
+ DEFS=@DEFS@
+ LDFLAGS=@LDFLAGS@
+-CFLAGS=$(DEFS) -I$(srcdir) -I.. @CFLAGS@
++CFLAGS=$(DEFS) -I$(srcdir) -I.. @CFLAGS@ $(TARGET_FLAGS)
+ CPPFLAGS=@CPPFLAGS@
+ LIBS=@LIBS@
+ INSTALL=@INSTALL@
+diff -Nuwarp pmacct-0.12.0/src/nfprobe_plugin/Makefile.in pmacct-0.12.0.patched/src/nfprobe_plugin/Makefile.in
+--- pmacct-0.12.0/src/nfprobe_plugin/Makefile.in	2006-11-19 17:16:07.000000000 +0200
++++ pmacct-0.12.0.patched/src/nfprobe_plugin/Makefile.in	2010-02-18 18:05:15.000000000 +0200
+@@ -14,7 +14,7 @@ VPATH=@srcdir@
+ CC=@CC@
+ DEFS=@DEFS@
+ LDFLAGS=@LDFLAGS@
+-CFLAGS=$(DEFS) -I$(srcdir) -I.. @CFLAGS@
++CFLAGS=$(DEFS) -I$(srcdir) -I.. @CFLAGS@ $(TARGET_FLAGS)
+ CPPFLAGS=@CPPFLAGS@
+ LIBS=@LIBS@
+ INSTALL=@INSTALL@
+diff -Nuwarp pmacct-0.12.0/src/sfprobe_plugin/Makefile.in pmacct-0.12.0.patched/src/sfprobe_plugin/Makefile.in
+--- pmacct-0.12.0/src/sfprobe_plugin/Makefile.in	2006-11-19 17:16:07.000000000 +0200
++++ pmacct-0.12.0.patched/src/sfprobe_plugin/Makefile.in	2010-02-18 18:05:38.000000000 +0200
+@@ -12,7 +12,7 @@ VPATH=@srcdir@
+ CC=@CC@
+ DEFS=@DEFS@
+ LDFLAGS=@LDFLAGS@
+-CFLAGS=$(DEFS) -I$(srcdir) -I.. @CFLAGS@
++CFLAGS=$(DEFS) -I$(srcdir) -I.. @CFLAGS@ $(TARGET_FLAGS)
+ CPPFLAGS=@CPPFLAGS@
+ LIBS=@LIBS@
+ INSTALL=@INSTALL@

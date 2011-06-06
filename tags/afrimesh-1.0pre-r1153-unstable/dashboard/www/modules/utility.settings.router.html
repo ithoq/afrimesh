@@ -1,0 +1,181 @@
+<!--
+ * Afrimesh: easy management for B.A.T.M.A.N. wireless mesh networks
+ * Copyright (C) 2008-2009 Meraka Institute of the CSIR
+ * All rights reserved.
+ *  
+ * This software is licensed as free software under the terms of the
+ * New BSD License. See /LICENSE for more information.
+-->
+
+
+<form class="two-column">
+
+  <fieldset>
+    <legend>Dashboard</legend>
+
+    <div class="label">Visualization Server</div>
+    <input id="afrimesh|settings|network|mesh|vis_server" style="background:#FFAAAA;" type="text" />
+    <div class="tooltip"><h3>visualization server</h3>
+        <p class="explain">The Network Map gets the available mesh nodes and their connections from the server at this address.</p>
+        <p class="typical">
+          By default the visualization server runs on the same address as the dashboard server and you should not need to change it.
+        </p>
+        <p class="learnmore">
+          You can learn how to configure a different vis server by reading the
+          <a href="http://code.google.com/p/afrimesh/wiki/HowTo">HowtoVisServer</a>
+        </p>
+        <p id="vis_server|error" style="color:#FF0000;"></p>
+    </div>
+
+    <div class="label">Map Server</div>
+    <input id="afrimesh|settings|map|server"  type="text" />
+    <div class="tooltip"><h3>map server</h3>
+      <p class="explain">The Network Map gets the terrain data from the server at this address.</p>
+      <p class="typical">If your mesh has internet access you will not need to change this setting.</p>
+      <p class="obstacle">
+        If your mesh does not have internet access you will need to set up your own map server and enter its address here.
+      </p>
+      <p class="learnmore">
+        You can learn how to set up your own map server by reading 
+        <a href="http://code.google.com/p/afrimesh/wiki/HowTo">HowToMapServer</a>
+      </p>
+    </div>
+    
+    <div class="label">Location</div>
+    <input id="location" />
+
+    <!-- div class="label">Map Extents</div>
+    <input id="afrimesh|settings|map|extent"  type="text" />
+    
+    <div class="label">Map Zoom</div>
+    <input id="afrimesh|settings|map|zoom"  type="text" / -->
+  </fieldset>
+
+
+  <!-- fieldset>
+    <legend>Sharing</legend>
+    <div class="label">Internet</div>
+    <input  id="afrimesh|settings|internet_gateway|share" type="checkbox" />
+    <div class="tooltip"><h3>share internet</h3></div>
+    <div class="label">Voice</div>
+    <input  id="afrimesh|settings|internet_gateway|share" type="checkbox" />
+    <div class="tooltip"><h3>share voice</h3></div>
+  </fieldset -->
+
+
+</form>
+
+
+<script type="text/javascript"> //<![CDATA[    
+(function() {
+
+  /** includes ------------------------------------------------------------ */
+  load("modules/utility.settings.js"); 
+
+
+  /** construction -------------------------------------------------------- */
+  ready = function() { // INJ 'ready' should be the only symbol we're exposing to the global namespace
+    console.debug("loaded utility.settings.router.html");
+    //$("#bar").val(afrimesh.storage("my_cookie"));
+
+    populate_dom();
+
+    /** install tooltips -------------------------------------------------- */
+    $("input.[id*=afrimesh]").tooltip({
+        position : ['bottom', 'right'],   // place tooltip on the right edge 
+        offset   : [-20, 20],             // a little tweaking of the position 
+        effect   : 'toggle',              // use a simple show/hide effect 
+        opacity  : 0.8                    // custom opacity setting 
+      });
+
+    /** install callbacks to save settings -------------------------------- */
+    function save_element(id, value) {
+      return (Q(afrimesh, id) != value) ? afrimesh.settings.save(id, value) : null;
+    };
+    $("input.[id*=afrimesh|settings]").bind("blur", function(event) {
+        console.debug("Saving Setting: " + this.id + " -> " + this.value);
+        save_element(this.id, this.value);
+        populate_dom(); 
+      });
+    $("input.[id*=afrimesh|settings]").bind("keypress", function(event) {
+	      if (event.keyCode == 13) {
+	        console.debug("Saving Setting: " + this.id + " -> " + this.value);
+          save_element(this.id, this.value);
+          if (this.id == "afrimesh|settings|internet_gateway|address") {
+            populate_select_interface();
+          } else if (this.id == "afrimesh|settings|network|mesh|vis_server") {
+              update_vis_server();
+          } else if (this.id == "afrimesh|settings|radius|server") {
+              update_radius_server();
+          }
+          populate_dom();
+ 	      } 
+      });
+
+    $("select.[id*=afrimesh|settings]").bind("change", function(event) { 
+        if ((this.id == "afrimesh|settings|internet_gateway|snmp|interface") || (this.id == "afrimesh|settings|radius|radtype")) {
+          save_element(this.id, this.value); 
+        }
+    });
+
+    $("select.[id*=afrimesh|settings]").bind("blur", function(event) { 
+        save_element(this.id, this.value); 
+    });
+    //$("input.[id*=afrimesh|settings|internet_gateway|address]").unbind("blur").bind("blur", function(event) { 
+    $("input.[id*=afrimesh|settings|internet_gateway|address]").bind("blur", function(event) { 
+        console.debug("Override Setting for gateway " + this.id + " -> " + this.value);
+        save_element(this.id, this.value);
+        populate_select_interface();
+      });
+
+    $("input.[id*=afrimesh|settings|network|mesh|vis_server]").bind("blur", function(event) { 
+        console.debug("Override Setting for vis server " + this.id + " -> " + this.value);
+        save_element(this.id, this.value);
+        update_vis_server();
+      });
+
+    $("input.[id*=afrimesh|settings|radius|server]").bind("blur", function(event) { 
+        console.debug("Override Setting for RADIUS server " + this.id + " -> " + this.value);
+        save_element(this.id, this.value);
+        update_radius_server();
+        
+      });
+
+    /** query internet gateway for network interfaces --------------------- */
+    //populate_select_interface();
+
+     /** query vis server for availability --------------------- */
+    update_vis_server();
+
+     /** query RADIUS server and mysql database for availability --------------------- */
+    //update_radius_server();
+
+    /** create map to set dashboard location ------------------------------ */
+    $("#location").replaceWith("<div id='location' />");
+    var location_map = new LocationMap("location", 
+                                       parseFloat(afrimesh.settings.location.longitude),
+                                       parseFloat(afrimesh.settings.location.latitude),
+                                       parseFloat(afrimesh.settings.map.extent),
+                                       parseInt(afrimesh.settings.map.zoom));
+    var router = { address : afrimesh.settings.address };
+    location_map.router(router);
+    
+    /** round corners ------------------------------------------------------ */
+    $(".tooltip").corner("tr 8px bl 8px br 8px");
+
+    //console.debug("DEFAULT: " + $(".explain").attr("default"));
+
+    return unload;
+  };
+
+  function unload() {
+    console.debug("unloaded utility.settings.router.html");
+  };
+
+  /** done ---------------------------------------------------------------- */
+  console.debug("loaded utility.settings.js");
+ 
+})();
+//]]></script>
+
+

@@ -1,0 +1,34 @@
+villagetelco-dashboard (1.0pre-r1100-1) lucid; urgency=low
+
+  * Misc Google maps bug fixes
+  * Added edge routing support for networks where the dashboard is not hosted on the mesh
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Fri, 03 December 2010 08:35:00 +0200
+
+
+villagetelco-dashboard (1.0pre-r1086-1) lucid; urgency=low
+
+  * Added support for Google street & hybrid maps w/ new option afrimesh.maps.google=1|0
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Mon, 29 November 2010 08:35:00 +0200
+
+
+villagetelco-dashboard (1.0pre-r1078-1) lucid; urgency=low
+
+  * Fixed ajax-proxy bug that mangled calls with no callback identifier.
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Thu, 28 October 2010 08:35:00 +0200
+
+
+villagetelco-dashboard (1.0pre-r1065-1) lucid; urgency=low
+
+  * Afrimesh VTE Server interim release.
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Sat, 24 October 2010 14:35:00 +0200
+
+
+villagetelco-dashboard (1.0pre-r954-1) lucid; urgency=low
+
+  * Afrimesh 1.0 pre-release package. Please don't redistribute!
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Sat, 31 July 2010 14:35:00 +0200

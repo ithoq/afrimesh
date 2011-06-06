@@ -1,0 +1,305 @@
+<!--
+ * Afrimesh: easy management for B.A.T.M.A.N. wireless mesh networks
+ * Copyright (C) 2008-2009 Meraka Institute of the CSIR
+ * All rights reserved.
+ *  
+ * This software is licensed as free software under the terms of the
+ * New BSD License. See /LICENSE for more information.
+-->
+
+<form class="two-column" 
+      id="potato" 
+      OnSubmit="return false;"
+      OnKeyPress="return disable_key(13, event);">
+
+  <table border="0">
+    <tr valign="top">
+
+      <td>
+        <fieldset id="network">
+          <legend>Network &nbsp; <button /></legend>
+          <div class="label">IP Address</div>
+          <input  id="afrimesh|settings|network|wireless|address"/>
+          <div class="tooltip"><h3>ip address</h3></div>
+          <div class="label">Netmask</div>
+          <input  id="afrimesh|settings|network|wireless|netmask" />
+          <div class="tooltip"><h3>netmask</h3></div>
+        </fieldset>
+        
+        <fieldset id="network">
+          <legend>Wireless</legend>
+          <div class="label">Channel</div>
+          <input  id="afrimesh|settings|network|wireless|channel" />
+          <div class="tooltip"><h3>channel</h3></div>
+          <div class="label">SSID</div>
+          <input  id="afrimesh|settings|network|wireless|ssid" />
+          <div class="tooltip"><h3>ssid</h3></div>
+          <div class="label">BSSID</div>
+          <input  id="afrimesh|settings|network|wireless|bssid" />
+          <div class="tooltip"><h3>bssid</h3></div>
+        </fieldset>      
+
+        <fieldset id="map">
+          <legend>Map</legend>
+          <div class="label">Map Server</div>
+          <input id="afrimesh|settings|map|server"  type="text" />
+          <div class="tooltip"><h3>map server</h3>
+            <p class="explain">The Network Map gets the terrain data from the server at this address.</p>
+            <p class="typical">If your mesh has internet access you will not need to change this setting.</p>
+            <p class="obstacle">
+              If your mesh does not have internet access you will need to set up your own map server and enter its address here.
+            </p>
+            <p class="learnmore">
+              You can learn how to set up your own map server by reading 
+              <a href="http://code.google.com/p/afrimesh/wiki/HowTo">HowToMapServer</a>
+            </p>
+          </div>
+        </fieldset>      
+      </td>
+
+      <td>
+        <fieldset id="batmand">
+          <legend>B.A.T.M.A.N. &nbsp; <button /></legend>
+          <div class="label">Vis Server</div>
+          <input id="afrimesh|settings|network|mesh|vis_server" style="background:#FFAAAA;" />
+          <div class="tooltip"><h3>visualization server</h3>
+            <p class="explain">The Network Map gets the available mesh nodes and their connections from the server at this address.</p>
+            <p class="typical">
+              By default the visualization server runs on the same address as the dashboard server and you should not need to change it.
+            </p>
+            <p class="learnmore">
+              You can learn how to configure a different vis server by reading the
+              <a href="http://code.google.com/p/afrimesh/wiki/HowTo">HowtoVisServer</a>
+            </p>
+            <p id="vis_server|error" style="color:#FF0000;"></p>
+          </div>
+          <div class="label">Gateway</div>
+          <input id="is_mesh_gateway" name="is_mesh_gateway" type="checkbox"  />
+          <div class="routing_class">
+            <div class="label">Routing Class</div>
+            <select id="afrimesh|settings|network|mesh|routing_class">
+              <option value="0">disable default route</option>
+              <option value="1">use fastest connection</option>
+              <option value="2">use most stable connection</option>
+              <option value="3">auto</option>
+            </select>
+            <div class="tooltip"><h3>routing class</h3></div>
+          </div>
+          <div class="gateway_class">
+            <div class="label">Gateway Class</div>
+            <input  id="afrimesh|settings|network|mesh|gateway_class" />
+            <div class="tooltip"><h3>gateway class</h3> 
+              <p class="explain">
+                The gateway class is used to tell other nodes in the
+                network your available internet bandwidth.  Enter any
+                number (optionally followed by "kbit" or "mbit") and
+                the daemon will guess your appropriate gateway
+                class. Use "/" to seperate the download and upload
+                rates. You can omit the upload rate and batmand will
+                assume an upload of download / 5.
+              </p>
+              <p class="typical">
+                default: <code>0 -> gateway disabled</code>
+                examples: <br/>
+                <code>5000<br/>
+                  5000kbit<br/>
+                  5mbit<br/>
+                  5mbit/1024<br/>
+                  5mbit/1024kbit<br/>
+                  5mbit/1mbit<br/>
+                </code>
+              </p>
+            </div>
+          </div>
+        </fieldset>
+        
+        <fieldset id="asterisk">
+          <legend>Telephony &nbsp; <button/></legend>
+          
+          <!-- div class="label">Extension</div>
+          <input  id="extension" />
+          <div class="tooltip"><h3>user extension</h3></div>
+          <div class="label">Inbound DID</div>
+          <input  id="did|inbound" />
+          <div class="tooltip"><h3>inbound did</h3></div>
+          <div class="label">Trunk Calls</div>
+          <input id="afrimesh|settings|voip|iax|enable" type="checkbox"  />
+          <div class="iax_trunk">
+            <div class="label">Asterisk Server</div>
+            <input  id="afrimesh|settings|voip|iax|address" />
+            <div class="tooltip"><h3>asterisk</h3></div>
+          </div -->
+
+          <div class="label">SIP Trunk</div>
+          <input id="afrimesh|settings|voip|sip|enable" type="checkbox"  />
+          <div class="sip_trunk">
+            <div class="label">Address</div>
+            <input  id="afrimesh|settings|voip|sip|address" />
+            <div class="tooltip"><h3>sip address</h3></div>
+            <div class="label">Username</div>
+            <input  id="afrimesh|settings|voip|sip|username" />
+            <div class="tooltip"><h3>sip username</h3></div>
+            <div class="label">Password</div>
+            <input type="password" id="afrimesh|settings|voip|sip|password" />
+            <div class="tooltip"><h3>sip password</h3></div>
+          </div>
+
+        </fieldset>
+      </td>
+    </tr>
+  </table>
+
+  <fieldset style="border:0px solid green; width:850px">
+    <div class="label">Location</div>
+    <div id="location" />
+  </fieldset>
+
+</form>
+
+
+<script type="text/javascript"> //<![CDATA[    
+(function() {
+
+  /** includes ------------------------------------------------------------ */
+  load("modules/utility.settings.js"); 
+
+
+  /** construction -------------------------------------------------------- */
+  ready = function() { // INJ 'ready' should be the only symbol we're exposing to the global namespace
+    console.debug("loaded utility.settings.html");
+
+    /** set controls to the values of afrimesh.settings.* ----------------- */
+    try {
+      populate_dom();
+    } catch (e) { console.error("populate_dom: " + e); }
+
+    /** install tooltips -------------------------------------------------- */
+    $("input.[id*=afrimesh]").tooltip({
+        position : ['bottom', 'right'],   // place tooltip on the right edge 
+        offset   : [-20, 20],             // a little tweaking of the position 
+        effect   : 'toggle',              // use a simple show/hide effect 
+        opacity  : 0.8                    // custom opacity setting 
+      });
+
+    /** round corners ------------------------------------------------------ */
+    $(".tooltip").corner("tr 8px bl 8px br 8px");
+
+    /** style controls ----------------------------------------------------- */
+    $('form.two-column :checkbox').slider();
+
+    /** service reload buttons --------------------------------------------- */
+    $("form.two-column :button").hide();
+    function reload_service(fieldset) {
+      var button   = $("fieldset#" + fieldset + " :button");
+      button.unbind("click");
+      button.click(function() { 
+          $(this).html("<img src='images/reload-busy.gif'/>");
+          button.attr("disabled", true); 
+          $("fieldset#" + fieldset + " *").attr("disabled", true);
+          var service = fieldset; // <-- any mapping required in future happens here
+          afrimesh.device.service.reload(afrimesh.settings.address, service, reload_complete);
+          function reload_complete(output) {
+            console.debug("Reloaded '" + fieldset + "'");
+            console.debug(output);
+            $("fieldset#" + fieldset + " *").attr("disabled", false);
+            $("fieldset#" + fieldset + " :button").hide(); 
+            update_sip_server(); // TODO - we should only call any associated update fn's
+          };
+        });
+      button.html("<img src='images/reload.png'/>");
+      $("fieldset#" + fieldset + " :button").show(); 
+    };
+
+    /** install callbacks to save settings --------------------------------- */
+    function save_element(id, value) {
+      if (Q(afrimesh, id) == value) {
+        return false;
+      } 
+      console.debug("Saving setting: " + id + " -> " + value);
+      return afrimesh.settings.save(id, value);
+    };
+    $("input.[id*=afrimesh|settings]").bind("blur", function(event) {
+        if (save_element(this.id, this.value)) {
+          populate_dom();
+          reload_service($(this).closest("fieldset").attr("id"));
+        }
+      });
+    $("input.[id*=afrimesh|settings]").bind("keypress", function(event) {
+	      if (event.keyCode != 13) return true;
+        if (save_element(this.id, this.value)) {
+          populate_dom();
+        }
+        return false;
+      });
+    $("select.[id*=afrimesh|settings]").bind("blur", function(event) { 
+        if (save_element(this.id, this.value)) {
+          reload_service($(this).closest("fieldset").attr("id"));
+        } 
+    });
+    $("input.[id*=afrimesh|settings|network|mesh|vis_server]").bind("blur", function(event) { 
+        update_vis_server();
+      });
+    $("input.[id*=afrimesh|settings|map|server]").bind("blur", function(event) { 
+        update_map_server();
+      });
+    $("#is_mesh_gateway").bind("change", function(event) { 
+        if ($("input[name='is_mesh_gateway']").attr("checked")) {
+          $(".routing_class").hide();
+          $(".gateway_class").show();
+          $("select.[id*=afrimesh|settings|network|mesh|routing_class]").val(0);
+          save_element("afrimesh|settings|network|mesh|routing_class", "");
+        } else {
+          $(".routing_class").show();
+          $(".gateway_class").hide();
+          $("input.[id*=afrimesh|settings|network|mesh|gateway_class]").val("");
+          save_element("afrimesh|settings|network|mesh|gateway_class", "");
+        }
+      });
+    $("input.[id=afrimesh|settings|voip|iax|enable]").bind("change", function(event) { 
+        if (save_element(this.id, this.checked.toString())) {
+          reload_service($(this).closest("fieldset").attr("id"));
+        }
+        update_iax_server();
+      });
+    $("input.[id=afrimesh|settings|voip|iax|address]").bind("blur", function(event) { 
+        update_iax_server();
+      });
+    $("input.[id=afrimesh|settings|voip|sip|enable]").bind("change", function(event) { 
+        if (save_element(this.id, this.checked.toString())) {
+          reload_service($(this).closest("fieldset").attr("id"));
+          update_sip_server();
+        }
+      });
+    $("fieldset#asterisk :text, :password").bind("blur", function(event) { 
+        update_sip_server(); // TODO - only call if field has changed
+      });
+
+    /** update mesh routing controls --------------------------------- */
+    try { 
+      update_mesh_controls(); 
+    } catch (e) { console.error("update_mesh_controls: " + e); }
+
+    /** query telephony servers for availability --------------------- */
+    update_sip_server();
+    update_iax_server();
+
+    /** query vis server for availability ---------------------------- */
+    update_vis_server();
+
+    /** query map server for availability ---------------------------- */
+    update_map_server();
+  
+    return unload;
+  };
+
+  function unload() {
+    console.debug("unloaded utility.settings.html");
+  };
+
+  /** done ---------------------------------------------------------------- */
+  console.debug("loaded utility.settings.js");
+ 
+})();
+//]]></script>
+
+

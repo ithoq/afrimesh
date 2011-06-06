@@ -1,0 +1,60 @@
+#!/bin/sh /etc/rc.common
+START=30
+
+start () {
+    # factory config
+    factory_dns="8.8.8.8 8.8.4.4"
+    factory_mode=ahdemo
+    factory_ssid=potato
+    factory_bssid="01:CA:FF:EE:BA:BE"
+    factory_channel=1
+    factory_network=10.130.1.0
+    factory_netmask=255.255.255.0
+
+    # local config
+    wifi0_device=wifi0
+    wifi0_interface=ath0
+    #wifi0_mac=`ifconfig $wifi0_interface | grep HWaddr | awk '{ print $5 }'`
+    wifi0_address=10.130.1.33   # TODO - get from MAC 
+    factory_root=$(uci get afrimesh.settings.root)
+
+    # configure router
+    uci delete network.lan.type
+    uci delete network.lan.gateway
+    uci set network.lan.dns="$factory_dns"
+    uci set network.lan.ipaddr=192.168.1.20
+    
+    uci set network.$wifi0_device=interface
+    uci set network.$wifi0_device.ifname=$wifi0_interface
+    uci set network.$wifi0_device.proto=static
+    uci set network.$wifi0_device.netmask=$factory_netmask
+    uci set network.$wifi0_device.ipaddr=$wifi0_address
+
+    # TODO initial startup seems to nuke this :-/
+    uci set wireless.$wifi0_device.disabled=0
+    uci set wireless.$wifi0_device.channel=$factory_channel
+    uci set wireless.@wifi-iface[0].encryption=none
+    uci set wireless.@wifi-iface[0].ssid=$factory_ssid
+    uci set wireless.@wifi-iface[0].mode=$factory_mode
+    uci set wireless.@wifi-iface[0].bssid=$factory_bssid
+    uci set wireless.@wifi-iface[0].network=$wifi0_device
+    
+    uci set batmand.general.interface=$wifi0_interface
+    uci set batmand.general.routing_class=3
+    uci set batmand.general.visualisation_srv=$factory_root
+
+    uci set system.@system[0].log_ip=$factory_root
+
+    # commit config
+    uci commit
+
+    # permissions - TODO something a bit less extreme :)
+    chmod -R a+rw /etc/config
+
+    # firewall
+    /etc/init.d/firewall disable
+
+    # cleanup
+    rm -rf /etc/init.d/runonce.afrimesh-provision
+    rm -rf /etc/rc.d/S30runonce.afrimesh-provision
+}

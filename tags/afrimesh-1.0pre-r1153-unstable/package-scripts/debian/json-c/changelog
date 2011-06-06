@@ -1,0 +1,26 @@
+json-c (0.9-5) lucid; urgency=low
+
+  * Switched to packaging for Lucid
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Sat, 24 July 2010 20:00:00 +0200
+
+
+json-c (0.9-1) hardy; urgency=low
+
+  * Updated package to 0.9
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Mon, 10 August 2009 20:00:00 +0200
+
+
+json-c (0.8-2) hardy; urgency=low
+
+  * Packaging fixes
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Fri, 15 May 2009 21:44:00 +0200
+
+
+json-c (0.8-1) hardy; urgency=low
+
+  * Initial release 
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Fri, 15 May 2009 18:32:44 +0200

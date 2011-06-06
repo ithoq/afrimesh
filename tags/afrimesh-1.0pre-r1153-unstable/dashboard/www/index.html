@@ -1,0 +1,198 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<!-- !DOCTYPE HTML -->
+<!--
+ * Afrimesh: easy management for B.A.T.M.A.N. wireless mesh networks
+ * Copyright (C) 2008-2009 Meraka Institute of the CSIR
+ * All rights reserved.
+ *  
+ * This software is licensed as free software under the terms of the
+ * New BSD License. See /LICENSE for more information.
+-->
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="style/default.css" /> 
+    <link rel="stylesheet" type="text/css" href="style/map.default.css"> 
+    <link rel="stylesheet" type="text/css" href="style/modules.css"> 
+
+    <!-- includes ------------------------------------------------------ -->
+    <!-- script type="text/javascript" src="javascript/jquery/jquery.min.js"></script -->
+    <!-- script type="text/javascript" src="http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js"></script -->
+    <!-- script type="text/javascript" src="javascript/json.org/json2.min.js"></script -->  <!-- TODO update!!! -->
+    <script src="http://maps.google.com/maps/api/js?sensor=false"></script> <!-- TODO - move to afrimesh.maps.js -->
+
+    <!-- afrimesh -->
+    <script type="text/javascript" src="javascript/afrimesh.js"></script>
+
+    <!-- One-time initialization/bootstrap ----------------------------- -->
+    <script type="text/javascript">  //<![CDATA[    
+      //$(document).ready(function() {
+      afrimesh.ready(function() {
+
+        console.log("START AFRIMESH DASHBOARD INITIALIZATION");
+
+        /** TODO - rename overlay window, move to network.maps */
+        /* evil_display_overlay = function(url) {
+           api.getContent().find("iframe.wrap").attr('src', url);
+           api.load();
+        }*/
+
+        /** global error handler for Ajax requests */
+        /*$(document).ajaxError(function(ajax, response, request) {
+            console.error("AJAX: " + ajax.type);
+            console.error("RESPONSE: " + response.status + " " + response.statusText + "\n" + response.responseText);
+            console.error("REQUEST:  " + request.data);
+          });*/
+
+        /** populate DOM references to afrimesh.settings */
+        /*var elements = $("[id*=afrimesh|settings]");
+        elements.each(function(element) {
+            $(elements[element]).html(Q(afrimesh, elements[element].id) + "");
+          });*/
+
+        /** attach actions to menu */
+        // UDE it looks like we're ending up with multiple instances of modules
+        //     need to change the code so it either unloads or only ever loads
+        //     a module once
+        // UDE as the code currently stands we cannot load a module into the
+        //     browser as a standalone
+        var unloader = function() {  };
+        function add_dock_item(item, module) {
+          $("ul#dock li#" + item).click(function(event) {
+              console.log("Loading menu: " + item);
+              $("ul#dock .callout").remove();
+              $("ul#dock .callout-border").remove();
+              $(this).append('<span class="callout-border"></span>');
+              $(this).append('<span class="callout"></span>');
+              unloader(); 
+              //$("#overlay").fadeIn(250);
+              $("#overlay").show();
+              $("div#content").hide();
+              $("div#content").load("modules/" + module + ".html", function(page) {
+                  $("div#content").show(); 
+                  unloader = ready(); // UDE fades mess with load completion and require a ready() method :(
+                });
+              return false;
+            });
+        };
+        add_dock_item("accounts", "accounts.manage");
+        add_dock_item("calls",    "customers.recharge");
+        add_dock_item("devices",  "network.devices");
+        add_dock_item("health",   "network.health");
+        add_dock_item("help",     "help.chat");
+        add_dock_item("settings", "utility.settings");
+
+        /** set default page */
+        /*if (!afrimesh.settings.location.latitude ||
+            !afrimesh.settings.location.longitude) {
+          console.log("Mesh has not yet been geo located");
+          afrimesh.settings.location.longitude = 0.0;
+          afrimesh.settings.location.latitude = 0.0;
+          afrimesh.settings.map.zoom = 2;
+          $("ul#dock li#settings").click();
+        }*/
+        $("div#map").load("modules/network.map.html", function(page) { 
+            //$("div#map").fadeIn("slow"); 
+            if (afrimesh.settings.location.latitude && afrimesh.settings.location.longitude) {
+              unloader = ready(); // UDE fades mess with load completion and require a ready() method
+            } else {
+              console.log("Mesh has not yet been geo located");
+              afrimesh.settings.location.longitude = 0.0;
+              afrimesh.settings.location.latitude = 0.0;
+              afrimesh.settings.map.zoom = 2;
+              unloader = ready(function() { $("ul#dock li#settings").click(); });
+            }
+          });
+
+
+        /** loading complete, we can now remove our message */
+        $("#message-loading").html("");
+
+        /* TODO - debug */
+        //$("ul#dock li#settings").click();
+
+        console.log("FIN AFRIMESH DASHBOARD INITIALIZATION");
+      });
+
+     //]]></script>
+  </head>
+  <body>
+
+    <!-- the network map ----------------------------------------------- -->
+    <div style="border:0px solid green;" id="map"></div>
+    
+    <!-- the dock ------------------------------------------------------ -->
+    <ul id="dock" class="round shadow dockleft dockmax">
+      <!-- See: http://iconverticons.com/ -->
+      <!--li onclick='if ($("#dock").hasClass("dockleft")) {
+                     $("#dock").addClass("dockright").removeClass("dockleft");
+                   } else {
+                     $("#dock").addClass("dockleft").removeClass("dockright");
+                   }'>
+        swap
+      </li>
+      <li onclick='if ($("#dock").hasClass("dockmin")) {
+                     $("#dock").addClass("dockmax").removeClass("dockmin");
+                     $("#overlay").css("left", "90px");
+                   } else {
+                     $("#dock").addClass("dockmin").removeClass("dockmax");
+                     $("#overlay").css("left", "30px");
+                   }'
+          style="text-align:right;">
+        hide
+      </li-->
+      <hr/>
+      <li id="home" tooltip="Home" onClick='$("#overlay").fadeOut(250);
+                                            $("ul#dock .callout").remove();
+                                            $("ul#dock .callout-border").remove();'>
+        <img src="icons/home.png" width="48" height="48" /> 
+      </li>
+
+      <hr/>
+      <hr/>
+      <hr/>
+      <li id="accounts" tooltip="People">
+        <img src="icons/users.png" width="48" height="48" /> 
+      </li>
+      <hr/>
+      <li id="devices" tooltip="Network Health">
+        <img src="icons/devices.png" width="48" height="48" />
+      </li>
+      <hr/>
+      <li id="health" tooltip="Network Logs">
+        <img src="icons/terminal.png" width="48" height="48" />
+      </li>
+      <div style="position:absolute; bottom: 10px; width:100%;">
+        <li id="help" tooltip="Help">
+          <img src="icons/help.png" width="48" height="48" />
+        </li>
+        <hr/>
+        <li id="settings" tooltip="Settings">
+          <img src="icons/settings.png" width="48" height="48" />
+        </li>
+        <hr/>
+        <li id="login" tooltip="Logout">
+          <img src="icons/login.png" width="48" height="48" />
+        </li>
+      </div>
+    </ul>
+    
+    <!-- the content overlay ------------------------------------------- -->
+    <!-- see http://www.schillmania.com/content/entries/2009/css3-and-the-future/ -->
+    <div id="overlay" class="round shadow">
+      <!-- img id="close" 
+           src="style/images/close-overlay.png" 
+           style="position:absolute; top:5px; right:15px;"
+           onClick='$("#home").click();'/ -->
+      <div id="content" style="border:0px solid black;">
+        please wait a moment...
+      </div>
+
+      <!-- live chat --------------------------------------------------- -->
+      <div id="live-chat" 
+           style="position:absolute; display:none; top:2.0em; bottom:2.0em; left:2.0em; right:2.0em;"></div> 
+    </div>
+    
+  </body>
+</html>
+

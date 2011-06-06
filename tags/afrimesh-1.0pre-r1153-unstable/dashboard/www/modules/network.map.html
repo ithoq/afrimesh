@@ -1,0 +1,479 @@
+<!--
+ * Afrimesh: easy management for B.A.T.M.A.N. wireless mesh networks
+ * Copyright (C) 2008-2009 Meraka Institute of the CSIR
+ * All rights reserved.
+ *  
+ * This software is licensed as free software under the terms of the
+ * New BSD License. See /LICENSE for more information.
+-->
+
+<!-- Main Map Div ------------------------------------------------------ -->
+<div class="network" id="network-map"></div>
+<div class="legend round"
+     onmouseover="this.style.opacity=1.0;" 
+     onmouseout="this.style.opacity=0.7;">
+  <img src="images/network_map_legend.png" />
+</div>
+
+
+<!-- http://bbs.keyhole.com/ubb/ubbthreads.php?ubb=showflat&Number=283026 -->
+<form id="network-map-export" 
+      class="export" 
+      action="/cgi-bin/mesh-topology.kml" 
+      method="POST" target="_blank">
+  <input id="export-map-data" type="hidden" name="data" />
+  <input id="export-map-type" type="hidden" name="type" 
+         value="application/vnd.google-earth.kml+xml" />
+  <input type="image" src="images/google_earth_export.png" 
+         value="Submit" alt="Submit" />
+</form>  
+
+
+<!-- Notifications ----------------------------------------------------- -->
+<div id="notifications"></div>
+<div id="popup" class="round-small shadow">
+
+  <h3>A new device has been added to the mesh!</h3>
+  <b>Mesh Potato #<span class="device">23</span></b> 
+  <span class="ip">10.130.1.20</span> 
+  <i>(<span class="mac">00:11:22:33:44:55</span>)</i>
+  <hr />
+  <span class="text">A message</span><br/>
+  <span id="error" style="color:red; font-size:0.8em; line-height:2.0em;"></span>
+  <div id="link" class="round-small" style="display:none;">
+    <input type="text" id="firstname" title="first name" value="" style="width: 10em;"/>
+    <input type="text" id="lastname"  title="last name"  value="" style="width: 10em;"/>
+    <input type="text" id="email"     title="email"      value="" style="width: 15em;"/>
+    <img src="images/find.png" width="24" height="24" />
+    <div style="height:5px;" />
+    <input type="text" id="longitude" title="longitude"  style="width: 10em;"/>
+    <input type="text" id="latitude"  title="latitude"   style="width: 10em;"/><br/>
+    <span style="font-size:0.8em;"><i>drag device to set location</i></span>
+    <div style="text-align:right;">
+      <button id="save">save</button>
+      <button id="cancel">cancel</button>
+    </div>
+  </div>
+</div>
+
+
+
+<script type="text/javascript">//<![CDATA[    
+var network_map = undefined; // TODO - better solution for visibility to utility.settings.update_location
+(function() {
+
+  /** includes ---------------------------------------------------------- */
+
+  /** construction ------------------------------------------------------ */
+  //var network_map = undefined;
+  ready = function(continuation) {
+    console.debug("loaded network.map.html");
+
+    $("div#network-map").addClass("message");
+    $("div#network-map").html("<p><br/><p>Loading Network Map...</p>");
+
+    // Load OpenStreetMap & OpenLayers libraries
+    load.async(afrimesh.settings.map.openlayers_url, function(data, textStatus) {
+        if (typeof OpenLayers == "undefined") {
+          return load_error("The OpenLayers mapping service could not be found.");
+        }
+        load.async(afrimesh.settings.map.osm_url, load_complete);
+      });
+
+    // Create map once libs are loaded
+    function load_complete(data, textStatus) {
+      if (typeof OpenLayers.Layer.OSM == "undefined") {
+        return load_error("The OpenStreetMaps mapping service could not be found.");
+      }
+      load("javascript/afrimesh.maps.js"); 
+      load("modules/network.map.js");
+      $("div#network-map").html("");
+      $("div#network-map").removeClass("message");
+      network_map = new Map("network-map",  // TODO - consider caching the map :)
+                            parseFloat(afrimesh.settings.location.longitude),
+                            parseFloat(afrimesh.settings.location.latitude),
+                            parseFloat(afrimesh.settings.map.extent),
+                            parseInt(afrimesh.settings.map.zoom),
+                            60.0 * 1000.0);
+      console.debug("location.longitude -> " + afrimesh.settings.location.longitude);
+      console.debug("location.latitude -> " + afrimesh.settings.location.latitude);
+      console.debug("map.extent -> " + afrimesh.settings.map.extent);
+      console.debug("map.zoom -> " + afrimesh.settings.map.zoom);
+      $("form#network-map-export").submit(function() {
+          console.debug("submitting");
+          export_kml(network_map);
+          return true;
+        });
+      update(network_map); 
+      //$("div[id$=_zoomworld]").click(function () {
+      $("div.olControlZoomToMaxExtentItemInactive").click(function () {
+          console.log("Zoooooooooooom");
+          network_map.zoom(3);
+        });    
+
+      if (continuation) { // TODO - 
+        continuation();
+      }
+    };
+
+    function load_error(message) {
+      var html = "<p><br/><p>Could Not Contact Map Server.</p>";
+      html += "<p><br/><p>" + message + "</p>";
+      $("div#network-map").html(html);
+    };
+
+    // register for provisioning notifications
+    var name = afrimesh.villagebus.mq.Bind("device:*:provision", function(error, notification) {
+        if (error) return console.error("Provision notification error: " + error);
+        console.log("New Device Provisioned!!!");
+        console.log(notification);
+        var n = new_notification(notification, "Click to set map position and link owner.");
+      });
+
+    // register for call notifications
+    var name = afrimesh.villagebus.mq.Bind("handset:*:call", function(error, notification) {
+        if (error) return console.error("Call notification error: " + error);
+        console.error("I has call: " + show(notification));
+        var feature = network_map.router({ address : notification.self });
+        if (!feature) {
+          console.debug("Could not find map feature associated with address: " + notification.self);
+          return;
+        }
+        var html = "Called <b>10.130.1." + notification.extension + "</b>";
+        network_map.popup(feature, html);
+        afrimesh.villagebus.mq.DELETE("handset:" + notification.self + ":call", function(error, response) {
+            if (error) return console.error("Could not remove notification: " + notification);
+            console.debug("notification removed: " + notification);
+          }, name);
+      });
+
+    // activate input hints
+    $("input[title!='']").hint();    
+
+    return unload;
+  };
+
+  function unload() {
+    clearTimeout(timer);
+    console.debug("unloaded network.map.html");
+  };
+  console.debug("loaded network.map.js");
+
+
+  /** - Map notifications ----------------------------------------------- */
+  function new_notification(device, text, continuation) {
+    var notification = $(document.createElement("div")).addClass("icon")
+                                                       .attr("id", device.mac)
+                                                       .appendTo("#notifications");
+
+
+    /** - link person to device ----------------------------------------- */
+    function link_person_to_device(person, device, continuation) {
+      person.device = device;
+      afrimesh.person.save(person, function(error, person) {  // save person info and get id
+          if (error) return continuation(error, person);
+          console.log("Linking device " + device.ip + " to person: " + person.id);
+          afrimesh.person.link(person, device, continuation);
+        });
+    };
+
+
+    /** - remove notification ------------------------------------------- */
+    function remove_notification(clicked, device, continuation) {
+      // del message:device:<mac>:provision
+      afrimesh.villagebus.mq.DELETE("device:" + device.mac + ":provision", function(error, response) {
+          if (error) {
+            $("div#popup div#link button#cancel").click(); // cancel save
+            return continuation(error, response);
+          }
+          $(clicked).remove();
+          $("div#popup").fadeOut(100);
+          $("div#notifications .fade").fadeOut(50, function() {
+              $("div#notifications .callout").remove();
+              $("div#notifications .callout-border").remove();
+            });
+          return continuation(error, response);
+        }); // TODO - pass name so we can invalidate cache
+    };
+
+
+    /** - event handler: save link -------------------------------------- */
+    function save_fn(clicked, device, feature) {
+      console.log("Saving: " + show(device));
+      var person = {
+        firstname : $("div#link input#firstname").hintval(), // TODO if we used submit hint would clear the fields
+        lastname  : $("div#link input#lastname").hintval(),
+        email     : $("div#link input#email").hintval()
+      };
+      var location = {
+        longitude : $("div#link input#longitude").val(),
+        latitude  : $("div#link input#latitude").val()
+      };
+      link_person_to_device(person, device, function(error, result) {
+          if (error) return $("div#popup #error").html("Could not link person to device: " + error);
+          remove_notification(clicked, device, function(error, result) {
+              if (error) $("div#popup #error").html("Could not delete provisioning notification: " + error);
+              cancel_fn(clicked, feature); // clean everything up - TODO figure something out for the error handlers
+              console.log("Finished linking person to device.");
+            });
+        });
+      // TODO - save location
+      // TODO set device:<ip>:location  = { longitude, latitude }
+    };
+
+
+    /** - event handler: cancel link ------------------------------------ */
+    function cancel_fn(clicked, feature) {
+      $("div#popup div#link button#save").unbind();
+      $("div#popup div#link button#cancel").unbind();
+      $("div#popup div#link input#firstname").val("").blur();
+      $("div#popup div#link input#lastname").val("").blur();
+      $("div#popup div#link input#email").val("").blur();
+      $("div#popup div#link input#latitude").val("").blur();
+      $("div#popup div#link input#longitude").val("").blur();
+      $("div#popup #error").html("");
+      $("div#popup #link").hide();
+      $("div#popup .text").show();
+      network_map.reset_drag_feature(feature);
+      /*$("div#popup").fadeOut(100);
+      $("div#notifications .fade").fadeOut(50, function() {
+          $("div#notifications .callout").remove();
+          $("div#notifications .callout-border").remove();
+        });
+      notification.looped({ "bottom" : "10px" }, 
+                          { "bottom" : "0px"  }, 500);*/
+      $("div#notifications div.icon").removeClass("inactive"); // reenable event handlers for notifications
+      $(clicked).trigger("mouseout"); // restart animations
+    };
+
+
+    /** - event handler: click notification ----------------------------- */
+    function click_fn(clicked, device) {
+      //var feature = network_map.router({ address : device.ip });
+      var feature = network_map.router({ address : device.ip, routes : [] });
+      if (!feature || !feature.geometry) { // TODO - the router could be rebooting, add router manually in this case
+        console.error("Invalid feature for notification!!");
+        $("div#popup #error").html("The device is still restarting. Please wait.");
+        return;
+      }
+      console.log("FEATURE: " + show(feature.router));
+
+      // 1. disable _all_ notification event handlers
+      $(clicked).unbind("click");
+      $("div#notifications div.icon").addClass("inactive");
+      
+      // 2. show account linker popup
+      $("div#popup .text").hide();
+      $("div#popup #link").show();
+
+      // 3. Add a drag handler & move router to friendly location
+      feature = network_map.on_drag_feature(feature, function(longitude, latitude) {
+          $("div#link input#longitude").val(longitude);
+          $("div#link input#latitude").val(latitude);
+        });
+      var center = network_map.center();
+      center.lat = center.lat + 300;
+      feature.move(center);
+
+      // 4. bind to save & cancel
+      $("div#popup div#link button#save").click(function() { 
+          save_fn(clicked, device, feature); 
+        });
+      $("div#popup div#link button#cancel").click(function() { 
+          cancel_fn(clicked, feature); 
+        });
+    };
+
+
+    /** - event handler: hover notification --------------------------------
+     * 1. Stop bouncing
+     * 2. Populate notify popup 
+     * 3. Activate callout & notify popup
+     * 4. Show notify popup & callout
+     * 5. Bind a click handler
+     */
+    function hover_fn() {
+      if ($(this).hasClass("inactive")) { console.log("INACTIVE HOVER"); return; }
+      $(this).stop().animate({ "bottom" : "20px" }, 50, function() {
+          $("div#popup span.device").html(device.id);
+          $("div#popup span.ip").html(device.ip);
+          $("div#popup span.mac").html(device.mac);
+          $("div#popup span.text").html(text);
+          $("div#notifications .callout").remove();
+          $("div#notifications .callout-border").remove();
+          $(this).append('<span class="fade callout-border"></span>');
+          $(this).append('<span class="fade callout"></span>');
+          $("#popup").fadeIn(100);
+          $(this).find(".fade").fadeIn(150);
+          $("div#notifications .callout").fadeIn(150);
+          $("div#notifications .callout-border").fadeIn(150);
+        });
+      $(this).click(function() { click_fn(this, device); });
+    };
+
+
+    /** - event handler: blur notification ---------------------------------
+     * 1. Unbind the click handler
+     * 2. Fade notify popup & callout
+     * 3. Start bouncing again
+     */
+    function blur_fn() {
+      console.log("BLUR: " + this);
+      if ($(this).hasClass("inactive")) { console.log("INACTIVE BLUR"); return; }
+      $(this).unbind("click");
+      $("div#popup #error").html("");
+      $("#popup").fadeOut(150);
+      $("div#notifications .fade").fadeOut(50, function() {
+          $("div#notifications .callout").remove();
+          $("div#notifications .callout-border").remove();
+        });
+      $(this).stop().looped({ "bottom" : "10px" }, 
+                            { "bottom" : "0px"  }, 500);
+    };
+
+    // set up notification
+    notification.hover(hover_fn, blur_fn);
+    notification.trigger("mouseout");
+
+    return notification;      
+  }
+
+
+
+  /** export kml -------------------------------------------------------- */
+  function export_kml(network_map) { 
+    var my_kml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"          +
+                      "<kml xmlns=\"http://www.opengis.net/kml/2.2\""       +
+                      "     xmlns:gx=\"http://www.google.com/kml/ext/2.2\"" +
+                      "     xmlns:kml=\"http://www.opengis.net/kml/2.2\""   +
+                      "     xmlns:atom=\"http://www.w3.org/2005/Atom\">";
+    my_kml_data += "<Document>";
+    my_kml_data += "<name>SimpleAfrimesh.kml</name>";
+    my_kml_data += "<Folder>";
+		my_kml_data += "<name>Afrimesh</name>";
+		my_kml_data += "<open>1</open>";
+
+    network_map.routers.features.map(function(feature) {
+        if (!feature.geometry) { return; }
+        console.debug("feature: " + feature + " -> " + feature.router);
+        var location = new OpenLayers.LonLat(feature.geometry.x, feature.geometry.y).transform(epsg_900913, epsg_4326);
+        my_kml_data += "<Style id=\"blueDot\">" +
+                       "<IconStyle>" +
+                       "<color>ffff5500</color>" +
+                       "<scale>1</scale>" +
+                       "<Icon>" +
+                       "<href>http://maps.google.com/mapfiles/kml/shapes/shaded_dot.png</href>" +
+                       "</Icon>" +
+                       "</IconStyle>" +
+                       "</Style>";
+       my_kml_data +=  "<Placemark>" +
+                       "<name>" + feature.id + "</name>" +
+                       "<styleUrl>#blueDot</styleUrl>" +
+                       "<Point>" +
+                       "<coordinates>" + location.lon + "," + location.lat + ",0</coordinates>" +
+                       "</Point>" +
+                       "</Placemark>";
+      });
+
+    network_map.routes.features.map(function(feature) {
+        var origin      = network_map.routers.getFeatureById(feature.route.router);
+        var destination = network_map.routers.getFeatureById(feature.route.neighbour);
+        origin      = new OpenLayers.LonLat(origin.geometry.x, origin.geometry.y).transform(epsg_900913, epsg_4326);
+        destination = new OpenLayers.LonLat(destination.geometry.x, destination.geometry.y).transform(epsg_900913, epsg_4326);
+        my_kml_data += "<Style id=\"yellowLine\">" +
+                       "<LineStyle>";
+        my_kml_data += "<color>" + network_map.lq_to_argb(feature.route.label) + "</color>";
+        my_kml_data += "<width>5</width>" +  // adjusts the width (thickness) of the links 
+                       "</LineStyle>" +
+                       "</Style>";
+        my_kml_data += "<Placemark>" +
+                       "<name>" + feature.route.router + "->" + feature.route.neighbour + "</name>" +
+                       "<styleUrl>#yellowLine</styleUrl>" +
+                       "<LineString>" +
+                       "<coordinates>" + origin.lon + "," + origin.lat + ",0\n" + 
+                                         destination.lon + "," + destination.lat + ",0\n" +
+                       "</coordinates>" +
+                       "</LineString>" +
+                       "</Placemark>"; 
+      });
+
+    my_kml_data += "</Folder>";
+    my_kml_data += "</Document>";
+    my_kml_data += "</kml>";
+    //console.debug(my_kml_data);
+    console.log("EXPORTING KML");
+    $("form#network-map-export input#export-map-data").val(my_kml_data); 
+    //window.location = 'data:application/vnd.google-earth.kml+xml,' + escape(my_kml_data);
+    //$.post("/~sprinter/cgi-bin/mesh-topology.kml?Content-type=application/vnd.google-earth.kml+xml", my_kml_data);
+  };
+       
+
+  /** update map ---------------------------------------------------------- */
+  var timer = {};
+  function update(network_map) {
+    clearTimeout(timer);
+    afrimesh.network.routers(function(error, routers) { 
+        if (error) return console.error("Error getting network devices list: " + error);
+        update_complete(network_map, routers); 
+      });
+  };
+
+  function update_complete(network_map, routers) {
+    var now = new Date();
+
+    // Update LQ display, tag all active network elements with last seen time and add new elements to the map
+    routers.map(function(router) { 
+        var feature = network_map.router(router);
+        feature.last_seen = now;
+        router.routes.map(function(route) {
+            var route_feature = network_map.route(route);
+            if (route_feature.style) { // TODO - this should be a network_map method
+              var color = network_map.lq_to_color(route.label);
+              route_feature.style.strokeOpacity   = color.a;
+              route_feature.style.strokeColor     = color.rgb;
+              network_map.routes.drawFeature(route_feature);
+            }
+            route_feature.last_seen = now; 
+          });
+      });
+        
+    // go through all features and set transparency relative to when they were last seen
+    network_map.routers.features.map(function(router_feature) {
+        // TODO - this should also be encapsulated in a network_map method
+        var fade_time = 240.0 * 1000.0;
+        var min_opacity = 0.1;
+        var start_opacity = 1.0;
+        var age = now - router_feature.last_seen;
+        var opacity = Math.max(min_opacity, start_opacity - (age / fade_time));        
+        //console.debug("Router last seen: " + age + " opacity: " + opacity);
+        router_feature.style.fillOpacity = opacity;
+        network_map.routers.drawFeature(router_feature);
+        router_feature.router.routes.map(function(route) {
+            var route_feature = network_map.route(route);
+            if (route_feature.last_seen) {
+               var age = now - route_feature.last_seen;
+               var opacity = Math.max(min_opacity, start_opacity - (age / fade_time));        
+               //console.debug("Route last seen: " + age + " opacity: " + opacity + " update freq: " + network_map.update_frequency);
+               if (age == 0) { 
+                 route_feature.style.strokeDashstyle = "solid";
+               } else {
+                 route_feature.style.strokeOpacity = opacity;
+                 route_feature.style.strokeDashstyle = "dot";
+               }
+               network_map.routes.drawFeature(route_feature);
+            }
+          });
+      });
+
+    //console.debug("updated network map");
+    timer = setTimeout(function() { update(network_map); }, network_map.update_frequency);
+    if (network_map.update_frequency < network_map.update_target) {
+      network_map.update_frequency *= 2.0;
+    }
+  };
+
+})();
+//]]></script>
+
+
+

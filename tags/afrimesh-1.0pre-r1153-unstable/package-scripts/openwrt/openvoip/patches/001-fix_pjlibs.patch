@@ -1,0 +1,32 @@
+diff -urN p2p.orig/src/Makefile.am p2p.patched/src/Makefile.am
+--- p2p.orig/src/Makefile.am	2009-06-18 14:28:17.000000000 +0200
++++ p2p.patched/src/Makefile.am	2009-06-18 14:53:51.000000000 +0200
+@@ -10,9 +10,10 @@
+ 
+ LDADD = bigint/libbigint.a node/libnode.a net/libnet.a table/libtable.a  \
+ 	distance/libdist.a msg/libmsg.a p2pconfig/libp2pconfig.a sys/libsys.a \
+-	utils/libutils.a stun/libstun_client_srv.a stun/pjnath/lib/libpjnath-i686-pc-linux-gnu.a \
+-	stun/pjlib/lib/libpj-i686-pc-linux-gnu.a \
+-	stun/pjlib-util/lib/libpjlib-util-i686-pc-linux-gnu.a
++	utils/libutils.a stun/libstun_client_srv.a \
++ $(STAGING_DIR)/usr/lib/libpjnath.a \
++ $(STAGING_DIR)/usr/lib/libpj.a \
++ $(STAGING_DIR)/usr/lib/libpjlib-util.a 
+ 
+ 
+ SUBDIRS = bigint distance msg net node p2pconfig sys table utils stun
+diff -urN p2p.orig/src/stun/Makefile.am p2p.patched/src/stun/Makefile.am
+--- p2p.orig/src/stun/Makefile.am	2009-06-18 14:28:17.000000000 +0200
++++ p2p.patched/src/stun/Makefile.am	2009-06-18 14:52:52.000000000 +0200
+@@ -7,7 +7,10 @@
+ 
+ INCLUDES = -I./pjnath/include -I./pjlib/include -I./pjlib-util/include 
+ LIBS = -lpthread 
+-LDADD = libstun_client_srv.a  pjnath/lib/libpjnath-i686-pc-linux-gnu.a pjlib/lib/libpj-i686-pc-linux-gnu.a pjlib-util/lib/libpjlib-util-i686-pc-linux-gnu.a
++LDADD = libstun_client_srv.a \
++        $(STAGING_DIR)/usr/lib/libpjnath.a \
++        $(STAGING_DIR)/usr/lib/libpj.a \
++        $(STAGING_DIR)/usr/lib/libpjlib-util.a 
+ 
+ CLEANFILES = *~ *.o test libstun_client_srv.a
+ 

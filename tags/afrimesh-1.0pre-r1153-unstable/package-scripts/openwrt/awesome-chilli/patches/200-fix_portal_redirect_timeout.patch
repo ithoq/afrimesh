@@ -1,0 +1,12 @@
+diff -urN a/www/coova.html b/www/coova.html
+--- a/www/coova.html	2010-03-02 14:03:36.000000000 +0200
++++ b/www/coova.html	2010-08-26 11:38:07.000000000 +0200
+@@ -30,7 +30,7 @@
+ function redirect() { window.location = loginUrl; return false; }
+ window.onload = function() {
+   loginUrl = getURLParam("loginurl");
+-  setTimeout(redirect, 5000); 
++  setTimeout(redirect, 1000); 
+ }
+ //-->
+ </script>

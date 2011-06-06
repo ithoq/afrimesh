@@ -1,0 +1,18 @@
+Source: afrimesh-dashboard
+Section: net
+Priority: optional
+Maintainer: Antoine van Gelder <antoine@7degrees.co.za>
+Build-Depends: makeself, json-c-dev, uci-dev, libcredis-dev, snmp, luarocks, libsnmp-dev, liblua5.1-socket-dev, liblua5.1-logging-dev, debhelper (>= 5)
+Standards-Version: 3.7.3
+Homepage: http://afrimesh.org
+
+Package: afrimesh-dashboard
+Architecture: any
+Depends: uci, libcredis, redis-server, apache2, snmp, snmpd, pmacct, lua5.1, luarocks, liblua5.1-socket2, liblua5.1-json, liblua5.1-logging, ${shlibs:Depends}, ${misc:Depends}
+Description: Easy management for B.A.T.M.A.N. wireless mesh networks
+ The ability to easily create an IP network in rural areas, developing
+ countries and disaster zones can significantly contribute to the ability
+ of people to communicate with each other. Afrimesh builds on top of the
+ most excellent B.A.T.M.A.N. project to provide a simple management
+ dashboard which enables network operators to create and sustain a
+ resilient communications network with a minimum of fuss.

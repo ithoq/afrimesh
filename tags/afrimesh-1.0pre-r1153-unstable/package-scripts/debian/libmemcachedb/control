@@ -1,0 +1,22 @@
+Source: libmemcachedb
+Priority: extra
+Maintainer: Antoine van Gelder <antoine@7degrees.co.za>
+Build-Depends: debhelper (>= 5), autotools-dev
+Standards-Version: 3.7.2
+Section: libs
+
+Package: libmemcachedb-dev
+Section: libdevel
+Architecture: any
+Depends: libmemcachedb (= ${Source-Version})
+Description: libmemcachedb is a patched version of libmemcache which extends
+ the programming interface to support some extra features provided by 
+ memcachedb.
+
+Package: libmemcachedb
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: libmemcachedb is a patched version of libmemcache which extends
+ the programming interface to support some extra features provided by 
+ memcachedb.

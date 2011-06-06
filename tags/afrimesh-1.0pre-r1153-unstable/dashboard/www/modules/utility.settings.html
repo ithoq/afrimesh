@@ -1,0 +1,277 @@
+<!--
+ * Afrimesh: easy management for B.A.T.M.A.N. wireless mesh networks
+ * Copyright (C) 2008-2009 Meraka Institute of the CSIR
+ * All rights reserved.
+ *  
+ * This software is licensed as free software under the terms of the
+ * New BSD License. See /LICENSE for more information.
+-->
+
+<form class="two-column scrollview"
+      style="top:2.0em;"
+      id="dashboard"
+      OnSubmit="return false;"
+      OnKeyPress="return disable_key(13, event);">
+
+  <table style="border:0px solid green;">
+    <tr>
+      <td style="vertical-align:top;">
+        <fieldset>
+          <legend>Mesh</legend>
+          <div class="label">Visualization Server</div>
+          <input id="afrimesh|settings|network|mesh|vis_server" style="background:#FFAAAA;" type="text" />
+          <div class="tooltip"><h3>visualization server</h3>
+            <p class="explain">The Network Map gets the available mesh nodes and their connections from the server at this address.</p>
+            <p class="typical">
+              By default the visualization server runs on the same address as the dashboard server and you should not need to change it.
+            </p>
+            <p class="learnmore">
+              You can learn how to configure a different vis server by reading the
+              <a href="http://code.google.com/p/afrimesh/wiki/HowTo">HowtoVisServer</a>
+            </p>
+            <p id="vis_server|error" style="color:#FF0000;"></p>
+          </div>
+          <div class="label">Accounting Server</div>
+          <input id="afrimesh|settings|network|mesh|accounting_server" style="background:#FFAAAA;" type="text" />
+          <div class="tooltip"><h3>Accounting Server</h3>
+            <p class="explain"></p>
+            <p class="typical"></p>
+            <p class="learnmore"></p>
+            <p id="accounting_server|error" style="color:#FF0000;"></p>
+          </div>
+          <!-- div class="label">Database Server</div>
+          <input id="afrimesh|settings|network|mesh|redis_server" style="background:#FFAAAA;" type="text" />
+          <div class="tooltip"><h3>Database Server</h3>
+            <p class="explain"></p>
+            <p class="typical"></p>
+            <p class="learnmore"></p>
+            <p id="redis_server|error" style="color:#FF0000;"></p>
+          </div -->
+        </fieldset>
+
+        <!-- fieldset>
+             <legend>Access Control</legend>
+             <div class="label">Radius Server</div>
+             <input id="afrimesh|settings|radius|server" style="background:#FFAAAA;" type="text"></input>
+             <div class="tooltip"><h3>server</h3>
+               <p class="explain">Afrimesh needs the address of your RADIUS server to be able to monitor it.</p>
+               <p id="radius|server|error" style="color:#FF0000;"></p>
+             </div>
+             <div class="label">Database Type</div>
+             <select id="afrimesh|settings|radius|radtype">
+               <option value="1">mysql</option>
+               <option value="2">memcachedb</option>
+             </select>
+             <div class="label">Username</div>
+             <input id="afrimesh|settings|radius|username" type="text" />
+             <div class="tooltip"><h3>username</h3>
+               <p class="explain">Enter your username for identification on the RADIUS database here.</p>
+             </div>
+             <div class="label">Password</div>
+             <input id="afrimesh|settings|radius|password" type="password" />    
+             <div class="tooltip"><h3>password</h3>
+               <p class="explain">Enter your password for authentication on the RADIUS database here.</p>
+             </div>
+        </fieldset -->
+        <!-- div class="label">Database</div>
+             <input id="afrimesh|settings|radius|database" type="text" />
+             <div class="tooltip"><h3>database</h3>
+               <p class="explain">Enter the RADIUS authentication database here.</p>
+        </div -->
+      </td>
+
+      <td style="vertical-align:top;">
+        <fieldset>
+          <legend>Internet Gateway</legend>
+          <div class="label">IP Address</div>
+          <input id="afrimesh|settings|internet_gateway|address" style="background:#FFAAAA;" type="text"></input>
+          <div class="tooltip"><h3>internet gateway address</h3>
+            <p class="explain">Afrimesh needs the address of your internet gateway to be able to monitor it.</p>
+            <p class="typical" >
+              This would usually be the same address as the default gateway of devices on your network.
+            </p>
+            <p id="internet_gateway|error" style="color:#FF0000;"></p>
+          </div>
+          <div class="label">Community String</div>
+          <input id="afrimesh|settings|internet_gateway|snmp|community" type="text" />
+          <div class="tooltip"><h3>snmp community string</h3>
+            <p class="explain">Afrimesh uses the SNMP protocol to communicate with the Internet gateway.</p>
+            <p class="typical">The default setting is usually 'public'</p>
+          </div><br/>
+          <div class="label">Interface</div>
+          <select id="afrimesh|settings|internet_gateway|snmp|interface" /><br/>
+          <div class="label">Download Bandwidth</div>
+          <input id="afrimesh|settings|internet_gateway|bandwidth|down" type="text" />
+          <div class="tooltip"><h3>download bandwidth</h3>
+            <p class="explain">Enter the download speed of your Internet connection here.</p>
+          </div>
+          <div class="label">Upload Bandwidth</div>
+          <input id="afrimesh|settings|internet_gateway|bandwidth|up" type="text" />    
+          <div class="tooltip"><h3>upload bandwidth</h3>
+            <p class="explain">Enter the upload speed of your Internet connection here.</p>
+            <p class="typical">On ADSL connections this is usually half of the download speed</p>
+          </div>
+        </fieldset>
+      </td>
+    </tr>
+  </table>
+
+  <fieldset> 
+    <legend>Map</legend>
+    <table style="border:0px solid yellow;">
+      <tr>
+        <td style="vertical-align:top;">  
+          <div class="label" style="clear:both;">Map Server</div>
+        </td>
+        <td style="vertical-align:top;">
+          <input id="afrimesh|settings|map|server" type="text"/>
+          <div class="tooltip"><h3>map server</h3>
+            <p class="explain">The Network Map gets the terrain data from the server at this address.</p>
+            <p class="typical">If your mesh has internet access you will not need to change this setting.</p>
+            <p class="obstacle">
+              If your mesh does not have internet access you will need to set up your own map server and enter its address here.
+            </p>
+            <p class="learnmore">
+              You can learn how to set up your own map server by reading 
+              <a href="http://code.google.com/p/afrimesh/wiki/HowTo">HowToMapServer</a>
+            </p>
+          </div><br/>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align:top;">
+          <div class="label" style="clear:both;">
+            Mesh Location
+            <p/><br/>
+            <p style="padding-right: 1.0em; font-size: 0.8em;">
+              Drag the circle on the map to the location of your mesh or just enter your coordinates below:
+            </p><br/>
+            <table>
+              <tr style="font-size:0.8em;">
+                <td>Lon:</td><td><input id="afrimesh|settings|location|longitude" style="width:100px;" type="text" /></td>
+              </tr>
+              <tr style="font-size:0.8em;">
+                <td>Lat:</td><td><input id="afrimesh|settings|location|latitude" style="width:100px;" type="text" /></td>
+              </tr>
+            </table>
+            <button id="geolocator" class="round-small button">
+              update map
+            </button>
+          </div>
+        </td>
+        <td style="vertical-align:top;">
+          <div id="location" />
+        </td>
+      </tr>
+    </table>
+  </fieldset>
+</form>
+
+<script type="text/javascript"> //<![CDATA[    
+(function() {
+
+  /** includes ------------------------------------------------------------ */
+  load("javascript/jquery/jquery.tooltip.min.js");
+  load("modules/utility.settings.js"); 
+
+
+  /** construction -------------------------------------------------------- */
+  ready = function() { // INJ 'ready' should be the only symbol we're exposing to the global namespace
+    console.debug("loaded utility.settings.html");
+    //$("#bar").val(afrimesh.storage("my_cookie"));
+
+    /** set controls to the values of afrimesh.settings.* ----------------- */
+    try {
+      populate_dom();
+    } catch (e) { console.error("populate_dom: " + e); }
+
+    /** install tooltips -------------------------------------------------- */
+    $("input.[id*=afrimesh]").tooltip({
+        position : ['bottom', 'right'],   // place tooltip on the right edge 
+        offset   : [-49, -85],            // a little tweaking of the position 
+        effect   : 'toggle',              // use a simple show/hide effect 
+        opacity  : 1.0                    // custom opacity setting 
+      });
+
+    /** style controls ----------------------------------------------------- */
+    //$('form.two-column :checkbox').slider(); // TODO
+
+    /** install callbacks to save settings -------------------------------- */
+    function save_element(id, value) {
+      if (Q(afrimesh, id) == value) {
+        return false;
+      } 
+      console.debug("Saving setting: " + id + " -> " + value);
+      return afrimesh.settings.save(id, value);
+    };
+    $("input.[id*=afrimesh|settings]").bind("blur", function(event) {
+        if (save_element(this.id, this.value)) {
+          populate_dom(); 
+          //reload_service($(this).closest("fieldset").attr("id"));
+        }
+      });
+    $("input.[id*=afrimesh|settings]").bind("keypress", function(event) {
+	      if (event.keyCode != 13) return true;
+        if (save_element(this.id, this.value)) {
+          populate_dom();
+        }
+        return false;
+      });
+    $("select.[id*=afrimesh|settings]").bind("change", function(event) { 
+        if (save_element(this.id, this.value)) {
+          //reload_service($(this).closest("fieldset").attr("id"));
+        } 
+    });
+    $("select.[id*=afrimesh|settings]").bind("blur", function(event) { 
+        if (save_element(this.id, this.value)) {
+          //reload_service($(this).closest("fieldset").attr("id"));
+        }
+    });
+    $("input.[id*=afrimesh|settings|network|mesh|vis_server]").bind("blur", function(event) { 
+        update_vis_server();
+      });
+    $("input.[id*=afrimesh|settings|network|mesh|accounting_server]").bind("blur", function(event) { 
+        update_accounting_server();
+      });
+    $("input.[id*=afrimesh|settings|map|server]").bind("blur", function(event) { 
+        update_map_server();
+      });
+    $("input.[id*=afrimesh|settings|radius|server]").bind("blur", function(event) { 
+        //update_radius_server();
+      });
+    $("input.[id*=afrimesh|settings|internet_gateway|address]").bind("blur", function(event) { 
+        populate_select_interface();
+      });
+    $("#geolocator").bind("click", function() {
+        update_location();
+      });
+
+    /** query internet gateway for network interfaces ---------------- */
+    populate_select_interface();
+
+    /** query vis server for availability ---------------------------- */
+    update_vis_server();
+
+    /** query accounting server for availability ---------------------------- */
+    update_accounting_server();
+
+    /** query map server for availability ---------------------------- */
+    update_map_server();
+
+     /** query RADIUS server and mysql database for availability ----- */
+    //update_radius_server();
+
+    return unload;
+  };
+
+  function unload() {
+    console.debug("unloaded utility.settings.html");
+  };
+
+  /** done ---------------------------------------------------------------- */
+  console.debug("loaded utility.settings.js");
+ 
+})();
+//]]></script>
+
+
