@@ -1,0 +1,7 @@
+bin/uci
+include/uci.h
+include/uci_config.h
+lib/libuci.a
+lib/libuci.so
+lib/libuci.so.0.6
+@dirrm etc/config

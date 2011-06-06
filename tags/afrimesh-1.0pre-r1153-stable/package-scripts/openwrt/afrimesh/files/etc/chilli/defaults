@@ -1,0 +1,30 @@
+HS_WANIF=gate0            # WAN Interface toward the Internet
+HS_LANIF=eth0             # Subscriber Interface for client devices
+HS_NETWORK=192.168.1.0/24        # HotSpot Network (must include HS_UAMLISTEN)
+HS_NETMASK=255.255.255.0   # HotSpot Network Netmask
+HS_UAMLISTEN=192.168.1.1      # HotSpot IP Address (on subscriber network)
+HS_UAMPORT=3990            # HotSpot Port (on subscriber network)
+HS_DNS1=192.168.20.5
+HS_NASID=nas01
+HS_UAMSECRET=theuamsecret
+HS_RADIUS=192.168.20.225
+HS_RADIUS2=192.168.20.225
+HS_ADMUSR=chillispot
+HS_ADMPWD=thechillispotsecret
+HS_RADSECRET=theradiussecret
+HS_UAMALLOW=192.168.1.0/24,192.168.20.0/24,10.0.0.0/8
+HS_UAMSERVER=192.168.1.1
+HS_UAMHOMEPAGE=http://\$HS_UAMLISTEN:\$HS_UAMPORT/www/coova.html
+HS_UAMFORMAT=http://\$HS_UAMSERVER:\$HS_UAMPORT/www/index.html
+HS_UAMSERVICE=http://192.168.20.225/cgi-bin/uam.pl
+HS_MODE=hotspot
+HS_TYPE=coovachilli
+
+HS_WWWDIR=/etc/chilli/www
+HS_WWWBIN=/etc/chilli/wwwsh
+HS_PROVIDER=Coova
+HS_PROVIDER_LINK=http://www.coova.org/
+HS_LOC_NAME="My HotSpot"           # WISPr Location Name and used in portal
+
+
+

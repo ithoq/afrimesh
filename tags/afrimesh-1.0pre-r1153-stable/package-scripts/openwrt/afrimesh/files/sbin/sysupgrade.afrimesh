@@ -1,0 +1,102 @@
+
+
+# 1. get combined image
+wget http://192.168.1.9/~antoine/firmware/openwrt-atheros-vmlinux.lzma
+wget http://192.168.1.9/~antoine/firmware/openwrt-atheros-vmlinux.gz
+wget http://192.168.1.9/~antoine/firmware/openwrt-atheros-root.jffs2-64k
+mtd write ./openwrt-atheros-vmlinux.lzma linux
+mtd write openwrt-atheros-vmlinux.gz linux
+mtd write ./openwrt-atheros-root.jffs2-64k rootfs
+
+
+# 2. check image checksum
+
+# 3. copy config files to /tmp
+
+# 4. flash images
+
+# 5. copy config files back
+
+~/Projects/afrimesh/combined-image.sh bin/openwrt-atheros-vmlinux.gz \
+                                      bin/openwrt-atheros-root.jffs2-64k \
+                                      bin/combined.img
+
+~/Projects/afrimesh/combined-image.sh \
+    bin.potato/openwrt-atheros-vmlinux.lzma  \
+    bin.potato/openwrt-atheros-root.squashfs \
+    bin.potato/combined.image
+
+sysupgrade http://192.168.1.9/~antoine/firmware/combined.img
+
+scp antoine@192.168.1.9:~/.ssh/id_rsa.pub /etc/dropbear/authorized_keys
+scp package/base-files/files/sbin/sysupgrade \
+    root@192.168.1.20:/sbin
+scp package/base-files/files/lib/upgrade/common.sh \
+    root@192.168.1.20:/lib/upgrade
+scp target/linux/atheros/base-files/lib/upgrade/platform.sh \
+    root@192.168.1.20:/lib/upgrade
+
+
+MERAKI
+------
+root@OpenWrt:/tmp# wget http://192.168.1.9/~antoine/firmware/combined.img
+Connecting to 192.168.1.9 (192.168.1.9:80)
+combined.img         100% |*******************************|  3840k 00:00:00 ETA
+root@OpenWrt:/tmp# sysupgrade ./combined.img 
+Saving config files...
+Switching to ramdisk...
+Performing system upgrade...
+Unlocking linux ...
+Unlocking rootfs ...
+Writing from <stdin> to linux ...     
+Writing from <stdin> to rootfs ...     
+Appending jffs2 data to from /tmp/sysupgrade.tgz to rootfs...
+Updating FIS table... 
+Rebooting ...
+Terminated
+
+
+POTATO
+root@OpenWrt:/tmp# sysupgrade combined.image 
+Image MD5:  9d4cc9e990fc1f7a8f9efeb859ddcef0
+Calc  MD5:  9d4cc9e990fc1f7a8f9efeb859ddcef0
+find: /etc/rc.local: No such file or directory
+Saving config files...
+-rw-r--r--    1 root     root         3496 Jan  1 00:01 /tmp/sysupgrade.tgz
+Switching to ramdisk...
+installing binaries
+installing mtd
+installing shell scripts
+switching
+remounting filesystems
+mount: mounting mini_fo:/jffs on /mnt failed: Function not implemented
+spawning new shell
+Performing system upgrade...
+doing the actual upgrade
+off we go: 
+dd if="combined.image" bs=65536 skip=1 count=11
+dd if="combined.image" bs=65536 skip=12 count=44
+mtd -j /tmp/sysupgrade.tgz -Fvmlinux.bin.l7:0x000b0000:0x80041000,rootfs write - vmlinux.bin.l7:rootfs
+
+Flashing kernel
+Unlocking vmlinux.bin.l7 ...
+Writing from <stdin> to vmlinux.bin.l7 ...  [w]11+0 records in
+11+0 records out
+[w]
+Flashing rootfs
+Unlocking rootfs ...
+Writing from <stdin> to rootfs ...  [w]44+0 records in
+44+0 records out
+[w]
+rebooted
+Refreshing partitions
+Standard
+Refreshing mtd partition rootfs ... 
+Restoring config
+Standard
+Unlocking rootfs_data ...
+Erasing rootfs_data ...
+Appending /tmp/sysupgrade.tgz to jffs2 partition rootfs_data
+Upgrade completed
+Rebooting system...
+@OpenWrt:/tmp# reboot
