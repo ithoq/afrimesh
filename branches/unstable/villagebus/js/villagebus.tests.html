@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+
+    <style>
+      body {
+        font-family: Helvetica, Verdana, Arial, Sans;
+      }
+    </style>
+
+    <script type="text/javascript"> 
+      document.addEventListener("DOMContentLoaded", function(event) {
+        console.log(document.readyState + " : " + event);
+
+        /* - session handling ------------------------------------------- */
+        villagebus.GET("/auth/session", function(error, session) {
+          if (error) {
+            $("form[name=login]").style.display = "block";
+            return $("#logout").innerHTML = error;
+          }
+          if (session.authorized) {
+            $("form[name=login]").style.display = "none";
+            $("#logout").style.display = "block";
+            $("#logout #username").innerHTML = session.username;
+            populate(session);
+          } else {
+            $("form[name=login]").style.display = "block";
+            $("#logout").style.display = "none";
+            populate(undefined);
+          }
+        });
+
+        /* - populate main page ----------------------------------------- */
+        function fail(error) {
+          $("#error").innerHTML = "Fail: " + error;
+        };
+
+        function populate(session) {
+          // following, followers
+          if (session) villagebus.GET("/profiles?userid=" + session.userid, function(error, profile) {
+            if (error) return fail(error);
+            console.log(profile);
+            profile.following.forEach(function(userid) {
+              var span = document.createElement("span");
+              span.innerHTML = userid + "&nbsp;";
+              $("#following").appendChild(span);
+            });
+            profile.followers.forEach(function(userid) {
+              var span = document.createElement("span");
+              span.innerHTML = userid + "&nbsp;";
+              $("#followers").appendChild(span);
+            });
+          });
+
+          // profiles
+          if (session) villagebus.GET("/profiles", function(error, profiles) {
+            if (error) return fail(error);
+            profiles.forEach(function(profile) {
+              var div = extend(document.createElement("div"), {
+                className : "profile",
+                style     : { "border-bottom" : "1px solid black" },
+                innerHTML : profile.userid + " " + profile.username + "&nbsp;" 
+              });
+              div.setAttribute("align", "left");
+              var span = extend(document.createElement("a"), { 
+                id        : profile.userid,
+                style     : { cursor : "pointer", color : "blue" },
+                innerHTML : "&nbsp;follow" 
+              });
+              span.onclick = function(event) {
+                villagebus.POST("/profiles/following", { userid : event.target.id }, function(error, reply) {
+                  if (error) return fail(error);
+                  console.log(reply);
+                  window.location.reload();
+                });
+              };
+              div.appendChild(span);
+              var span = extend(document.createElement("a"), { 
+                id        : profile.userid,
+                style     : { cursor : "pointer", color : "red" },
+                innerHTML : "&nbsp;unfollow" 
+              });
+              span.onclick = function(event) {
+                villagebus.DELETE("/profiles/following?userid=" + event.target.id, function(error, reply) {
+                  if (error) return fail(error);
+                  console.log(reply);
+                  window.location.reload();
+                });
+              };
+              div.appendChild(span);
+              $("#profiles").appendChild(div);
+            });
+          });
+
+          // messages
+          villagebus.GET("/pubsub", function(error, messages) {
+            console.log("MESSAGES: ");
+            console.log(messages);
+            if (error) return fail(error);
+            messages.forEach(function(message) {
+              var div = document.createElement("div");
+              div.className = "message";
+              div.style.border = "1px solid black";
+              div.style.margin = "5px";
+              div.style.padding = "5px";
+              div.setAttribute("align", "left");
+              //div.innerHTML = JSON.stringify(message);
+              var html = message.channel + ": <b>" + message.message + "</b><br/>";
+              if (message.image) {
+                html += "<img src='uploads/" + message.image + "' height='120'></img><br/>";
+              }
+              //html += JSON.stringify(message);
+              //console.log(html);      
+              div.innerHTML = html;
+              $("#messages").appendChild(div);
+            });
+          });
+        };
+
+
+        /* - Exercise villagebus ---------------------------------------- */
+        //var url  = "http://localhost/cgi-bin/villagebus.lua/provision/router/00:11:22:33:44:55?foo=bar";
+        var url = "/test/farmer/brown?ink=ank&ook=oink";
+        //var url = "/profiles?userid=1";
+        var data = { foo : "bar", plink : "plonk" };
+        $("#get").onclick = function() {
+          console.log("get");
+          var xhr = villagebus.GET(url, function(error, response) {
+            if (error) return $("#get").innerHTML = "Error: " + error;
+            $("#get").innerHTML = JSON.stringify(response);
+          });
+        };
+        $("#post").onclick = function() {
+          console.log("post");
+          var xhr = villagebus.POST(url, data, function(error, response) {
+            if (error) return $("#post").innerHTML = "Error: " + error;
+            $("#post").innerHTML = JSON.stringify(response);      
+          });
+        };
+        $("#put").onclick = function() {
+          console.log("put");
+          var xhr = villagebus.PUT(url, data, function(error, response) {
+            if (error) return $("#put").innerHTML = "Error: " + error;
+            $("#put").innerHTML = JSON.stringify(response);      
+          });
+        };
+
+        /* - login ------------------------------------------------------ */
+        //$("form[name=login]").submit(function() {
+        $("form[name=login]").addEventListener("submit", function(event) {
+          console.log(event.target.username.value);
+          console.log(event.target.password.value);
+          event.target.hash.value = hex_sha1(event.target.username.value + event.target.password.value);
+          event.target.password.value = "";
+          console.log(event.target.hash.value);
+          //event.stopPropagation();
+          //event.preventDefault();
+        }, false);
+
+        $("form[name=login] input[name=register]").addEventListener("click", function(event) {
+          console.log("register");
+          $("form[name=login]").style.display = "none";
+          $("form[name=register]").style.display = "block";
+          event.preventDefault();
+        }, false);
+
+        /* - register --------------------------------------------------- */
+        $("form[name=register]").addEventListener("submit", function(event) {
+          console.log(event.target.username.value);
+          console.log(event.target.password.value);
+          console.log(event.target.confirm.value);
+          if (event.target.password.value != event.target.confirm.value) {
+            event.preventDefault();
+            return $("form[name=register] #error").innerHTML = "passwords must match";
+          }
+          event.target.hash.value = hex_sha1(event.target.username.value + event.target.password.value);
+          console.log(event.target.hash.value);
+          event.target.password.value = "";
+          event.target.confirm.value  = "";
+          //event.preventDefault();
+        }, false);
+
+        /*$("form[name=publish]").addEventListener("submit", function(event) {
+          console.log(event.target.message.value);
+          event.preventDefault();
+        }, false);*/
+
+        return false;
+      }, false);
+      
+      // https://developer.mozilla.org/En/Code_snippets/QuerySelector
+      function $(selector, element)  {
+        return element ? element.querySelector(selector) 
+                       : document.querySelector(selector);
+      };
+
+    </script>
+    <script type="text/javascript" src="sha1-min.js"></script> <!-- http://pajhome.org.uk/crypt/md5/instructions.html  -->
+    <script type="text/javascript" src="villagebus.js"></script>
+  </head>
+  <body>
+    <div id="error"></div>
+
+    <form name="login" action="/auth/login" method="POST">
+      <input name="username" type="email" placeholder="email address" value="antoine@7degrees.co.za" required></input>
+      <input name="password" type="password" placeholder="password" value="r1t1f1m1" required></input>
+      <input name="hash" type="hidden" value=""></input>
+      <input type="submit" value="login"></input>
+      <input name="register" type="button" value="register"></input>
+    </form>
+    <span id="logout">
+      <a href="/auth/logout">logout </a>
+      <span id="username"></span>
+    </span>
+
+    <form name="register" action="/auth/register" method="POST" style="display:none;">
+      <input name="username" type="email"    placeholder="email address" required></input>
+      <input name="password" type="password" placeholder="password" required></input>
+      <input name="confirm"  type="password" placeholder="confirm password" required></input>      
+      <input name="hash" type="hidden" value=""></input>
+      <input type="submit" value="register"></input>
+      <span id="error"></span>
+    </form>
+
+    <form name="publish" action="/pubsub" method="POST" enctype="multipart/form-data">
+      <textarea name="message" cols="40" rows="5" autofocus></textarea><br/>
+      <input type="file" name="image"></input><br/>
+      <input type="submit"></input>
+    </form>
+
+    <div id="following">
+      <b>following</b>
+    </div>
+
+    <div id="followers">
+      <b>followers</b>
+    </div>
+
+    <div id="messages">
+      <h3>messages</h3>
+    </div>
+
+    <div id="profiles">
+      <h3>profiles</h3>
+    </div>
+
+
+    <div id="get">
+      <button>get</button>
+    </div>
+
+    <div id="post">
+      <button>post</button>
+    </div>
+
+    <div id="put">
+      <button>put</button>
+    </div>
+
+    <div id="delete">
+      <button>delete</button>
+    </div>
+
+    <div id="head">
+      <button>head</button>
+    </div>
+
+  </body>
+</html>

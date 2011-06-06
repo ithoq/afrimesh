@@ -1,0 +1,31 @@
+#!/bin/sh /etc/rc.common
+START=30
+
+
+start () {
+    # factory config
+
+    # local config
+    factory_root=$(uci get afrimesh.settings.root)
+
+    # configure router
+    uci set batmand.general.routing_class=1
+    uci set batmand.general.visualisation_srv=$factory_root
+    uci set system.@system[0].log_ip=$factory_root
+
+    # commit changes
+    uci commit
+  
+    # LuCI
+    #uci add_list lucid.luciweb.virtual=/village-bus
+    #uci commit
+    #/etc/init.d/lucid disable
+    #/etc/init.d/httpd enable
+
+    # permissions - TODO something a bit less extreme :)
+    chmod -R a+rw /etc/config
+
+    # cleanup
+    rm -rf /etc/init.d/runonce.villagetelco-device
+    rm -rf /etc/rc.d/S30runonce.villagetelco-device
+}

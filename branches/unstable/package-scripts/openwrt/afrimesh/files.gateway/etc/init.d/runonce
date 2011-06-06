@@ -1,0 +1,37 @@
+#!/bin/sh /etc/rc.common
+START=30
+
+start () {
+  # batman
+  #uci set batmand.general.gateway_class="100mbit"
+  #uci set batmand.general.visualisation_srv="10.130.1.1"
+  #uci commit
+  mv /etc/config/batmand.afrimesh-gateway /etc/config/batmand
+
+  # vis 
+  mv /etc/config/vis.afrimesh-gateway /etc/config/vis
+  mv /etc/init.d/vis.afrimesh-gateway /etc/init.d/vis
+  rm /etc/rc.d/S90vis.afrimesh-gateway
+
+  # firewall - TODO this is pretty ugly
+  mv /etc/config/firewall.afrimesh-gateway /etc/config/firewall
+  mv /etc/firewall.user.afrimesh-gateway   /etc/init.d/firewall
+  chmod 0755 /etc/init.d/firewall
+  
+  # pmacct
+  mv /etc/pmacctd.conf.afrimesh-gateway /etc/pmacctd.conf
+  /etc/init.d/pmacctd disable
+
+  # LuCI
+  #uci add_list lucid.luciweb.virtual=/village-bus
+  #uci commit
+  #/etc/init.d/lucid disable
+  #/etc/init.d/httpd enable
+
+  # permissions - TODO something a bit less extreme :)
+  chmod 0666 /etc/config/*
+
+  # cleanup
+  rm -rf /etc/init.d/runonce.afrimesh-gateway 
+  rm -rf /etc/rc.d/S30runonce.afrimesh-gateway
+}

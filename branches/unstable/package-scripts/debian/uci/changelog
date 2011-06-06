@@ -1,0 +1,42 @@
+uci (2010-09-28-1) lucid; urgency=low
+
+  * Bumped uci version
+  * Added liblua5.1-lua package spec for lua bindings
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Sat, 20 December 2010 16:00:00 +0200
+
+
+uci (0.7.5-5) lucid; urgency=low
+
+  * Switched to packaging for Lucid
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Sat, 24 July 2010 20:00:00 +0200
+
+
+uci (0.7.5-1) hardy; urgency=low
+
+  * Updated to new version
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Mon, 10 August 2009 20:30:00 +0200
+
+
+uci (0.7.3-3) hardy; urgency=low
+
+  * Packaging fixes
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Fri, 15 May 2009 21:43:00 +0200
+
+
+uci (0.7.3-2) hardy; urgency=low
+
+  * Patched Makefile to build properly under Ubuntu
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Fri, 15 May 2009 20:11:34 +0200
+
+
+uci (0.7.3-1) hardy; urgency=low
+
+  * Initial release
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Fri, 15 May 2009 18:15:56 +0200
+

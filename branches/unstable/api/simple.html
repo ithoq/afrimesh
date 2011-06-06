@@ -1,0 +1,71 @@
+<html>
+  <head>
+    <style>
+      body {
+        font-family: Helvetica, Verdana, Arial, Sans;
+      }
+    </style>
+    <script type="text/javascript" src="javascript/afrimesh.js"></script>
+    <script type="text/javascript">  //<![CDATA[    
+      afrimesh.ready(function() {
+        console.log("afrimesh ready");
+        $("div#topology button").click(hello_mesh);
+      });
+
+      // hello mesh
+      function hello_mesh() {
+
+        // afrimesh.settings.network.mesh.vis_server = "demo.afrimesh.org";
+
+        /**
+         * afrimesh.network.routers() requests a list of routers on the mesh
+         * 
+         * Usually we'd say something like this:
+         *
+         *   var routers = afrimesh.network.routers()
+         *   // do something to 'routers'
+         *
+         * However, most afrimesh API calls are querying the network for
+         * information which can take a long time and, most importantly,
+         * will result in the whole browser freezing while you're waiting
+         * for the call to return.
+         *
+         * For this reason, most afrimesh API calls follow a slightly 
+         * different style:
+         *
+         *   afrimesh.network.routers(function(error, routers) {
+         *       // do something to 'routers'
+         *     });
+         *
+         * If this makes no sense at all. DONT PANIC!!!
+         *
+         * What we did is really simple. Rather making our program
+         * wait around for afrimesh.network.routers() to do its
+         * job, we are giving afrimesh.network.routers() a function
+         * it must call when it finally has a list of routers!
+         *
+         * This way, the rest of the program can carry on without
+         * freezing up the browser.
+         */
+         afrimesh.network.routers(function(error, routers) { 
+          if (error) return $("div#topology").html("Error getting network devices list: " + error);
+          var html = "";
+          for (var n in routers) {
+            var router = routers[n];
+            html += router.address + "<br/>";
+          }
+          $("div#topology").html(html);
+        });
+      };
+    //]]></script>
+  </head>
+  <body>
+
+    <h1>Afrimesh API Sample</h1>
+
+    <div id="topology">
+      <button>mesh topology</button>
+    </div>
+
+  </body>
+</html>

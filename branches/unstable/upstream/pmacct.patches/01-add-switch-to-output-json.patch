@@ -1,0 +1,270 @@
+diff -Nuwarp pmacct-0.11.6/src/pmacct-defines.h pmacct-0.11.6.patched/src/pmacct-defines.h
+--- pmacct-0.11.6/src/pmacct-defines.h	2008-07-24 14:17:22.000000000 +0200
++++ pmacct-0.11.6.patched/src/pmacct-defines.h	2009-08-12 12:21:52.000000000 +0200
+@@ -23,7 +23,7 @@
+ #define ARGS_NFACCTD "n:dDhP:b:f:F:c:m:p:r:s:S:L:l:v:o:R"
+ #define ARGS_SFACCTD "n:dDhP:b:f:F:c:m:p:r:s:S:L:l:v:o:R"
+ #define ARGS_PMACCTD "n:NdDhP:b:f:F:c:i:I:m:p:r:s:S:v:o:wWL:"
+-#define ARGS_PMACCT "Ssc:Cetm:p:P:M:arN:n:lT:"
++#define ARGS_PMACCT "Ssc:Cetm:p:P:M:arN:n:lT:j"
+ #define N_PRIMITIVES 21
+ #define N_FUNCS 10 
+ #define MAX_N_PLUGINS 32
+diff -Nuwarp pmacct-0.11.6/src/pmacct.c pmacct-0.11.6.patched/src/pmacct.c
+--- pmacct-0.11.6/src/pmacct.c	2009-04-05 13:34:32.000000000 +0200
++++ pmacct-0.11.6.patched/src/pmacct.c	2009-08-12 12:21:52.000000000 +0200
+@@ -25,6 +25,8 @@
+ #include "pmacct.h"
+ #include "pmacct-data.h"
+ #include "imt_plugin.h"
++#include <stdio.h>
++#include <stdlib.h>
+ 
+ /* prototypes */
+ int Recv(int, unsigned char **);
+@@ -56,7 +58,8 @@ void usage_client(char *prog)
+   printf("%s\n", PMACCT_USAGE_HEADER);
+   printf("Usage: %s [query]\n\n", prog);
+   printf("Queries:\n");
+-  printf("  -s\tShow statistics\n"); 
++  printf("  -s\tShow statistics and print to file stat.json\n"); 
++  printf("  -j\tShow statistics in json format\n"); 
+   printf("  -N\t[matching data[';' ... ]] | ['file:'[filename]] \n\tMatch primitives; print counters only (requires -c)\n");
+   printf("  -n\t[bytes|packets|flows|all] \n\tSelect the counters to print (applies to -N)\n");
+   printf("  -S\tSum counters instead of returning a single counter for each request (applies to -N)\n");
+@@ -238,12 +241,12 @@ int main(int argc,char **argv)
+   int sd, buflen, unpacked, printed;
+   int counter=0, ct_idx=0, ct_num=0;
+ 
++  //src_mac,dst_mac,vlan,src_host,dst_host,src_net,dst_net,src_port,dst_port,proto,tos,src_as,dst_as,sum_mac,sum_host,sum_net,sum_as,sum_port,tag 
+   /* mrtg stuff */
+   char match_string[LARGEBUFLEN], *match_string_token, *match_string_ptr;
+   char count[128], *count_token[N_PRIMITIVES], *count_ptr;
+   int count_index = 0, match_string_index = 0, index = 0;
+   u_int32_t count_token_int[N_PRIMITIVES];
+-  
+   /* getopt() stuff */
+   extern char *optarg;
+   extern int optind, opterr, optopt;
+@@ -251,7 +254,7 @@ int main(int argc,char **argv)
+   int want_status, want_mrtg, want_counter, want_match, want_all_fields;
+   int which_counter, topN_counter, fetch_from_file, sum_counters, num_counters;
+   u_int32_t what_to_count, have_wtc, tmpnum;
+-
++  int want_json;
+   /* Administrativia */
+   memset(&q, 0, sizeof(struct query_header));
+   memset(&empty_addr, 0, sizeof(struct pkt_primitives));
+@@ -278,7 +281,7 @@ int main(int argc,char **argv)
+   fetch_from_file = FALSE;
+   what_to_count = FALSE;
+   have_wtc = FALSE;
+-
++  want_json = FALSE;
+   while (!errflag && ((cp = getopt(argc, argv, ARGS_PMACCT)) != -1)) {
+     switch (cp) {
+     case 's':
+@@ -287,6 +290,13 @@ int main(int argc,char **argv)
+       q.num = 1;
+       want_stats = TRUE;
+       break;
++    case 'j':
++      if (CHECK_Q_TYPE(q.type)) print_ex_options_error();
++      q.type |= WANT_STATS;
++      q.num = 1;
++      want_json = TRUE;
++      want_stats = TRUE;
++      break;
+     case 'c':
+       strlcpy(count, optarg, sizeof(count));
+       count_ptr = count;
+@@ -762,7 +772,7 @@ int main(int argc,char **argv)
+   send(sd, clibuf, buflen, 0);
+ 
+   /* reading results */ 
+-  if (want_stats || want_match) {
++  if(want_json && want_stats || want_match ){
+     unpacked = Recv(sd, &largebuf);
+     if (want_all_fields) have_wtc = FALSE; 
+     else have_wtc = TRUE; 
+@@ -796,18 +806,154 @@ int main(int argc,char **argv)
+       }
+     }
+ 
+-    write_stats_header(what_to_count, have_wtc);
+     elem = largebuf+sizeof(struct query_header);
+     unpacked -= sizeof(struct query_header);
+ 
+     acc_elem = (struct pkt_data *) elem;
+     if (topN_counter) client_counters_merge_sort(acc_elem, 0, unpacked/sizeof(struct pkt_data), topN_counter);
++    printf("[");
++    while (printed < unpacked) {
++      acc_elem = (struct pkt_data *) elem;
++      if (memcmp(&acc_elem, &empty_addr, sizeof(struct pkt_primitives)) != 0) {
++	printf("{");
++        if (!have_wtc || (what_to_count & COUNT_ID))
++	  {printf("\"ID\":\"%d\",", acc_elem->primitives.id);}
++        if (!have_wtc || (what_to_count & COUNT_CLASS))
++          printf("%-16s  ", (acc_elem->primitives.class == 0 || acc_elem->primitives.class > ct_idx ||
++		!class_table[acc_elem->primitives.class-1].id) ? "unknown" : class_table[acc_elem->primitives.class-1].protocol);
++#if defined (HAVE_L2)
++	if (!have_wtc || (what_to_count & (COUNT_SRC_MAC|COUNT_SUM_MAC))) {
++	  etheraddr_string(acc_elem->primitives.eth_shost, ethernet_address);
++	  printf("\"SRC_MAC\":\"%s\",", ethernet_address);
++	}
++
++	if (!have_wtc || (what_to_count & COUNT_DST_MAC)) {
++	  etheraddr_string(acc_elem->primitives.eth_dhost, ethernet_address);
++	  printf("\"DST_MAC\":\"%s\",", ethernet_address);
++	} 
++
++	if (!have_wtc || (what_to_count & COUNT_VLAN)) {
++          printf("\"VLAN\":\"%d\",", acc_elem->primitives.vlan_id);
++        }
++#endif
++	if (!have_wtc || (what_to_count & (COUNT_SRC_AS|COUNT_SUM_AS))) {
++          printf("\"SRC_AS\":\"%d\",", acc_elem->primitives.src_as);
++        }
++
++	if (!have_wtc || (what_to_count & COUNT_DST_AS)) {
++          printf("\"DST_AS\":\"%d\",", acc_elem->primitives.dst_as);
++        }
++
++	if (!have_wtc || (what_to_count & (COUNT_SRC_HOST|COUNT_SUM_HOST|
++					   COUNT_SRC_NET|COUNT_SUM_NET))) {
++	  addr_to_str(ip_address, &acc_elem->primitives.src_ip);
++#if defined ENABLE_IPV6
++	 printf("\"SRC_IP\":\"%s\",", ip_address);
++#else
++	 printf("\"SRC_IP\":\"%s\",", ip_address);
++#endif
++	}
++
++	if (!have_wtc || (what_to_count & (COUNT_DST_HOST|COUNT_DST_NET))) {
++	  addr_to_str(ip_address, &acc_elem->primitives.dst_ip);
++#if defined ENABLE_IPV6
++	  printf("\"DST_IP\":\"%s\",", ip_address);
++#else
++	  printf("\"DST_IP\":\"%s\",", ip_address);
++#endif
++	}
++
++	if (!have_wtc || (what_to_count & (COUNT_SRC_PORT|COUNT_SUM_PORT)))
++	 printf("\"SRC_PORT\":\"%d\",", acc_elem->primitives.src_port);
++
++	if (!have_wtc || (what_to_count & COUNT_DST_PORT))
++	  printf("\"DST_PORT\":\"%d\",", acc_elem->primitives.dst_port);
++
++	if (!have_wtc || (what_to_count & COUNT_TCPFLAGS))
++	  printf("\"TCP_FLAGS\":\"%d\",", acc_elem->tcp_flags);
++
++	if (!have_wtc || (what_to_count & COUNT_IP_PROTO)) {
++	  if (acc_elem->primitives.proto < protocols_number)
++	    {printf("\"PROTOCOL\":\"%s\",", _protocols[acc_elem->primitives.proto].name);}
++	  else{ printf("\"PROTOCOL\":\"%d\",",acc_elem->primitives.proto);}
++	}
++
++	if (!have_wtc || (what_to_count & COUNT_IP_TOS))
++	 printf("\"TOS\":\"%d\",",acc_elem->primitives.tos);
+ 
++#if defined HAVE_64BIT_COUNTERS
++	printf("\"PACKETS\":\"%llu\",", acc_elem->pkt_num);
++
++	if (!have_wtc || (what_to_count & COUNT_FLOWS))
++	  printf("\"FLOWS\":\"%llu\",", acc_elem->flo_num);
++
++	printf("\"BYTES\":\"%llu\"", acc_elem->pkt_len);
++#else
++        printf("\"PACKETS\":\"%lu\",", acc_elem->pkt_num);
++
++        if (!have_wtc || (what_to_count & COUNT_FLOWS))
++	  printf("\"FLOWS\":\"%lu\",", acc_elem->flo_num);
++
++        printf("\"BYTES\":\"%lu\"", acc_elem->pkt_len); 
++#endif
++        counter++;
++	
++      }
++      elem += sizeof(struct pkt_data);
++      printed += sizeof(struct pkt_data);
++      
++	if(printed == (unpacked))
++	printf("}");
++	else
++	printf("},");
++    }
++   printf("]");
++  }
++  else if (want_stats || want_match ) {
++    unpacked = Recv(sd, &largebuf);
++    if (want_all_fields) have_wtc = FALSE; 
++    else have_wtc = TRUE; 
++    what_to_count = ((struct query_header *)largebuf)->what_to_count;
++    if (check_data_sizes((struct query_header *)largebuf, acc_elem)) exit(1);
++
++    /* Before going on with the output, we need to retrieve the class strings
++       from the server */
++    if (what_to_count & COUNT_CLASS && !class_table) {
++      struct query_header qhdr;
++
++      memset(&qhdr, 0, sizeof(struct query_header));
++      qhdr.type = WANT_CLASS_TABLE;
++      qhdr.num = 1;
++
++      memcpy(clibuf, &qhdr, sizeof(struct query_header));
++      buflen = sizeof(struct query_header);
++      buflen++;
++      clibuf[buflen] = '\x4'; /* EOT */
++      buflen++;
++
++      sd = build_query_client(path);
++      send(sd, clibuf, buflen, 0);
++      Recv(sd, &ct); 
++      ct_num = ((struct query_header *)ct)->num;
++      elem = ct+sizeof(struct query_header);
++      class_table = (struct stripped_class *) elem;
++      while (ct_idx < ct_num) {
++	class_table[ct_idx].protocol[MAX_PROTOCOL_LEN-1] = '\0';
++        ct_idx++;
++      }
++    }
++
++    write_stats_header(what_to_count, have_wtc);
++    elem = largebuf+sizeof(struct query_header);
++    unpacked -= sizeof(struct query_header);
++
++    acc_elem = (struct pkt_data *) elem;
++    if (topN_counter) client_counters_merge_sort(acc_elem, 0, unpacked/sizeof(struct pkt_data), topN_counter);
+     while (printed < unpacked) {
+       acc_elem = (struct pkt_data *) elem;
+       if (memcmp(&acc_elem, &empty_addr, sizeof(struct pkt_primitives)) != 0) {
+         if (!have_wtc || (what_to_count & COUNT_ID))
+-	  printf("%-5d  ", acc_elem->primitives.id);
++	  {printf("%-5d  ", acc_elem->primitives.id);}
+         if (!have_wtc || (what_to_count & COUNT_CLASS))
+           printf("%-16s  ", (acc_elem->primitives.class == 0 || acc_elem->primitives.class > ct_idx ||
+ 		!class_table[acc_elem->primitives.class-1].id) ? "unknown" : class_table[acc_elem->primitives.class-1].protocol);
+@@ -887,9 +1033,12 @@ int main(int argc,char **argv)
+         printf("%lu\n", acc_elem->pkt_len); 
+ #endif
+         counter++;
++	
+       }
+       elem += sizeof(struct pkt_data);
+       printed += sizeof(struct pkt_data);
++      
++	
+     }
+     printf("\nFor a total of: %d entries\n", counter);
+   }
+diff -Nuwarp pmacct-0.11.6/src/stat.json pmacct-0.11.6.patched/src/stat.json
+--- pmacct-0.11.6/src/stat.json	1970-01-01 02:00:00.000000000 +0200
++++ pmacct-0.11.6.patched/src/stat.json	2009-08-12 12:21:52.000000000 +0200
+@@ -0,0 +1 @@
++[{"SRC_IP":"172.30.1.4","PACKETS":"13364","BYTES":"670598"},{"SRC_IP":"172.30.1.6","PACKETS":"10789","BYTES":"498724"},{"SRC_IP":"172.30.1.1","PACKETS":"12188","BYTES":"1824764"},{"SRC_IP":"172.30.1.3","PACKETS":"11119","BYTES":"692879"},{"SRC_IP":"172.30.1.2","PACKETS":"10846","BYTES":"589693"}]
+\ No newline at end of file
+diff -Nuwarp pmacct-0.11.6/src/test.rrd pmacct-0.11.6.patched/src/test.rrd
+--- pmacct-0.11.6/src/test.rrd	1970-01-01 02:00:00.000000000 +0200
++++ pmacct-0.11.6.patched/src/test.rrd	2009-08-12 12:21:52.000000000 +0200
+@@ -0,0 +1 @@
++

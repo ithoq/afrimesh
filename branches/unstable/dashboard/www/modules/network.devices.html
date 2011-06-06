@@ -1,0 +1,162 @@
+<!--
+ * Afrimesh: easy management for mesh networks
+ *  
+ * This software is licensed as free software under the terms of the
+ * New BSD License. See /LICENSE for more information.
+-->
+
+<!-- /* TODO - use the same caching mechanism as the map */
+     /* TODO - write the caching mechanism for the map - at what level? villagebus? higher? */ -->
+
+
+<div id="network-devices">
+
+  <!-- filter control -->
+  <table><tr>
+      <td><form class="filter">   
+          <input type="checkbox" id="servers" /> <label for="servers">Servers</label>
+          <!-- input type="checkbox" id="supernodes" /> <label for="supernodes">Supernodes</label -->
+          <input type="checkbox" id="gateways" /> <label for="gateways">Gateways</label>
+          <input type="checkbox" id="nodes" /> <label for="nodes">Nodes</label>
+      </form></td>
+      <!--td><div style="width: 100px;"></div></td>
+      <td><form class="filter">   
+          <input type="checkbox" id="score"  /> <label for="score">score</label>
+          <input type="checkbox" id="nexthop"/> <label for="nexthop">nexthop</label>
+          <input type="checkbox" id="gateway"/> <label for="gateway">gateway</label>
+      </form></td -->
+  </tr></table>
+  <hr/>
+
+  <!-- device list -->
+  <div class="scrollview" style="top:5.0em;">
+    <div id="devicelist" class="devices">
+      <!-- div class="head">
+        <span>Name</span>
+        <span>Uptime</span>
+        <span>Usage</span>
+        <span>Stats</span>
+      </div -->
+      <div id="device-template" class="device" style="display:none;">
+        <span class="name"></span> 
+        <span class="uptime"></span>
+        <span class="traffic"></span>
+        <span class="graph round-small">
+          <div style="font-size: 0.5em; width:inherit; height:20.0em; border:0px solid red;" id="graph"></div>
+        </span>
+      </div>
+    </div>
+  </div>
+
+</div> <!-- #network-devices -->
+
+
+<script type="text/javascript"> //<![CDATA[    
+(function() {
+
+  /** includes ---------------------------------------------------------- */
+  load("javascript/jquery/jquery.flot.min.js");
+  /* often a good idea:  load("modules/network.devices.js"); *;/
+
+  /** construction ------------------------------------------------------ */
+  ready = function() { // INJ 'ready' should be the only symbol we're exposing to the global namespace
+    /* often a good place to do this: populate_control(); */
+    console.debug("loaded network.devices.html");
+
+    /* Setup display filter */
+    $("div#network-devices .filter").mousedown(function(event) { return false; });
+    $("div#network-devices .filter input[type=checkbox]").hide().click(function(event) {
+        $(this).toggleClass("active");
+        $(this).next("label").toggleClass("active");
+        $(this).is(':checked') ? $(".device." + this.id).slideDown(100) : $(".device." + this.id).slideUp(100);
+      });
+    $("div#network-devices .filter label").addClass("round");
+    $("div#network-devices .filter input[type=checkbox]").each(function(e) { return $(this).click(); });
+
+
+    /* load data */   
+    afrimesh.network.status(function(error, address, device) {
+        if (error) {
+          return console.error("error: " + error); // TODO - Fail handler
+        }
+
+        // clone device template
+        var clone = $("#device-template").clone()
+                                         .attr("id", "device-" + address)
+                                         .appendTo("#devicelist").show();
+
+        // add data for device
+        clone.find(".name").html(address);
+        clone.find(".uptime").html(pretty_seconds(device.uptime));
+        clone.find(".traffic").html(pretty_bytes(device.bytes.tx + device.bytes.rx));
+
+        // add data series for plots - TODO move legend to outside div
+        afrimesh.device.interface.history(address, function(error, data) {
+            var score = data.map(function(entry) {
+                return [ entry.timestamp*1000, entry.gateways[0].score ];
+              });
+            var gateway = data.map(function(entry) {
+                return [ entry.timestamp*1000, -entry.gateways[0].ping.gateway ];
+              });
+            var nexthop = data.map(function(entry) {
+                return [ entry.timestamp*1000, -entry.gateways[0].ping.nexthop ];
+              });
+            console.log(address + " has " + score.length + " entries");
+            $.plot(clone.find("#graph"),                                 // - element --
+                   [ { label : "score",                                  // - data -----
+                       data  : score,   
+                       yaxis : 1,      
+                       bars  : { show : true, fill : true }, 
+                       lines : { show : false } },    
+                     { label : "nexthop", data : nexthop, yaxis: 2 },
+                     { label : "gateway", data : gateway, yaxis: 2 } ],
+                   { xaxis  : { mode       : "time" },                   // - options --
+                     yaxis  : { max : 255 },
+                     y2axis : { max : 0,
+                                tickFormatter : function(v, axis) { 
+                                    return Math.abs(v.toFixed(axis.tickDecimals)); } },
+                     y3axis : { },
+                     legend : { show     : true,
+                                position : "sw" },
+                     series : { lines  : { show      : true,
+                                           lineWidth : 1.0 }, 
+                                points : { show      : false },
+                                shadowSize : 0 },
+                     grid   : { show        : true,
+                                borderWidth : 1.0,
+                                labelMargin : 0.0,
+                                axisMargin  : 0.0  } });
+          }, { start : 0, end : 47 }); 
+      });
+
+    return unload;
+  };
+
+  function unload() {
+    clearTimeout(timer);
+    console.debug("unloaded network.devices.html");
+  };
+
+
+  /** populate control -------------------------------------------------- */
+  var timer = {};
+
+  function update() {
+    /* clearTimeout(timer); */
+
+    //populate_devices(routers); // TODO - update this view occasionally?
+
+    /* timer = setTimeout(update, 5000); */
+  };
+
+  function populate_devices(routers) {
+  };
+
+
+  /** done -------------------------------------------------------------- */
+  console.debug("loaded network.devices.js");
+ 
+})();
+//]]></script>
+
+

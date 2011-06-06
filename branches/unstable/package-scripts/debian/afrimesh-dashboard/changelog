@@ -1,0 +1,71 @@
+afrimesh-dashboard (1.0pre-r1100-1) lucid; urgency=low
+
+  * Misc Google maps bug fixes
+  * Added edge routing support for networks where the dashboard is not hosted on the mesh
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Fri, 03 December 2010 08:35:00 +0200
+
+
+afrimesh-dashboard (1.0pre-r1086-1) lucid; urgency=low
+
+  * Added support for Google street & hybrid maps w/ new option afrimesh.maps.google=1|0
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Mon, 29 November 2010 08:35:00 +0200
+
+
+afrimesh-dashboard (1.0pre-r1078-1) lucid; urgency=low
+
+  * Fixed ajax-proxy bug that mangled calls with no callback identifier.
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Thu, 28 October 2010 08:35:00 +0200
+
+
+afrimesh-dashboard (1.0pre-r1065-1) lucid; urgency=low
+
+  * Afrimesh VTE Server interim release.
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Sat, 24 October 2010 14:35:00 +0200
+
+
+afrimesh-dashboard (1.0pre-r965-1) lucid; urgency=low
+
+  * Afrimesh 1.0 pre-release package. Please don't redistribute!
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Sat, 31 July 2010 14:35:00 +0200
+
+
+afrimesh-dashboard (0.9-r766-1) hardy; urgency=low
+
+  * Minor packaging fixes
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Wed, 30 June 2010 20:32:00 +0200
+
+
+afrimesh-dashboard (0.9-r721-1) hardy; urgency=low
+
+  * Initial beta release of Afrimesh Network Management Dashboard for Ubuntu Linux
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Tue, 25 February 2010 23:35:00 +0200
+
+
+afrimesh-dashboard (0.9-r720-1) hardy; urgency=low
+
+  * release-candidate : *bump*
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Tue, 25 February 2010 23:30:00 +0200
+
+
+afrimesh-dashboard (0.9-r717-1) hardy; urgency=low
+
+  * release-candidate : *bump*
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Tue, 25 February 2010 23:30:00 +0200
+
+
+afrimesh-dashboard (0.9-r715-1) hardy; urgency=low
+
+  * release-candidate : *bump*
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Tue, 25 February 2010 20:30:00 +0200
+
+

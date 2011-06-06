@@ -1,0 +1,70 @@
+<!--
+ * Afrimesh: easy management for B.A.T.M.A.N. wireless mesh networks
+ * Copyright (C) 2008-2009 Meraka Institute of the CSIR
+ * All rights reserved.
+ *  
+ * This software is licensed as free software under the terms of the
+ * New BSD License. See /LICENSE for more information.
+-->
+
+<h2>Customer Status</h2>
+
+
+<div id="widget-customers-status" class="widget customers-status">please wait a moment...</div>
+
+
+<script type="text/javascript"> //<![CDATA[    
+(function() {
+
+  /** includes ------------------------------------------------------------ */
+  load("javascript/jquery/jquery.tablesorter.min.js");
+
+
+  /** construction -------------------------------------------------------- */
+  ready = function() { 
+    populate_control();
+    console.debug("loaded customers.status.html");
+    return unload;
+  };
+
+  function unload() {
+    console.debug("unloaded customers.status.html");
+  };
+
+
+  /** populate control ---------------------------------------------------- */
+  function populate_control() {
+    afrimesh.customers.status(function(error, customers) {
+        if (error) {
+          return console.error("Could not query customer status: " + error);
+        }
+        var s = "<table>";
+        s += "<thead><tr><th>login</th><th>credit</th><th>station</th><th>status</th></tr></thead>";
+        s += "<tbody>";
+        customers.map(function(customer) {
+            // for (property in customer) { console.log(property + " : " + customer[property]; }
+            s += "<tr class='" + customer.type + "'>";
+            s += "<td class='name'>" + customer.username + "</td>";
+            s += "<td>unlimited</td>";
+            s += "<td>" + customer.caller_id + "</td>";
+            s += "<td>" + ((customer.type == "login") ? "logged in" : "idle");
+            s += " for " + Math.floor(customer.session_time / 60)  + " minutes</td>";
+            s += "</tr>";
+          });
+        s += "</tbody>";
+        s += "</table>";
+        s += "<br/>";
+        $("div#widget-customers-status").html(s);
+        $("div#widget-customers-status table").tablesorter(); 
+      });
+  };
+
+
+
+  /** done ---------------------------------------------------------------- */
+  console.debug("loaded customers.status.js");
+ 
+})();
+//]]></script>
+
+
