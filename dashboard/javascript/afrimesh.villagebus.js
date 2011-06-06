@@ -1,7 +1,5 @@
 /*
- * Afrimesh: easy management for B.A.T.M.A.N. wireless mesh networks
- * Copyright (C) 2008-2009 Meraka Institute of the CSIR
- * All rights reserved.
+ * Afrimesh: easy management for mesh networks
  *  
  * This software is licensed as free software under the terms of the
  * New BSD License. See /LICENSE for more information.
@@ -9,6 +7,7 @@
 
 
 /**
+ * @namespace
  * All interaction with external systems, both local and on the network
  * occur via the VillageBus
  *
@@ -25,11 +24,306 @@ var BootVillageBus = function (afrimesh) {
     for (var p in this) { if (p != "prototype") ret.push(p); }
     return ret;
   };
-  villagebus.ajax_proxy = function() { 
-    return "http://" + afrimesh.settings.address + afrimesh.settings.ajax_proxy; 
+
+  /** - ajax_proxy ------------------------------------------------------ */
+  villagebus.ajax_proxy = function(prefix) { 
+    console.log("EDGE: " + afrimesh.settings.edge);
+    // edge_proxy : "/http/192.168.20.108/cgi-bin/villagebus.lua"
+    var edge_proxy = afrimesh.settings.edge ? "/http/" + afrimesh.settings.edge + "/cgi-bin/villagebus.lua" 
+                                            : "";  
+    return prefix + afrimesh.settings.address + afrimesh.settings.ajax_proxy + edge_proxy; 
   };
 
-  /** - villagebus.login --------------------------------------------------------- */
+  /** - villagebus.api -------------------------------------------------- */
+
+  /* Either this:
+  var name     = afrimesh.villagebus.Name("/@self/db/keys/status");
+  var channel  = afrimesh.villagebus.GET(name, "*");
+  var response = afrimesh.villagebus.Read(channel);
+  if (afrimesh.villagebus.Fail(response)) return console.log(response.error);
+  for (key in response) {
+    // dadadada
+  }
+
+  // Or this:
+  var name = afrimesh.villagebus.Name("/@self/db/keys/status");
+  name = Bind(name, function(error, response) {
+      if (error) return console.log(error);
+      for (key in response) { // dadadadada }
+      return response;
+    });
+  var channel = afrimesh.villagebus.GET(name, "*");
+  var response = Read(channel); */ 
+
+  /* TODO - A short note on the use of ajax_proxy below:
+       I'm applying proxy universally for purposes of the SteveDemo
+       as there's not necesarily routing between the mesh, the dashboard
+       and the viewer.
+       What needs to happen here in future is that we should _ONLY_
+       be proxying if an address below is not directly accessible from 
+       the browser. HOW to do that is utterly beyond me right now but
+       I'm sure there's a nice solution. 
+       Also see the work I'm going to be doing w/ Keith & the CloudBoard
+     */
+  function proxy(host, path) {
+    var url = "/" + host + path;
+    if (host != afrimesh.settings.address) {  // address may or may not be routable - TODO we vant to be sure!
+      return afrimesh.villagebus.ajax_proxy("/") + "/http" + url;
+    }
+    return url;
+  };
+  villagebus.Name = function(name) {
+    console.log("name: " + name);
+    name = name.split('/').map(function(node) {   // perform path transformations for network locations
+      if (node == "@root") {
+        //return "/" + afrimesh.settings.root + "/cgi-bin/villagebus";
+        return proxy(afrimesh.settings.root, "/cgi-bin/villagebus");
+      } else if (node == "@self") {
+        return "/" + afrimesh.settings.address + "/cgi-bin/villagebus"; 
+      } else if (node == "@redis") {
+        console.log("REDIS IS AT: " + afrimesh.settings.redis_server + " (" + afrimesh.settings.address + ") ");
+        return proxy(afrimesh.settings.redis_server, "/cgi-bin/villagebus");
+      } else if (node == "@topology") {
+        //return "/" + afrimesh.settings.network.mesh.vis_server + ":2005";  
+        return proxy(afrimesh.settings.network.mesh.vis_server, ":2005");
+      } else if (node == "@pmacct") {
+        //return "/" + afrimesh.settings.network.mesh.accounting_server + "/cgi-bin/villagebus";  
+        return proxy(afrimesh.settings.network.mesh.accounting_server, "/cgi-bin/villagebus");
+      } else if (node == "@radius") {
+        //return "/" + afrimesh.settings.radius.server + "/cgi-bin/village-bus-radius";
+        return proxy(afrimesh.settings.radius.server, "/cgi-bin/village-bus-radius");
+      } else if (node == "@a3glue") {
+        // TODO afrimesh.settings.servers.a3glue
+        return proxy(afrimesh.settings.address, "/a3glue");
+        //return proxy(afrimesh.settings.address, "/plink");
+      } else if (node[0] == '@') {
+        //return "/" + node.substring(1) + "/cgi-bin/villagebus"; 
+        return proxy(node.substring(1), "/cgi-bin/villagebus");
+      }
+      return node;
+    }).join('/');
+    console.log("txlate: " + name);
+    name = {
+      async       : true,
+      type        : "GET",
+      url         : "http:" + name, 
+      contentType : "application/json",
+      //contentType : "application/x-javascript",
+      dataType    : "jsonp",
+      context     : document.body,
+      success     : function(response) { return response; }, // TODO - default sync handler
+      error       : function(response) { return response; }, // TODO - default sync handler
+      complete    : function() { },
+      beforeSend  : function() { }
+    };
+    name.continuations = [];
+    return name;
+  };
+  
+  /**
+   * Bind name to a continuation
+   * @name Bind
+   * @function
+   */
+  villagebus.Bind = function(name, continuation) { // TODO -> Bind(name1, name2)
+    if (isString(name)) {
+      name = villagebus.Name(name);
+    }
+    name.continuations.push(continuation);
+    //name.complete = function() { console.log("COMPLETE " + name.url); };
+    name.success = function(response) {
+      if (villagebus.Fail(response)) {
+        console.error("VBUS.FAIL " + response.error + " " + name.url);
+        return continuation(response.error, null);
+      }
+      name._response_ = response;
+      return continuation(null, response);
+    };
+    name.error = function(response) {
+      console.error("VBUS.XHR-ERROR " + response + " " + name.url);
+      return continuation(response, null);
+    };
+    return name;
+  };
+
+  villagebus.Send = function(name, args) {
+    console.log("VBUS." + name.type + " " + name.url);
+    // TODO - if there are no continuations bound to name configure a
+    //        sync JSON request so that we can block on read.
+    if (name.continuations.length == 0) {
+      console.log("No continuations registered. Converting " + name.url + " to Sync JSON call (" + name.dataType + ")");
+      name.async = false;            // convert to SYNC call
+      if (name.dataType != "text") { // don't convert from JSONP if it's already a JSON call
+        name = jsonp_to_json(name, args); 
+      }
+      return name;
+    }
+    if (args) {
+      var search = "?";
+      for (var arg in args) {
+        if (search.length > 1) {
+          search += "&";
+        }
+        search += arg + "=" + args[arg];
+      }
+      name.url += search;
+    }
+    name.beforeSend(); // Grf. jQuery does not trigger beforeSend for jsonp calls
+    name._xhr_ = $.ajax(name);
+    return name;
+  };
+
+  villagebus.GET = function(name, args) {
+    name.type = "GET";
+    return villagebus.Send(name, args);
+  };
+
+  villagebus.PUT = function(name, data, args, raw) {
+    name      = jsonp_to_json(name, data, raw);
+    name.type = "PUT";
+    return villagebus.Send(name, args);
+  };
+
+  villagebus.POST = function(name, data, args, raw) {
+    name      = jsonp_to_json(name, data, raw);
+    name.type = "POST";
+    return villagebus.Send(name, args);
+  };
+
+  villagebus.DELETE = function(name, args, raw) {
+    name      = jsonp_to_json(name, null, raw);
+    name.type = "DELETE";
+    return villagebus.Send(name, args);
+  };
+
+  // jsonp does not support POST so we need to adjust our strategy to use JSON 
+  function jsonp_to_json(name, data, raw) {
+    if (data) {
+      name.data     = JSON.stringify(data);
+    } 
+    name.dataType = "text";
+    var success = name.success; 
+    name.success = function(response) {
+      try {
+        if (raw) {
+          name._response_ = eval(response);
+          return success(name._response_);
+        } 
+        function jsonp(payload) { // handle a jsonp reply
+          name._response_ = payload;
+          return success(name._response_);
+        };
+        eval(response); // evaluates jsonp reply and calls ^^^^^^^
+      } catch (fail) { 
+        return success({ error : fail }); // call original success fn
+      }
+    };
+    if (parseURL(name.url).hostname != afrimesh.settings.address) {
+      var proxy = afrimesh.villagebus.ajax_proxy("http://");
+      console.log("JSONP_TO_JSON IS PROXYING: " + name.url);
+      if (name.url.indexOf(proxy) == 0) {
+        console.log("JSONP_TO_JSON HOWEVER CHANGED ITS MIND");
+      } else {
+        name.url = proxy + name.url;
+        console.log("JSONP_TO_JSON SUBSEQUENTLY PRODUCED: " + name.url);
+      }
+    } else {
+      console.log("JSONP_TO_JSON IS FEELING NO NEED TO PROXY: " + name.url);
+    }
+    return name;
+  };
+  villagebus.jsonp_to_json = jsonp_to_json; // export it - TODO - better Naming please
+
+
+  /**
+   * Intended semantics is that calling Read() on an async request will 
+   * block until call returns. In practice, there's no way to block on 
+   * an async request w/ Browser JS. :-/
+   *
+   * What we're doing at the moment is to reconfigure the request as a
+   * sync JSON call (via ajax-proxy as needed)
+   *
+   * Best bet would prob. be to use Web Workers to manage XHR execution. 
+   * WebKit and Gecko both support so mayhap 'tis time to just do it.
+   *
+   *   See: http://caniuse.com/#feat=webworkers
+   *        http://html5test.com
+   */
+  villagebus.Read = function(name) {
+    name._xhr_ = $.ajax(name);
+    return name._response_;
+  };
+  
+  /**
+   * Check for a response of type: { 'error' : 'some message' }
+   */
+  villagebus.Fail = function(response) { 
+    //console.log("Is this an error: " + show(response) + response.hasOwnProperty("error"));
+    return (response ? response.hasOwnProperty("error") : response);
+  };
+
+
+
+  /** - VillageBus Message Queue ---------------------------------------- */
+  
+  villagebus.mq = {};
+
+  // notify continuation whenever new message(s) are available in the queue
+  villagebus.mq.Bind = function(name, continuation, rate) {
+    var queue = "/@self/db/keys/message:" + name;
+    continuation.mq       = { };
+    continuation.mq.timer = undefined;
+    continuation.mq.cache = { };
+    name = (function poll(name, continuation, rate) {
+      name = afrimesh.villagebus.Bind(queue, function(error, response) {
+        if (error) return continuation(error, null);  
+        if (!response) return; // empty queue
+        response.map(function(message) {
+          if (continuation.mq.cache[message]) { // has this continuation received this message yet?          
+            return continuation.mq.cache[message];
+          } 
+          continuation.mq.cache[message] = true;
+          return afrimesh.villagebus.GET(afrimesh.villagebus.Bind("/@self/db/" + message, continuation));
+        });
+      });
+      name = afrimesh.villagebus.GET(name);
+      continuation.mq.timer = setTimeout(function() {
+        poll(name, continuation, rate);
+      }, (rate ? rate : 60000));
+      return name;
+    })(name, continuation, rate);
+    return continuation;
+  };
+
+  // delete message(s) from the queue
+  // TODO - notify everyone subscribed to the queue
+  // e.g. del message:device:<mac>:provision
+  villagebus.mq.DELETE = function(name, continuation, queue) {
+    name = "message:" + name;
+    if (queue && queue.mq && queue.mq.cache) {
+      queue.mq.cache[name] = false;
+    }
+    name = afrimesh.villagebus.Bind("/@self/db/" + name, continuation);
+    return afrimesh.villagebus.DELETE(name);  
+  };
+
+  // stop notifying the continuation - TODO support multiple queues on continuations?
+  villagebus.mq.Unbind = function(continuation) {
+    console.log("UNBINDING: " + name);
+    clearTimeout(name.mq.timer);
+    name.mq.cache = {};
+    return name;
+  };  
+
+  // add a new message to the queue
+  villagebus.mq.POST = function(name, message, continuation) {
+  };
+
+  
+
+
+
+  /** - villagebus.login ------------------------------------------------ */
   // TODO - support multiple authentication mechanisms e.g.  luci, htaccess, cert, ldap etc.
   villagebus.login = function(username, password, continuation, error) {
     return this.login.async(username, password, continuation, error);
@@ -50,430 +344,17 @@ var BootVillageBus = function (afrimesh) {
       }, error); 
   };
   
-  /** - villagebus.mesh_topology ------------------------------------------------- */
-  villagebus.mesh_topology       = function()  { return this.mesh_topology.vis();};
-  villagebus.mesh_topology.vis   = function()  { 
-    return this.vis.sync(); 
-  }; 
-  villagebus.mesh_topology.async = function(f) {
-    return this.vis.async(f);
-  };
 
-  villagebus.mesh_topology.vis.url  = function() { 
-    if (afrimesh.settings.network.mesh.vis_server == afrimesh.settings.address) {
-      return "http://" + afrimesh.settings.address + ":2005"; 
-    }
-    return villagebus.ajax_proxy() + "http://" + afrimesh.settings.network.mesh.vis_server + ":2005"; 
-    //return "http://" + afrimesh.settings.network.mesh.vis_server + ":2005?callback=foo"; 
-  };
+  /** - JSON/RPC helper functions --------------------------------------- */
   
-  villagebus.mesh_topology.vis.async = function(handler) { 
-    var xml = make_json_request({
-        url     : this.url(),
-        request : {},
-        success : handler,
-        async   : true });
-    return xml;
-  };
-  villagebus.mesh_topology.vis.poll = function(f, frequency) {   
-    this.async(f);
-    setTimeout(function() { afrimesh.villagebus.mesh_topology.vis.poll(f, frequency); }, 
-               frequency);
-  };
-  villagebus.mesh_topology.vis.sync = function() { 
-    var handler  = function(data) { 
-      handler.response = data;  
-    };
-    return make_json_request({
-        url     : this.url(),
-        request : {},
-        success : handler,
-        async   : false });
-  };
-
-  /** - villagebus.geolocation ------------------------------------------- */
-  villagebus.geolocation = function (address, f) {
-    // TODO - cheap'n'very nasty hack for demos - remove before 1.0 release.
-    if (afrimesh.settings.network.mesh.vis_server == demo_server) {
-      address = afrimesh.settings.network.mesh.vis_server + afrimesh.settings.ajax_proxy + "http://" + address;
-    } 
-    villagebus.uci.get.async(function (config) {
-        f(config.afrimesh.location.longitude, config.afrimesh.location.latitude);
-      }, address, "afrimesh.location");
-  };
-  villagebus.geolocation.set = function (address, longitude, latitude, f) {
-    /* - invariably folk will think that the demo dashboard is their network and try to change
-         it! So disable setting of node positions.
-    if (afrimesh.settings.network.mesh.vis_server == demo_server) {
-      address = afrimesh.settings.network.mesh.vis_server + afrimesh.settings.ajax_proxy + "http://" + address;
-    } */
-    afrimesh.villagebus.uci.set.async(function (response) {
-        f("success");
-      }, address, 
-      [ { config: "afrimesh", section: "location", option: "longitude", value: longitude.toString() }, 
-        { config: "afrimesh", section: "location", option: "latitude",  value: latitude.toString()  } ]);
-  };
+  // only used for LuCI login - to be deprecated!
   
-
-  /** - villagebus.acct -------------------------------------------------- */
-  villagebus.acct = { }; 
-  villagebus.acct.url  = function() { 
-    if (afrimesh.settings.network.mesh.accounting_server == afrimesh.settings.address) {
-      return "http://" + afrimesh.settings.address + "/cgi-bin/village-bus/acct";
-    }
-    return afrimesh.villagebus.ajax_proxy() + "http://" + afrimesh.settings.network.mesh.accounting_server + "/cgi-bin/village-bus/acct";
-  };
-  villagebus.acct.gateway = function() { return villagebus.acct.gateway.sync(); }
-  villagebus.acct.gateway.sync  = function()  { return rpc(villagebus.acct.url(), "gateway", []); }
-  villagebus.acct.gateway.async = function(f) { return rpc_async(villagebus.acct.url(), "gateway", [], f); }
-
-  /** - villagebus.radius ------------------------------------------------- */
-  // TODO - refactor into rpc* and finally drop make_*_handler && make_*_request
-  villagebus.radius        = function(callback) { return villagebus.radius.who(); };
-  villagebus.radius.url    = function() {
-    if (afrimesh.settings.radius.server == afrimesh.settings.address) {
-      return "http://" + afrimesh.settings.radius.server + "/cgi-bin/village-bus-radius";
-    }
-    return villagebus.ajax_proxy() + "http://" + afrimesh.settings.radius.server + "/cgi-bin/village-bus-radius";
-  };
-  villagebus.radius.who = function(callback) { 
-    return (callback ? villagebus.radius.who.async(callback) 
-                     : villagebus.radius.who.sync()); 
-  };
-  villagebus.radius.select = function(callback) { 
-    return (callback ? villagebus.radius.select.async(callback) 
-                     : villagebus.radius.select.sync()); 
-  };
-  villagebus.radius.insert = function(username, type, seconds, callback) { 
-    return (callback ? villagebus.radius.insert.async(username, type, seconds, callback)
-                     : villagebus.radius.insert.sync(username, type, seconds)); 
-  };
-  villagebus.radius.remove = function(username, callback) { 
-    return (callback ? villagebus.radius.remove.async(username, callback)
-                     : villagebus.radius.remove.sync(username)); 
-  };
-  villagebus.radius.update = function(username, new_username, new_password, new_type, callback) { 
-    return (callback ? villagebus.radius.update.async(username, new_username, new_password, new_type, callback) 
-                     : villagebus.radius.update.sync(username, new_username, new_password, new_type)); 
-  };
-
-  villagebus.radius.who.sync = function() {
-    var handler = function(data) { handler.response = data; }; // TODO - extend sync handler to handle array data
-    return make_json_request({
-        url     : villagebus.radius.url(),
-        request : { package  : "radius",
-                    command  : "who" },
-        success : handler,
-        async   : false });
-  };
-  villagebus.radius.async_helper = function(request, callback) {
-    return make_json_request({
-        url     : villagebus.radius.url(),
-        request : request,
-        error   : function(err)  { callback(err);        },
-        success : function(data) { callback(null, data); },
-        async   : true });
-  };
-  villagebus.radius.who.async = function(callback) {
-    return villagebus.radius.async_helper({ package  : "radius", command  : "who" }, 
-                                          callback);
-  };
-  villagebus.radius.select.sync = function() {
-    var handler = function(data) { handler.response = data; }; // TODO - extend sync handler to handle array data
-    return make_json_request({
-        url     : villagebus.radius.url(),
-        request : { package : "radius",
-                    command : "list" },
-        success : handler,
-        async   : false });
-  };
-  villagebus.radius.select.async = function(callback) {
-    return villagebus.radius.async_helper({ package  : "radius", command  : "list" }, 
-                                          callback);
-  };
-  villagebus.radius.insert.sync = function(username, type, seconds) {
-    return make_json_request({
-        url     : villagebus.radius.url(),
-        request : { package  : "radius",
-                    command  : "new",
-                    username : username,
-                    type     : type,
-                    seconds  : seconds },  
-        success : make_sync_response_handler(villagebus.radius.url(), "villagebus.radius.insert"),
-        async   : false });
-  };
-  villagebus.radius.insert.async = function(username, type, seconds, callback) {
-    return villagebus.radius.async_helper({ package  : "radius", command  : "new",
-                                            username : username, 
-                                            type     : type, 
-                                            seconds  : seconds }, 
-                                          callback);
-  };
-  villagebus.radius.update.sync = function(username, new_username, new_password, new_type) {
-    return make_json_request({
-        url     : villagebus.radius.url(),
-        request : { package      : "radius",
-                    command      : "modify",
-                    username     : username,
-                    new_username : new_username,
-                    new_password : new_password,
-                    new_type     : new_type },
-        success : make_sync_response_handler(villagebus.radius.url(), "villagebus.radius.update"),
-        async   : false });
-  };
-  villagebus.radius.update.async = function(username, new_username, new_password, new_type, callback) {
-    return villagebus.radius.async_helper({ package  : "radius", command  : "modify",
-                                            username     : username, 
-                                            new_username : new_username, 
-                                            new_password : new_password, 
-                                            new_type     : new_type }, 
-                                          callback);
-  };
-  villagebus.radius.remove.sync = function(username) {
-    return make_json_request({
-        url     : villagebus.radius.url(),
-        request : { package  : "radius",
-                    command  : "delete",
-                    username : username },
-        success : make_sync_response_handler(villagebus.radius.url(), "villagebus.radius.remove"),
-        async   : false });
-  };
-  villagebus.radius.remove.async = function(username, callback) {
-    return villagebus.radius.async_helper({ package  : "radius", command  : "delete",
-                                            username : username }, 
-                                          callback);
-  };
-
-
-  /** - villagebus.snmp --------------------------------------------------- */
-  // snmpwalk -v 2c -c public 196.211.3.106 SysDescr
-  villagebus.snmp = function(address, community, oids) {
-    return villagebus.snmp.get(address, community, oids);
-  };
-
-  villagebus.snmp.get = function(address, community, oids) {
-    return villagebus.snmp.sync("get", address, community, oids);
-  };
-
-  villagebus.snmp.get.async = function(f, address, community, oids) {
-    return villagebus.snmp.async(f, "get", address, community, oids);
-  };
-
-  villagebus.snmp.walk = function(address, community, oid) {
-    return villagebus.snmp.sync("walk", address, community, oid);
-  };
-
-  villagebus.snmp.walk.async = function(f, address, community, oid) {
-    return villagebus.snmp.async(f, "walk", address, community, oid);
-  };
-
-  // will always use the machine being viewed for the snmp service
-  // if snmp is not supported on that machine, use another one!
-  villagebus.snmp.url = function() {
-    return "http://" + afrimesh.settings.address + "/cgi-bin/village-bus/snmp";
-  };
-
-  villagebus.snmp.poll = function(f, frequency, address, community, oids) {
-    // TODO
-  };
-
-  villagebus.snmp.sync = function(command, address, community, oids) {
-    return rpc(this.url(), command, [address, community, oids]);
-  };
-
-  villagebus.snmp.async = function(f, command, address, community, oids) {
-    return rpc_async(this.url(), command, [address, community, oids], f); 
-  };
-
-
-  /** - villagebus.sys ---------------------------------------------------- */
-  villagebus.sys = function(address) {
-    return { uname : "", syslog : "", version : "" };
-  };
-  villagebus.sys.url = function(address) { 
-    if (address == afrimesh.settings.address) {
-      return "http://" + address + "/cgi-bin/village-bus/sys";
-    }
-    return afrimesh.villagebus.ajax_proxy() + "http://" + address + "/cgi-bin/village-bus/sys";
-  };
-  villagebus.sys.uname = function(address) { return villagebus.sys.uname.sync(address); };
-  villagebus.sys.uname.sync  = function(address)    { return rpc(villagebus.sys.url(address), "uname", []); };
-  villagebus.sys.uname.async = function(f, address) { return rpc_async(villagebus.sys.url(address), "uname", [], f); };  
-  villagebus.sys.version = function(address) { return villagebus.sys.version.sync(address); };
-  villagebus.sys.version.sync  = function(address)    { return rpc(villagebus.sys.url(address), "version", []); };
-  villagebus.sys.version.async = function(f, address) { return rpc_async(villagebus.sys.url(address), "version", [], f); };  
-  villagebus.sys.service = function(address, service, command)       { return villagebus.sys.service.sync(address, service, command); };
-  villagebus.sys.service.sync  = function(address, name, command)    { return rpc(villagebus.sys.url(address), "service", [ name, command ]); };
-  villagebus.sys.service.async = function(f, address, name, command) { return rpc_async(villagebus.sys.url(address), "service", [ name, command ], f); };  
-
-  /** - villagebus.ipkg --------------------------------------------------- */
-  villagebus.ipkg = function(address) {
-    return { update : "", list : "", status : "", upgrade : "" };
-  };
-  villagebus.ipkg.url = function(address) { 
-    if (address == afrimesh.settings.address) {
-      return "http://" + address + "/cgi-bin/village-bus/ipkg";
-    }
-    return afrimesh.villagebus.ajax_proxy() + "http://" + address + "/cgi-bin/village-bus/ipkg";
-  };
-  villagebus.ipkg.update       = function(address) { return villagebus.ipkg.update.sync(address); };
-  villagebus.ipkg.update.sync  = function(address) { return rpc(villagebus.ipkg.url(address), "update", []); };
-  villagebus.ipkg.update.async = function(f, address) { return rpc_async(villagebus.ipkg.url(address), "update", [], f); };
-
-  villagebus.ipkg.list       = function(address) { return villagebus.ipkg.list.sync(address); };
-  villagebus.ipkg.list.sync  = function(address) { return rpc(villagebus.ipkg.url(address), "list", []); };
-  villagebus.ipkg.list.async = function(f, address) { return rpc_async(villagebus.ipkg.url(address), "list", [], f); };
-
-  villagebus.ipkg.status       = function(address) { return villagebus.ipkg.status.sync(address); };
-  villagebus.ipkg.status.sync  = function(address) { return rpc(villagebus.ipkg.url(address), "status", []); };
-  villagebus.ipkg.status.async = function(f, address) { return rpc_async(villagebus.ipkg.url(address), "status", [], f); };
-
-  villagebus.ipkg.upgrade       = function(address, pkgname) { return villagebus.ipkg.upgrade.sync(address, pkgname); };
-  villagebus.ipkg.upgrade.sync  = function(address, pkgname) { return rpc(villagebus.ipkg.url(address), "upgrade", [pkgname]); };
-  villagebus.ipkg.upgrade.async = function(f, address, pkgname) { return rpc_async(villagebus.ipkg.url(address), "upgrade", [pkgname], f); };
-
-
-  /** - villagebus.uci ---------------------------------------------------- */
-  // UDE - sometimes there are problems with permissions on /etc/config & /tmp/.uci 
-  villagebus.uci = function(address) {
-    return villagebus.uci.get.sync(address, "");
-  };
-
-  // UDE - when dashboard_host != mesh_gateway then we need a way to be able to proxy
-  //       through the mesh gateway onto the mesh
-  // INJ - TODO - modify ajax_proxy.cgi to be able to chain ajax proxy calls ?
-  // INJ.alt - the way open mesh deals with this is to have the mesh nodes pull requests to the
-  //           dashboard rather than the dashboard pushing to the nodes. Hrmm. Must ponder.
-  //
-  // e.g.  return afrimesh.villagebus.ajax_proxy()  + "http://" + afrimesh.settings.hosts.mesh_gateway + 
-  //              afrimesh.settings.ajax_proxy      + "http://" + address + "/cgi-bin/village-bus-uci";
-  villagebus.uci.url = function(address) { 
-    if (address == afrimesh.settings.address) {
-      return "http://" + address + "/cgi-bin/village-bus/uci";
-    }
-    //console.error("FINAL UCI URL: " + afrimesh.villagebus.ajax_proxy() + "http://" + address + "/cgi-bin/village-bus/uci");
-    return afrimesh.villagebus.ajax_proxy() + "http://" + address + "/cgi-bin/village-bus/uci";
-  };
-
-  villagebus.uci.get = function(address, selector) { return villagebus.uci.get.sync(address, selector);  };
-  villagebus.uci.set = function(address, entries)  { return villagebus.uci.set.sync(address, entries);   };
-
-  villagebus.uci.get.sync = function(address, selector) { return rpc(villagebus.uci.url(address), "show", [selector]);  };
-  villagebus.uci.get.async = function(f, address, selector) { return rpc_async(villagebus.uci.url(address), "show", [selector], f);  };
-
-  villagebus.uci.set.sync = function(address, entries) { return rpc(villagebus.uci.url(address), "set", [entries]);  };
-  villagebus.uci.set.async = function(f, address, entries) { return rpc_async(villagebus.uci.url(address), "set", [entries], f);  };
-
-
-  /** - villagebus.syslog ------------------------------------------------- */
-  villagebus.syslog = function() { return this.syslog.sync(); }
-
-  // will always show the log on the machine being viewed. If you want all nodes in the log, view
-  // the remote log server
-  villagebus.syslog.url = function() {
-    return "http://" + afrimesh.settings.address + "/cgi-bin/village-bus/sys";
-  };
-
-  villagebus.syslog.sync = function(count) {
-    if (count == undefined) { count = 10; }
-    return rpc(villagebus.syslog.url(), "syslog", [count]);
-  };
-
-  villagebus.syslog.async = function(f, count) {
-    if (count == undefined) { count = 10; }
-    return rpc_async(villagebus.syslog.url(), "syslog", [count], f);
-  };
-
-
-  /** - villagebus.voip --------------------------------------------------- */
-  villagebus.voip = {};
-  villagebus.voip.url = function(address) {
-    if (address == afrimesh.settings.address) {
-      return "http://" + address + "/cgi-bin/village-bus/voip";
-    }
-    return afrimesh.villagebus.ajax_proxy() + "http://" + address + "/cgi-bin/village-bus/voip";
-  };
-  villagebus.voip.sip = {};
-  villagebus.voip.sip.peers = function(address) { return villagebus.voip.sip.peers.sync(address); }
-  villagebus.voip.sip.peers.sync  = function(address)    { return rpc(villagebus.voip.url(address), "sip", [ "show peers" ]);    }
-  villagebus.voip.sip.peers.async = function(f, address) { return rpc_async(villagebus.voip.url(address), "sip", [ "show peers" ], f); }
-
-  /** - helper functions -------------------------------------------------- */
   /**
+   * Invoke a JSON/RPC interface
+   * @deprecate
    * @return XMLHttpRequest
    */
-  function make_json_request(request) {
-    var xml = $.ajax({
-        url: request.url,
-        type        : "POST",
-        contentType : "application/json",
-        dataType    : "json",
-        async       : request.async,
-        data        : JSON.stringify(request.request),
-        error       : (request.error ? request.error : function () {
-            console.error("JSON error");
-            console.error("url : "  + request.url);
-            console.error("data : " + JSON.stringify(request.request));
-          }),
-        success     : request.success });
-    if (request.async) {
-      return xml;
-    }
-    return request.success.response;
-  };
-
-  function make_jsonp_request(request) {
-    console.log("Async: " + request.async);
-    console.log("URL: " + request.url);
-    var xml = $.ajax({
-        url         : request.url,
-        type        : "GET",
-        contentType : "application/json",
-        dataType    : "jsonp",
-        //jsonp       : "callback",
-        async       : request.async,
-        data        : "", //{ json : $.toJSON(request.request) },
-        success     : request.success });
-    console.log("Made request");
-    if (request.async) {
-      return xml;
-    }
-    return request.success.response;
-  };
-
-  function make_sync_response_handler(address, name) {
-    var handler = function(data) {
-      if (data.length == 0) {
-        console.error(name + " failed to get data from address: " + address);
-        console.error(data);
-        return;
-      }
-      handler.response = data[0]; 
-      if (handler.response.error) {
-        console.error(name + " failed with error: " + data[0].error);
-      }
-    };
-    return handler;
-  };
-
-  function make_async_response_handler(f, address, name) {
-    var handler = function(data) {
-      if (data.length == 0) {
-        console.error(name + " failed to get data from address: " + address);
-        console.error(data);
-        return;
-      } 
-      handler.response = data[0]; 
-      if (handler.response.error) {
-        console.error(name + " failed with error: " + data[0].error);
-      }
-      f(data[0]);
-    };
-    return handler;
-  };
-
-  // TODO - don't require parameters to be in an array - rather use varargs!
-  var rpc = function(url, method, parameters) {
+  var rpc = function(url, method, parameters) {   // TODO - don't require parameters to be in an array - rather use varargs!
     // TODO - check host & path
     var request = {
       url         : url, //"http://" + rpc.host + rpc.path, 
@@ -503,6 +384,11 @@ var BootVillageBus = function (afrimesh) {
     return request.result;
   }; 
 
+  /**
+   * Invoke a JSON/RPC interface
+   * @deprecate
+   * @return XMLHttpRequest
+   */
   function rpc_async(url, method, parameters, continuation, error) {
     var request = {
       url          :  url, //"http://" + rpc.host + rpc.path, 
@@ -550,6 +436,7 @@ var BootVillageBus = function (afrimesh) {
 
   return villagebus;
 };
+exports.BootVillageBus = BootVillageBus;
 console.debug("loaded afrimesh.villagebus.js");
 
 

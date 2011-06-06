@@ -1,0 +1,52 @@
+diff -Nuwarp a/mini_httpd.c b/mini_httpd.c
+--- a/mini_httpd.c	2005-06-29 19:31:17.000000000 +0200
++++ b/mini_httpd.c	2010-07-18 01:16:45.000000000 +0200
+@@ -155,6 +155,7 @@ typedef long long int64_t;
+ #define METHOD_GET 1
+ #define METHOD_HEAD 2
+ #define METHOD_POST 3
++#define METHOD_PUT  4
+ 
+ 
+ /* A multi-family sockaddr. */
+@@ -1284,6 +1285,8 @@ handle_request( void )
+ 	method = METHOD_HEAD;
+     else if ( strcasecmp( method_str, get_method_str( METHOD_POST ) ) == 0 )
+ 	method = METHOD_POST;
++    else if ( strcasecmp( method_str, get_method_str( METHOD_PUT ) ) == 0 )
++	method = METHOD_PUT;
+     else
+ 	send_error( 501, "Not Implemented", "", "That method is not implemented." );
+ 
+@@ -1689,7 +1692,8 @@ do_cgi( void )
+     char* binary;
+     char* directory;
+ 
+-    if ( method != METHOD_GET && method != METHOD_POST )
++    if ( method != METHOD_GET && method != METHOD_POST && 
++         method != METHOD_PUT )
+ 	send_error( 501, "Not Implemented", "", "That method is not implemented for CGI." );
+ 
+     /* If the socket happens to be using one of the stdin/stdout/stderr
+@@ -1720,9 +1724,11 @@ do_cgi( void )
+     ** into our buffer.  We also have to do this for all SSL CGIs.
+     */
+ #ifdef USE_SSL
+-    if ( ( method == METHOD_POST && request_len > request_idx ) || do_ssl )
++    if ( ( ( method == METHOD_POST || method == METHOD_PUT ) && 
++           request_len > request_idx ) || do_ssl )
+ #else /* USE_SSL */
+-    if ( ( method == METHOD_POST && request_len > request_idx ) )
++    if ( ( method == METHOD_POST || method == METHOD_PUT ) &&
++         request_len > request_idx )
+ #endif /* USE_SSL */
+ 	{
+ 	int p[2];
+@@ -2874,6 +2880,7 @@ get_method_str( int m )
+ 	case METHOD_GET: return "GET";
+ 	case METHOD_HEAD: return "HEAD";
+ 	case METHOD_POST: return "POST";
++	case METHOD_PUT: return "PUT";
+ 	default: return "UNKNOWN";
+ 	}
+     }

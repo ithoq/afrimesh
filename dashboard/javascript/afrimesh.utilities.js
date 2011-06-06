@@ -8,30 +8,24 @@
  */
 //(function() {
 
-  /** - Add any missing pieces -------------------------------------------- */
-  if (typeof(window.console) == "undefined") {  // Some browsers really have no console at all
-    window.console = { debug   : function(){},
-                       warning : function(){},
-                       error   : function(){},
-                       log     : function(){}   };
-    console = window.console;
-  }
-
 
   /** - Make Javascript a better Lisp ------------------------------------- */
-  Array.prototype.car = function() { return (this.length > 0) ? this[0]       : []; };
+  function car(array) { return (array.length > 0) ? array[0]       : []; };
+  function cdr(array) { return (array.length > 1) ? array.slice(1) : []; };
   //Array.prototype.rac = function() { return (this.length > 0) ? this[this.length() - 1] : [] };
-  Array.prototype.cdr = function() { return (this.length > 1) ? this.slice(1) : []; };
   //Array.prototype.rdc = function() { return (this.length > 1) ? this.slice(0, this.length() - 2) : [] };
-  Array.prototype.first = Array.prototype.car;
-  Array.prototype.rest  = Array.prototype.cdr;
-  Array.prototype.head  = Array.prototype.car;
-  Array.prototype.tail  = Array.prototype.cdr;
+  //Array.prototype.first = Array.prototype.car;
+  //Array.prototype.rest  = Array.prototype.cdr;
+  //Array.prototype.head  = Array.prototype.car;
+  //Array.prototype.tail  = Array.prototype.cdr;
   //Array.prototype.init  = Array.prototype.rdc;
   //Array.prototype.last  = Array.prototype.rac;
 
 
   /** - Make Javascript a better Javascript ------------------------------- */
+  function isObject(object) {
+    return typeof object === "object";
+  };
   // See: http://thinkweb2.com/projects/prototype/instanceof-considered-harmful-or-how-to-write-a-robust-isarray/
   //      http://ajaxian.com/archives/isarray-why-is-it-so-bloody-hard-to-get-right
   //      http://erik.eae.net/archives/2005/06/06/22.13.54/
@@ -51,8 +45,37 @@
     return object instanceof Date;
   };
   function isString(object) {
-    return object instanceof Date;
+    return typeof object === "string";
   };
+  function isStringURL(object) {
+    return isString(object) && 
+        ((object.indexOf("http://") === 0) ||
+         (object.indexOf("https://") === 0));
+  };
+  function isNetworkAddress(object) { // TODO - really cheap hack
+    var ret = isString(object) && (object.split(".").length > 1);
+    console.log("isNetworkAddress: " + object.split(".") + " " + ret);
+    return ret;
+  };
+  function type(object) {
+    if (isArray(object)) {
+      return "Array";
+    } else if (isFunction(object)) {
+      return "Function";
+    } else if (isNumber(object)) {
+      return "Number";
+    } else if (isDate(object)) {
+      return "Date";
+    } else if (isStringURL(object)) {
+      return "URL";
+    } else if (isString(object)) {
+      return "String";
+    } else if (isObject(object)) {
+      return "Object";
+    }
+    return "Unknown";
+  };
+  
 
   String.prototype.trim = function() {
     return this.replace(/^\s+|\s+$/g,"");
@@ -68,6 +91,16 @@
       object_1[property] = object_2[property];
     }
     return object_1;
+  };
+
+
+  /**
+   * { href, hostname, pathname }
+   */
+  function parseURL(url) {
+    var a = document.createElement("a");
+    a.href = url;
+    return a;
   };
 
   
@@ -99,8 +132,8 @@
   };
 
   function Qsugar(selector, root) {     // SUGAR drop the first selector element if it is the same as the object name:
-    if (selector.car().toLowerCase() == (root ? root : "afrimesh")) { // TODO UDE we don't have an automagic way to get root object names
-      selector = selector.cdr();
+    if (car(selector).toLowerCase() == (root ? root : "afrimesh")) { // TODO UDE we don't have an automagic way to get root object names
+      selector = cdr(selector);
     };
     return selector;
   };
@@ -125,15 +158,15 @@
     } else if (selector.length == 0) {
       return this_object;
     } 
-    var head = selector.car();
+    var head = car(selector);
     if (regex_array_selector.test(head)) {               // test for @some-name[0]
       head = resolve_array_selector(this_object, head); 
     } 
     if (this_object[head] == undefined) {
-      console.warn("__q(" + this_object.valueOf() + "): Invalid selector - " + selector.join("|"));
+      //console.warn("__q(" + this_object.valueOf() + "): Invalid selector - " + selector.join("|"));
       return undefined;
     } 
-    return __q(this_object[head], selector.cdr());
+    return __q(this_object[head], cdr(selector));
   };
 
   function resolve_array_selector(this_object, selector) {
@@ -231,29 +264,10 @@
     }
     return s;
   }
-  function typeOf(obj) { 
-    //console.error("TYPE: " + obj + " -> " + (typeof obj));
-    if (isArray(obj)) {
-      return "array";
-    } else if (typeof obj == 'function') {
-      return "function";
-    } else if (typeof obj == 'string') {
-      return "string";
-    } else if (typeof obj == 'number') {
-      return "number";
-    } else if (typeof obj == 'boolean') {
-      return "boolean";
-    } else if (typeof obj == 'undefined') {
-      return "undefined";
-    } else if (obj == null) {
-      return "null";
-    }
-    return "object";
-  }
   function rshow(item) {
     var s = "";
     for (var property in item) {
-      if (typeOf(item[property]) == 'object') {
+      if (isObject(item[property])) {
         s += property + " : { " + rshow(item[property]) + " } \n";
       } else {
         s += property + " : |" + item[property] + "|\t";
@@ -368,12 +382,12 @@
     }
   };
   
-  window.console.log = function() {
-    var message = "";// timestamp(true);
+  window.console.log = function(message) {
+    /*message = "";// timestamp(true);
     message += "[log]\t";
     for (var arg = 0; arg < arguments.length; arg++) {
       message += arguments[arg];
-    }
+    }*/
     return window.console.native_log(message);
   };
   
@@ -418,5 +432,62 @@
 //if (!console && window.console) {
 console = window.console; //TODO CLEAN 
 //}
+
+
+  /** - Make jQuery a usuable looped animations ------------------------- */
+  jQuery.fn.looped = function(start, end, duration) {
+    function loopfn(element, start, end, duration) {
+      return $(element).animate(start, duration, "swing", function() {
+          $(this).animate(end, duration, "swing", function() {
+              //setTimeout(loopfn, duration);
+              loopfn(element, start, end, duration);
+            }); 
+        });
+    }
+    return this.each(function() {
+        return loopfn(this, start, end, duration);
+      });
+  };
+
+  /** - http://remysharp.com/2007/01/25/jquery-tutorial-text-box-hints/ - */
+  jQuery.fn.hint = function (blurClass) {
+    if (!blurClass) { 
+      blurClass = 'blur';
+    }
+    return this.each(function () {
+      var $input = jQuery(this);
+      var title  = $input.attr('title');
+      var $form  = jQuery(this.form);
+      var $win   = jQuery(window);
+      function remove() {
+        if ($input.val() === title && $input.hasClass(blurClass)) {
+          $input.val('').removeClass(blurClass);
+        }
+      }
+      if (title) {                // only apply logic if the element has the attribute
+        $input.blur(function () { // on blur, set value to title attr if text is blank
+          if (this.value === '') {
+            $input.val(title).addClass(blurClass);
+          }
+        }).focus(remove).blur(); // now change all inputs to title
+        $form.submit(remove);    // clear the pre-defined text when form is submitted
+        $win.unload(remove);     // handles Firefox's autocomplete
+      }
+    });
+  };
+
+  // TODO - use form.submit to save forms so that fn.hint can do this for you
+  jQuery.fn.hintval = function (value) {
+    var $input = jQuery(this);
+    if (!value) {
+      var title  = $input.attr('title');
+      var value  = $input.val();
+      return (title == value) ? "" : value;
+    }
+    $input.val(value);
+    $input.removeClass("blur");
+  };
+
+
 console.debug("loaded afrimesh.utilities.js");
 

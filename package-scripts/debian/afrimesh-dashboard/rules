@@ -10,11 +10,14 @@
 #export DH_VERBOSE=1
 
 package = afrimesh-dashboard
-CC = gcc
-CFLAGS = -g -Wall
+CC=gcc
+CFLAGS=
+#-Wall
+#-g -Wall
 
 ifeq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
-  CFLAGS += -O2
+  CFLAGS+=
+  #-O2
 endif
 
 
@@ -80,7 +83,7 @@ binary-arch: build install
 #	dh_installinit
 #	dh_installcron
 #	dh_installinfo
-	dh_installman
+#	dh_installman
 	dh_link
 	dh_strip
 	dh_compress

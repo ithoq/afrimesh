@@ -3,7 +3,6 @@ config 'afrimesh' 'dashboard'
 
 config 'afrimesh' 'settings'
 	option 'locale'     'en_US.UTF-8'
-	option 'configured' '0'
 
 config 'afrimesh' 'support'
 	option 'howto'  'afrimesh'

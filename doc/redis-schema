@@ -1,0 +1,56 @@
+
+
+* Delete a failed provision attempt:
+
+  redis-cli del "provision:10.130.1.20:mac device:10.130.1.20:status" 
+  redis-cli del "provision:10.130.1.20:device interface:10.130.1.20:history"
+  redis-cli del "message:device:00:09:45:58:E5:02:provision"
+
+TODO - shouldn't need it!
+TODO - what's the plan for when devices change IP?
+
+--
+
+   STATUS
+     |
+   DEVICE -< INTERFACE - MAC -< IP
+     v           |
+     |        HISTORY
+     ^
+   PERSON
+     |
+   DETAILS
+
+--
+
+# - object ids
+device:id                       COUNTER
+device:ids                      SET      # TODO
+person:id                       COUNTER
+person:ids                      SET      # TODO
+handset:id                      COUNTER  # NEW
+handset:ids                     SET      # TODO
+
+# - device status & history
+device:<ip>:status              STRING   { uname, idle, traffic etc. }      
+interface:<ip>:history          LIST     { pings, radio etc.         }      
+
+# - provisioning  TODO - provenance be interface based on the lowliest level
+provision:<ip>:mac              STRING   mac                                
+provision:<ip>:device           STRING   device.id                          
+provision:<ip>:person           STRING   person.id 
+provision:<device.id>:handset   STRING   handset.id   #NEW
+
+# - device
+device:<ip>:location            STRING  { longitude, latitude }  #TODO
+
+# - person
+person:<email>:id               STRING  person.id
+person:<id>:details             STRING  { person.id, firstname, lastname, email }
+
+# - handset
+handset:<id>:??? <------- HERE
+
+# notifications
+message:device:<mac>:provision  STRING  { device.id, ip, mac }
+
