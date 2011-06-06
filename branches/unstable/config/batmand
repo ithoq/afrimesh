@@ -1,3 +1,0 @@
-config 'batmand' 'general'
-      option 'visualisation_srv' '10.130.1.1'
-
