@@ -1,0 +1,31 @@
+Index: vis/vis.c
+===================================================================
+--- vis/vis.c	(revision 1738)
++++ vis/vis.c	(working copy)
+@@ -395,7 +395,7 @@
+ 						fillme->dot_buffer = (char *)debugRealloc( fillme->dot_buffer, strlen( tmp ) + strlen( fillme->dot_buffer ) + 1, 408 );
+ 						strncat( fillme->dot_buffer, tmp, strlen( tmp ) );
+ 
+-						snprintf( tmp, sizeof( tmp ), "%s\t{ router : \"%s\", neighbour : \"%s\", label : %.2f }",
++						snprintf( tmp, sizeof( tmp ), "%s\t{ \"router\" : \"%s\", \"neighbour\" : \"%s\", \"label\" : %.2f }",
+ 							(first_line ? "" : ",\n"), from_str, to_str, (float)( orig_node->tq_max / (float)neigh->tq_avg ) );
+ 						first_line = 0;
+ 						fillme->json_buffer = (char *)debugRealloc( fillme->json_buffer, strlen( tmp ) + strlen( fillme->json_buffer ) + 1, 408 );
+@@ -416,7 +416,7 @@
+ 					fillme->dot_buffer = (char *)debugRealloc( fillme->dot_buffer, strlen( tmp ) + strlen( fillme->dot_buffer ) + 1, 409 );
+ 					strncat( fillme->dot_buffer, tmp, strlen( tmp ) );
+ 
+-					snprintf( tmp, sizeof( tmp ), "%s\t{ router : \"%s\", gateway : \"%s/%s\", label : \"HNA\" }",
++					snprintf( tmp, sizeof( tmp ), "%s\t{ \"router\" : \"%s\", \"gateway\" : \"%s/%s\", \"label\" : \"HNA\" }",
+ 						(first_line ? "" : ",\n"), from_str, to_str, hna_str );
+ 					first_line = 0;
+ 					fillme->json_buffer = (char *)debugRealloc( fillme->json_buffer, strlen( tmp ) + strlen( fillme->json_buffer ) + 1, 409 );
+@@ -432,7 +432,7 @@
+ 					strncat( fillme->dot_buffer, tmp, strlen( tmp ) );
+ 
+ 					snprintf( tmp, sizeof( tmp ),
+-						"%s\t{ router : \"%s\", gateway : \"%s\", label : \"%s\" }",
++						"%s\t{ \"router\" : \"%s\", \"gateway\" : \"%s\", \"label\" : \"%s\" }",
+ 						(first_line ? "" : ",\n"), from_str, "0.0.0.0/0.0.0.0", "HNA" );
+ 					first_line = 0;
+ 					fillme->json_buffer = (char *)debugRealloc( fillme->json_buffer, strlen( tmp ) + strlen( fillme->json_buffer ) + 1, 410 );

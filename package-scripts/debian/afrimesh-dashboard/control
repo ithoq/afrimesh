@@ -2,13 +2,13 @@ Source: afrimesh-dashboard
 Section: net
 Priority: optional
 Maintainer: Antoine van Gelder <antoine@7degrees.co.za>
-Build-Depends: json-c-dev, uci-dev, libmemcachedb-dev, snmp, libsnmp-dev, freeradius, libmysqlclient15-dev, debhelper (>= 5)
+Build-Depends: makeself, json-c-dev, uci-dev, libcredis-dev, snmp, luarocks, libsnmp-dev, liblua5.1-socket-dev, liblua5.1-logging-dev, debhelper (>= 5)
 Standards-Version: 3.7.3
-Homepage: http://code.google.com/p/afrimesh
+Homepage: http://afrimesh.org
 
 Package: afrimesh-dashboard
 Architecture: any
-Depends: apache2, snmp, wget, curl, mysql-client, pmacct, ${shlibs:Depends}, ${misc:Depends}
+Depends: uci, libcredis, redis-server, apache2, snmp, snmpd, pmacct, lua5.1, luarocks, liblua5.1-socket2, liblua5.1-json, liblua5.1-logging, ${shlibs:Depends}, ${misc:Depends}
 Description: Easy management for B.A.T.M.A.N. wireless mesh networks
  The ability to easily create an IP network in rural areas, developing
  countries and disaster zones can significantly contribute to the ability

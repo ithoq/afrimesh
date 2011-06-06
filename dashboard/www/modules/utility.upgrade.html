@@ -79,13 +79,15 @@
 
     var address = afrimesh.settings.address;
 
-    afrimesh.villagebus.ipkg.update.async(update_complete, address);
-    function update_complete(log) {
+    afrimesh.device.package.update(address, update_complete);
+    function update_complete(error, log) {
+      if (error) return console.error("Could not update package list");
       $("#update-packages td:eq(0)").append(log.join("<br/>"));
-      afrimesh.villagebus.ipkg.list.async(list_complete, address, "upgradable");
+      afrimesh.device.package.list(address, list_complete);
     };
 
-    function list_complete(packages) {
+    function list_complete(error, packages) {
+      if (error) return console.error("Could not list upgradable packages");
       var updates = $("#update-packages td:eq(0)").html("");
       var html = "<table cellspacing=0 cellpadding=0 border=0 style='margin:0px; padding:0px;'>";
       //html += "<tr><td width=100><i>package</i></td><td><i>current</i></td><td><i>update</i></td></tr>";
@@ -109,9 +111,10 @@
       $("#update-packages td:eq(0)").append(log.join("<br/>"));
       if (packages.length) {
         var package = packages.pop();
-        afrimesh.villagebus.ipkg.upgrade.async(function(log) { 
+        afrimesh.device.package.upgrade(address, package.name, function(error, log) { 
+            if (error) return console.error("Could not upgrade package: " + package.name);
             upgrade_complete(log, packages); 
-          }, address, package.name);
+          });
         return;
       }
       $("#update-packages button").html("done");

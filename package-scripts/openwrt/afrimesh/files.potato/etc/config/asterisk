@@ -11,7 +11,7 @@ config 'asterisk'
 	option 'zone' 'Australia/Perth'
 
 config 'sipgeneral'
-	option 'allow' 'ulaw'
+	option 'allow' 'gsm,ulaw'
 
 config 'sip' 'sippotato'
 	option 'context' 'default'
@@ -24,3 +24,4 @@ config 'sip' 'sippotato'
 	option 'dtmfmode' 'rfc2833'
 	option 'register' 'yes'
 	option 'insecure' 'invite'
+  option 'allow' ''

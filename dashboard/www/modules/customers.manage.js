@@ -28,13 +28,13 @@ var populate_control = undefined;
         s += "<td><div id='" + customer.username + "' class='edit-username'>" + customer.username + "</div></td>";
         s += "<td><div id='" + customer.username + "' class='edit-type'>" + customer.type + "</div></td>";
         s += "<td class='command'>";
-        s += "<span id='" + customer.username + "' class='button delete'>delete</span>";
-        //s += "<span id='" + customer.username + "' class='button password'>password</span>";
+        s += "<span id='" + customer.username + "' class='round button delete'>delete</span>";
+        //s += "<span id='" + customer.username + "' class='round button password'>password</span>";
         s += "</td>";
         s += "</tr>";
       });
     s += "</tbody>";
-    s += "<tfoot><tr id='new'><td colspan=3 class='command'><span id='new' class='button'>new</span></td></tr></tfoot>";
+    s += "<tfoot><tr id='new'><td colspan=3 class='command'><span id='new' class='round button'>new</span></td></tr></tfoot>";
     s += "</table>";
     s += "<br/>";
     $("div#widget-customers-manage").html(s)
@@ -58,7 +58,6 @@ var populate_control = undefined;
     $("div#widget-customers-manage table").tablesorter(); 
 
     /** button logic - TODO - move to afrimesh.ui.js */
-    $(".button").corner("4px");
     $(".button").mousedown(function() { $(this).addClass("selected"); });
     $(".button").mouseup(function() { $(".button").removeClass("selected"); });
 
@@ -72,7 +71,6 @@ var populate_control = undefined;
     $("div#widget-customers-manage table tr#new").html($("#widget-customers-new table tr#new_active").html());
     $("div#widget-customers-manage input#username").focus();
     $("#save").click(on_customer_save);
-    $(".button").corner("4px"); // TODO - json 3 added functionality to only have to do this once 
     $(".button").mousedown(function() { $(this).addClass("selected"); });
     $(".button").mouseup(function() { $(".button").removeClass("selected"); });
     console.debug("display_customer_insert");

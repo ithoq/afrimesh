@@ -197,7 +197,7 @@
           button.attr("disabled", true); 
           $("fieldset#" + fieldset + " *").attr("disabled", true);
           var service = fieldset; // <-- any mapping required in future happens here
-          afrimesh.villagebus.sys.service.async(reload_complete, afrimesh.settings.address, service, "reload");
+          afrimesh.device.service.reload(afrimesh.settings.address, service, reload_complete);
           function reload_complete(output) {
             console.debug("Reloaded '" + fieldset + "'");
             console.debug(output);
