@@ -1,0 +1,31 @@
+
+config 'interface' 'loopback'
+	option 'ifname' 'lo'
+	option 'proto' 'static'
+	option 'ipaddr' '127.0.0.1'
+	option 'netmask' '255.0.0.0'
+
+#config 'interface' 'lan'
+#	option 'ifname'  'eth0'
+#	option 'proto'   'dhcp'
+
+config 'interface' 'lan'
+	option 'ifname'    'eth0'
+	option 'proto'     'static'
+	option 'ipaddr'    '192.168.10.20'
+	option 'netmask'   '255.255.255.0'
+	option 'gateway'   '192.168.10.1'
+	option 'dns'       '192.168.10.1'
+
+#config alias
+#	option 'interface' 'lan'
+#	option 'proto'     'static'
+#	option 'ipaddr'    '172.31.255.254'
+#	option 'netmask'   '255.255.255.252'
+
+config 'interface' 'wifi0'
+	option 'ifname'  'ath0'
+	option 'proto'   'static'
+	option 'ipaddr'  '10.130.1.1'
+	option 'netmask' '255.255.255.0'
+

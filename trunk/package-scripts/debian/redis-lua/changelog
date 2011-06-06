@@ -1,0 +1,5 @@
+redis-lua (2.0.0-0-1) lucid; urgency=low
+
+  * Initial release
+
+ -- Antoine van Gelder <antoine@7degrees.co.za>  Mon, 20 December 2010 11:14:44 +0200

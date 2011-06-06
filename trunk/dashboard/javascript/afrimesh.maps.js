@@ -11,18 +11,11 @@
 /**
  * includes
  */
-if (afrimesh.settings.map.aerial == "1") {
-  //load("http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAUILHePuv7Cq0mK0HSze5PRRTJkofi8MdSXz7uUeCtVadpg691BS55tAxiNsjEjEAKrgA9qrFrG_PPw");
-  //load("http://api.maps.yahoo.com/ajaxymap?v=3.0&appid=euzuro-openlayers");
-  load("javascript/yahoo/ajaxymap.js");
-  load("javascript/yahoo/dom_2.0.1-b2.js");
-  load("javascript/yahoo/event_2.0.0-b2.js");
-  load("javascript/yahoo/dragdrop_2.0.1-b4.js");
-  load("javascript/yahoo/animation_2.0.1-b2.js");
-  load("javascript/yahoo/ymapapi_3_8_2_1.js");
-}
 //load("javascript/openlayers/OpenLayers.js");
 //load("javascript/openlayers/OpenStreetMap.js");
+if (afrimesh.settings.map.google == "1") {
+  //load("http://maps.google.com/maps/api/js?sensor=false"); // TODO - figure out why not working
+}
 
 
 /** 

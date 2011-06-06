@@ -1,0 +1,14 @@
+Source: villagetelco-dashboard
+Section: net
+Priority: optional
+Maintainer: Antoine van Gelder <antoine@7degrees.co.za>
+Build-Depends: makeself, json-c-dev, uci-dev, libcredis-dev, snmp, luarocks, libsnmp-dev, liblua5.1-socket-dev, liblua5.1-logging-dev, debhelper (>= 5)
+Standards-Version: 3.7.3
+Homepage: http://villagetelco.org
+
+Package: villagetelco-dashboard
+Architecture: any
+Depends: uci, libcredis, redis-server, apache2, batmand, snmp, snmpd, pmacct, lua5.1, luarocks, liblua5.1-socket2, liblua5.1-json, liblua5.1-logging, ${shlibs:Depends}, ${misc:Depends}
+Description: The VillageTelco Dashboard
+ VillageTelco is an easy-to-use, scalable, standards-based, wireless,
+ local, do-it-yourself, telephone company toolkit.

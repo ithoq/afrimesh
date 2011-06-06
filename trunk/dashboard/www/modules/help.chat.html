@@ -10,35 +10,30 @@
 <script type="text/javascript"> //<![CDATA[    
 (function() {
 
-  /** includes ------------------------------------------------------------ */
+  /** includes ---------------------------------------------------------- */
 
-
-  /** construction -------------------------------------------------------- */
-  ready = function() { // INJ 'ready' should be the only symbol we're exposing to the global namespace
+  /** construction ------------------------------------------------------ */
+  ready = function() { 
     if ($("#live-chat iframe").length == 0) {
       $("#live-chat").append("<iframe></iframe>");
       $("#live-chat iframe").attr({
           src         : afrimesh.settings.support.irc,
           scrolling   : "no",
           frameborder : 0,
-          style       : "background: lightgray;"
+          style       : "background:lightgray; width:100%; height:100%;"
         });
     }
-    $("#live-chat iframe").attr("width", "99%");
-    $("#live-chat iframe").attr("height", "80%");
-    $("#live-chat iframe").css("visibility", "visible");
+    $("#live-chat").show();
     console.debug("loaded help.chat.html");
     return unload;
   };
 
   function unload() {
-    $("#live-chat iframe").css("visibility", "hidden");
-    $("#live-chat iframe").attr("width", "0%");
-    $("#live-chat iframe").attr("height", "0%");
+    $("#live-chat").hide();
     console.debug("unloaded help.chat.html");
   };
 
-  /** done ---------------------------------------------------------------- */
+  /** done -------------------------------------------------------------- */
   console.debug("loaded help.chat.js");
  
 })();

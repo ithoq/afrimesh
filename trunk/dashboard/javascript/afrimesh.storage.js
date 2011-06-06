@@ -67,4 +67,5 @@ function BootStorage(parent) {
 
   return storage;
 };
+exports.BootStorage = BootStorage;
 console.debug("loaded afrimesh.storage.js");
