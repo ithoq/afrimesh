@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ----------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=1100
+PKG_REV:=1158
 #PKG_REV:=`svn info | grep -o "Revision: [0-9]*" | sed -e "s/Revision: //"`
 PKG_VERSION:=1.0pre-r$(PKG_REV)
 PKG_RELEASE:=1
@@ -20,10 +20,11 @@ PKG_RELEASE:=1
 #      http://forum.openwrt.org/viewtopic.php?id=18090
 ##PKG_SOURCE_MIRROR=0
 # - to use local sources, disable PKG_SOURCE_URL & set LOCAL_SOURCES -------
-LOCAL_SOURCES:=~/afrimesh
+#LOCAL_SOURCES:=~/afrimesh
 ifeq "$(wildcard $(LOCAL_SOURCES) )"  ""
 #PKG_SOURCE_URL:=http://afrimesh.googlecode.com/svn/trunk
 PKG_SOURCE_URL:=http://afrimesh.googlecode.com/svn/branches/unstable
+#PKG_SOURCE_URL:=http://afrimesh.googlecode.com/svn/tags/afrimesh-1.0pre-r1153-unstable
 endif
 
 

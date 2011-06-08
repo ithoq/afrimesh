@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 # - configuration ----------------------------------------------------------
 PKG_NAME:=afrimesh
-PKG_REV:=1100
+PKG_REV:=1158
 #PKG_REV:=`svn info | grep -o "Revision: [0-9]*" | sed -e "s/Revision: //"`
 PKG_VERSION:=1.0pre-r$(PKG_REV)
 PKG_RELEASE:=1
@@ -20,10 +20,11 @@ PKG_RELEASE:=1
 #      http://forum.openwrt.org/viewtopic.php?id=18090
 ##PKG_SOURCE_MIRROR=0
 # - to use local sources, disable PKG_SOURCE_URL & set LOCAL_SOURCES -------
-LOCAL_SOURCES:=~/afrimesh
+#LOCAL_SOURCES:=~/afrimesh
 ifeq "$(wildcard $(LOCAL_SOURCES) )"  ""
-#PKG_SOURCE_URL:=http://afrimesh.googlecode.com/svn/trunk
-PKG_SOURCE_URL:=http://afrimesh.googlecode.com/svn/branches/unstable
+PKG_SOURCE_URL:=http://afrimesh.googlecode.com/svn/trunk
+#PKG_SOURCE_URL:=http://afrimesh.googlecode.com/svn/branches/unstable
+#PKG_SOURCE_URL:=http://afrimesh.googlecode.com/svn/tags/afrimesh-1.0pre-r1153-unstable
 endif
 
 
@@ -341,7 +342,6 @@ define Package/afrimesh-webif/install
 	$(INSTALL_DIR)   $(1)/www/afrimesh/javascript
 	$(INSTALL_DIR)   $(1)/www/afrimesh/javascript/jquery
 	$(INSTALL_DIR)   $(1)/www/afrimesh/javascript/openlayers
-	$(INSTALL_DIR)   $(1)/www/afrimesh/javascript/yahoo
 	$(INSTALL_DIR)   $(1)/www/afrimesh/modules
 	$(INSTALL_DIR)   $(1)/www/afrimesh/style
 	$(INSTALL_DIR)   $(1)/www/afrimesh/style/images
@@ -354,7 +354,6 @@ define Package/afrimesh-webif/install
 	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/www/images/*.png          $(1)/www/afrimesh/images
 	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/javascript/jquery/*       $(1)/www/afrimesh/javascript/jquery
 	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/javascript/openlayers/*   $(1)/www/afrimesh/javascript/openlayers
-	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/javascript/yahoo/*        $(1)/www/afrimesh/javascript/yahoo
 	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/javascript/afrimesh*.js   $(1)/www/afrimesh/javascript
 	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/www/modules/*.html        $(1)/www/afrimesh/modules
 	$(INSTALL_DATA)  $(PKG_BUILD_DIR)/dashboard/www/modules/*.js          $(1)/www/afrimesh/modules
@@ -413,7 +412,6 @@ define Package/afrimesh-dashboard/install
 	$(INSTALL_DIR)  $(1)/www/afrimesh/javascript
 	$(INSTALL_DIR)  $(1)/www/afrimesh/javascript/jquery
 	$(INSTALL_DIR)  $(1)/www/afrimesh/javascript/openlayers
-	$(INSTALL_DIR)  $(1)/www/afrimesh/javascript/yahoo
 	$(INSTALL_DIR)  $(1)/www/afrimesh/style/images
 	$(INSTALL_DIR)  $(1)/www/afrimesh/style
 	$(INSTALL_DIR)  $(1)/www/afrimesh/modules
@@ -426,7 +424,6 @@ define Package/afrimesh-dashboard/install
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/images/*.png           $(1)/www/afrimesh/images
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/jquery/*        $(1)/www/afrimesh/javascript/jquery
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/openlayers/*    $(1)/www/afrimesh/javascript/openlayers
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/yahoo/*         $(1)/www/afrimesh/javascript/yahoo
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/javascript/afrimesh*.js    $(1)/www/afrimesh/javascript
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/*.html         $(1)/www/afrimesh/modules
 	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dashboard/www/modules/*.js           $(1)/www/afrimesh/modules
