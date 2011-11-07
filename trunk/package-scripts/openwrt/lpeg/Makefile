@@ -36,7 +36,7 @@ endef
 
 define Build/Compile
 	$(MAKE) -C $(PKG_BUILD_DIR) \
-    CC="$(TARGET_CC) $(TARGET_CFLAGS) -I/usr/include -std=gnu99 -fPIC" \
+    CC="$(TARGET_CC) $(TARGET_CFLAGS) -I"$(STAGING_DIR)/usr/include" -std=gnu99 -fPIC" \
 		lpeg.so
 endef
 
